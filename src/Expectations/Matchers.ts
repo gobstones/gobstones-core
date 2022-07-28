@@ -1,21 +1,14 @@
 /**
- * This module provides the [[Matchers]] class, that contains all the matchers
- * for the expectations. All matchers are centralized in this module for
- * bigger extensibility.
- *
- * Additionally, it provides the [[MatcherCall]] interface, that allows to
- * register the result of a call to a specific matcher.
- *
+ * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
  */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { deepEquals } from '../helpers/deepEquals';
 
 /**
  * A matcher call represents a call to a matcher with it's corresponding
  * arguments and the actual result.
+ *
+ * @group Helper classes and interfaces
  */
 export interface MatcherCall {
     matcher: string;
@@ -31,6 +24,8 @@ export interface MatcherCall {
  *
  * Having the matchers separated from the instances that use the matchers allow for
  * greater extensibility.
+ *
+ * @group Helper classes and interfaces
  */
 export class Matchers {
     // Generic
@@ -73,6 +68,11 @@ export class Matchers {
         return (
             (expectedType !== 'object' && typeof actual === expectedType) ||
             (expectedType === 'array' && typeof actual === 'object' && Array.isArray(actual)) ||
+            (expectedType === 'buffer' &&
+                actual &&
+                actual.constructor &&
+                typeof actual.constructor.isBuffer === 'function' &&
+                actual.constructor.isBuffer(actual)) ||
             (expectedType === 'object' && !Array.isArray(actual) && typeof actual === expectedType)
         );
     }

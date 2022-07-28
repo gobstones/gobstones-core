@@ -1,26 +1,33 @@
+/**
+ * @module Board
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
+
 import { CellDataDefinition, CellInfo, CellLocation } from './BoardDefinition';
 import { InvalidStonesAmount, StonesChangeActionAttempt } from './BoardErrors';
 
 import { Board } from './Board';
 import { Color } from './Color';
 import { Direction } from './Direction';
-import { TypedEmitter } from '../TypedEmitter';
+import { EventEmitter } from '../Events/EventEmitter';
 import { expect } from '../Expectations';
 
 /**
- * This object contains the default values for a [[Board]] and it's cells.
+ * This object contains the default values for a {@link Board} and it's cells.
  * When a specific value is not given, the defaults are used.
+ *
+ * @internal
  */
 const Defaults = {
-    [Color.Blue]: 0,
-    [Color.Black]: 0,
-    [Color.Red]: 0,
-    [Color.Green]: 0
-};
+    [Color.BLUE]: 0,
+    [Color.BLACK]: 0,
+    [Color.RED]: 0,
+    [Color.GREEN]: 0
+} as unknown as CellInfo;
 
 /**
  * This type represents the function that acts as a callback of
- * the [[Cell.onStonesChanged]] event. Such an event is thrown by
+ * the {@link Cell.onStonesChanged} event. Such an event is thrown by
  * an instance of a cell whenever an operation is performed such
  * that the cell changes the amount of cells.
  *
@@ -29,47 +36,57 @@ const Defaults = {
  * * The amount of the stones in the cell, after the change ocurred.
  * * The previous amount of stones the cell had.
  *
- * @see [[Cell.onStonesChanged]] for more information.
+ * @see {@link Cell.onStonesChanged} for more information.
+ *
+ * @event
  */
 export type OnCellStonesChanged = (
     cellLocation: { x: number; y: number },
     stones: {
-        [Color.Blue]: number;
-        [Color.Black]: number;
-        [Color.Red]: number;
-        [Color.Green]: number;
+        [Color.BLUE]: number;
+        [Color.BLACK]: number;
+        [Color.RED]: number;
+        [Color.GREEN]: number;
     },
     previousStones: {
-        [Color.Blue]: number;
-        [Color.Black]: number;
-        [Color.Red]: number;
-        [Color.Green]: number;
+        [Color.BLUE]: number;
+        [Color.BLACK]: number;
+        [Color.RED]: number;
+        [Color.GREEN]: number;
     }
 ) => void;
 
 /**
  * This interface contains the signature of the
  * events that a Cell can throw.
+ *
+ * @group Internal board events
+ * @internal
  */
-interface CellEvents {
+export interface CellEvents {
     [Cell.onStonesChanged]: OnCellStonesChanged;
 }
 
-export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
+/**
+ * A cell
+ *
+ * @group Main module definitions
+ */
+export class Cell extends EventEmitter<CellEvents> implements CellInfo {
     /**
      * This event is thrown whenever an action that alters the stones in
      * the cell is performed. Listeners of this action are expected to conform to
-     * [[OnCellStonesChanged]].
+     * {@link OnCellStonesChanged}.
      *
      * The actions that trigger this callback include:
-     * * Setting the [[a]] attribute of an instance.
-     * * Setting the [[n]] attribute of an instance.
-     * * Setting the [[r]] attribute of an instance.
-     * * Setting the [[v]] attribute of an instance.
-     * * Calling [[setStonesOf]] on an instance with any color and value.
-     * * Calling [[addStones]] on an instance with any color and value.
-     * * Calling [[removeStones]] on an instance with any color and value.
-     * * Calling [[empty]] on an instance.
+     * * Setting the {@link a} attribute of an instance.
+     * * Setting the {@link n} attribute of an instance.
+     * * Setting the {@link r} attribute of an instance.
+     * * Setting the {@link v} attribute of an instance.
+     * * Calling {@link setStonesOf} on an instance with any color and value.
+     * * Calling {@link addStones} on an instance with any color and value.
+     * * Calling {@link removeStones} on an instance with any color and value.
+     * * Calling {@link empty} on an instance.
      *
      * @event
      */
@@ -109,7 +126,7 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
 
     /**
      * Create a new instance of a cell with the given cell information.
-     * A cell should be given the [[Board]] it belongs to, as a cell cannot exist
+     * A cell should be given the {@link Board} it belongs to, as a cell cannot exist
      * without a board. Additionally, at least the [x, y] coordinate of the cell
      * within the board should be passed as the cell's information, and optionally,
      * the amount of stones of the different colors in case they are not zero.
@@ -134,30 +151,10 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
         this.locationX = cellInfo.x;
         this.locationY = cellInfo.y;
 
-        this.blueStones = cellInfo[Color.Blue] ?? Defaults[Color.Blue];
-        this.blackStones = cellInfo[Color.Black] ?? Defaults[Color.Black];
-        this.redStones = cellInfo[Color.Red] ?? Defaults[Color.Red];
-        this.greenStones = cellInfo[Color.Green] ?? Defaults[Color.Green];
-    }
-
-    /* ************* Cloning ************** */
-
-    /**
-     * Clone this cell. Pass a board in order to set the
-     * associated board of the cloned cell to that element.
-     *
-     * @param cloneBoard The Board the cloned cell will be associated to.
-     * @returns A new [[Cell]]
-     */
-    public clone(newBoard?: Board): Cell {
-        return new Cell(newBoard, {
-            x: this.x,
-            y: this.y,
-            [Color.Blue]: this.getStonesOf(Color.Blue),
-            [Color.Black]: this.getStonesOf(Color.Black),
-            [Color.Red]: this.getStonesOf(Color.Red),
-            [Color.Green]: this.getStonesOf(Color.Green)
-        });
+        this.blueStones = cellInfo[Color.BLUE] ?? Defaults[Color.BLUE];
+        this.blackStones = cellInfo[Color.BLACK] ?? Defaults[Color.BLACK];
+        this.redStones = cellInfo[Color.RED] ?? Defaults[Color.RED];
+        this.greenStones = cellInfo[Color.GREEN] ?? Defaults[Color.GREEN];
     }
 
     /* ************* Accessors ************** */
@@ -203,29 +200,29 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     }
 
     /**
-     * Get the amount of [[Color.Blue | blue]] stones of this cell.
+     * Get the amount of {@link Color.Blue | blue} stones of this cell.
      * Or instead, set the amount of stones.
      *
      * @deprecated This is retain only for compatibility reasons.
      *      If you need to access the amount of stones of a color,
-     *      use [[getStonesOf]] instead, passing the color as an argument.
+     *      use {@link getStonesOf} instead, passing the color as an argument.
      *      So the preferred method for blue stones should be
      *      ```
      *      cell.getStonesOf(Color.Blue);
      *      ```
-     *      For setting the stones of a color, use [[setStonesOf]] instead,
+     *      For setting the stones of a color, use {@link setStonesOf} instead,
      *      with the color and the new desired value. The preferred way for
      *      blue stones should be:
      *      ```
      *      cell.setStonesOf(Color.Blue, amount);
      *      ```
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `SetStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `SetStones`
      *      if the new amount of stones is lower than zero.
      *
-     * @param value The new amount of [[Color.Blue | blue]] stones
+     * @param value The new amount of {@link Color.Blue | blue} stones
      *
-     * @returns The number of stones of [[Color.Blue]].
+     * @returns The number of stones of {@link Color.Blue}.
      */
     public get a(): number {
         return this.getStonesOf(Color.Blue);
@@ -236,29 +233,29 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     }
 
     /**
-     * Get the amount of [[Color.Black | black]] stones of this cell.
+     * Get the amount of {@link Color.Black | black} stones of this cell.
      * Or instead, set the amount of stones.
      *
      * @deprecated This is retain only for compatibility reasons.
      *      If you need to access the amount of stones of a color,
-     *      use [[getStonesOf]] instead, passing the color as an argument.
+     *      use {@link getStonesOf} instead, passing the color as an argument.
      *      So the preferred method for black stones should be
      *      ```
      *      cell.getStonesOf(Color.Black);
      *      ```
-     *      For setting the stones of a color, use [[setStonesOf]] instead,
+     *      For setting the stones of a color, use {@link setStonesOf} instead,
      *      with the color and the new desired value. The preferred way for
      *      black stones should be:
      *      ```
      *      cell.setStonesOf(Color.Black, amount);
      *      ```
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `SetStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `SetStones`
      *      if the new amount of stones is lower than zero.
      *
-     * @param value The new amount of [[Color.Black | black]] stones
+     * @param value The new amount of {@link Color.Black | black} stones
      *
-     * @returns The number of stones of [[Color.Black]].
+     * @returns The number of stones of {@link Color.Black}.
      */
     public get n(): number {
         return this.getStonesOf(Color.Black);
@@ -269,29 +266,29 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     }
 
     /**
-     * Get the amount of [[Color.Red | red]] stones of this cell.
+     * Get the amount of {@link Color.Red | red} stones of this cell.
      * Or instead, set the amount of stones.
      *
      * @deprecated This is retain only for compatibility reasons.
      *      If you need to access the amount of stones of a color,
-     *      use [[getStonesOf]] instead, passing the color as an argument.
+     *      use {@link getStonesOf} instead, passing the color as an argument.
      *      So the preferred method for red stones should be
      *      ```
      *      cell.getStonesOf(Color.Red);
      *      ```
-     *      For setting the stones of a color, use [[setStonesOf]] instead,
+     *      For setting the stones of a color, use {@link setStonesOf} instead,
      *      with the color and the new desired value. The preferred way for
      *      red stones should be:
      *      ```
      *      cell.setStonesOf(Color.Red, amount);
      *      ```
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `SetStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `SetStones`
      *      if the new amount of stones is lower than zero.
      *
-     * @param value The new amount of [[Color.Red | red]] stones
+     * @param value The new amount of {@link Color.Red | red} stones
      *
-     * @returns The number of stones of [[Color.Red]].
+     * @returns The number of stones of {@link Color.Red}.
      */
     public get r(): number {
         return this.getStonesOf(Color.Red);
@@ -302,29 +299,29 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     }
 
     /**
-     * Get the amount of [[Color.Green | green]] stones of this cell.
+     * Get the amount of {@link Color.Green | green} stones of this cell.
      * Or instead, set the amount of stones.
      *
      * @deprecated This is retain only for compatibility reasons.
      *      If you need to access the amount of stones of a color,
-     *      use [[getStonesOf]] instead, passing the color as an argument.
+     *      use {@link getStonesOf} instead, passing the color as an argument.
      *      So the preferred method for green stones should be
      *      ```
      *      cell.getStonesOf(Color.Green);
      *      ```
-     *      For setting the stones of a color, use [[setStonesOf]] instead,
+     *      For setting the stones of a color, use {@link setStonesOf} instead,
      *      with the color and the new desired value. The preferred way for
      *      green stones should be:
      *      ```
      *      cell.setStonesOf(Color.Green, amount);
      *      ```
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `SetStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `SetStones`
      *      if the new amount of stones is lower than zero.
      *
-     * @param value The new amount of [[Color.Green | green]] stones
+     * @param value The new amount of {@link Color.Green | green} stones
      *
-     * @returns The number of stones of [[Color.Green]].
+     * @returns The number of stones of {@link Color.Green}.
      */
     public get v(): number {
         return this.getStonesOf(Color.Green);
@@ -343,6 +340,26 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
      */
     public get location(): CellLocation {
         return [this.x, this.y];
+    }
+
+    /* ************* Cloning ************** */
+
+    /**
+     * Clone this cell. Pass a board in order to set the
+     * associated board of the cloned cell to that element.
+     *
+     * @param cloneBoard The Board the cloned cell will be associated to.
+     * @returns A new {@link Cell}
+     */
+    public clone(newBoard?: Board): Cell {
+        return new Cell(newBoard, {
+            x: this.x,
+            y: this.y,
+            [Color.BLUE]: this.getStonesOf(Color.Blue),
+            [Color.BLACK]: this.getStonesOf(Color.Black),
+            [Color.RED]: this.getStonesOf(Color.Red),
+            [Color.GREEN]: this.getStonesOf(Color.Green)
+        });
     }
 
     /* ************* Managing & Querying Stones ************** */
@@ -374,7 +391,7 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     /**
      * Set the amount of stones of the given color in this cell.
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `SetStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `SetStones`
      *      if the new amount of stones is lower than zero.
      *
      * @param color The color of the stones to set the amount.
@@ -387,7 +404,7 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     /**
      * Add a given amount of stones of a particular color to this cell.
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `AddStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `AddStones`
      *      if the new amount of stones is lower or equal than zero.
      *
      * @param color The color of the stones to add to.
@@ -396,14 +413,14 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     public addStones(color: Color, amount: number = 1): void {
         expect(amount)
             .toBeGreaterThan(0)
-            .orThrow(new InvalidStonesAmount('AddStones', color, amount, this));
+            .orThrow(new InvalidStonesAmount('AddStones', color.toString(), amount, this));
         this.innerSetStones(color, this.getStonesOf(color) + amount, undefined);
     }
 
     /**
      * Remove a given amount of stones of a particular color to this cell.
      *
-     * @throws [[InvalidStonesAmount]] with the attempt set to `AddStones`
+     * @throws {@link InvalidStonesAmount} with the attempt set to `AddStones`
      *      if the new amount of stones is lower or equal than zero, or if the
      *      amount of stones to remove is greater than the amount currently in
      *      the cell.
@@ -414,7 +431,7 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     public removeStones(color: Color, amount: number = 1): void {
         expect(amount)
             .toBeGreaterThan(0)
-            .orThrow(new InvalidStonesAmount('RemoveStones', color, amount, this));
+            .orThrow(new InvalidStonesAmount('RemoveStones', color.toString(), amount, this));
         this.innerSetStones(color, this.getStonesOf(color) - amount, 'RemoveStones');
     }
 
@@ -528,10 +545,7 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
      * @returns The neighbor cell at the given diagonal, or `undefined`
      *      if the neighbor does not exist.
      */
-    public neighborDiagonalTo(
-        vertical: Direction.North | Direction.South,
-        horizontal: Direction.East | Direction.West
-    ): Cell {
+    public neighborDiagonalTo(vertical: Direction, horizontal: Direction): Cell {
         if (this.isAtBorderAt(vertical) || this.isAtBorderAt(horizontal)) return undefined;
 
         const verticalDelta = this.innerGetDeltaByDirection(vertical, 1)[1];
@@ -565,12 +579,8 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
             ) {
                 neighbors.push(
                     this.neighborDiagonalTo(
-                        (Direction.isVertical(dir) ? dir : nextDir) as
-                            | Direction.North
-                            | Direction.South,
-                        (Direction.isVertical(dir) ? nextDir : dir) as
-                            | Direction.East
-                            | Direction.West
+                        Direction.isVertical(dir) ? dir : nextDir,
+                        Direction.isVertical(dir) ? nextDir : dir
                     )
                 );
             }
@@ -637,7 +647,7 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
     /**
      * Set the amount of stones of the given color for this cell, to the given amount.
      *
-     * @throws [[InvalidStonesAmount]] with the given performed action, when the
+     * @throws {@link InvalidStonesAmount} with the given performed action, when the
      *      amount of stones to set is lower than zero.
      *
      * @param color The color of the stones to set.
@@ -645,13 +655,13 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
      * @param performedAction The attempt to set the error to in case of failure.
      */
     private innerSetStones(
-        color: string,
+        color: Color,
         amount: number,
         performedAction: StonesChangeActionAttempt
     ): void {
         expect(amount)
             .toBeGreaterThanOrEqual(0)
-            .orThrow(new InvalidStonesAmount(performedAction, color, amount, this));
+            .orThrow(new InvalidStonesAmount(performedAction, color.toString(), amount, this));
         const oldBlueStones = this.blueStones;
         const oldBlackStones = this.blackStones;
         const oldRedStones = this.redStones;
@@ -677,16 +687,16 @@ export class Cell extends TypedEmitter<CellEvents> implements CellInfo {
             Cell.onStonesChanged,
             { x: this.locationX, y: this.locationY },
             {
-                [Color.Blue]: this.blueStones,
-                [Color.Black]: this.blackStones,
-                [Color.Red]: this.redStones,
-                [Color.Green]: this.greenStones
+                [Color.BLUE]: this.blueStones,
+                [Color.BLACK]: this.blackStones,
+                [Color.RED]: this.redStones,
+                [Color.GREEN]: this.greenStones
             },
             {
-                [Color.Blue]: oldBlueStones,
-                [Color.Black]: oldBlackStones,
-                [Color.Red]: oldRedStones,
-                [Color.Green]: oldGreenStones
+                [Color.BLUE]: oldBlueStones,
+                [Color.BLACK]: oldBlackStones,
+                [Color.RED]: oldRedStones,
+                [Color.GREEN]: oldGreenStones
             }
         );
     }

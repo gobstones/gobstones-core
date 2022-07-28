@@ -1,17 +1,6 @@
 /**
- * This module provides mechanisms to support basic localization of strings.
- * This allows for error messages and CLI to support different languages
- * without much effort.
- *
- * Note that this module does not provide localization for the Gobstones Language
- * but for this tool internally, and should not be confused with other classes
- * exposed by this package. If you want to learn about how to translate the
- * Gobstones Language see [[models_Translator | the Translator module]] and
- * the [[models_Definition | the Definition module]].
- *
+ * @module Translator
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
  */
 import { flatten } from '../helpers/flatten';
 
@@ -20,7 +9,7 @@ import { flatten } from '../helpers/flatten';
  * locale being used, and allows for switching between different locales
  * and obtain translated strings.
  *
- * The translation expects a [[Locale]] to be given as the language,
+ * The translation expects a locale to be given as the language definition,
  * and, if constructed with the flatten options, flattens it to allow
  * dot notation access to the different strings in the locale object.
  *
@@ -29,6 +18,7 @@ import { flatten } from '../helpers/flatten';
  * language as a state object. Rather, this should be created once, setted
  * with the desired language, and used always through the full library.
  *
+ * @group Main module definitions
  */
 export class Translator<TLocale> {
     /**
@@ -137,7 +127,7 @@ export class Translator<TLocale> {
      * @param key The key to use to obtain the translated text
      * @param interpolations If given, keys of this object will be used
      *      to replace any interpolation matcher in the translated text
-     *      (any text in ${}) by the value of the corresponding key.
+     *      (any text in between $\{\}) by the value of the corresponding key.
      *
      * @returns A translated string
      */
@@ -165,19 +155,22 @@ export class Translator<TLocale> {
      * @param key The key to use to obtain the translated text
      * @param interpolations If given, keys of this object will be used
      *      to replace any interpolation matcher in the translated text
-     *      (any text in ${}) by the value of the corresponding key.
+     *      (any text in $\{\}) by the value of the corresponding key.
      *
      * @returns A translated string
      */
     public pluralize(amount: number, key: string, interpolations?: Record<string, any>): string {
-        if (amount % 1 !== amount) {
+        if (!Number.isInteger(amount)) {
             throw new Error('pluralization can only be used for integers');
         }
-        if (this.currentLocale[key + '.' + amount.toString()]) {
-            return this.translate(this.currentLocale[key + amount.toString()], interpolations);
+        if (this.currentLocale[`${key}.${amount.toString()}`]) {
+            return this.translate(
+                this.currentLocale[`${key}.${amount.toString()}`],
+                interpolations
+            );
         }
-        if (this.currentLocale[key + '.n']) {
-            return this.translate(this.currentLocale[key + amount.toString()], interpolations);
+        if (this.currentLocale[`${key}.n`]) {
+            return this.translate(this.currentLocale[`${key}.n`], interpolations);
         }
         return key;
     }

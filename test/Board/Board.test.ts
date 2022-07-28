@@ -14,18 +14,18 @@ describe(`Board`, () => {
             7,
             [2, 3],
             [
-                { x: 0, y: 0, [Color.Red]: 1, [Color.Green]: 1 },
-                { x: 1, y: 0, [Color.Red]: 1 },
-                { x: 2, y: 0, [Color.Red]: 1 },
-                { x: 3, y: 0, [Color.Red]: 1 },
-                { x: 4, y: 0, [Color.Red]: 1 },
-                { x: 0, y: 1, [Color.Green]: 1 },
-                { x: 0, y: 2, [Color.Green]: 1 },
-                { x: 0, y: 3, [Color.Green]: 1 },
-                { x: 0, y: 4, [Color.Green]: 1 },
-                { x: 0, y: 5, [Color.Green]: 1 },
-                { x: 0, y: 6, [Color.Green]: 1 },
-                { x: 2, y: 3, [Color.Blue]: 5, [Color.Black]: 3 }
+                { x: 0, y: 0, [Color.RED]: 1, [Color.GREEN]: 1 },
+                { x: 1, y: 0, [Color.RED]: 1 },
+                { x: 2, y: 0, [Color.RED]: 1 },
+                { x: 3, y: 0, [Color.RED]: 1 },
+                { x: 4, y: 0, [Color.RED]: 1 },
+                { x: 0, y: 1, [Color.GREEN]: 1 },
+                { x: 0, y: 2, [Color.GREEN]: 1 },
+                { x: 0, y: 3, [Color.GREEN]: 1 },
+                { x: 0, y: 4, [Color.GREEN]: 1 },
+                { x: 0, y: 5, [Color.GREEN]: 1 },
+                { x: 0, y: 6, [Color.GREEN]: 1 },
+                { x: 2, y: 3, [Color.BLUE]: 5, [Color.BLACK]: 3 }
             ]
         );
     });

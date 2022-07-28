@@ -1,0 +1,110 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>deepEquals | @gobstones/gobstones-core - v0.3.0</title><meta name="description" content="Documentation for @gobstones/gobstones-core - v0.3.0"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script async src="../assets/search.js" id="search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base="..">
+<div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">@gobstones/gobstones-core - v0.3.0</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb">
+<li><a href="../modules.html">@gobstones/gobstones-core - v0.3.0</a></li>
+<li><a href="../modules/helpers.html">helpers</a></li>
+<li><a href="helpers.deepEquals.html">deepEquals</a></li></ul>
+<h1>Function deepEquals</h1></div>
+<section class="tsd-panel">
+<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+<li class="tsd-signature tsd-anchor-link" id="deepEquals">deep<wbr/>Equals<span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>first<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span>, second<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#deepEquals" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Answer wether or not two elements are semantically equal, considering them
+equal when they have the same type and all their internal elements are
+the same, or when they represent the same concept (two regular expressions
+that match the same string, two dates for the same moment, two sets with same
+elements in it, and so on).</p>
+<p>The function is intended for comparison of basic types, simple non classed
+objects, arrays, and built-in basic classed objects such as Set, Map, RegExp,
+Date, Buffer and Error.</p>
+<p>Most simple cases should return true as expected, such as:</p>
+<ul>
+<li><code>deepEquals(1, 1.0)</code></li>
+<li><code>deepEquals({a: 1, b: {c: 3, d: 4}}, {b: {c: 3, d: 4}, a: 1})</code></li>
+<li><code>deepEquals([1,2,3], [1, 1+1, 2+1])</code></li>
+<li><code>deepEquals(new Set([1,2,3]), new Set([3,2,1]))</code></li>
+</ul>
+<p>There is one special case, that we support and that might not be expected
+in standard TS/JS behavior, which is <code>NaN</code> comparison. Here you might find
+that <code>deepEquals(NaN, NaN)</code> is <code>true</code>, even though in JS NaN is not equal
+to anything, even itself.</p>
+<p>Note that parameters are statically typed when running in TypeScript,
+thus not allowing for things such as <code>deepEquals(4, &#39;4.0&#39;)</code> to be typed,
+unless explicitly casted away. In that case even, the comparison is performed
+not considering type coercion, thus, returning false.</p>
+<p>Note that deep equality is costly, and should be avoided whenever possible. Yet
+is some scenarios, it may be useful to count with such a function. In that sense,
+we provide a &#39;cheap&#39; (in terms of dependency overhead) alternative to most
+third-party implementations, that can be used through the whole project.</p>
+<p>The implementation is kind of ugly and heavily procedural. The idea behind the
+code is to return a result as fast as possible, for performance reasons. Also
+note that it might not consider the most edgy cases. If you have trouble with a
+specific case, please consider sending a Pull Request or raising an Issue in
+this project&#39;s repository.</p>
+<p>If you want to see all supported and unsupported cases, we recommend you to check
+out the test cases.</p>
+
+<h3>Returns</h3><p><code>true</code> if both elements are equal, <code>false</code> otherwise.</p>
+</div>
+<div class="tsd-type-parameters">
+<h4 class="tsd-type-parameters-title">Type Parameters</h4>
+<ul class="tsd-type-parameters">
+<li>
+<h4>T</h4></li></ul></div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>first: <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h5>
+<div class="tsd-comment tsd-typography"><p>The element to compare to.</p>
+</div></li>
+<li>
+<h5>second: <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h5>
+<div class="tsd-comment tsd-typography"><p>The element to compare against.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current"><a href="../modules.html">@gobstones/gobstones-<wbr/>core -<wbr/> v0.3.0</a>
+<ul>
+<li class="tsd-kind-module"><a href="../modules/Board.html">Board</a></li>
+<li class="tsd-kind-module"><a href="../modules/Events.html">Events</a></li>
+<li class="tsd-kind-module"><a href="../modules/Expectations.html">Expectations</a></li>
+<li class="tsd-kind-module"><a href="../modules/RegExp.html">Reg<wbr/>Exp</a></li>
+<li class="tsd-kind-module"><a href="../modules/Translator.html">Translator</a></li>
+<li class="tsd-kind-module"><a href="../modules/cli.html">cli</a></li>
+<li class="current tsd-kind-module"><a href="../modules/helpers.html">helpers</a></li></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky">
+<ul>
+<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/helpers.FlattenOptions.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-256-path"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)" id="icon-256-text"></path></svg>Flatten<wbr/>Options</a></li>
+<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/helpers.UnflattenOptions.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Unflatten<wbr/>Options</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="helpers.Matrix.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg>Matrix</a></li>
+<li class="current tsd-kind-function tsd-parent-kind-module"><a href="helpers.deepEquals.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>deep<wbr/>Equals</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="helpers.flatten.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>flatten</a></li>
+<li class="tsd-kind-function tsd-parent-kind-module"><a href="helpers.unflatten.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>unflatten</a></li></ul></nav></div></div>
+<div class="overlay"></div><script src="../assets/main.js"></script></body></html>

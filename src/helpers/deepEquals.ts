@@ -1,35 +1,18 @@
 /**
- * This module provides the function [[deepEquals]] that allows to test
- * if two object are semantically equal. The module is loosely based on
- * [inspect-js/node-deep-equal](https://github.com/inspect-js/node-deep-equal)
- * but removing all dependencies.
+ * @module helpers
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
+
+/**
+ * Answer wether or not two elements are semantically equal, considering them
+ * equal when they have the same type and all their internal elements are
+ * the same, or when they represent the same concept (two regular expressions
+ * that match the same string, two dates for the same moment, two sets with same
+ * elements in it, and so on).
  *
  * The function is intended for comparison of basic types, simple non classed
  * objects, arrays, and built-in basic classed objects such as Set, Map, RegExp,
  * Date, Buffer and Error.
- *
- * Note that deep equality is costly, and should be avoided whenever possible. Yet
- * is some scenarios, it may be useful to count with such a function. In that sense,
- * we provide a 'cheap' (in terms of dependency overhead) alternative to most
- * third-party implementations, that can be used through the whole project.
- *
- * Note that the implementation is kind of ugly and heavily procedural. The idea
- * behind the code is to return a result as fast as possible. Also note that it might
- * not consider the most edgy cases. If you have trouble with a specific case,
- * please consider sending a Pull Request or raising an Issue in this project's
- * repository.
- *
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
- */
-
-/**
- * Answer wether or not two elements are equal, considering them
- * equal when they have the same type and all their internal elements are
- * the same, or when they represent the same concept (two regular expressions
- * that match the same string, to date for the same moment, to sets with same
- * elements in it, and so on).
  *
  * Most simple cases should return true as expected, such as:
  * * `deepEquals(1, 1.0)`
@@ -47,14 +30,26 @@
  * unless explicitly casted away. In that case even, the comparison is performed
  * not considering type coercion, thus, returning false.
  *
+ * Note that deep equality is costly, and should be avoided whenever possible. Yet
+ * is some scenarios, it may be useful to count with such a function. In that sense,
+ * we provide a 'cheap' (in terms of dependency overhead) alternative to most
+ * third-party implementations, that can be used through the whole project.
+ *
+ * The implementation is kind of ugly and heavily procedural. The idea behind the
+ * code is to return a result as fast as possible, for performance reasons. Also
+ * note that it might not consider the most edgy cases. If you have trouble with a
+ * specific case, please consider sending a Pull Request or raising an Issue in
+ * this project's repository.
+ *
  * If you want to see all supported and unsupported cases, we recommend you to check
  * out the test cases.
- *
  *
  * @param first The element to compare to.
  * @param second The element to compare against.
  *
  * @return `true` if both elements are equal, `false` otherwise.
+ *
+ * @group Main module definitions
  */
 export const deepEquals = <T>(first: T, second: T): boolean => {
     const compare = (a: any, b: any): boolean => {
@@ -113,7 +108,7 @@ const numberEquals = (a: number, b: number): boolean => {
  * Answer if two arrays are equal. Two arrays are equal when they both
  * have the exact same number of elements, and they have the same element
  * in each position. To consider if two elements inside the array are equal
- * the [[innerComparer]] is used. The expected value for [[innerComparer]]
+ * the {@link innerComparer} is used. The expected value for {@link innerComparer}
  * is the recursive comparer function in deepEquals.
  *
  * @param a The first array
@@ -140,7 +135,7 @@ const arrayEquals = <T>(aArr: T[], bArr: T[], innerComparer: (a: T, b: T) => boo
  * Answer if two objects are equal. Two objects are equal when they both
  * have the exact same number of properties, with same names, and they
  * have the same value in each property. To consider if two values of a property
- * are equal the [[innerComparer]] is used. The expected value for [[innerComparer]]
+ * are equal the {@link innerComparer} is used. The expected value for {@link innerComparer}
  * is the recursive comparer function in deepEquals.
  *
  * @param a The first object
@@ -195,7 +190,7 @@ const setEquals = <T>(a: Set<T>, b: Set<T>): boolean => {
  * Answer if two Maps are equal. Two Maps are equal when they both
  * have the exact same number of keys, with same key names, and they
  * have the same value in each key. To consider if two values of a key
- * are equal the [[innerComparer]] is used. The expected value for [[innerComparer]]
+ * are equal the {@link innerComparer} is used. The expected value for {@link innerComparer}
  * is the recursive comparer function in deepEquals.
  *
  * @param a The first map

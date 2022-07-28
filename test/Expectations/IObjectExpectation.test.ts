@@ -114,17 +114,17 @@ describe('IObjectExpectation', () => {
         given('actual is a simple type', () => {
             it('Should have false result', () => {
                 expect(
-                    ((assert(7) as unknown) as IObjectExpectation<any>)
+                    (assert(7) as unknown as IObjectExpectation<any>)
                         .toHaveAtLeast(['a'])
                         .getResult()
                 ).toBe(false);
                 expect(
-                    ((assert('hello world') as unknown) as IObjectExpectation<any>)
+                    (assert('hello world') as unknown as IObjectExpectation<any>)
                         .toHaveAtLeast(['a'])
                         .getResult()
                 ).toBe(false);
                 expect(
-                    ((assert(false) as unknown) as IObjectExpectation<any>)
+                    (assert(false) as unknown as IObjectExpectation<any>)
                         .toHaveAtLeast(['a'])
                         .getResult()
                 ).toBe(false);
@@ -184,17 +184,17 @@ describe('IObjectExpectation', () => {
         given('actual is a simple type', () => {
             it('Should have false result', () => {
                 expect(
-                    ((assert(7) as unknown) as IObjectExpectation<any>)
+                    (assert(7) as unknown as IObjectExpectation<any>)
                         .toHaveNoOtherThan(['a'])
                         .getResult()
                 ).toBe(false);
                 expect(
-                    ((assert('hello world') as unknown) as IObjectExpectation<any>)
+                    (assert('hello world') as unknown as IObjectExpectation<any>)
                         .toHaveNoOtherThan(['a'])
                         .getResult()
                 ).toBe(false);
                 expect(
-                    ((assert(false) as unknown) as IObjectExpectation<any>)
+                    (assert(false) as unknown as IObjectExpectation<any>)
                         .toHaveNoOtherThan(['a'])
                         .getResult()
                 ).toBe(false);

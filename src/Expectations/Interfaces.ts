@@ -1,10 +1,6 @@
 /**
- * This module provides a series of interfaces that allow for specific typing of
- * different expectations, depending on the types of the input that act's as the actual value.
- *
+ * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
  */
 
 /**
@@ -12,6 +8,8 @@
  * The matchers that can be called contain general things, such as
  * strict comparison with other elements, be undefined, be null,
  * or any other checks.
+ *
+ * @group Helper classes and interfaces
  */
 export interface IGenericExpectation<T> {
     // Generic values
@@ -23,12 +21,14 @@ export interface IGenericExpectation<T> {
     not: this;
     /**
      * Answers if the actual value is the same as expected, using strict compare.
-     * Do not use toBe with floating point numbers, use [[toBeCloseTo]] instead.
+     * Do not use toBe with floating point numbers, use
+     * {@link Expectations!Matchers.toBeCloseTo} instead.
      */
     toBe(value: T): this & IFinishedExpectation;
     /**
      * Answers if the actual value is the same as expected, using a deep compare mechanism.
-     * Do not use toBeLike with floating point numbers, use [[toBeCloseTo]] instead.
+     * Do not use toBeLike with floating point numbers, use
+     * {@link Expectations!Matchers.toBeCloseTo} instead.
      */
     toBeLike(value: T): this & IFinishedExpectation;
     /**
@@ -63,6 +63,8 @@ export interface IGenericExpectation<T> {
 
 /**
  * This interface represents an expectation that is performed over a number.
+ *
+ * @group Helper classes and interfaces
  */
 export interface INumberExpectation extends IGenericExpectation<number> {
     /**
@@ -105,6 +107,8 @@ export interface INumberExpectation extends IGenericExpectation<number> {
 
 /**
  * This interface represents an expectation that is performed over a string.
+ *
+ * @group Helper classes and interfaces
  */
 export interface IStringExpectation extends IGenericExpectation<string> {
     /**
@@ -127,6 +131,8 @@ export interface IStringExpectation extends IGenericExpectation<string> {
 
 /**
  * This interface represents an expectation that is performed over an array.
+ *
+ * @group Helper classes and interfaces
  */
 export interface IArrayExpectation<T> extends IGenericExpectation<T[]> {
     /**
@@ -158,6 +164,8 @@ export interface IArrayExpectation<T> extends IGenericExpectation<T[]> {
 
 /**
  * This interface represents an expectation that is performed over an object.
+ *
+ * @group Helper classes and interfaces
  */
 export interface IObjectExpectation<T> extends IGenericExpectation<T> {
     /**
@@ -188,6 +196,8 @@ export interface IObjectExpectation<T> extends IGenericExpectation<T> {
 /**
  * This interface represents an expectation after a matcher has been executed
  * and the result can be accessed.
+ *
+ * @group Helper classes and interfaces
  */
 export interface IFinishedExpectation {
     /**

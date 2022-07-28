@@ -1,16 +1,19 @@
 /**
- * This module provides the [[Expectation]] class that implements
- * all interfaces for expectations.
- *
+ * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
  */
 import { MatcherCall, Matchers } from './Matchers';
 
 import { FinishedExpectation } from './FinishedExpectation';
 import { IFinishedExpectation } from './Interfaces';
 
+/**
+ * The expectation class is the class that is actually instantiated for
+ * any expectation. It implements all interfaces for expectations, even
+ * the finished expectation ones.
+ *
+ * @group Helper classes and interfaces
+ */
 export class Expectation<T> extends FinishedExpectation {
     /**
      * The querying element of this expectation.
@@ -36,7 +39,6 @@ export class Expectation<T> extends FinishedExpectation {
      *
      * @param element The element to query to.
      */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public constructor(element: any) {
         super();
         this.states = [];
@@ -44,141 +46,139 @@ export class Expectation<T> extends FinishedExpectation {
         this.isNot = false;
     }
 
-    /** @inheritdoc [[IGenericExpectation.not]] */
+    /** @inheritDoc {@link IGenericExpectation.not} */
     public get not(): Expectation<T> {
         this.isNot = !this.isNot;
         return this;
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBe]] */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    /** @inheritDoc {@link IGenericExpectation.toBe} */
     public toBe(value: any): this & IFinishedExpectation {
         return this.runMatcher('toBe', [value]);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBeLike]] */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    /** @inheritDoc {@link IGenericExpectation.toBeLike} */
     public toBeLike(value: any): this & IFinishedExpectation {
         return this.runMatcher('toBeLike', [value]);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBeNull]] */
+    /** @inheritDoc {@link IGenericExpectation.toBeNull} */
     public toBeNull(): this & IFinishedExpectation {
         return this.runMatcher('toBeNull', []);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBeDefined]] */
+    /** @inheritDoc {@link IGenericExpectation.toBeDefined} */
     public toBeDefined(): this & IFinishedExpectation {
         return this.runMatcher('toBeDefined', []);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBeUndefined]] */
+    /** @inheritDoc {@link IGenericExpectation.toBeUndefined} */
     public toBeUndefined(): this & IFinishedExpectation {
         return this.runMatcher('toBeUndefined', []);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBeTruthy]] */
+    /** @inheritDoc {@link IGenericExpectation.toBeTruthy} */
     public toBeTruthy(): this & IFinishedExpectation {
         return this.runMatcher('toBeTruthy', []);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toBeFalsy]] */
+    /** @inheritDoc {@link IGenericExpectation.toBeFalsy} */
     public toBeFalsy(): this & IFinishedExpectation {
         return this.runMatcher('toBeFalsy', []);
     }
 
-    /** @inheritdoc [[IGenericExpectation.toHaveType]] */
+    /** @inheritDoc {@link IGenericExpectation.toHaveType} */
     public toHaveType(typeName: string): this & IFinishedExpectation {
         return this.runMatcher('toHaveType', [typeName]);
     }
 
     // INumberExpectation
 
-    /** @inheritdoc [[INumberExpectation.toBeGreaterThan]] */
+    /** @inheritDoc {@link INumberExpectation.toBeGreaterThan} */
     public toBeGreaterThan(value: number): this & IFinishedExpectation {
         return this.runMatcher('toBeGreaterThan', [value]);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeGreaterThanOrEqual]] */
+    /** @inheritDoc {@link INumberExpectation.toBeGreaterThanOrEqual} */
     public toBeGreaterThanOrEqual(value: number): this & IFinishedExpectation {
         return this.runMatcher('toBeGreaterThanOrEqual', [value]);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeLowerThan]] */
+    /** @inheritDoc {@link INumberExpectation.toBeLowerThan} */
     public toBeLowerThan(value: number): this & IFinishedExpectation {
         return this.runMatcher('toBeLowerThan', [value]);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeLowerThanOrEqual]] */
+    /** @inheritDoc {@link INumberExpectation.toBeLowerThanOrEqual} */
     public toBeLowerThanOrEqual(value: number): this & IFinishedExpectation {
         return this.runMatcher('toBeLowerThanOrEqual', [value]);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeBetween]] */
+    /** @inheritDoc {@link INumberExpectation.toBeBetween} */
     public toBeBetween(from: number, to: number): this & IFinishedExpectation {
         return this.runMatcher('toBeBetween', [from, to]);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeInfinity]] */
+    /** @inheritDoc {@link INumberExpectation.toBeInfinity} */
     public toBeInfinity(): this & IFinishedExpectation {
         return this.runMatcher('toBeInfinity', []);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeNaN]] */
+    /** @inheritDoc {@link INumberExpectation.toBeNaN} */
     public toBeNaN(): this & IFinishedExpectation {
         return this.runMatcher('toBeNaN', []);
     }
 
-    /** @inheritdoc [[INumberExpectation.toBeCloseTo]] */
+    /** @inheritDoc {@link INumberExpectation.toBeCloseTo} */
     public toBeCloseTo(value: number, digits: number = 5): this & IFinishedExpectation {
         return this.runMatcher('toBeCloseTo', [value, digits]);
     }
 
     // IStringExpectation
 
-    /** @inheritdoc [[IStringExpectation.toHaveSubstring]] */
+    /** @inheritDoc {@link IStringExpectation.toHaveSubstring} */
     public toHaveSubstring(substring: string): this & IFinishedExpectation {
         return this.runMatcher('toHaveSubstring', [substring]);
     }
 
-    /** @inheritdoc [[IStringExpectation.toStartWith]] */
+    /** @inheritDoc {@link IStringExpectation.toStartWith} */
     public toStartWith(start: string): this & IFinishedExpectation {
         return this.runMatcher('toStartWith', [start]);
     }
 
-    /** @inheritdoc [[IStringExpectation.toEndWith]] */
+    /** @inheritDoc {@link IStringExpectation.toEndWith} */
     public toEndWith(end: string): this & IFinishedExpectation {
         return this.runMatcher('toEndWith', [end]);
     }
 
-    /** @inheritdoc [[IStringExpectation.toMatch]] */
+    /** @inheritDoc {@link IStringExpectation.toMatch} */
     public toMatch(regexp: RegExp): this & IFinishedExpectation {
         return this.runMatcher('toMatch', [regexp]);
     }
 
     // IArrayExpectation
 
-    /** @inheritdoc [[IArrayExpectation.toHaveLength]] */
+    /** @inheritDoc {@link IArrayExpectation.toHaveLength} */
     public toHaveLength(count: number): this & IFinishedExpectation {
         return this.runMatcher('toHaveLength', [count]);
     }
-    /** @inheritdoc [[IArrayExpectation.toContain]] */
+    /** @inheritDoc {@link IArrayExpectation.toContain} */
     public toContain(value: T): this & IFinishedExpectation {
         return this.runMatcher('toContain', [value]);
     }
-    /** @inheritdoc [[IArrayExpectation.toHaveAtPosition]] */
+    /** @inheritDoc {@link IArrayExpectation.toHaveAtPosition} */
     public toHaveAtPosition(value: T, position: number): this & IFinishedExpectation {
         return this.runMatcher('toHaveAtPosition', [value, position]);
     }
-    /** @inheritdoc [[IArrayExpectation.allToSatisfy]] */
+    /** @inheritDoc {@link IArrayExpectation.allToSatisfy} */
     public allToSatisfy(criteria: (item: T) => boolean): this & IFinishedExpectation {
         return this.runMatcher('allToSatisfy', [criteria]);
     }
-    /** @inheritdoc [[IArrayExpectation.anyToSatisfy]] */
+    /** @inheritDoc {@link IArrayExpectation.anyToSatisfy} */
     public anyToSatisfy(criteria: (item: T) => boolean): this & IFinishedExpectation {
         return this.runMatcher('anyToSatisfy', [criteria]);
     }
-    /** @inheritdoc [[IArrayExpectation.amountToSatisfy]] */
+    /** @inheritDoc {@link IArrayExpectation.amountToSatisfy} */
     public amountToSatisfy(
         count: number,
         criteria: (item: T) => boolean
@@ -188,23 +188,23 @@ export class Expectation<T> extends FinishedExpectation {
 
     // IObjectExpectation
 
-    /** @inheritdoc [[IObjectExpectation.toHavePropertyCount]] */
+    /** @inheritDoc {@link IObjectExpectation.toHavePropertyCount} */
     public toHavePropertyCount(count: number): this & IFinishedExpectation {
         return this.runMatcher('toHavePropertyCount', [count]);
     }
-    /** @inheritdoc [[IObjectExpectation.toHaveAtLeast]] */
+    /** @inheritDoc {@link IObjectExpectation.toHaveAtLeast} */
     public toHaveAtLeast(keys: string[]): this & IFinishedExpectation {
         return this.runMatcher('toHaveAtLeast', keys, false);
     }
-    /** @inheritdoc [[IObjectExpectation.toHaveNoOtherThan]] */
+    /** @inheritDoc {@link IObjectExpectation.toHaveNoOtherThan} */
     public toHaveNoOtherThan(keys: string[]): this & IFinishedExpectation {
         return this.runMatcher('toHaveNoOtherThan', keys, false);
     }
-    /** @inheritdoc [[IObjectExpectation.toHaveProperty]] */
+    /** @inheritDoc {@link IObjectExpectation.toHaveProperty} */
     public toHaveProperty(propertyName: string): this & IFinishedExpectation {
         return this.runMatcher('toHaveProperty', [propertyName]);
     }
-    /** @inheritdoc [[IObjectExpectation.toBeInstanceOf]] */
+    /** @inheritDoc {@link IObjectExpectation.toBeInstanceOf} */
     // eslint-disable-next-line @typescript-eslint/ban-types
     public toBeInstanceOf(classConstructor: Function): this & IFinishedExpectation {
         return this.runMatcher('toBeInstanceOf', [classConstructor]);
@@ -212,7 +212,7 @@ export class Expectation<T> extends FinishedExpectation {
 
     // IFinishedExpectation
 
-    /** @inheritdoc [[IFinishedExpectation.getResult]] */
+    /** @inheritDoc {@link IFinishedExpectation.getResult} */
     public getResult(): boolean {
         return this.result;
     }

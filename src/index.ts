@@ -1,6 +1,9 @@
+/**
+ * @ignore
+ */
 export * from './Board';
 export * from './Expectations';
 export * from './Translations';
-export * from './TypedEmitter';
+export * from './Events/EventEmitter';
 export * from './Regexp';
 export * from './helpers';

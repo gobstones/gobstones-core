@@ -1,42 +1,45 @@
 /**
- * This module provides a set of custom errors thrown by the [[Board/Board | Board]]
- * class and it's associated [[Board/Cell | Cell]] class when an invalid operations
- * are performed over them.
- *
+ * @module Board
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
  */
+
 import { CellInfo, CellLocation } from './BoardDefinition';
 
 /**
- * @ignore
+ * The operation attempted to be performed when a {@link InvalidCellReading} error ocurred.
  *
- * The operation attempted to be performed when a [[InvalidCellReading]] error ocurred.
+ * @group Performed actions
+ * @internal
  */
 export type CellReadingActionAttempt = 'ReadCell' | 'ReadColumn' | 'ReadRow';
 /**
- * @ignore
- * The operation attempted to be performed when a [[LocationFallsOutsideBoard]] error ocurred.
+ * The operation attempted to be performed when a {@link LocationFallsOutsideBoard} error ocurred.
+ *
+ * @group Performed actions
+ * @internal
  */
 export type LocationChangeActionAttempt = 'Move' | 'SetLocation';
 /**
- * @ignore
+ * The operation attempted to be performed when a {@link InvalidSizeChange} error ocurred.
  *
- * The operation attempted to be performed when a [[InvalidSizeChange]] error ocurred.
+ * @group Performed actions
+ * @internal
  */
 export type InvalidSizeChangeAttempt = 'Resize' | 'RemoveRow' | 'RemoveColumn';
 /**
- * @ignore
+ * The operation attempted to be performed when a {@link InvalidStonesAmount} error ocurred.
  *
- * The operation attempted to be performed when a [[InvalidStonesAmount]] error ocurred.
+ * @group Performed actions
+ * @internal
  */
 export type StonesChangeActionAttempt = 'AddStones' | 'RemoveStones' | 'SetStones';
 
 /**
  * The base class of the error hierarchy that is thrown when
- * an invalid operation is performed in the [[Board/Board | Board]]
- * class and it's associated [[Board/Cell | Cell]].
+ * an invalid operation is performed in the {@link Board}
+ * class and it's associated {@link Cell}.
+ *
+ * @group Exceptions
  */
 export class BoardError extends Error {
     /** A boolean that specifies the instance as an error. Always `true`. */
@@ -53,6 +56,8 @@ export class BoardError extends Error {
 /**
  * This error is thrown when attempting to create a board
  * with invalid data.
+ *
+ * @group Exceptions
  */
 export class InvalidBoardDescription extends BoardError {
     /** The height attempted to create the board with */
@@ -78,6 +83,8 @@ export class InvalidBoardDescription extends BoardError {
 /**
  * This error is thrown when attempting to read a cell, a
  * column or a row but an invalid location is given.
+ *
+ * @group Exceptions
  */
 export class InvalidCellReading extends BoardError {
     /** The action attempted to be performed */
@@ -100,6 +107,8 @@ export class InvalidCellReading extends BoardError {
 /**
  * This error is thrown when attempting to move the head, but an
  * invalid location is given.
+ *
+ * @group Exceptions
  */
 export class LocationFallsOutsideBoard extends BoardError {
     /** The action attempted to be performed */
@@ -130,6 +139,8 @@ export class LocationFallsOutsideBoard extends BoardError {
 /**
  * This error is thrown when attempting to change the size of the board,
  * but an invalid size is given
+ *
+ * @group Exceptions
  */
 export class InvalidSizeChange extends BoardError {
     /** The action attempted to be performed */
@@ -168,6 +179,8 @@ export class InvalidSizeChange extends BoardError {
 /**
  * This error is thrown when attempting to change the stones amount
  * with an invalid amount of stone (negative amount).
+ *
+ * @group Exceptions
  */
 export class InvalidStonesAmount extends BoardError {
     /** The action attempted to be performed */

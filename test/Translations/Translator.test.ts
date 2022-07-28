@@ -14,6 +14,10 @@ interface Locale {
             msg1: string;
         };
     };
+    plural: string;
+    'plural.1': string;
+    'plural.2': string;
+    'plural.n': string;
 }
 
 const lang1: Locale = {
@@ -25,7 +29,11 @@ const lang1: Locale = {
         deep2: {
             msg1: 'lang1-deep1-deep2-msg1'
         }
-    }
+    },
+    plural: 'lang1-plural',
+    'plural.1': 'lang1-plural1',
+    'plural.2': 'lang1-plural2',
+    'plural.n': 'lang1-pluralN'
 };
 
 const lang2: Locale = {
@@ -37,17 +45,21 @@ const lang2: Locale = {
         deep2: {
             msg1: 'lang2-deep1-deep2-msg1'
         }
-    }
+    },
+    plural: 'lang2-plural',
+    'plural.1': 'lang2-plural1',
+    'plural.2': 'lang2-plural2',
+    'plural.n': 'lang2-pluralN'
 };
 
 describe(`Translator`, () => {
     it(`Throws error when constructing with undefined translations or default`, () => {
-        expect(() => new Translator<Locale>(undefined, 'lang1')).toThrow();
+        expect(() => new Translator<Locale>(undefined as any, 'lang1')).toThrow();
         // eslint-disable-next-line no-null/no-null
-        expect(() => new Translator<Locale>(null, 'lang1')).toThrow();
-        expect(() => new Translator<Locale>({ lang1, lang2 }, undefined)).toThrow();
+        expect(() => new Translator<Locale>(null as any, 'lang1')).toThrow();
+        expect(() => new Translator<Locale>({ lang1, lang2 }, undefined as any)).toThrow();
         // eslint-disable-next-line no-null/no-null
-        expect(() => new Translator<Locale>({ lang1, lang2 }, null)).toThrow();
+        expect(() => new Translator<Locale>({ lang1, lang2 }, null as any)).toThrow();
     });
     it(`Throws error when given an invalid locale as default when constructing`, () => {
         expect(() => new Translator<Locale>({ lang1, lang2 }, 'lang3', true, 'lang2')).toThrow();
@@ -190,6 +202,37 @@ describe(`Translator`, () => {
             it(`Retrieves the key when a translation is not found`, () => {
                 expect(flatTranslator.translate('nonexistent')).toBe('nonexistent');
                 expect(flatTranslator.translate('deep1.nonexistent')).toBe('deep1.nonexistent');
+            });
+        });
+    });
+    given('A translator for pluralizations', () => {
+        let unflatTranslator: Translator<Locale>;
+
+        beforeEach(() => {
+            unflatTranslator = new Translator<Locale>({ lang1, lang2 }, 'lang1', false);
+        });
+        describe('pluralize', () => {
+            it(`Should pluralized based on key and number`, () => {
+                expect(unflatTranslator.pluralize(1, 'plural')).toBe('lang1-plural1');
+                expect(unflatTranslator.pluralize(2, 'plural')).toBe('lang1-plural2');
+                unflatTranslator.setLocale('lang2');
+                expect(unflatTranslator.pluralize(1, 'plural')).toBe('lang2-plural1');
+                expect(unflatTranslator.pluralize(2, 'plural')).toBe('lang2-plural2');
+            });
+
+            it(`Return the value in N, if any other amount not specified given`, () => {
+                expect(unflatTranslator.pluralize(3, 'plural')).toBe('lang1-pluralN');
+            });
+
+            it(`Return the key for non pluralizable keys`, () => {
+                expect(unflatTranslator.pluralize(3, 'stuff')).toBe('stuff');
+            });
+
+            it(`Return the non plural value if no plural is given`, () => {
+                expect(unflatTranslator.translate('plural')).toBe('lang1-plural');
+            });
+            it(`Cannot pluralize if number is not integer`, () => {
+                expect(() => unflatTranslator.pluralize(1.5, 'plural')).toThrow();
             });
         });
     });

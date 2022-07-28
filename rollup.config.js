@@ -23,13 +23,11 @@ export default (commandLineArgs) => [
             }
         ],
         plugins: [
-            nodeResolve({ preferBuiltins: true }),
             typescript(),
             commonjs(),
             commandLineArgs.configMinify && terser(),
             commandLineArgs.configShowSizes && pluginSizes()
-        ],
-        external: ['events']
+        ]
     },
     {
         input: 'src/cli.ts',
@@ -37,7 +35,7 @@ export default (commandLineArgs) => [
             {
                 sourcemap: true,
                 dir: 'dist',
-                format: 'es'
+                format: 'cjs'
             }
         ],
         plugins: [

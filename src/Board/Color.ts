@@ -1,43 +1,72 @@
 /**
+ * @module Board
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
+
+/**
  * This enum represent the valid Gobstones Colors.
- * It's accompanied by a namespace with the same name, that provides additional
- * functionality, such as asking for the first or the last color, or iterate over
- * the elements of this enum.
+ * It provides a set of singleton cases, for each possible value,
+ * as well as static accessors for each case name string (that should
+ * be used as key for representing directions).
  *
- * Note that directions are sorted in the following order, from first to last.
+ * Additionally it provides handy methods for operations that are common
+ * with colors in Gobstones, such as asking for the first, the last,
+ * the next or the previous.
+ *
+ * Note that colors are sorted in the following order, from first to last.
  * * Color.Blue
  * * Color.Black
  * * Color.Red
  * * Color.Green
  *
- * Always prefer using the enum over the string values it represents,
- * even as object keys.
- */
-export enum Color {
-    Blue = 'a',
-    Black = 'n',
-    Red = 'r',
-    Green = 'v'
+ * Always prefer using the provided static names as object keys when needed,
+ * such as:
+ *
+```
+{
+    [Color.BLUE]: 5,
+    [Color.BLACK]: 3,
+    [Color.RED]: 7,
+    [Color.GREEN]: 0
 }
-
-/**
- * This namespace provides additional functionality that extends the simple
- * Color enum, by providing some helper functions.
+```
+ *
+ * @group Main module definitions
  */
-export namespace Color {
+export class Color {
+    public static BLUE: 'a' = 'a';
+    public static BLACK: 'n' = 'n';
+    public static RED: 'r' = 'r';
+    public static GREEN: 'v' = 'v';
+
+    public static Blue = new Color(Color.BLUE);
+    public static Black = new Color(Color.BLACK);
+    public static Red = new Color(Color.RED);
+    public static Green = new Color(Color.GREEN);
+
+    private value: string;
+
+    private constructor(value: string) {
+        this.value = value;
+    }
+
     /**
-     * The smallest Color possible, currently [[Color.Blue]]
+     * The smallest Color possible, currently {@link Color.Blue}
      *
      * @returns The smallest color.
      */
-    export const min = (): Color => Color.Blue;
+    public static min(): Color {
+        return Color.Blue;
+    }
 
     /**
-     * The biggest Color possible, currently [[Color.Green]]
+     * The biggest Color possible, currently {@link Color.Green}
      *
      * @returns The biggest color.
      */
-    export const max = (): Color => Color.Green;
+    public static max(): Color {
+        return Color.Green;
+    }
 
     /**
      * The next Color of a given Color. Colors are sorted
@@ -53,7 +82,7 @@ export namespace Color {
      *
      * @returns The next color of the given one.
      */
-    export const next = (color: Color): Color => {
+    public static next(color: Color): Color {
         switch (color) {
             case Color.Blue:
                 return Color.Black;
@@ -67,7 +96,7 @@ export namespace Color {
             default:
                 return undefined;
         }
-    };
+    }
 
     /**
      * The next Color of a given Color. Color are sorted
@@ -83,7 +112,7 @@ export namespace Color {
      *
      * @returns The previous color of the given one.
      */
-    export const previous = (color: Color): Color => {
+    public static previous(color: Color): Color {
         switch (color) {
             case Color.Blue:
                 return Color.Green;
@@ -97,7 +126,7 @@ export namespace Color {
             default:
                 return undefined;
         }
-    };
+    }
 
     /**
      * Iterate over all the colors, in their defined order, from the smallest,
@@ -106,12 +135,48 @@ export namespace Color {
      *
      * @param f The callback to call on each iteration.
      */
-    export function foreach(f: (color: Color) => void): void {
+    public static foreach(f: (color: Color) => void): void {
         let current = Color.min();
         while (current !== Color.max()) {
             f(current);
             current = Color.next(current);
         }
         f(current);
+    }
+
+    /**
+     * The next Color of this color. Colors are sorted
+     * in the following way, from first to last:
+     * * Color.Blue
+     * * Color.Black
+     * * Color.Red
+     * * Color.Green
+     *
+     * And they are cyclic, that is, the next color of Green is Blue.
+     *
+     * @returns The next color of the given one.
+     */
+    public next(): Color {
+        return Color.next(this);
+    }
+
+    /**
+     * The next Color of this color. Color are sorted
+     * in the following way, from last to first:
+     * * Color.Green
+     * * Color.Red
+     * * Color.Black
+     * * Color.Blue
+     *
+     * And they are cyclic, that is, the previous color of Blue is Green.
+     *
+     * @returns The previous color of the given one.
+     */
+    public previous(): Color {
+        return Color.previous(this);
+    }
+
+    public toString(): string {
+        return this.value;
     }
 }

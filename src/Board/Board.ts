@@ -1,3 +1,7 @@
+/**
+ * @module Board
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
 import { BoardDefinition, CellDataDefinition, CellLocation } from './BoardDefinition';
 import {
     InvalidBoardDescription,
@@ -7,30 +11,19 @@ import {
     LocationChangeActionAttempt,
     LocationFallsOutsideBoard
 } from './BoardErrors';
+import { and, expect, or } from '../Expectations';
 
 import { Cell } from './Cell';
 import { Color } from './Color';
 import { Direction } from './Direction';
+import { EventEmitter } from '../Events/EventEmitter';
 import { Matrix } from '../helpers/matrix';
-import { TypedEmitter } from '../TypedEmitter';
-/**
- * This module provides the [[Board]] class, which models a Gobstones Board
- * and all the associated behavior.
- *
- * The [[Board]] class is expected to be used all through the Gobstones Platform
- * and all Gobstones plugins whenever a Board should be used. E.g. The
- * [gobstones-gbb-parser](https://github.com/gobstones/gobstones-gbb-parser)
- * returns a Board.
- *
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
- */
-import { expect } from '../Expectations';
 
 /**
- * This object contains the default values for a [[Board]].
+ * This object contains the default values for a {@link Board}.
  * When a specific value is not given, the defaults are used.
+ *
+ * @internal
  */
 const Defaults = {
     width: 4,
@@ -40,7 +33,7 @@ const Defaults = {
 
 /**
  * This type represents the function that acts as a callback of
- * the [[Board.onSizeChanged]] event. Such an event is thrown by
+ * the {@link Board.onSizeChanged} event. Such an event is thrown by
  * an instance of a board whenever an operation is performed such
  * that the original size of the board is altered.
  *
@@ -57,7 +50,9 @@ const Defaults = {
  * * The previous size the board had, in an encapsulated object with `width` and `height`.
  * * The previous cell that the head was at. Might be the same as the current one.
  *
- * @see [[Board.onSizeChanged]] for more information.
+ * @see {@link Board.onSizeChanged} for more information.
+ *
+ * @event
  */
 export type OnBoardSizeChangedCallback = (
     newSize: { width: number; height: number },
@@ -69,7 +64,7 @@ export type OnBoardSizeChangedCallback = (
 
 /**
  * This type represents the function that acts as a callback of
- * the [[Board.onHeadMoved]] event. Such an event is thrown by
+ * the {@link Board.onHeadMoved} event. Such an event is thrown by
  * an instance of a board whenever an operation is performed such
  * that the current head location is altered.
  *
@@ -77,7 +72,9 @@ export type OnBoardSizeChangedCallback = (
  * * The current head location.
  * * The previous head location.
  *
- * @see [[Board.onHeadMoved]] for more information.
+ * @see {@link Board.onHeadMoved} for more information.
+ *
+ * @event
  */
 export type OnBoardHeadMovedCallback = (
     currentLocation: CellLocation,
@@ -87,22 +84,25 @@ export type OnBoardHeadMovedCallback = (
 /**
  * This interface contains the signature of the
  * events that a Board can throw.
+ *
+ * @group Internal board events
+ * @internal
  */
-interface BoardEvents {
+export interface BoardEvents {
     [Board.onSizeChanged]: OnBoardSizeChangedCallback;
     [Board.onHeadMoved]: OnBoardHeadMovedCallback;
 }
 
 /**
  * This class models a Gobstones Board with all it's associated behavior.
- * Note that an instance of this class implements [[BoardDefinition]],
+ * Note that an instance of this class implements {@link BoardDefinition},
  * so it can be used as a valid description of a board in the [Gobstones
  * Interpreter](http://github.com/gobstones/gobstones-interpreter) and is
  * returned by [The Gobstones GBB Parser](http://github.com/gobstones/gobstones-gbb-parser).
  * All newer developments are expected to use this class instead of a particular ad-hoc
  * representation for a board.
  *
- * Note that this class provides a [[board]] attribute, that used to be the standard
+ * Note that this class provides a {@link board} attribute, that used to be the standard
  * way to access the cells of the boards, but this new class is intended to be used
  * as an ADT. So it's expected that you use the provided functions for accessing
  * cells, columns ands rows, instead of using the board attribute. Be aware of
@@ -110,26 +110,28 @@ interface BoardEvents {
  *
  * The class provides a set of method for accessing and querying the properties
  * of the board and cell contents, modify the head location, the size and the
- * cell contents. This class works in conjunction with the [[Cell]] class. Note
+ * cell contents. This class works in conjunction with the {@link Cell} class. Note
  * that internal representation of a board might change, so do not rely on
  * representation, and abstract away of it as much as possible.
+ *
+ * @group Main module definitions
  */
-export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition {
+export class Board extends EventEmitter<BoardEvents> implements BoardDefinition {
     /**
      * This event is thrown whenever an action that alters the position of the head
      * is performed. Listeners of this action are expected to conform to
-     * [[OnBoardHeadMovedCallback]].
+     * {@link OnBoardHeadMovedCallback}.
      *
      * The actions that trigger this callback include:
-     * * Setting the [[head]] attribute of an instance.
-     * * Calling [[moveHeadTo]] on an instance with any direction.
-     * * Calling [[moveHeadToEdgeAt]] on an instance with any direction.
+     * * Setting the {@link head} attribute of an instance.
+     * * Calling {@link moveHeadTo} on an instance with any direction.
+     * * Calling {@link moveHeadToEdgeAt} on an instance with any direction.
      *
      * Note however that there is a particular case where the head moves, but this
      * event is not triggered. Such particular case happens when the board is resized
      * is such a way that, the location where the head was at, no longer exists as
      * a valid cell of the board, thus, the head is assigned to a new location.
-     * If you wish to consider such a case, consider also listening to [[onSizeChanged]].
+     * If you wish to consider such a case, consider also listening to {@link onSizeChanged}.
      * @event
      */
     public static readonly onHeadMoved: unique symbol = Symbol('onHeadMoved');
@@ -137,21 +139,21 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * This event is thrown whenever an action that alters the size of the board
      * is performed. Listeners of this action are expected to conform to
-     * [[OnBoardSizeChangedCallback]]
+     * {@link OnBoardSizeChangedCallback}
      *
      * The actions that trigger this callback include:
-     * * Setting the [[width]] attribute of an instance.
-     * * Setting the [[height]] attribute of an instance.
-     * * Calling [[changeSizeTo]] on an instance with any values
+     * * Setting the {@link width} attribute of an instance.
+     * * Setting the {@link height} attribute of an instance.
+     * * Calling {@link changeSizeTo} on an instance with any values
      *      (even with the same width and height as the actual size)
-     * * Calling [[addColumn]] on an instance.
-     * * Calling [[addColumns]] on an instance.
-     * * Calling [[removeColumn]] on an instance.
-     * * Calling [[removeColumns]] on an instance.
-     * * Calling [[addRow]] on an instance.
-     * * Calling [[addRows]] on an instance.
-     * * Calling [[removeRow]] on an instance.
-     * * Calling [[removeRows]] on an instance.
+     * * Calling {@link addColumn} on an instance.
+     * * Calling {@link addColumns} on an instance.
+     * * Calling {@link removeColumn} on an instance.
+     * * Calling {@link removeColumns} on an instance.
+     * * Calling {@link addRow} on an instance.
+     * * Calling {@link addRows} on an instance.
+     * * Calling {@link removeRow} on an instance.
+     * * Calling {@link removeRows} on an instance.
      * @event
      */
     public static readonly onSizeChanged: unique symbol = Symbol('onSizeChanged');
@@ -159,14 +161,14 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * The internal representation of the width of the board.
      *
-     * @see [[width]]
+     * @see {@link width}
      */
     private boardWidth: number;
 
     /**
      * The internal representation of the height of the board
      *
-     * @see [[height]]
+     * @see {@link height}
      */
     private boardHeight: number;
 
@@ -177,7 +179,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * 0 <= x < width
      * ```
      *
-     * @see [[head]]
+     * @see {@link head}
      */
     private headXLocation: number;
 
@@ -188,17 +190,17 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * 0 <= y < height
      * ```
      *
-     * @see [[head]]
+     * @see {@link head}
      */
     private headYLocation: number;
 
     /**
      * The internal representation of the cells of the board.
-     * Currently this is represented as an array of [[boardWidth]]
-     * elements, where each element is itself an array of [[boardHeight]]
-     * elements, where each of them is a [[Cell]].
+     * Currently this is represented as an array of {@link boardWidth}
+     * elements, where each element is itself an array of {@link boardHeight}
+     * elements, where each of them is a {@link Cell}.
      *
-     * @see [[board]]
+     * @see {@link board}
      */
     private boardData: Cell[][];
 
@@ -209,7 +211,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      *
      * Optionally and additionally, when creating a custom sized board, you can
      * initialize some of the cells with some specific stones amount, by providing
-     * an array of [[CellDataDefinition]], specifying the stones of each color for a
+     * an array of {@link CellDataDefinition}, specifying the stones of each color for a
      * given position of the board (There's no specific behavior if two elements
      * for the same location is given, any of them might be used,
      * so be sure to specify the stones of a specific location only once).
@@ -226,18 +228,18 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * ]);
      * ```
      *
-     * Note that when passing [[CellDataDefinition]], the usage of the
-     * [[Color]] enum values as keys for specifying the stones amount is
+     * Note that when passing {@link CellDataDefinition}, the usage of the
+     * {@link Color} enum values as keys for specifying the stones amount is
      * preferred over the 'a', 'n', 'r', 'v' string keys. Although equivalent,
      * the actual strings of the enum may change is the future.
      *
-     * @throws [[InvalidBoardDescription]] if the given width or height
+     * @throws {@link InvalidBoardDescription} if the given width or height
      *      are lower or equal than zero.
-     * @throws [[InvalidBoardDescription]] if the given head location
+     * @throws {@link InvalidBoardDescription} if the given head location
      *      has an `x` coordinate lower than zero or greater or equal
      *      than the `width` or an `y` coordinate lower than zero or
      *      greater or equal than the `height`.
-     * @throws [[InvalidBoardDescription]] if any of the given cell
+     * @throws {@link InvalidBoardDescription} if any of the given cell
      *      locations in `initialState` has a location as an `[x, y]`
      *      coordinate such that `x < 0 || x >= width` or
      *      `y < 0 || y >= height`.
@@ -245,7 +247,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * @param width The width of the board.
      * @param height The height of the board.
      * @param head The head location.
-     * @param initialState An array of [[CellDataDefinition]] for the cells
+     * @param initialState An array of {@link CellDataDefinition} for the cells
      *      that you want to specify initial stones to.
      */
     public constructor();
@@ -267,23 +269,18 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
         this.headXLocation = (head ?? Defaults.head)[0];
         this.headYLocation = (head ?? Defaults.head)[1];
 
-        expect
-            .and(
-                expect(this.boardWidth).toBeGreaterThan(0),
-                expect(this.boardHeight).toBeGreaterThan(0),
-                expect(this.headX).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardWidth),
-                expect(this.headY).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardHeight)
-            )
-            .orThrow(
-                new InvalidBoardDescription(this.boardHeight, this.boardWidth, [
-                    this.headX,
-                    this.headY
-                ])
-            );
+        and(
+            expect(this.boardWidth).toBeGreaterThan(0),
+            expect(this.boardHeight).toBeGreaterThan(0),
+            expect(this.headX).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardWidth),
+            expect(this.headY).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardHeight)
+        ).orThrow(
+            new InvalidBoardDescription(this.boardHeight, this.boardWidth, [this.headX, this.headY])
+        );
 
         const cells: Map<string, CellDataDefinition> = new Map(
             (initialState ?? []).map((cellDef) => {
-                expect.and(
+                and(
                     expect(cellDef.x).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardWidth),
                     expect(cellDef.y).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardHeight)
                 );
@@ -297,32 +294,11 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
         );
     }
 
-    /* ************* Cloning ************** */
-
-    /**
-     * Clone this board, returning a new one with the same characteristics.
-     *
-     * @returns A new Board.
-     */
-    public clone(): Board {
-        const cellStates = this.foldCells((cells, cell) => {
-            cells.push({
-                x: cell.x,
-                y: cell.y,
-                [Color.Blue]: cell.getStonesOf(Color.Blue),
-                [Color.Black]: cell.getStonesOf(Color.Black),
-                [Color.Red]: cell.getStonesOf(Color.Red),
-                [Color.Green]: cell.getStonesOf(Color.Green)
-            });
-            return cells;
-        }, []);
-        return new Board(this.width, this.height, this.head, cellStates);
-    }
-
     /* ************* Accessors ************** */
 
     /**
-     * Useful to test is an untyped object is a board. Returns true for any board.
+     * Returns true for any board.
+     * Useful to test if an untyped object is a board.
      */
     public get isBoard(): boolean {
         return true;
@@ -337,56 +313,64 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * is produces might come from any other location or format other than GBB,
      * and is not at all relevant to the user.
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.format | BoardDefinition.format]]
+     * @see {@link BoardDefinition.format | BoardDefinition.format}
      */
     public get format(): string {
         return 'GBB/1.0';
     }
 
     /**
-     * Get or sets the width of this board.
+     * Get the width of this board.
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.width | BoardDefinition.width]]
-     *
-     * @throws [[InvalidSizeChange]] with the attempt as `Resize`
-     * if attempting to set the attribute and the given value is
-     * lower or equal to zero.
+     * @see {@link BoardDefinition.width | BoardDefinition.width}
      *
      * @returns The width of the board, always greater than 0.
      */
     public get width(): number {
         return this.boardWidth;
     }
+
+    /**
+     * Sets the width of this board.
+     *
+     * @see {@link BoardDefinition.width | BoardDefinition.width}
+     *
+     * @throws {@link InvalidSizeChange} with the attempt as `Resize`
+     * if attempting to set the attribute and the given value is
+     * lower or equal to zero.
+     */
     public set width(value: number) {
         this.innerChangeSize(value, this.boardHeight, false, 'Resize');
     }
 
     /**
-     * Get or sets the height of this board.
+     * Get the height of this board.
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.height | BoardDefinition.height]]
-     *
-     * @throws [[InvalidSizeChange]] with the attempt as `Resize`
-     * if attempting to set the attribute and the given value is
-     * lower or equal to zero.
+     * @see {@link BoardDefinition.height | BoardDefinition.height}
      *
      * @returns The height of the board, always greater than 0.
      */
     public get height(): number {
         return this.boardHeight;
     }
+
+    /**
+     * Get or sets the height of this board.
+     *
+     * @see {@link BoardDefinition.height | BoardDefinition.height}
+     *
+     * @throws {@link InvalidSizeChange} with the attempt as `Resize`
+     * if attempting to set the attribute and the given value is
+     * lower or equal to zero.
+     */
     public set height(value: number) {
         this.innerChangeSize(this.boardWidth, value, false, 'Resize');
     }
 
     /**
-     * Get or set the head location of this board as an `[x, y]` coordinate.
+     * Get the head location of this board as an `[x, y]` coordinate.
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.head | BoardDefinition.head]]
-     *
-     * @throws [[LocationFallsOutsideBoard]] with the attempt as `SetLocation`
-     *      if attempting to set the attribute and the given cell location as
-     *      `[x, y]` has `x < 0 || x > width` or `y < 0 || y > width`.
+     * @see {@link BoardDefinition.head | BoardDefinition.head}
      *
      * @returns The head location as a two element array `[x, y]`, that satisfies
      *      `0 <= x < width && 0 <= y < height`
@@ -394,6 +378,16 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     public get head(): CellLocation {
         return [this.headX, this.headY] as CellLocation;
     }
+
+    /**
+     * Sets the head location of this board as an `[x, y]` coordinate.
+     *
+     * @see {@link BoardDefinition.head | BoardDefinition.head}
+     *
+     * @throws {@link LocationFallsOutsideBoard} with the attempt as `SetLocation`
+     *      if attempting to set the attribute and the given cell location as
+     *      `[x, y]` has `x < 0 || x > width` or `y < 0 || y > width`.
+     */
     public set head(value: CellLocation) {
         this.innerSetHeadLocation(value, 'SetLocation');
     }
@@ -403,7 +397,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      *
      * @returns The board X's coordinate, which satisfies `0 <= x < width`
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.head | BoardDefinition.head]]
+     * @see {@link BoardDefinition.head | BoardDefinition.head}
      */
     public get headX(): number {
         return this.headXLocation;
@@ -414,7 +408,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      *
      * @returns The board X's coordinate, which satisfies `0 <= y < height`
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.head | BoardDefinition.head]]
+     * @see {@link BoardDefinition.head | BoardDefinition.head}
      */
     public get headY(): number {
         return this.headYLocation;
@@ -422,19 +416,19 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
 
     /**
      * Obtain the cells of the board as an array of `width` elements, each
-     * of which is an array of `height` elements, each of which is a [[Cell]],
-     * or in another sense, a [[Matrix]] of [[Cell | Cells]].
+     * of which is an array of `height` elements, each of which is a {@link Cell},
+     * or in another sense, a {@link helpers!Matrix} of {@link Cell | Cells}.
      *
      * This is retain only for compatibility reasons.
      *
-     * @see [[Board/BoardDefinition.BoardDefinition.board | BoardDefinition.board]]
+     * @see {@link BoardDefinition.board | BoardDefinition.board}
      *
      * @deprecated
      * Note that this method of accessing the board is deprecated and should not
      * be used. If you need a cell matrix, in such a way that the first
      * array represents the columns, and each array inside the cells of such a column,
-     * the method [[getColumns]] should be used. Instead if you are attempting to
-     * access a specific cell as `board[x][y]`, use the [[getCell]] method instead as
+     * the method {@link getColumns} should be used. Instead if you are attempting to
+     * access a specific cell as `board[x][y]`, use the {@link getCell} method instead as
      * `getCell(x, y)`.
      *
      * @returns A matrix of cells.
@@ -444,13 +438,35 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
         return this.boardData;
     }
 
+    /* ************* Cloning ************** */
+
+    /**
+     * Clone this board, returning a new one with the same characteristics.
+     *
+     * @returns A new Board.
+     */
+    public clone(): Board {
+        const cellStates = this.foldCells<CellDataDefinition[]>((cells, cell) => {
+            cells.push({
+                x: cell.x,
+                y: cell.y,
+                [Color.BLUE]: cell.getStonesOf(Color.Blue),
+                [Color.BLACK]: cell.getStonesOf(Color.Black),
+                [Color.RED]: cell.getStonesOf(Color.Red),
+                [Color.GREEN]: cell.getStonesOf(Color.Green)
+            });
+            return cells;
+        }, []);
+        return new Board(this.width, this.height, this.head, cellStates);
+    }
+
     /* ************* Querying ************** */
 
     /**
-     * Get a [[Cell]] for the given location, or the cell for the
+     * Get a {@link Cell} for the given location, or the cell for the
      * head location if none is given.
      *
-     * @throws [[LocationFallsOutsideBoard]] with the attempt as `ReadCell`
+     * @throws {@link LocationFallsOutsideBoard} with the attempt as `ReadCell`
      *      if the given cell location as `[x, y]` has `x < 0 || x > width`
      *      or `y < 0 || y > width`.
      *
@@ -458,7 +474,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      *      data from, or undefined if the data is ought to be taken
      *      from the cell at the head location.
      *
-     * @returns A [[Cell]] for the given location.
+     * @returns A {@link Cell} for the given location.
      */
     public getCell(): Cell;
     public getCell(x: number, y: number): Cell;
@@ -467,44 +483,44 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     }
 
     /**
-     * Get an array of [[Cell | Cells]] for the specific column.
+     * Get an array of {@link Cell | Cells} for the specific column.
      *
-     * @throws [[LocationFallsOutsideBoard]] with the attempt as `ReadColumn`
+     * @throws {@link LocationFallsOutsideBoard} with the attempt as `ReadColumn`
      *      if the given column number is lower than cero or greater than of equal
-     *      than the [[width]].
+     *      than the {@link width}.
      *
      * @param columnNumber The column number to obtain the cell from.
      *
-     * @returns A [[Cell]] array for the given column.
+     * @returns A {@link Cell} array for the given column.
      */
     public getColumn(columnNumber: number): Cell[] {
         return this.innerGetColumn(columnNumber);
     }
 
     /**
-     * Get an array of [[Cell | Cells]] for the specific row.
+     * Get an array of {@link Cell | Cells} for the specific row.
      *
      * Note that with the current implementation this takes more
      * time than accessing by column, but this might change in future
      * implementations.
      *
-     * @throws [[LocationFallsOutsideBoard]] with the attempt as `ReadRow`
+     * @throws {@link LocationFallsOutsideBoard} with the attempt as `ReadRow`
      *      if the given column number is lower than cero or greater of equal
-     *      than the [[height]].
+     *      than the {@link height}.
      *
      * @param rowNumber The row number to obtain the cell from.
      *
-     * @returns A [[Cell]] array for the given row.
+     * @returns A {@link Cell} array for the given row.
      */
     public getRow(rowNumber: number): Cell[] {
         return this.innerGetRow(rowNumber);
     }
 
     /**
-     * Get an array of arrays of [[Cell | Cells]] for the board, that can be
+     * Get an array of arrays of {@link Cell | Cells} for the board, that can be
      * iterated by column, that is, an array of columns.
      *
-     * @returns A [[Cell]] array of arrays where each element is a column,
+     * @returns A {@link Cell} array of arrays where each element is a column,
      *      and each column is a list of cells.
      */
     public getColumns(): Cell[][] {
@@ -512,14 +528,14 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     }
 
     /**
-     * Get an array of arrays of [[Cell | Cells]] for the board, that can be
+     * Get an array of arrays of {@link Cell | Cells} for the board, that can be
      * iterated by rows, that is, an array of rows.
      *
      * Note that with the current implementation this takes more
      * time than accessing by column, but this might change in future
      * implementations.
      *
-     * @returns A [[Cell]] array of arrays where each element is a row,
+     * @returns A {@link Cell} array of arrays where each element is a row,
      *      and each row is a list of cells.
      */
     public getRows(): Cell[][] {
@@ -633,7 +649,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * * for `dir === Direction.East` the new head is at `[x+1, y]`.
      * * for `dir === Direction.West` the new head is at `[x-1, y]`.
      *
-     * @throws [[LocationFallsOutsideBoard]] with the attempt as `Move`
+     * @throws {@link LocationFallsOutsideBoard} with the attempt as `Move`
      *      if moving the head to the given direction makes it fall
      *      outside the board.
      *
@@ -670,7 +686,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * `false` they are added to the East and/or North. The same happens when removing,
      * that is, when the new size is lower that the current one, for any of width or
      * height.
-     * Note that changing the size of the board by setting the [[width]] or [[height]]
+     * Note that changing the size of the board by setting the {@link width} or {@link height}
      * attributes act as using this same method with `fromOriginCorner` set to `false`.
      * Thus, this methods provides a more generic way of modifying the size, allowing to
      * add columns or rows at the beginning of the board instead of the end.
@@ -679,7 +695,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * of the head is adjusted in any case that the location falls outside the board
      * given the new size.
      *
-     * @throws [[InvalidBoardDescription]] if any of the given
+     * @throws {@link InvalidBoardDescription} if any of the given
      *      `width` or `height` are lower than or equal to zero.
      *
      * @param width The new width of the board.
@@ -694,21 +710,24 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Add a new column to the board at the given direction.
      * Note that this is equivalent of adding one column
-     * by calling [[addColumns]] with argument 1 for the same direction
+     * by calling {@link addColumns} with argument 1 for the same direction
      * as given.
      *
      * If no direction is given, the column is added to the East.
      *
      * @param dir The direction where to add the new column.
      */
-    public addColumn(dir: Direction.East | Direction.West = Direction.East): void {
+    public addColumn(dir: Direction = Direction.East): void {
+        or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
+            new TypeError('The direction to addColumn should be East or West')
+        );
         this.addColumns(1, dir);
     }
 
     /**
      * Add a given amount of new columns to the board at the given direction.
      * Note that, this is equivalent as increasing the size of the board with
-     * [[changeSizeTo]] where the new width corresponds to the current width
+     * {@link changeSizeTo} where the new width corresponds to the current width
      * plus the number of new columns. If the given direction is `Direction.East`,
      * then the new columns are added at the beginning of the board (that is,
      * using `changeSizeTo` with `fromOriginCell` as `true`).
@@ -718,28 +737,34 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * @param amount The number of columns to add.
      * @param dir The direction where to add the new column.
      */
-    public addColumns(amount: number, dir: Direction.East | Direction.West = Direction.East): void {
+    public addColumns(amount: number, dir: Direction = Direction.East): void {
+        or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
+            new TypeError('The direction to addColumns should be East or West')
+        );
         this.innerChangeSize(this.width + amount, this.height, dir === Direction.West, undefined);
     }
 
     /**
      * Remove a column to the board at the given direction.
      * Note that this is equivalent to removing one column
-     * by calling [[removeColumns]] with argument 1 for the same direction
+     * by calling {@link removeColumns} with argument 1 for the same direction
      * as given.
      *
      * If no direction is given, the column is removed from the East.
      *
      * @param dir The direction where to remove the new column.
      */
-    public removeColumn(dir: Direction.East | Direction.West = Direction.East): void {
+    public removeColumn(dir: Direction = Direction.East): void {
+        or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
+            new TypeError('The direction to removeColumn should be East or West')
+        );
         this.removeColumns(1, dir);
     }
 
     /**
      * Remove given number of columns from the board at the given direction.
      * Note that, this is equivalent as decreasing the size of the board with
-     * [[changeSizeTo]] where the new width corresponds to the current width
+     * {@link changeSizeTo} where the new width corresponds to the current width
      * minus the number of columns to remove. If the given direction is
      * `Direction.East`, then the new columns are removed from the beginning of
      * the board (that is, using `changeSizeTo` with `fromOriginCell` as `true`).
@@ -749,10 +774,10 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * @param amount The amount of columns to remove.
      * @param dir The direction where to remove the new column.
      */
-    public removeColumns(
-        amount: number,
-        dir: Direction.East | Direction.West = Direction.East
-    ): void {
+    public removeColumns(amount: number, dir: Direction = Direction.East): void {
+        or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
+            new TypeError('The direction to removeColumns should be East or West')
+        );
         this.innerChangeSize(
             this.width - amount,
             this.height,
@@ -764,21 +789,24 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Add a new row to the board at the given direction.
      * Note that this is equivalent of adding one row
-     * by calling [[addRows]] with argument 1 for the same direction
+     * by calling {@link addRows} with argument 1 for the same direction
      * as given.
      *
      * If no direction is given, the row is added to the North.
      *
      * @param dir The direction where to add the new column.
      */
-    public addRow(dir: Direction.North | Direction.South = Direction.North): void {
+    public addRow(dir: Direction = Direction.North): void {
+        or(expect(dir).toBe(Direction.North), expect(dir).toBe(Direction.South)).orThrow(
+            new TypeError('The direction to addRow should be North or South')
+        );
         this.addRows(1, dir);
     }
 
     /**
      * Add a given amount of new rows to the board at the given direction.
      * Note that, this is equivalent as increasing the size of the board with
-     * [[changeSizeTo]] where the new height corresponds to the current height
+     * {@link changeSizeTo} where the new height corresponds to the current height
      * plus the number of new rows. If the given direction is `Direction.South`,
      * then the new columns are added at the beginning of the board (that is,
      * using `changeSizeTo` with `fromOriginCell` as `true`).
@@ -788,28 +816,34 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * @param amount The number of rows to add.
      * @param dir The direction where to add the new row.
      */
-    public addRows(amount: number, dir: Direction.North | Direction.South = Direction.North): void {
+    public addRows(amount: number, dir: Direction = Direction.North): void {
+        or(expect(dir).toBe(Direction.North), expect(dir).toBe(Direction.South)).orThrow(
+            new TypeError('The direction to addRows should be North or South')
+        );
         this.innerChangeSize(this.width, this.height + amount, dir === Direction.South, undefined);
     }
 
     /**
      * Remove a row to the board at the given direction.
      * Note that this is equivalent to removing one row
-     * by calling [[removeRows]] with argument 1 for the same direction
+     * by calling {@link removeRows} with argument 1 for the same direction
      * as given.
      *
      * If no direction is given, the row is removed from the North.
      *
      * @param dir The direction where to remove the new row.
      */
-    public removeRow(dir: Direction.North | Direction.South = Direction.North): void {
+    public removeRow(dir: Direction = Direction.North): void {
+        or(expect(dir).toBe(Direction.North), expect(dir).toBe(Direction.South)).orThrow(
+            new TypeError('The direction to removeRow should be North or South')
+        );
         this.removeRows(1, dir);
     }
 
     /**
      * Remove given number of rows from the board at the given direction.
      * Note that, this is equivalent as decreasing the size of the board with
-     * [[changeSizeTo]] where the new height corresponds to the current height
+     * {@link changeSizeTo} where the new height corresponds to the current height
      * minus the number of rows to remove. If the given direction is
      * `Direction.South`, then the new columns are removed from the beginning of
      * the board (that is, using `changeSizeTo` with `fromOriginCell` as `true`).
@@ -819,10 +853,10 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      * @param amount The amount of rows to remove.
      * @param dir The direction where to remove the new row.
      */
-    public removeRows(
-        amount: number,
-        dir: Direction.North | Direction.South = Direction.North
-    ): void {
+    public removeRows(amount: number, dir: Direction = Direction.North): void {
+        or(expect(dir).toBe(Direction.North), expect(dir).toBe(Direction.South)).orThrow(
+            new TypeError('The direction to removeRows should be North or South')
+        );
         this.innerChangeSize(
             this.width,
             this.height - amount,
@@ -900,7 +934,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Retrieve all the cells in a given column.
      *
-     * @throws [[InvalidCellReading]] with the attempt as `ReadColumn`
+     * @throws {@link InvalidCellReading} with the attempt as `ReadColumn`
      *      if the given column number is lower than zero or greater
      *      or equal to the board width.
      *
@@ -917,7 +951,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Retrieve all the cells in a given row.
      *
-     * @throws [[InvalidCellReading]] with the attempt as `ReadRow`
+     * @throws {@link InvalidCellReading} with the attempt as `ReadRow`
      *      if the given row number is lower than zero or greater
      *      or equal to the board height.
      *
@@ -938,7 +972,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Retrieve the cells in a given location.
      *
-     * @throws [[InvalidCellReading]] with the attempt as `ReadCell`
+     * @throws {@link InvalidCellReading} with the attempt as `ReadCell`
      *      if the location given as `[x, y]`  has `x` that is lower
      *      than zero or greater or equal to the board width, or `y`
      *      that is lower than zero or greater or equal to the board height.
@@ -960,7 +994,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Change the head location to the specific cell location.
      *
-     * @throws [[LocationFallsOutsideBoard]] with the attempt as `performedAction`
+     * @throws {@link LocationFallsOutsideBoard} with the attempt as `performedAction`
      *      if the given cell location as `[x, y]` has `x < 0 || x > width`
      *      or `y < 0 || y > width`.
      *
@@ -970,12 +1004,10 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
         location: CellLocation,
         performedAction: LocationChangeActionAttempt
     ): void {
-        expect
-            .and(
-                expect(location[0]).toBeGreaterThanOrEqual(0).toBeLowerThan(this.width),
-                expect(location[1]).toBeGreaterThanOrEqual(0).toBeLowerThan(this.height)
-            )
-            .orThrow(new LocationFallsOutsideBoard(performedAction, location, this.head));
+        and(
+            expect(location[0]).toBeGreaterThanOrEqual(0).toBeLowerThan(this.width),
+            expect(location[1]).toBeGreaterThanOrEqual(0).toBeLowerThan(this.height)
+        ).orThrow(new LocationFallsOutsideBoard(performedAction, location, this.head));
         const oldHeadX = this.headXLocation;
         const oldHeadY = this.headYLocation;
         this.headXLocation = location[0];
@@ -996,7 +1028,7 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
      *      performed multiple time, nor expected immediacy, so the penalties
      *      in performance are acceptable.
      *
-     * @throws [[InvalidBoardDescription]] if any of the given
+     * @throws {@link InvalidBoardDescription} if any of the given
      *      `width` or `height` are lower tor equal than zero.
      *
      * @param width The new width of the board.
@@ -1010,11 +1042,9 @@ export class Board extends TypedEmitter<BoardEvents> implements BoardDefinition 
         fromOriginCorner: boolean = false,
         attempt: InvalidSizeChangeAttempt
     ): void {
-        expect
-            .and(expect(height).toBeGreaterThan(0), expect(width).toBeGreaterThan(0))
-            .orThrow(
-                new InvalidSizeChange(attempt, this.boardWidth, this.boardHeight, width, height)
-            );
+        and(expect(height).toBeGreaterThan(0), expect(width).toBeGreaterThan(0)).orThrow(
+            new InvalidSizeChange(attempt, this.boardWidth, this.boardHeight, width, height)
+        );
 
         // Gather state of change
         const oldHeight = this.boardHeight;

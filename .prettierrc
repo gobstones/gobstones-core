@@ -6,5 +6,6 @@
   "singleQuote": true,
   "trailingComma": "none",
   "parser": "typescript",
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "quoteProps": "as-needed"
 }

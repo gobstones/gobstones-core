@@ -1,8 +1,17 @@
 /**
- * This enum represent the valid Gobstones Directions.
- * It's accompanied by a namespace with the same name, that provides additional
- * functionality, such as asking for the first or the last direction, or iterate over
- * the elements of this enum.
+ * @module Board
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
+
+/**
+ * This class represents the valid Gobstones Directions.
+ * It provides a set of singleton cases, for each possible value,
+ * as well as static accessors for each case name string (that should
+ * be used as key for representing directions).
+ *
+ * Additionally it provides handy methods for operations that are common
+ * with directions in Gobstones, such as asking for the first, the last,
+ * the next, the previous or the opposite direction.
  *
  * Note that directions are sorted in the following order, from first to last.
  * * Direction.North
@@ -10,34 +19,52 @@
  * * Direction.South
  * * Direction.West
  *
- * Always prefer using the enum over the string values it represents,
- * even as object keys.
- */
-export enum Direction {
-    North = 'n',
-    East = 'e',
-    South = 's',
-    West = 'w'
+ * Always prefer using the provided static names as object keys when needed,
+ * such as:
+ *
+```
+{
+    [Direction.NORTH]: 'Some value',
+    [Direction.SOUTH]: 'Some other value'
 }
-
-/**
- * This namespace provides additional functionality that extends the simple
- * Direction enum, by providing some helper functions.
+```
+ *
+ * @group Main module definitions
  */
-export namespace Direction {
+export class Direction {
+    public static NORTH: 'n' = 'n';
+    public static EAST: 'e' = 'e';
+    public static SOUTH: 's' = 's';
+    public static WEST: 'w' = 'w';
+
+    public static North = new Direction(Direction.NORTH);
+    public static East = new Direction(Direction.EAST);
+    public static South = new Direction(Direction.SOUTH);
+    public static West = new Direction(Direction.WEST);
+
+    private value: string;
+
+    private constructor(value: string) {
+        this.value = value;
+    }
+
     /**
-     * The smallest Direction possible, currently [[Direction.North]]
+     * The smallest Direction possible, currently {@link Direction.North}
      *
      * @returns The smallest direction.
      */
-    export const min = (): Direction => Direction.North;
+    public static min(): Direction {
+        return Direction.North;
+    }
 
     /**
-     * The biggest Direction possible, currently [[Direction.West]]
+     * The biggest Direction possible, currently {@link Direction.West}
      *
      * @returns The biggest direction.
      */
-    export const max = (): Direction => Direction.West;
+    public static max(): Direction {
+        return Direction.West;
+    }
 
     /**
      * The next Direction of a given Direction. Directions are sorted
@@ -53,7 +80,7 @@ export namespace Direction {
      *
      * @returns The next direction of the given one.
      */
-    export const next = (dir: Direction): Direction => {
+    public static next(dir: Direction): Direction {
         switch (dir) {
             case Direction.North:
                 return Direction.East;
@@ -67,7 +94,7 @@ export namespace Direction {
             default:
                 return undefined;
         }
-    };
+    }
 
     /**
      * The next Direction of a given Direction. Directions are sorted
@@ -83,8 +110,8 @@ export namespace Direction {
      *
      * @returns The previous direction of the given one.
      */
-    export const previous = (color: Direction): Direction => {
-        switch (color) {
+    public static previous(dir: Direction): Direction {
+        switch (dir) {
             case Direction.North:
                 return Direction.West;
             case Direction.East:
@@ -97,7 +124,7 @@ export namespace Direction {
             default:
                 return undefined;
         }
-    };
+    }
 
     /**
      * The opposite Direction of a given Direction. Directions are opposed
@@ -109,8 +136,8 @@ export namespace Direction {
      *
      * @returns The opposite direction of the given one.
      */
-    export const opposite = (color: Direction): Direction => {
-        switch (color) {
+    public static opposite(dir: Direction): Direction {
+        switch (dir) {
             case Direction.North:
                 return Direction.South;
             case Direction.East:
@@ -123,7 +150,7 @@ export namespace Direction {
             default:
                 return undefined;
         }
-    };
+    }
 
     /**
      * Answer wether or not the given direction is vertical,
@@ -133,8 +160,9 @@ export namespace Direction {
      *
      * @returns `true` if it's vertical, `false` otherwise.
      */
-    export const isVertical = (dir: Direction): boolean =>
-        dir === Direction.North || dir === Direction.South;
+    public static isVertical(dir: Direction): boolean {
+        return dir === Direction.North || dir === Direction.South;
+    }
 
     /**
      * Answer wether or not the given direction is horizontal,
@@ -144,7 +172,9 @@ export namespace Direction {
      *
      * @returns `true` if it's horizontal, `false` otherwise.
      */
-    export const isHorizontal = (dir: Direction): boolean => !Direction.isVertical(dir);
+    public static isHorizontal(dir: Direction): boolean {
+        return !Direction.isVertical(dir);
+    }
 
     /**
      * Iterate over all the directions, in their defined order, from the smallest,
@@ -153,12 +183,84 @@ export namespace Direction {
      *
      * @param f The callback to call on each iteration.
      */
-    export const foreach = (f: (dir: Direction) => void): void => {
+    public static foreach(f: (dir: Direction) => void): void {
         let current = Direction.min();
         while (current !== Direction.max()) {
             f(current);
             current = Direction.next(current);
         }
         f(current);
-    };
+    }
+
+    /**
+     * The next Direction of this direction. Directions are sorted
+     * in the following way, from first to last:
+     * * Direction.North
+     * * Direction.East
+     * * Direction.South
+     * * Direction.West
+     *
+     * And they are cyclic, that is, the next direction of West is North.
+     *
+     * @param dir The direction to obtain the next value from.
+     *
+     * @returns The next direction of the given one.
+     */
+    public next(): Direction {
+        return Direction.next(this);
+    }
+
+    /**
+     * The next Direction of this one. Directions are sorted
+     * in the following way, from last to first:
+     * * Direction.West
+     * * Direction.South
+     * * Direction.East
+     * * Direction.North
+     *
+     * And they are cyclic, that is, the previous direction of North is West.
+     *
+     * @param dir The direction to obtain the previous value from.
+     *
+     * @returns The previous direction of the given one.
+     */
+    public previous(): Direction {
+        return Direction.previous(this);
+    }
+
+    /**
+     * The opposite Direction of this one. Directions are opposed
+     * to each other in pairs, those being:
+     * * Direction.West is opposite to Direction.East and vice versa
+     * * Direction.North is opposite to Direction.South and vice versa
+     *
+     * @returns The opposite direction of the given one.
+     */
+    public opposite(): Direction {
+        return Direction.opposite(this);
+    }
+
+    /**
+     * Answer wether or not this direction is vertical,
+     * that is, one of Direction.North or Direction.South.
+     *
+     * @returns `true` if it's vertical, `false` otherwise.
+     */
+    public isVertical(): boolean {
+        return Direction.isVertical(this);
+    }
+
+    /**
+     * Answer wether or not this direction is horizontal,
+     * that is, one of Direction.East or Direction.West.
+     *
+     * @returns `true` if it's horizontal, `false` otherwise.
+     */
+    public isHorizontal(): boolean {
+        return Direction.isHorizontal(this);
+    }
+
+    public toString(): string {
+        return this.value;
+    }
 }

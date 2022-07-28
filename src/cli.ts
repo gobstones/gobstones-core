@@ -7,7 +7,7 @@
  *
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  *
- * @packageDocumentation
+ * @module cli
  */
 import commander, { program } from 'commander';
 
@@ -18,7 +18,7 @@ import fs from 'fs';
  * The general flags that a CLI app accepts, when configured to used them.
  * Note that currently the default flags cannot be changed.
  */
-interface CLIGeneralFlags {
+export interface CLIGeneralFlags {
     /** The help flags, both short and long */
     help: { short: string; long: string };
     /** The language set flags, both short and long */
@@ -35,9 +35,9 @@ interface CLIGeneralFlags {
  * A set of options for initially configure a CLI application.
  * If a translation is given
  */
-interface CLIAppOptions {
+export interface CLIAppOptions {
     /**
-     * The description texts (Or a description key if a [[Translator]] is provided)
+     * The description texts (Or a description key if a {@link Translator} is provided)
      * that is used is the description of the different parts of the CLI.
      * The `name` and the `versionNumber` are expected to be the app name (No translation
      * is used, as the name should be the same through all the app), and the `versionNumber`
@@ -54,7 +54,7 @@ interface CLIAppOptions {
     };
 
     /**
-     * A [[Translator]] used to translate the tool to different locales, both when
+     * A {@link Translator} used to translate the tool to different locales, both when
      * called with a language flag, and automatically at startup by auto-detecting
      * the user language by checking OS Environment variables.
      */
@@ -75,10 +75,10 @@ interface CLIAppOptions {
 }
 
 /**
- * A builder for a CLI command. May be the main command of the app ([[CLIApp]])
+ * A builder for a CLI command. May be the main command of the app ({@link CLIApp})
  * extends this class) or a sub-command.
  */
-class CLICommandBuilder {
+export class CLICommandBuilder {
     private static SHORT_HELP_FLAG = '-h';
     private static SHORT_VERSION_FLAG = '-v';
     private static SHORT_LANG_FLAG = '-l';
@@ -342,7 +342,7 @@ class CLICommandBuilder {
     }
 }
 
-class CLIApp extends CLICommandBuilder {
+export class CLIApp extends CLICommandBuilder {
     /** The arguments passed to the application */
     private processArgs: string[];
 

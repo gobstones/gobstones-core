@@ -2,52 +2,20 @@
     "entryPoints": [
         "./src"
     ],
+    "entryPointStrategy": "expand",
     "out": "docs",
     "includes": "./src",
     "exclude": [
         "**/*.test.ts",
-        "**/index.ts"
+        "./src/index.ts"
     ],
-    "theme": "./node_modules/typedoc-neo-theme/bin/default",
     "includeVersion": true,
     "categorizeByGroup": true,
     "excludeExternals": true,
+    "excludeInternal": false,
     "excludePrivate": false,
     "hideGenerator": true,
     "disableSources": true,
-    "links": [
-        {
-            "label": "Repository",
-            "url": "https://github.com/gobstones/gobstones-core"
-        },
-        {
-            "label": "Gobstones Docs",
-            "url": "https://dev.gobstones.org"
-        },
-        {
-            "label": "Contribution Guidelines",
-            "url": "https://dev.gobstones.org/contribution-guidelines"
-        }
-    ],
-    "outline": [
-        {
-            "Public Modules": {
-                "Board": "Board_Board",
-                "Cell": "Board_Cell",
-                "Color": "Board_Color",
-                "Direction": "Board_Direction",
-                "Expectations": "Expectations_Expectations",
-                "TypedEmitter": "TypedEmitter"
-            },
-            "Internal Modules": {
-                "BoardDefinitions": "Board_BoardDefinition",
-                "BoardErrors": "Board_BoardErrors",
-                "Expectation": "Expectations_Expectation",
-                "JoinedExpectation": "Expectations_JoinedExpectation",
-                "FinishedExpectation": "Expectations_FinishedExpectation",
-                "Interfaces": "Expectations_interfaces",
-                "Matchers": "Expectations_Matchers"
-            }
-        }
-    ]
+    "githubPages": true,
+    "mergeModulesMergeMode": "module"
 }

@@ -1,22 +1,19 @@
 /**
- * This module provides the [[JoinedExpectation]] class that provides
- * a way to create an expectation that has a result the result of
- * applying the joiner to every expectation in the result.
- *
+ * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @packageDocumentation
  */
 import { FinishedExpectation } from './FinishedExpectation';
 import { IFinishedExpectation } from './Interfaces';
 
 /**
  * A joined expectation consist of multiple expectations joined by a specific
- * joiner function. A JoinedExpectation implements [[FinishedExpectation]],
+ * joiner function. A JoinedExpectation implements {@link FinishedExpectation},
  * where the result is calculated using the given joiner function.
  *
- * Currently two join forms are provided, [[Expectations/Expectations.expect.and]],
- * and [[Expectations/Expectations.expect.or]].
+ * Currently two join forms are provided, {@link Expectations!and},
+ * and {@link Expectations!or}.
+ *
+ * @group Helper classes and interfaces
  */
 export class JoinedExpectation extends FinishedExpectation {
     /**
@@ -39,7 +36,7 @@ export class JoinedExpectation extends FinishedExpectation {
         this.result = joiner(expectations);
     }
 
-    /** @inheritdoc [[IFinishedExpectancy.getResult]] */
+    /** @inheritDoc {@link Expectations!IFinishedExpectancy.getResult} */
     public getResult(): boolean {
         return this.result;
     }
