@@ -5,6 +5,7 @@
 .eslintrc.js
 .vscode/*
 .github/*
+.husky/*
 
 # tests
 test/*
