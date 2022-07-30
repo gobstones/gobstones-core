@@ -1,6 +1,6 @@
 {
   "name": "@gobstones/gobstones-core",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
