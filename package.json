@@ -1,6 +1,6 @@
 {
   "name": "@gobstones/gobstones-core",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
@@ -12,17 +12,24 @@
     "Board",
     "expect"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "typings": "dist/typings/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./cli": "./dist/cli.js"
+      ".": {
+        "types": "./dist/typings/index.d.ts",
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.js"
+      },
+      "./cli": {
+        "types": "./dist/typings/cli/cli.d.ts",
+        "default": "./dist/cli.cjs"
+      }
   },
+  "typings": "./dist/typings/index.d.ts",
   "typesVersions": {
     "*": {
       "cli": [
-        "dist/typings/cli"
+        "./dist/typings/cli"
       ]
     }
   },

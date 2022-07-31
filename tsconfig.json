@@ -11,8 +11,8 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "stripInternal": true,
-        "composite": false
-
+        "composite": false,
+        "skipLibCheck": true
     },
     "include": [
         "./src/**/*"

@@ -15,19 +15,37 @@ export default (commandLineArgs) => [
                 sourcemap: true,
                 dir: 'dist',
                 format: 'es'
-            },
-            {
-                sourcemap: true,
-                file: 'dist/index.cjs',
-                format: 'cjs'
             }
         ],
+        preserveSymlinks: true,
         plugins: [
             typescript(),
             commonjs(),
             commandLineArgs.configMinify && terser(),
             commandLineArgs.configShowSizes && pluginSizes()
         ]
+    },
+    {
+        input: 'src/index.ts',
+        output: [
+            {
+                sourcemap: true,
+                file: 'dist/index.cjs',
+                format: 'cjs'
+            }
+        ],
+        preserveSymlinks: true,
+        plugins: [
+            typescript({
+                declaration: true,
+                declarationMap: true,
+                declarationDir: '/typings'
+            }),
+            commonjs(),
+            commandLineArgs.configMinify && terser(),
+            commandLineArgs.configShowSizes && pluginSizes()
+        ],
+        external: [/@gobstones\/.*/]
     },
     {
         input: 'src/cli.ts',
@@ -38,6 +56,7 @@ export default (commandLineArgs) => [
                 format: 'cjs'
             }
         ],
+        preserveSymlinks: true,
         plugins: [
             nodeResolve({ preferBuiltins: true }),
             typescript(),
@@ -45,6 +64,6 @@ export default (commandLineArgs) => [
             commandLineArgs.configMinify && terser(),
             commandLineArgs.configShowSizes && pluginSizes()
         ],
-        external: ['fs']
+        external: [/@gobstones\/.*/, 'fs']
     }
 ];
