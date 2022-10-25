@@ -1,6 +1,6 @@
 {
   "name": "@gobstones/gobstones-core",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.2.0",
-    "@gobstones/gobstones-scripts": "^0.2.6",
+    "@gobstones/gobstones-scripts": "^0.3.0",
     "@markforged/nps": "^5.11.2",
     "@rollup/plugin-commonjs": "^23.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
