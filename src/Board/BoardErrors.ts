@@ -18,14 +18,19 @@ export type CellReadingActionAttempt = 'ReadCell' | 'ReadColumn' | 'ReadRow';
  * @group Performed actions
  * @internal
  */
-export type LocationChangeActionAttempt = 'Move' | 'SetLocation';
+export type LocationChangeActionAttempt = 'Move' | 'SetLocation' | 'MoveToEdge';
 /**
  * The operation attempted to be performed when a {@link InvalidSizeChange} error ocurred.
  *
  * @group Performed actions
  * @internal
  */
-export type InvalidSizeChangeAttempt = 'Resize' | 'RemoveRow' | 'RemoveColumn';
+export type InvalidSizeChangeAttempt =
+    | 'Resize'
+    | 'RemoveRow'
+    | 'RemoveColumn'
+    | 'AddRows'
+    | 'AddColumns';
 /**
  * The operation attempted to be performed when a {@link InvalidStonesAmount} error ocurred.
  *

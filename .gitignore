@@ -1,21 +1,18 @@
-# OS generated files and folders #
+# Node files #
+node_modules/
+npm-debug.log
+yarn-error.log
+.rollup.cache
+
+# OS generated files #
 .DS_Store
 Thumbs.db
 .tmp/
 
-# IDE related stuff #
-.idea/
-
-# Package manager files #
-node_modules/
-npm-debug.log
-yarn-error.log
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# Building and distributing #
+# Dist #
 dist/
 coverage/
 tsconfig.build.json
-.rollup.cache
+
+# IDE #
+.idea/

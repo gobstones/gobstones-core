@@ -213,7 +213,7 @@ export interface IFinishedExpectation {
     /**
      * If the result of the expectation is false, return the given value.
      */
-    orYield<T>(value: T): T;
+    orYield<T>(value: T): T | undefined;
     /**
      * If the result of the expectation is false, run the given function.
      */

@@ -351,7 +351,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
      * @param cloneBoard The Board the cloned cell will be associated to.
      * @returns A new {@link Cell}
      */
-    public clone(newBoard?: Board): Cell {
+    public clone(newBoard: Board): Cell {
         return new Cell(newBoard, {
             x: this.x,
             y: this.y,
@@ -414,7 +414,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
         expect(amount)
             .toBeGreaterThan(0)
             .orThrow(new InvalidStonesAmount('AddStones', color.toString(), amount, this));
-        this.innerSetStones(color, this.getStonesOf(color) + amount, undefined);
+        this.innerSetStones(color, this.getStonesOf(color) + amount, 'AddStones');
     }
 
     /**
@@ -528,7 +528,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
      * @returns The neighbor cell at the given direction, or `undefined`
      *      if the neighbor does not exist
      */
-    public neighborTo(direction: Direction): Cell {
+    public neighborTo(direction: Direction): Cell | undefined {
         const [deltaX, deltaY] = this.innerGetDeltaByDirection(direction, 1);
 
         if (this.isAtBorderAt(direction)) return undefined;
@@ -545,7 +545,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
      * @returns The neighbor cell at the given diagonal, or `undefined`
      *      if the neighbor does not exist.
      */
-    public neighborDiagonalTo(vertical: Direction, horizontal: Direction): Cell {
+    public neighborDiagonalTo(vertical: Direction, horizontal: Direction): Cell | undefined {
         if (this.isAtBorderAt(vertical) || this.isAtBorderAt(horizontal)) return undefined;
 
         const verticalDelta = this.innerGetDeltaByDirection(vertical, 1)[1];
@@ -566,11 +566,11 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
      * @returns A list of neighbors of the current cell.
      */
     public neighbors(location: 'orthogonal' | 'diagonal' | 'both' = 'orthogonal'): Cell[] {
-        const neighbors = [];
+        const neighbors: Cell[] = [];
         Direction.foreach((dir) => {
             const nextDir = Direction.next(dir);
             if (!this.isAtBorderAt(dir) && location !== 'diagonal') {
-                neighbors.push(this.neighborTo(dir));
+                neighbors.push(this.neighborTo(dir) as Cell);
             }
             if (
                 !this.isAtBorderAt(dir) &&
@@ -581,7 +581,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
                     this.neighborDiagonalTo(
                         Direction.isVertical(dir) ? dir : nextDir,
                         Direction.isVertical(dir) ? nextDir : dir
-                    )
+                    ) as Cell
                 );
             }
         });

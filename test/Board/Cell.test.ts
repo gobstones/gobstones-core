@@ -35,7 +35,7 @@ describe(`Cell`, () => {
     });
 
     it(`Clones as another cell correctly`, () => {
-        const newCornerCell = cornerCell.clone();
+        const newCornerCell = cornerCell.clone(board);
         expect(newCornerCell).not.toBe(cornerCell);
         expect(newCornerCell.x).toBe(cornerCell.x);
         expect(newCornerCell.y).toBe(cornerCell.y);

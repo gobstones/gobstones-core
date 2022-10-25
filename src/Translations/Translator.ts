@@ -20,7 +20,7 @@ import { flatten } from '../helpers/flatten';
  *
  * @group Main module definitions
  */
-export class Translator<TLocale> {
+export class Translator<TLocale extends Record<string, any>> {
     /**
      * All the registered translations avaiable.
      */
@@ -137,7 +137,7 @@ export class Translator<TLocale> {
             return key;
         }
         for (const each in interpolations || []) {
-            value = value.replace(`\${${each}}`, `${interpolations[each]}`);
+            value = value.replace(`\${${each}}`, `${interpolations?.[each]}`);
         }
         return value;
     }

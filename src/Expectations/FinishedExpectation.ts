@@ -20,7 +20,7 @@ export abstract class FinishedExpectation implements IFinishedExpectation {
     }
 
     /** @inheritDoc {@link IFinishedExpectation.orYield} */
-    public orYield<T>(value: T): T {
+    public orYield<T>(value: T): T | undefined {
         return !this.getResult() ? value : undefined;
     }
 

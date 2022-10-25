@@ -91,13 +91,14 @@ export function flatten<TTarget extends Record<string, any>, TResult extends Rec
         Object.keys(object).forEach(function (key) {
             const value: any = object[key];
             const type: string = Object.prototype.toString.call(value);
-            const isarray: boolean = opts.safe && Array.isArray(value);
+            const isarray: boolean =
+                opts.safe === undefined ? false : opts.safe && Array.isArray(value);
             const isbuffer: boolean = isBuffer(value);
             const isobject: boolean = type === '[object Object]' || type === '[object Array]';
 
             const newKey = prev
-                ? prev + opts.delimiter + opts.transformKey(key)
-                : opts.transformKey(key);
+                ? prev + opts.delimiter + opts?.transformKey?.(key)
+                : opts?.transformKey?.(key);
 
             if (
                 !isarray &&
@@ -179,17 +180,22 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
         }, recipient);
 
     function isEmpty(val): boolean {
+        console.log("IN IS EMPTY");
+        console.log(val);
         const type = Object.prototype.toString.call(val);
         const isArray = type === '[object Array]';
         const isObject = type === '[object Object]';
 
         if (!val) {
+            /* istanbul ignore next */
             return true;
         } else if (isArray) {
             return !val.length;
         } else if (isObject) {
             return !Object.keys(val).length;
         }
+        /* istanbul ignore next */
+        return false;
     }
 
     target = Object.keys(target).reduce(function (acc, key) {
@@ -201,11 +207,11 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
         } else {
             return addKeys(key, acc, flatten(target[key], opts));
         }
-    }, {});
+    }, {}) as TTarget;
 
     Object.keys(target).forEach(function (key) {
-        const split = key.split(opts.delimiter).map(opts.transformKey);
-        let key1 = getkey(split.shift());
+        const split = key.split(opts.delimiter || '.').map(opts.transformKey || ((e) => e));
+        let key1 = getkey(split.shift() as string);
         let key2 = getkey(split[0]);
         let recipient = output;
 
@@ -229,7 +235,7 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
 
             recipient = recipient[key1];
             if (split.length > 0) {
-                key1 = getkey(split.shift());
+                key1 = getkey(split.shift() as string);
                 key2 = getkey(split[0]);
             }
         }

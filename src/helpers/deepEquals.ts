@@ -146,8 +146,8 @@ const arrayEquals = <T>(aArr: T[], bArr: T[], innerComparer: (a: T, b: T) => boo
  */
 const objectEquals = <T>(aArr: T, bArr: T, innerComparer: (a: T, b: T) => boolean): boolean => {
     // Obtain the object keys, sorted
-    const aKeys = Object.keys(aArr).sort();
-    const bKeys = Object.keys(bArr).sort();
+    const aKeys = Object.keys(aArr as object).sort();
+    const bKeys = Object.keys(bArr as object).sort();
     // They should have the same amount of keys
     if (aKeys.length !== bKeys.length) return false;
     // And perform a cheap key test (they should both have same keys)
@@ -210,7 +210,7 @@ const mapEquals = <K, V>(
     while (!aNext.done) {
         // Should have a key with same name or value
         if (!b.has(aNext.value[0])) return false;
-        if (!innerComparer(aNext.value[1], b.get(aNext.value[0]))) return false;
+        if (!innerComparer(aNext.value[1], b.get(aNext.value[0]) as V)) return false;
         aNext = aEntries.next();
     }
     return true;

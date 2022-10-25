@@ -539,7 +539,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *      and each row is a list of cells.
      */
     public getRows(): Cell[][] {
-        const rows = [];
+        const rows: Cell[][] = [];
         for (let row = 0; row < this.height; row++) {
             rows.push(this.getRow(row));
         }
@@ -605,7 +605,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *   and `false`otherwise.
      */
     public filterCells(f: (cell: Cell, row: number, column: number) => boolean): Cell[] {
-        return this.foldCells((previousList, cell, row, column) => {
+        return this.foldCells((previousList: Cell[], cell: Cell, row: number, column: number) => {
             if (f(cell, row, column)) {
                 previousList.push(cell);
             }
@@ -626,6 +626,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
     public foreachCells(f: (cell: Cell, row: number, column: number) => void): void {
         this.foldCells((_, cell, row, column) => {
             f(cell, row, column);
+            return undefined;
         }, undefined);
     }
 
@@ -674,7 +675,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      */
     public moveHeadToEdgeAt(dir: Direction): void {
         const [deltaX, deltaY] = this.innerGetDeltaByDirection(dir);
-        this.innerSetHeadLocation([this.headX + deltaX, this.headY + deltaY], undefined);
+        this.innerSetHeadLocation([this.headX + deltaX, this.headY + deltaY], 'MoveToEdge');
     }
 
     /* ************* Modifying Size ************** */
@@ -741,7 +742,12 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
             new TypeError('The direction to addColumns should be East or West')
         );
-        this.innerChangeSize(this.width + amount, this.height, dir === Direction.West, undefined);
+        this.innerChangeSize(
+            this.width + amount,
+            this.height,
+            dir === Direction.West,
+            'AddColumns'
+        );
     }
 
     /**
@@ -820,7 +826,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         or(expect(dir).toBe(Direction.North), expect(dir).toBe(Direction.South)).orThrow(
             new TypeError('The direction to addRows should be North or South')
         );
-        this.innerChangeSize(this.width, this.height + amount, dir === Direction.South, undefined);
+        this.innerChangeSize(this.width, this.height + amount, dir === Direction.South, 'AddRows');
     }
 
     /**
@@ -962,7 +968,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
             .toBeGreaterThanOrEqual(0)
             .toBeLowerThan(this.height)
             .orThrow(new InvalidCellReading('ReadRow', [0, row]));
-        const rowData = [];
+        const rowData: Cell[] = [];
         for (let c = 0; c < this.width; c++) {
             rowData.push(this.boardData[c][row]);
         }

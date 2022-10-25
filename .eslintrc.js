@@ -3,7 +3,8 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 2018,
         sourceType: 'module',
-        impliedStrict: true
+        impliedStrict: true,
+        warnOnUnsupportedTypeScriptVersion: false
     },
     env: {
         node: true

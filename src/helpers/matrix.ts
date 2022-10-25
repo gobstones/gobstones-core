@@ -26,12 +26,12 @@ export const Matrix = <T>(
     if (width < 1 || height < 1) {
         throw new Error('The width and height of a matrix need to be positive values');
     }
-    const generatedMatrix = [];
+    const generatedMatrix: (T | undefined)[][] = [];
     for (let i = 0; i < width; i++) {
         generatedMatrix[i] = [];
         for (let j = 0; j < height; j++) {
             generatedMatrix[i][j] = initialValueGenerator ? initialValueGenerator(i, j) : undefined;
         }
     }
-    return generatedMatrix;
+    return generatedMatrix as T[][];
 };

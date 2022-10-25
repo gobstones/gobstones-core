@@ -34,10 +34,10 @@
  * @group Main module definitions
  */
 export class Color {
-    public static BLUE: 'a' = 'a';
-    public static BLACK: 'n' = 'n';
-    public static RED: 'r' = 'r';
-    public static GREEN: 'v' = 'v';
+    public static BLUE = 'a' as const;
+    public static BLACK = 'n' as const;
+    public static RED = 'r' as const;
+    public static GREEN = 'v' as const;
 
     public static Blue = new Color(Color.BLUE);
     public static Black = new Color(Color.BLACK);
@@ -94,7 +94,7 @@ export class Color {
                 return Color.Blue;
             /* istanbul ignore next */
             default:
-                return undefined;
+                return undefined as unknown as Color;
         }
     }
 
@@ -124,7 +124,7 @@ export class Color {
                 return Color.Red;
             /* istanbul ignore next */
             default:
-                return undefined;
+                return undefined as unknown as Color;
         }
     }
 

@@ -32,10 +32,10 @@
  * @group Main module definitions
  */
 export class Direction {
-    public static NORTH: 'n' = 'n';
-    public static EAST: 'e' = 'e';
-    public static SOUTH: 's' = 's';
-    public static WEST: 'w' = 'w';
+    public static NORTH = 'n' as const;
+    public static EAST = 'e' as const;
+    public static SOUTH = 's' as const;
+    public static WEST = 'w' as const;
 
     public static North = new Direction(Direction.NORTH);
     public static East = new Direction(Direction.EAST);
@@ -92,7 +92,7 @@ export class Direction {
                 return Direction.North;
             /* istanbul ignore next */
             default:
-                return undefined;
+                return undefined as unknown as Direction;
         }
     }
 
@@ -122,7 +122,7 @@ export class Direction {
                 return Direction.South;
             /* istanbul ignore next */
             default:
-                return undefined;
+                return undefined as unknown as Direction;
         }
     }
 
@@ -148,7 +148,7 @@ export class Direction {
                 return Direction.East;
             /* istanbul ignore next */
             default:
-                return undefined;
+                return undefined as unknown as Direction;
         }
     }
 
