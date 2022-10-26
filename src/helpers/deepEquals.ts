@@ -144,10 +144,10 @@ const arrayEquals = <T>(aArr: T[], bArr: T[], innerComparer: (a: T, b: T) => boo
  *
  * @returns `true` if both object are equal, `false` otherwise.
  */
-const objectEquals = <T>(aArr: T, bArr: T, innerComparer: (a: T, b: T) => boolean): boolean => {
+const objectEquals = <T>(objA: T, objB: T, innerComparer: (a: T, b: T) => boolean): boolean => {
     // Obtain the object keys, sorted
-    const aKeys = Object.keys(aArr as object).sort();
-    const bKeys = Object.keys(bArr as object).sort();
+    const aKeys = Object.keys(objA as object).sort();
+    const bKeys = Object.keys(objB as object).sort();
     // They should have the same amount of keys
     if (aKeys.length !== bKeys.length) return false;
     // And perform a cheap key test (they should both have same keys)
@@ -157,8 +157,8 @@ const objectEquals = <T>(aArr: T, bArr: T, innerComparer: (a: T, b: T) => boolea
     // If they do, perform a more expensive deep equal test in all values
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < aKeys.length; i++) {
-        const aValue = aArr[aKeys[i]];
-        const bValue = bArr[aKeys[i]];
+        const aValue: any = (objA as any)[aKeys[i]];
+        const bValue: any = (objB as any)[aKeys[i]];
         if (!innerComparer(aValue, bValue)) return false;
     }
     // They must be equal when this is reached

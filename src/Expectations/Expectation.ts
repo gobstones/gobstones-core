@@ -4,6 +4,7 @@
  */
 import { MatcherCall, Matchers } from './Matchers';
 
+import { AnyARecord } from 'dns';
 import { FinishedExpectation } from './FinishedExpectation';
 import { IFinishedExpectation } from './Interfaces';
 
@@ -23,7 +24,7 @@ export class Expectation<T> extends FinishedExpectation {
      * The current result of this expectation. Undefined until
      * the first matcher is run.
      */
-    protected result: boolean;
+    protected result: boolean | undefined;
     /**
      * true if this expectation is a negated expectation, that is,
      * the `not` property was accessed.
@@ -44,6 +45,7 @@ export class Expectation<T> extends FinishedExpectation {
         this.states = [];
         this.element = element;
         this.isNot = false;
+        this.result = undefined;
     }
 
     /** @inheritDoc {@link IGenericExpectation.not} */
@@ -214,7 +216,7 @@ export class Expectation<T> extends FinishedExpectation {
 
     /** @inheritDoc {@link IFinishedExpectation.getResult} */
     public getResult(): boolean {
-        return this.result;
+        return this.result || false;
     }
 
     /**
@@ -245,7 +247,8 @@ export class Expectation<T> extends FinishedExpectation {
      */
     protected runMatcher(matcherName: string, args: any[], sparse: boolean = true): this {
         const matcherArgs = sparse ? [this.element, ...args] : [this.element, args];
-        const matcherResult = Matchers[matcherName].call(this, ...matcherArgs);
+        const matcherToCall = (Matchers as any)[matcherName] as any;
+        const matcherResult = matcherToCall.call(this, ...matcherArgs);
         const result = this.isNot ? !matcherResult : matcherResult;
         this.states.push({
             matcher: matcherName,

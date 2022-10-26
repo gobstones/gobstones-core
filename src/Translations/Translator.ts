@@ -64,6 +64,7 @@ export class Translator<TLocale extends Record<string, any>> {
         }
         this.availableTranslations = availableTranslations;
         this.defaultLocale = defaultLocale;
+        this.currentLocaleName = defaultLocale;
         this.flatten = shouldFlat;
         this.setLocale(currentLocale ?? defaultLocale);
     }

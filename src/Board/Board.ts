@@ -309,7 +309,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *
      * @deprecated
      * In the future, the version information would not be available on a board,
-     * as it derives from the GBB format, but the way in which this instance
+     * as it's derived from the GBB format, but the way in which this instance
      * is produces might come from any other location or format other than GBB,
      * and is not at all relevant to the user.
      *

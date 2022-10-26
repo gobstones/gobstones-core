@@ -34,20 +34,69 @@
  * @group Main module definitions
  */
 export class Color {
+    /**
+     * The Blue Color internal value.
+     * @private
+     */
     public static BLUE = 'a' as const;
+
+    /**
+     * The Black Color internal value.
+     * @private
+     */
     public static BLACK = 'n' as const;
+
+    /**
+     * The Red Color internal value.
+     * @private
+     */
     public static RED = 'r' as const;
+
+    /**
+     * The Green Color internal value.
+     * @private
+     */
     public static GREEN = 'v' as const;
 
+    /**
+     * The Blue color. Use whenever a reference to Blue is needed.
+     */
     public static Blue = new Color(Color.BLUE);
+
+    /**
+     * The Black color. Use whenever a reference to Black is needed.
+     */
     public static Black = new Color(Color.BLACK);
+
+    /**
+     * The Red color. Use whenever a reference to Red is needed.
+     */
     public static Red = new Color(Color.RED);
+
+    /**
+     * The Green color. Use whenever a reference to Green is needed.
+     */
     public static Green = new Color(Color.GREEN);
 
-    private value: string;
+    /**
+     * The internal value of the color.
+     */
+    private innerValue: string;
 
+    /**
+     * Create a new instance of a color. This is private, as
+     * colors are already provided in a singleton like pattern.
+     */
     private constructor(value: string) {
-        this.value = value;
+        this.innerValue = value;
+    }
+
+    /**
+     * The internal value of this element.
+     * @private
+     */
+    public get value(): string {
+        return this.innerValue;
     }
 
     /**
@@ -177,6 +226,6 @@ export class Color {
     }
 
     public toString(): string {
-        return this.value;
+        return this.innerValue;
     }
 }

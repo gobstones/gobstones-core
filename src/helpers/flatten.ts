@@ -168,7 +168,7 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
     }
 
     // return the key as a string or as an integer
-    function getkey(key: string): string | number {
+    function getKey(key: string): string | number {
         const parsedKey = Number(key);
         return isNaN(parsedKey) || key.indexOf('.') !== -1 || opts.object ? key : parsedKey;
     }
@@ -179,9 +179,7 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
             return acc;
         }, recipient);
 
-    function isEmpty(val): boolean {
-        console.log("IN IS EMPTY");
-        console.log(val);
+    function isEmpty(val: any): boolean {
         const type = Object.prototype.toString.call(val);
         const isArray = type === '[object Array]';
         const isObject = type === '[object Object]';
@@ -198,7 +196,7 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
         return false;
     }
 
-    target = Object.keys(target).reduce(function (acc, key) {
+    target = Object.keys(target).reduce(function (acc: Record<string, any>, key: string) {
         const type = Object.prototype.toString.call(target[key]);
         const isObject = type === '[object Object]' || type === '[object Array]';
         if (!isObject || isEmpty(target[key])) {
@@ -211,8 +209,8 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
 
     Object.keys(target).forEach(function (key) {
         const split = key.split(opts.delimiter || '.').map(opts.transformKey || ((e) => e));
-        let key1 = getkey(split.shift() as string);
-        let key2 = getkey(split[0]);
+        let key1 = getKey(split.shift() as string);
+        let key2 = getKey(split[0]);
         let recipient = output;
 
         while (key2 !== undefined) {
@@ -220,28 +218,31 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
                 return;
             }
 
-            const type = Object.prototype.toString.call(recipient[key1]);
+            const type = Object.prototype.toString.call((recipient as any)[key1]);
             const isobject = type === '[object Object]' || type === '[object Array]';
 
             // do not write over falsey, non-undefined values if overwrite is false
-            if (!opts.overwrite && !isobject && typeof recipient[key1] !== 'undefined') {
+            if (!opts.overwrite && !isobject && typeof (recipient as any)[key1] !== 'undefined') {
                 return;
             }
 
-            // eslint-disable-next-line no-null/no-null
-            if ((opts.overwrite && !isobject) || (!opts.overwrite && recipient[key1] == null)) {
-                recipient[key1] = typeof key2 === 'number' && !opts.object ? [] : {};
+            if (
+                (opts.overwrite && !isobject) ||
+                // eslint-disable-next-line no-null/no-null
+                (!opts.overwrite && (recipient as any)[key1] == null)
+            ) {
+                (recipient as any)[key1] = typeof key2 === 'number' && !opts.object ? [] : {};
             }
 
-            recipient = recipient[key1];
+            recipient = (recipient as any)[key1];
             if (split.length > 0) {
-                key1 = getkey(split.shift() as string);
-                key2 = getkey(split[0]);
+                key1 = getKey(split.shift() as string);
+                key2 = getKey(split[0]);
             }
         }
 
         // unflatten again for 'messy objects'
-        recipient[key1] = unflatten(target[key], opts);
+        (recipient as any)[key1] = unflatten((target as any)[key], opts);
     });
 
     return output as TResult;

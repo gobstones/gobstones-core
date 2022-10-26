@@ -32,20 +32,69 @@
  * @group Main module definitions
  */
 export class Direction {
+    /**
+     * The North Direction internal value.
+     * @private
+     */
     public static NORTH = 'n' as const;
+
+    /**
+     * The East Direction internal value.
+     * @private
+     */
     public static EAST = 'e' as const;
+
+    /**
+     * The South Direction internal value.
+     * @private
+     */
     public static SOUTH = 's' as const;
+
+    /**
+     * The West Direction internal value.
+     * @private
+     */
     public static WEST = 'w' as const;
 
+    /**
+     * The North direction. Use whenever a reference to North is needed.
+     */
     public static North = new Direction(Direction.NORTH);
+
+    /**
+     * The East direction. Use whenever a reference to East is needed.
+     */
     public static East = new Direction(Direction.EAST);
+
+    /**
+     * The South direction. Use whenever a reference to South is needed.
+     */
     public static South = new Direction(Direction.SOUTH);
+
+    /**
+     * The West direction. Use whenever a reference to West is needed.
+     */
     public static West = new Direction(Direction.WEST);
 
-    private value: string;
+    /**
+     * The internal value of the direction.
+     */
+    private innerValue: string;
 
+    /**
+     * Create a new instance of a direction. This is private, as
+     * directions are already provided in a singleton like pattern.
+     */
     private constructor(value: string) {
-        this.value = value;
+        this.innerValue = value;
+    }
+
+    /**
+     * The internal value of this element.
+     * @private
+     */
+    public get value(): string {
+        return this.innerValue;
     }
 
     /**
@@ -261,6 +310,6 @@ export class Direction {
     }
 
     public toString(): string {
-        return this.value;
+        return this.innerValue;
     }
 }
