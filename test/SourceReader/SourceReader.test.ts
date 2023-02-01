@@ -1,5 +1,10 @@
 import * as SR from '../../src/SourceReader';
 
+import {
+    ErrorAtEOFBy,
+    ErrorInvalidOperationForUnknownBy,
+    ErrorNoInput
+} from '../../src/SourceReader/SR-Errors';
 /* eslint-disable no-underscore-dangle */
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
@@ -120,11 +125,11 @@ Testing for SourcePos contentsTo and From, both common and full, and relationshi
 */
 
 function verifySpecialPos(posArg: SR.SourcePos): void {
-    expect(posArg.inputName).toThrow(Error);
-    expect(posArg.inputContents).toThrow(Error);
-    expect(posArg.line).toThrow(Error);
-    expect(posArg.column).toThrow(Error);
-    expect(posArg.regions).toThrow(Error);
+    expect(() => posArg.inputName).toThrow(Error);
+    expect(() => posArg.inputContents).toThrow(Error);
+    expect(() => posArg.line).toThrow(Error);
+    expect(() => posArg.column).toThrow(Error);
+    expect(() => posArg.regions).toThrow(Error);
 }
 
 function verifyPosEOF(posArg: SR.SourcePos): void {
@@ -152,7 +157,7 @@ function verifyPos(
 
 function verifyEmptySourceReader(readerArg: SR.SourceReader): void {
     expect(readerArg.atEOF()).toBe(true);
-    expect(readerArg.peek()).toThrow(Error);
+    expect(() => readerArg.peek()).toThrow(ErrorAtEOFBy);
     expect(readerArg.startsWith('')).toBe(true);
     expect(readerArg.startsWith('any other')).toBe(false);
     verifyPosEOF(readerArg.getPos());
@@ -180,20 +185,20 @@ describe('SourceReader static members', () => {
     it('SR.static - Unknown position', () => {
         pos = SR.SourceReader.UnknownPos;
         expect(pos.isUnknown()).toBe(true);
-        expect(pos.isEOF()).toThrow(Error);
+        expect(() => pos.isEOF()).toThrow(ErrorInvalidOperationForUnknownBy);
         verifySpecialPos(pos);
     });
 });
 
 describe('SourceReader no input', () => {
     //   it('SR.0 - Undefined', () => {
-    //     expect(new SR.SourceReader(undefined,undefined)).toThrow(Error);
+    //     expect(() => new SR.SourceReader(undefined,undefined)).toThrow(Error);
     //   });
     it('SR.0 - Empty array', () => {
-        expect(new SR.SourceReader([], defaultLineEnders)).toThrow(Error);
+        expect(() => new SR.SourceReader([], defaultLineEnders)).toThrow(new ErrorNoInput());
     });
     it('SR.0 - Empty object', () => {
-        expect(new SR.SourceReader({}, defaultLineEnders)).toThrow(Error);
+        expect(() => new SR.SourceReader({}, defaultLineEnders)).toThrow(new ErrorNoInput());
     });
 });
 

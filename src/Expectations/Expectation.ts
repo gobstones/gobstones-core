@@ -4,7 +4,7 @@
  */
 import { MatcherCall, Matchers } from './Matchers';
 
-import { AnyARecord } from 'dns';
+// import { AnyARecord } from 'dns';
 import { FinishedExpectation } from './FinishedExpectation';
 import { IFinishedExpectation } from './Interfaces';
 
