@@ -762,11 +762,14 @@ export class SourceReader {
      */
     public constructor(input: SourceInput, lineEnders: string) {
         // No input string is not a valid option
-        and(
-            expect(input).toBeDefined(),
-            expect(input).not.toBe([]),
-            expect(input).not.toBe({})
-        ).orThrow(new ErrorNoInput());
+        // and(
+        //     // expect(input).toBeDefined(), // It cannot be undefined, by typing
+        //     expect(input).not.toBe([]),
+        //     expect(input).not.toBe({})
+        // ).orThrow(new ErrorNoInput());
+        if (input.length === 0) {
+            throw new ErrorNoInput();
+        }
         // Fix input to object in case of a string
         // to satisfy `_inputs` invariant.
         if (typeof input === 'string') {
