@@ -43,19 +43,6 @@ export class SourceReaderErrorBy extends SourceReaderError {
 }
 
 /**
- * The error to produce when there is an attempt to construct a
- * {@link SourcePos} with wrong arguments.
- */
-export class ErrorWrongArgsForSourcePos extends SourceReaderError {
-    /**
-     * The constructor for {@link ErrorWrongArgsForSourcePos} errors.
-     */
-    public constructor() {
-        super('WrongArgsForSourcePos');
-    }
-}
-
-/**
  * The error to produce when a SourceReader is called with no input (undefined, or empty objects).
  */
 export class ErrorNoInput extends SourceReaderError {
@@ -76,49 +63,6 @@ export class ErrorIncompatibleSilentSkip extends SourceReaderError {
      */
     public constructor() {
         super('IncompatibleSilentSkip');
-    }
-}
-
-/**
- * The error to produce when the execution reaches code that is impossible to happen.
- */
-export class ErrorCannotHappenBy extends SourceReaderErrorBy {
-    /**
-     * The constructor for {@link ErrorCannotHappenBy} errors.
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
-     */
-    public constructor(operation: string, context: string) {
-        super('ErrorCannotHappenBy', operation, context);
-    }
-}
-
-/**
- * The error to produce when an invariant violation has been detected.
- */
-export class ErrorInvariantViolationBy extends SourceReaderErrorBy {
-    /**
-     * The constructor for {@link InvariantViolationBy} errors.
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
-     */
-    public constructor(operation: string, context: string) {
-        super('InvariantViolationBy', operation, context);
-    }
-}
-
-/**
- * The error to produce when a function that is not supposed to be used with an
- * {@link SourceReader.UnknownPosition | UnknownPosition} is called.
- */
-export class ErrorInvalidOperationForUnknownBy extends SourceReaderErrorBy {
-    /**
-     * The constructor for {@link InvalidOperationForUnknownBy} errors.
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
-     */
-    public constructor(operation: string, context: string) {
-        super('InvalidOperationForUnknownBy', operation, context);
     }
 }
 
