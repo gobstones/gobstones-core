@@ -10,12 +10,8 @@
  */
 export interface SourceReaderLocale {
     error: {
-        WrongArgsForSourcePos: string;
         NoInput: string;
         IncompatibleSilentSkip: string;
-        CannotHappenBy: string;
-        InvariantViolationBy: string;
-        InvalidOperationForUnknownBy: string;
         UnmatchingPositionsBy: string;
         AtEOFBy: string;
     };
