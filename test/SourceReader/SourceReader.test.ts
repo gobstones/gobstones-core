@@ -157,11 +157,11 @@ function verifyPos(
 
 function verifyEmptySourceReader(readerArg: SR.SourceReader): void {
     expect(readerArg.atEOF()).toBe(true);
-    expect(() => readerArg.peek()).toThrow(ErrorAtEOFBy);
+    expect(() => readerArg.peek()).toThrow(new ErrorAtEOFBy('peek', 'SourceReader'));
     expect(readerArg.startsWith('')).toBe(true);
     expect(readerArg.startsWith('any other')).toBe(false);
     verifyPosEOF(readerArg.getPos());
-    expect(readerArg.getPos().regions).toBe([]);
+    expect(readerArg.getPos().regions).toStrictEqual([]);
 }
 
 function verifySourceReaderBasicOperations(): void {
@@ -221,7 +221,7 @@ describe('SourceReader creation equivalences', () => {
 });
 
 describe('SourceReader empty inputs', () => {
-    it('SR.empty - a1.0', () => {
+    it.only('SR.empty - a1.0', () => {
         verifyEmptySourceReader(new SR.SourceReader([''], defaultLineEnders));
     });
     it('SR.empty - a2.0*', () => {

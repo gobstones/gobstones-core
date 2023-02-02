@@ -5,15 +5,12 @@
  */
 import {
     ErrorAtEOFBy,
-    ErrorCannotHappenBy,
     ErrorIncompatibleSilentSkip,
-    ErrorInvalidOperationForUnknownBy,
-    ErrorInvariantViolationBy,
     ErrorNoInput,
     ErrorUnmatchingPositionsBy
 } from './SR-Errors';
-import { and, expect } from '../Expectations';
 
+import { expect } from '../Expectations';
 import { SourceReaderIntl as intl } from './translations';
 
 /** The type {@link SourceInput} establishes the different kinds of input a {@link SourceReader}
@@ -38,385 +35,667 @@ import { SourceReaderIntl as intl } from './translations';
  */
 export type SourceInput = string | Record<string, string> | string[];
 
-/** A {@link SourcePos} indicates a particular position in a source given by a {@link SourceReader}.
- * There exists a particular position, the {@link SourceReader.UnknownPos | `UnknownPos`}, static
- * member of {@link SourceReader}, that do not indicate any position; it is used when a position
- * must be provided, but no one is known.
- *
- * A {@link SourcePos} is created using the {@link SourceReader.getPos | `getPos`} operation of a
- * particular @link SourceReader}; the obtained instance indicates a position in the source
- * associated with that reader.
- * Valid operations on a {@link SourcePos} include:
- *  * ask if the position is unknown or not,
- *  * get the `inputName`, `inputContents`, `fullInputContents`, `line`, `column` and `regions`
- *    of known positions,
- *  * produce a string representation of the position for display (**not** for persistence), and
- *  * get the visible or full portion of the source between a position and some other position
- *    related with the same reader.
- *
- * Regarding visible or full contents, and regions, consult the documentation of
+/**
+ * Instances of {@link SourcePos} point to particular positions in the source given by a
  * {@link SourceReader}.
+ * They may be unknown or they may point to a particular {@link SourceReader}.
+ * All {@link SourcePos} are created through {@link SourceReader}.
+ *
+ * Subclasses of {@link SourcePos} determine if the position is known or unknown.
+ * The operation {@link SourcePos.isUnknown | isUnknown} indicates which is the case.
+ * Additionally, all {@link SourcePos} can be converted to a string, for showing purposes,
+ * with the operation {@link SourcePos.toString | toString}.
+ * Subclasses may have other operations, depending on its nature.
+ *
+ * Valid operations on a {@link SourcePos} include:
+ *  * indicate if the position is known or unknown, with {@link SourcePos.isUnknown | isUnknown},
+ *    and
+ *  * produce a string representation of the position for display (**not** for persistence),
+ *    with {@link SourcePos.toString | toString}.
  *
  * A typical use of {@link SourcePos} is relating nodes of an AST representation of code to
  * particular positions in the string version of the source code (that may come from several input
  * strings).
  */
-export class SourcePos {
+export abstract class SourcePos {
     /** Instances of {@link SourcePos} are tightly coupled with {@link SourceReader}, because they
      * determine particular positions in the source input kept by those.
      * They are created exclusively by a {@link SourceReader}, either using the operation
      * {@link SourceReader.getPos | getPos } or by the static const
      * {@link SourceReader.UnknownPos | UnknownPos } of {@link SourceReader}.
      *
-     * The implementation of {@link SourcePos} keeps a reference to the source reader managing
-     * the source input referenced by a given position (except for unknown positions) and the data
-     * needed to determine the position in it. If the position is unknown, that is, the source
-     * reader is undefined, then all the other elements are undefined as well; but if it is known,
-     * all the other elements must not be undefined.
-     * The information stored about the particular position is:
-     * * {@link SourcePos._inputIndex | _inputIndex}, indicating which string in the
-     *   {@link SourceReader} contains the char indicated by this position, that is, the _current
-     *   source string_,
-     * * {@link SourcePos._charIndex | _charIndex}, indicating which character in the _current
-     *   source string_ is the char indicated,
-     * * {@link SourcePos._visibleCharIndex | _visibleCharIndex}, indicating which character in
-     *   the visible part of the _current source string_ is the one indicated (see the
-     *   {@link SourceReader} documentation for explanation on visible parts of the input),
-     * * {@link SourcePos._line | _line} and {@link SourcePos._column | _column}, indicating the
-     *   position in a two dimensional disposition of the source input, where the line separators
-     *   depend on the {@link SourceReader}, according to its configuration, and
-     * * {@link SourcePos._regions | _regions}, a stack of region IDs (see the
-     *   {@link SourceReader} documentation for explanation on regions in the code).
+     * The implementation of {@link SourcePos} uses subclasses to distinguish between unknown
+     * positions and known ones.
+     * The method {@link SourcePos.isUnknown | isUnknown} is used to distinguish that.
+     * Additionally, the method {@link SourcePos.toString | toString} provides a string version
+     * of the position (not suitable for persistance, as it looses information).
      *
-     * Operations access the relevant data of a position (if it is unknown or not, if it determines
-     * the end of input or active positions, and for these, the input string name and contents,
-     * both visible and full, line and column in the contents, and the regions active at that
-     * position), and some additional operations to access the portion of contents, again visible
-     * or full, determined by two instances of the same source reader.
-     * Auxiliary operations control the conditions needed for those to work properly.
-     *
-     * A {@link SourcePos} works tightly coupled with its {@link SourceReader}, as the source input
-     * referred by the position belongs to the latter.
-     * Operations to access the source input uses protected methods of the {@link SourceReader}.
+     * See the documentation of {@link UnknownSourcePos} and {@link KnownSourcePos} for additional
+     * implementation details.
+     * @private
      */
     private static _implementationDetails = 'Dummy for documentation';
-    /** The {@link SourceReader} of the input this position belongs to.
-     * It is undefined if the position is unknown.
-     */
-    private _sourceReader: SourceReader | undefined;
-    /** The index indicating the input string in the `_sourceReader`.
-     *
-     * **INVARIANT**:
-     *  if `_sourceReader` is defined,
-     *   then `_inputIndex` is defined, `0 <= _inputIndex` and
-     *        it is a valid index in that reader
-     */
-    private _inputIndex: number | undefined;
-    /** The index indicating the exact char of this position in the input string.
-     *
-     * **INVARIANT:**
-     *  if `_sourceReader` is defined,
-     *   then `_charIndex is defined, `0 <= _charIndex` and
-     *        it is a valid index in that reader
-     */
-    private _charIndex: number | undefined;
-    /** The index indicating the exact char of this position in the visible input string.
-     *
-     * **INVARIANT:**
-     *  if `_sourceReader` is defined,
-     *   then `_visibleCharIndex` is defined, `0 <= _visibleCharIndex` and
-     *        it is a valid index in that reader
-     */
-    private _visibleCharIndex: number | undefined;
-    /** The line number of this position in the current input.
-     *
-     * **INVARIANT:**
-     *  if `_sourceReader` is defined,
-     *   then `_line` is defined, `1 <= _line`, and it is a valid line in that reader
-     */
-    private _line: number | undefined;
-    /** The column number of this position in the current input.
-     *
-     * **INVARIANT:**
-     *  if `_sourceReader` is defined,
-     *   then `_column` is defined, `1 <= _column and it is a valid column in that reader
-     */
-    private _column: number | undefined;
-    /** The regions the position in the current input belongs to.
-     *
-     * **INVARIANT:**
-     *  if `_sourceReader` is defined, then
-     *   then `_regions` is also defined, and the regions are valid in that reader
-     */
-    private _regions: string[] | undefined;
 
-    /** Constructs a specific position in an input source.
+    /** It indicates if this position does not belong to any input.
+     * It must be implemented by concrete subclasses.
+     * @group Access
+     */
+    public abstract isUnknown(): boolean;
+
+    /** It returns a string version of the position.
+     * It is NOT useful for persistence, as it looses information.
+     * It must be reimplemented by concrete subclasses.
+     * @group Access
+     */
+    public abstract toString(): string;
+}
+
+/** An unknown source position does not point to any position in any source reader.
+ * It is used when a position must be provided, but no one is known.
+ *
+ * As source positions are only created by a {@link SourceReader}, there is
+ * a static member of it, the {@link SourceReader.UnknownPos | `UnknownPos`},
+ * with an instance of this class.
+ *
+ * This positions responds with `true` to the operation {@link SourcePos.isUnknown | isUnknown}.
+ */
+export class UnknownSourcePos extends SourcePos {
+    /** Instances of {@link UnknownSourcePos} do not point to a particular {@link SourceReader}.
+     * To preserve the property that only a {@link SourceReader} can produce source positions,
+     * there is a static const * {@link SourceReader.UnknownPos | UnknownPos } of
+     * {@link SourceReader} that keeps an instance of this class.
+     *
+     * The implementation just implements the abstract operation of the superclass, with the
+     * proper information.
+     */
+    private static _implementationDetailsForUnknown = 'Dummy for documentation';
+
+    /** It returns an unknown source position.
+     *  It is intended to be used only by {@link SourceReader}.
+     * @group Protected
+     * @private
+     */
+    public constructor() {
+        super();
+    }
+
+    /** It indicates that this position does not belong to any input.
+     * Implements the abstract operation of its superclass.
+     * @group Access
+     */
+    public isUnknown(): boolean {
+        return true;
+    }
+
+    /** It returns the string representation of unknown positions.
+     * Implements the abstract operation of its superclass.
+     * @group Access
+     */
+    public toString(): string {
+        return '<' + intl.translate('string.unknownPos') + '>';
+    }
+}
+
+/** A {@link KnownSourcePos} points to a position in a specific {@link SourceReader}.
+ * It is created using the {@link SourceReader.getPos | `getPos`} operation of a particular
+ * {@link SourceReader} instance.
+ * The obtained object indicates a position in the source associated with that reader, that may be
+ * EOF or a defined position.
+ * This difference is given by subclasses.
+ *
+ * Valid operations on a {@link KnownSourcePos}, in addition to those of the superclasses,
+ * include:
+ *  * indicate if the position is EOF or not, with {@link SourcePos.isEOF | isEOF},
+ *  * get the {@link SourceReader} this positions refers to, with
+ *    {@link KnownSourcePos.sourceReader | sourceReader},
+ *  * get the line, column, and regions in the source input, with
+ *    {@link KnownSourcePos.line | line},
+ *    {@link KnownSourcePos.column | column}, and
+ *    {@link KnownSourcePos.regions | regions}, and
+ *  * get the visible or full portion of the source between a known position and some other
+ *    known position related with the same reader, with
+ *    {@link KnownSourcePos.contentsTo | contentsTo},
+ *    {@link KnownSourcePos.contentsFrom | contentsFrom},
+ *    {@link KnownSourcePos.fullContentsTo | fullContentsTo}, and
+ *    {@link KnownSourcePos.fullContentsFrom | fullContentsFrom}.
+ */
+export abstract class KnownSourcePos extends SourcePos {
+    /** Instances of {@link KnownSourcePos} point to a particular {@link SourceReader}, given as
+     * an argument during construction.
+     * It is remembered in a protected property, {@link SourcePos._sourceReader | _sourceReader}.
+     *
+     * The abstract operations of {@link SourcePos} are implemented with the relevant information.
+     * Additionally, there is a new abstract operation, {@link SourcePos.isEOF | isEOF} to
+     * determine if this position is EOF or Defined.
+     *
+     * There are four properties with the information about the position:
+     * {@link KnownSourcePos.sourceReader | sourceReader},
+     * {@link KnownSourcePos.line | line},
+     * {@link KnownSourcePos.column | column}, and
+     * {@link KnownSourcePos.regions | regions}.
+     * They are the getters of the protected properties,
+     * {@link KnownSourcePos._line | _line},
+     * {@link KnownSourcePos._column | _column}, and
+     * {@link KnownSourcePos._regions | _regions}.
+     *
+     * There are also four new operations to determine sections of the source input:
+     * {@link KnownSourcePos.contentsTo | contentsTo},
+     * {@link KnownSourcePos.contentsFrom | contentsFrom},
+     * {@link KnownSourcePos.fullContentsTo | fullContentsTo}, and
+     * {@link KnownSourcePos.fullContentsFrom | fullContentsFrom}.
+     * They use the Template Method Pattern to provide a common validation and different logics
+     * depending on the subclass.
+     * Protected methods
+     * {@link KnownSourcePos._validateSourceReaders | _validateSourceReaders},
+     * {@link KnownSourcePos._contentsTo | contentsTo },
+     * {@link KnownSourcePos._contentsFrom | contentsFrom },
+     * {@link KnownSourcePos._fullContentsTo | fullContentsTo }, and
+     * {@link KnownSourcePos._fullContentsFrom | fullContentsFrom },
+     * are used to implement this Template Method Pattern.
+     *
+     * The implementation of {@link KnownSourcePos} uses subclasses to distinguish between the
+     * special position EOF, and the rest, defined positions.
+     *
+     * The information stored about the particular position is:
+     * * {@link KnownSourcePos._line | _line} and {@link KnownSourcePos._column | _column},
+     *   indicating the position in a two dimensional disposition of the source input, where the
+     *   line separators depend on the {@link SourceReader}, according to its configuration, and
+     * * {@link KnownSourcePos._regions | _regions}, a stack of region IDs
+     *   -- see the {@link SourceReader} documentation for explanation on regions in the code.
+     *
+     * A {@link KnownSourcePos} works tightly coupled with its {@link SourceReader}, as the source
+     * input referred by the position belongs to the latter.
+     * Operations to access the source input uses protected methods of the {@link SourceReader}.
+     * @private
+     */
+    private static _implementationDetailsForKnown = 'Dummy for documentation';
+
+    /** The {@link SourceReader} of the input this position belongs to. */
+    protected _sourceReader: SourceReader;
+    /** The line number of this position in the current input.
+     * It will be modified only by the constructor.
+     *
+     * **INVARIANT:** `1 <= _line`, and it is a valid line in that reader.
+     */
+    protected _line: number;
+    /** The column number of this position in the current input.
+     * It will be modified only by the constructor.
+     *
+     * **INVARIANT:** `1 <= _column and it is a valid column in that reader.
+     */
+    protected _column: number;
+    /** The regions the position in the current input belongs to.
+     * It will be modified only by the constructor.
+     *
+     * **INVARIANT:** the regions are valid in that reader.
+     */
+    protected _regions: string[];
+
+    /** It returns a source position belonging to some {@link SourceReader}.
      *  It is intended to be used only by {@link SourceReader}.
      *
-     * **PRECONDITIONS:**
-     *   * if the `sourceReader` is defined, then all other arguments are defined as well
-     *   * all numbers are >= 0
-     *   * numbers are consistent with the reader state (not verified during execution)
-     *
-     * It should throw {@link ErrorWrongArgsForSourcePos}, but that situation is not controlled
-     * and thus, invalid data may be created (producing later a {@link ErrorInvariantViolationBy}
-     * on other operations).
+     * **PRECONDITIONS:** (not verified during execution)
+     *  * all numbers are >= 0
+     *  * numbers are consistent with the reader state
      * @group Protected
      * @private
      */
     public constructor(
-        sourceReader?: SourceReader,
-        inputIndex?: number,
-        charIndex?: number,
-        visibleCharIndex?: number,
-        line?: number,
-        column?: number,
-        regions?: string[]
+        sourceReader: SourceReader,
+        line: number,
+        column: number,
+        regions: string[]
     ) {
-        /** These controls are not necessary, because it is an internal operation...
-         * /
-        if (sourceReader !== undefined) {
-          and(
-            expect(inputIndex).toBeDefined(),
-            expect(charIndex).toBeDefined(),
-            expect(visibleCharIndex).toBeDefined(),
-            expect(line).toBeDefined(),
-            expect(column).toBeDefined(),
-            expect(regions).toBeDefined()
-          ).orThrow(new ErrorWrongArgsForSourcePos());
-          and(
-            expect(inputIndex).toBeGreaterThanOrEqual(0),
-            expect(charIndex).toBeGreaterThanOrEqual(0),
-            expect(line).toBeGreaterThanOrEqual(0),
-            expect(column).toBeGreaterThanOrEqual(0)
-          ).orThrow(new ErrorWrongArgsForSourcePos())
-        }
-        /*
-        */
+        super();
         this._sourceReader = sourceReader;
-        this._inputIndex = inputIndex;
-        this._charIndex = charIndex;
-        this._visibleCharIndex = visibleCharIndex;
         this._line = line;
         this._column = column;
         this._regions = regions;
     }
 
-    /** The name of the input string this position belongs to.
-     *
-     * **PRECONDITION:** `!this.isUnknown() && !this.isEOF()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorAtEOFBy} if the position indicates EOF.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
+    /** It returns the {@link SourceReader} this position belongs to.
+     * @group Access
      */
-    public get inputName(): string {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('inputName', 'SourcePos'));
-        expect(this.isEOF()).toBe(false).orThrow(new ErrorAtEOFBy('inputName', 'SourcePos'));
-
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && this._theInputIndex !== undefined) {
-            let name: string = this._sourceReader._inputNameAt(this._theInputIndex);
-            const allDigits: RegExp = /^[0-9]*$/;
-            if (allDigits.test(name)) {
-                name = SourceReader._unnamedStr + '[' + name + ']';
-            }
-            return name;
-        } else {
-            throw new ErrorInvariantViolationBy('contentsFrom', 'SourcePos');
-        }
+    public get sourceReader(): SourceReader {
+        return this._sourceReader;
     }
 
-    /** The contents of the visible input string this position belongs to.
-     *
-     * **PRECONDITION:** `!this.isUnknown() && !this.isEOF()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorAtEOFBy} if the position indicates EOF.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
+    /** The line number of this position in the current input.
+     * @group Access
      */
-    public get inputContents(): string {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('inputContents', 'SourcePos'));
-        expect(this.isEOF()).toBe(false).orThrow(new ErrorAtEOFBy('inputContents', 'SourcePos'));
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && this._theInputIndex !== undefined) {
-            return this._sourceReader._visibleInputContentsAt(this._theInputIndex);
-        } else {
-            throw new ErrorInvariantViolationBy('contentsFrom', 'SourcePos');
+    public get line(): number {
+        return this._line;
+    }
+
+    /** The column number of this position in the current input.
+     * @group Access
+     */
+    public get column(): number {
+        return this._column;
+    }
+
+    /** The regions the position in the current input belongs to.
+     * @group Access
+     */
+    public get regions(): string[] {
+        return this._regions;
+    }
+
+    /** It indicates that this position belongs to some input.
+     * It implements the abstract operation of its superclass.
+     * @group Access
+     */
+    public isUnknown(): boolean {
+        return false;
+    }
+
+    /** It indicates if this position correspond to the end of input of the
+     * {@link SourceReader} it belongs, or not.
+     *  It must be implemented by concrete subclasses.
+     * @group Access
+     */
+    public abstract isEOF(): boolean;
+
+    /** The exact portion of the source that is enclosed between the `this` position and
+     * `to` position and is visible.
+     * If `to` comes before `this`, he result is the empty string.
+     *
+     * The implementation uses the Template Method Pattern, to have a common validation
+     * and specific logic given by subclasses.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader.
+     * @throws {@link ErrorUnmatchingPositionsBy}
+     *         if the argument and `this` do not belong to the same reader.
+     * @group Access
+     */
+    public contentsTo(to: KnownSourcePos): string {
+        this._validateSourceReaders(to, 'contentsTo', 'SourcePos');
+        return this._contentsTo(to);
+    }
+
+    /** The exact portion of the source that is enclosed between the `from` position and `this`
+     * position and is visible.
+     * If `this` comes before `from`, the result is the empty string.
+     *
+     * The implementation uses the Template Method Pattern, to have a common validation
+     * and specific logic given by subclasses.
+     *
+     * **PRECONDITIONS:** both positions correspond to the same reader.
+     * @throws {@link ErrorUnmatchingPositionsBy}
+     *         if the argument and `this` do not belong to the same reader.
+     * @group Access
+     */
+    public contentsFrom(from: KnownSourcePos): string {
+        this._validateSourceReaders(from, 'contentsFrom', 'KnownSourcePos');
+        return this._contentsFrom(from);
+    }
+
+    /** The exact portion of the source that is enclosed between the `this` position and `to`
+     * position (visible and non visible).
+     *  If `to` comes before `this`, the result is the empty string.
+     *
+     * The implementation uses the Template Method Pattern, to have a common validation
+     * and specific logic given by subclasses.
+     *
+     * **PRECONDITIONS:** both positions correspond to the same reader.
+     * @throws {@link ErrorUnmatchingPositionsBy}
+     *         if the argument and `this` do not belong to the same reader.
+     * @group Access
+     */
+    public fullContentsTo(to: KnownSourcePos): string {
+        this._validateSourceReaders(to, 'fullContentsTo', 'KnownSourcePos');
+        return this._fullContentsTo(to);
+    }
+
+    /** The exact portion of the source that is enclosed between the `from` position and `this`
+     * position (visible and non visible).
+     *  If `this` comes before `from`, the result is the empty string.
+     *
+     * The implementation uses the Template Method Pattern, to have a common validation
+     * and specific logic given by subclasses.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader.
+     * @throws {@link ErrorUnmatchingPositionsBy}
+     *         if the argument and `this` do not belong to the same reader.
+     * @group Access
+     */
+    public fullContentsFrom(from: KnownSourcePos): string {
+        this._validateSourceReaders(from, 'fullContentsFrom', 'KnownSourcePos');
+        return this._fullContentsFrom(from);
+    }
+
+    /** It validates that both positions correspond to the same reader
+     *
+     * Implements a common validation for the Template Method Pattern.
+     * @throws {@link ErrorUnmatchingPositionsBy}
+     *         if `this` and `that` positions do not belong to the same reader.
+     * @group Protected
+     * @private
+     */
+    protected _validateSourceReaders(
+        that: KnownSourcePos,
+        operation: string,
+        context: string
+    ): void {
+        expect(this._sourceReader)
+            .toBe(that._sourceReader)
+            .orThrow(new ErrorUnmatchingPositionsBy(operation, context));
+    }
+
+    /** The exact portion of the source that is enclosed between `this` position and `to`
+     * position and is visible.
+     * If `this` comes after `to`, the result is the empty string.
+     *
+     * It implements the specific logic of each subclass for the Template Method Pattern
+     * of {@link SourcePos.contentsTo | contentsTo}.
+     * It must be reimplemented by subclasses.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     * @group Protected
+     * @private
+     */
+    protected abstract _contentsTo(to: KnownSourcePos);
+
+    /** The exact portion of the source that is enclosed between `from` position and `this`
+     * position and is visible.
+     * If `from` comes after `this`, the result is the empty string.
+     *
+     * It implements the specific logic of each subclass for the Template Method Pattern
+     * of {@link SourcePos.contentsFrom | contentsFrom}.
+     * It must be reimplemented by subclasses.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     * @group Protected
+     * @private
+     */
+    protected abstract _contentsFrom(from: KnownSourcePos);
+
+    /** The exact portion of the source that is enclosed between `this` position and `to`
+     * position (both visible and non-visible).
+     * If `this` comes after `to`, the result is the empty string.
+     *
+     * It implements the specific logic of each subclass for the Template Method Pattern
+     * of {@link SourcePos.fullContentsTo | fullContentsTo}.
+     * It must be reimplemented by subclasses.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     * @group Protected
+     * @private
+     */
+    protected abstract _fullContentsTo(to: KnownSourcePos);
+
+    /** The exact portion of the source that is enclosed between `from` position and `this`
+     * position (both visible and non-visible).
+     * If `from` comes after `this`, the result is the empty string.
+     *
+     * It implements the specific logic of each subclass for the Template Method Pattern
+     * of {@link SourcePos.fullContentsFrom | fullContentsFrom}.
+     * It must be reimplemented by subclasses.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     * @group Protected
+     * @private
+     */
+    protected abstract _fullContentsFrom(from: KnownSourcePos);
+}
+
+/** An {@link EOFSourcePos} points to the EOF position in a specific {@link SourceReader}.
+ * That position is reached when all input strings have been processed.
+ * It is a special position, because it does not point to a particular position inside the
+ * source input, but to the end of it.
+ */
+export class EOFSourcePos extends KnownSourcePos {
+    /** Instances of {@link EOFSourcePos} point at the EOF of a particular {@link SourceReader}.
+     *
+     * The abstract operations of {@link KnownSourcePos} are implemented or reimplemented with the
+     * relevant information.
+     * @private
+     */
+    private static _implementationDetailsForEOF = 'Dummy for documentation';
+
+    /** It constructs the EOF position in an input source.
+     *  It is intended to be used only by {@link SourceReader}.
+     *
+     * **PRECONDITIONS:** (not verified during execution)
+     *  * all numbers are >= 0
+     *  * numbers are consistent with the reader state
+     * @group Protected
+     * @private
+     */
+    public constructor(
+        sourceReader: SourceReader,
+        line: number,
+        column: number,
+        regions: string[]
+    ) {
+        super(sourceReader, line, column, regions);
+    }
+
+    /** It indicates that this position is EOF.
+     * It implements the abstract operation of its superclass.
+     * @group Access
+     */
+    public isEOF(): boolean {
+        return true;
+    }
+
+    /** It returns the string representation of EOF positions.
+     * Implements the abstract operation of its superclass.
+     * @group Access
+     */
+    public toString(): string {
+        return '<' + intl.translate('string.eof') + '>';
+    }
+
+    /** The exact portion of the source that is enclosed between the `this` position and
+     * `to` position and is visible.
+     *
+     * Implements the specific logic for the Template Method Pattern
+     * of {@link SourcePos.contentsTo | contentsTo}.
+     * As `this` position is EOF, all the `to` positions are before it, and so the result
+     * is the empty string.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     * @group Protected
+     * @private
+     */
+    protected _contentsTo(to: KnownSourcePos): string {
+        return '';
+    }
+
+    /** The exact portion of the source that is enclosed between the `from` position and `this`
+     * position and is visible.
+     *
+     * Implements the specific logic for the Template Method Pattern
+     * of {@link SourcePos.contentsFrom | contentsFrom}.
+     * It uses a protected method of the source reader.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     */
+    protected _contentsFrom(from: KnownSourcePos): string {
+        return this._sourceReader._visibleInputFromTo(from, this);
+    }
+
+    /** The exact portion of the source that is enclosed between the `this` position and `to`
+     * position (visible and non visible).
+     *
+     * Implements the specific logic for the Template Method Pattern
+     * of {@link SourcePos.fullContentsTo | fullContentsTo}.
+     * As `this` position is EOF, all the `to` positions are before it, and so the result
+     * is the empty string.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     */
+    protected _fullContentsTo(to: KnownSourcePos): string {
+        return '';
+    }
+
+    /** The exact portion of the source that is enclosed between the `from` position and `this`
+     * position (visible and non visible).
+     *
+     * Implements the specific logic for the Template Method Pattern
+     * of {@link SourcePos.fullContentsFrom | fullContentsFrom}.
+     * It uses a protected method of the source reader.
+     *
+     * **PRECONDITION:** both positions correspond to the same reader
+     *                   (not validated, as it is a protected operation).
+     */
+    protected _fullContentsFrom(from: KnownSourcePos): string {
+        return this._sourceReader._inputFromTo(from, this);
+    }
+}
+
+/** A {@link DefinedSourcePos} points to a particular position, different from EOF, in a source
+ * given by a {@link SourceReader}.
+ *
+ * It provide the right implementation for the operations given by its superclasses,
+ * {@link KnownSourcePos} and {@link SourcePos}.
+ * Additionally, it provides three new operations that only have sense for defined positions:
+ *  * {@link DefinedSourcePos.inputName | inputName}, the name of the particular string in the
+ *    source input that has the char pointed to by this position,
+ *  * {@link DefinedSourcePos.inputContents | inputContents}, the visible contents of the
+ *    particular string in the source input that has the char pointed to by this position, and
+ *  * {@link DefinedSourcePos.fullInputContents | fullInputContents}, the contents (both visible
+ *    and non-visible) of the particular string in the source input that has the char pointed to
+ *    by this position.
+ */
+export class DefinedSourcePos extends KnownSourcePos {
+    /**
+     * The implementation of {@link DefinedSourcePos} stores additional information to locate the
+     * precise position it points to in its {@link SourceReader}, to be able to implement all the
+     * required operations.
+     * The values stored are tightly coupled with the implementation in the {@link SourceReader};
+     * they are:
+     * * {@link SourcePos._inputIndex | _inputIndex}, with information about which string in the
+     *   {@link SourceReader} contains the char pointed to by this position, that is, the _current
+     *   source string_,
+     * * {@link SourcePos._charIndex | _charIndex}, with information about which character in the
+     *   _current source string_ is the char pointed to, and
+     * * {@link SourcePos._visibleCharIndex | _visibleCharIndex}, with information about which
+     *   character in the visible part of the _current source string_ is the one pointed to (see
+     *   the {@link SourceReader} documentation for explanation on visible parts of the input).
+     * This information must be provided by the {@link SourceReader} during creation, and it will
+     * be accessed by it when calculating sections of the source input in the implementation of
+     * operations
+     * {@link DefinedSourcePos._contentsTo | _contentsTo},
+     * {@link DefinedSourcePos._contentsFrom | _contentsFrom},
+     * {@link DefinedSourcePos._contentsTo | _contentsTo}, and
+     * {@link DefinedSourcePos._fullContentsFrom | _fullContentsFrom}.
+     *
+     * Additionally, it provides three new operations that only have sense for defined positions:
+     *  * {@link DefinedSourcePos.inputName | inputName}, the name of the particular string in the
+     *    source input that has the char pointed to by this position,
+     *  * {@link DefinedSourcePos.inputContents | inputContents}, the visible contents of the
+     *    particular string in the source input that has the char pointed to by this position, and
+     *  * {@link DefinedSourcePos.fullInputContents | fullInputContents}, the contents (both visible
+     *    and non-visible) of the particular string in the source input that has the char pointed to
+     *    by this position.
+     */
+    private static _implementationDetailsForDefPos = 'Dummy for documentation';
+
+    /** The index with information about the input string in the `_sourceReader`.
+     *
+     * **INVARIANT**: `0 <= _inputIndex` and it is a valid index in that reader.
+     */
+    private _inputIndex: number;
+    /** The index with information about the exact char pointed to by this position in the input
+     * string.
+     *
+     * **INVARIANT:** `0 <= _charIndex` and it is a valid index in that reader.
+     */
+    private _charIndex: number;
+    /** The index with information about the exact char pointed to by this position in the visible
+     * input string.
+     *
+     * **INVARIANT:** `0 <= _visibleCharIndex` and it is a valid index in that reader.
+     */
+    private _visibleCharIndex: number;
+
+    /** Constructs a specific position different from EOF in an input source.
+     *  It is intended to be used only by {@link SourceReader}.
+     *
+     * **PRECONDITIONS:** (not verified during execution)
+     *  * all numbers are >= 0
+     *  * numbers are consistent with the reader state     *
+     * @group Protected
+     * @private
+     */
+    public constructor(
+        sourceReader: SourceReader,
+        line: number,
+        column: number,
+        regions: string[],
+        inputIndex: number,
+        charIndex: number,
+        visibleCharIndex: number
+    ) {
+        super(sourceReader, line, column, regions);
+        this._inputIndex = inputIndex;
+        this._charIndex = charIndex;
+        this._visibleCharIndex = visibleCharIndex;
+    }
+
+    /** The name of the input string this position belongs to. */
+    public get inputName(): string {
+        let name: string = this._sourceReader._inputNameAt(this._theInputIndex);
+        const allDigits: RegExp = /^[0-9]*$/;
+        if (allDigits.test(name)) {
+            name = SourceReader._unnamedStr + '[' + name + ']';
         }
+        return name;
+    }
+
+    /** The contents of the visible input string this position belongs to. */
+    public get inputContents(): string {
+        return this._sourceReader._visibleInputContentsAt(this._theInputIndex);
     }
 
     /** The contents of the input string this position belongs to
      *  (both visible and non visible).
-     *
-     * **PRECONDITION:** `!this.isUnknown() && !this.isEOF()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorAtEOFBy} if the position indicates EOF.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
      */
     public get fullInputContents(): string {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('fullInputContents', 'SourcePos'));
-        expect(this.isEOF())
-            .toBe(false)
-            .orThrow(new ErrorAtEOFBy('fullInputContents', 'SourcePos'));
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && this._theInputIndex !== undefined) {
-            return this._sourceReader._inputContentsAt(this._theInputIndex);
-        } else {
-            throw new ErrorInvariantViolationBy('contentsFrom', 'SourcePos');
-        }
-    }
-
-    /** The line number of this position in the current input.
-     *
-     * **PRECONDITION:** `!this.isUnknown() && !this.isEOF()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorAtEOFBy} if the position indicates EOF.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
-     */
-    public get line(): number {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('line', 'SourcePos'));
-        expect(this.isEOF()).toBe(false).orThrow(new ErrorAtEOFBy('line', 'SourcePos'));
-        if (this._line !== undefined) {
-            return this._line;
-        } else {
-            throw new ErrorInvariantViolationBy('line', 'SourcePos');
-        }
-    }
-
-    /** The column number of this position in the current input.
-     *
-     * **PRECONDITION:** `!this.isUnknown() && !this.isEOF()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorAtEOFBy} if the position indicates EOF.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
-     */
-    public get column(): number {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('column', 'SourcePos'));
-        expect(this.isEOF()).toBe(false).orThrow(new ErrorAtEOFBy('column', 'SourcePos'));
-        if (this._column !== undefined) {
-            return this._column;
-        } else {
-            throw new ErrorInvariantViolationBy('column', 'SourcePos');
-        }
-    }
-
-    /** The regions the position in the current input belongs to.
-     *
-     * **PRECONDITION:** `!this.isUnknown()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
-     */
-    public get regions(): string[] {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('regions', 'SourcePos'));
-        if (this._regions !== undefined) {
-            return this._regions;
-        } else {
-            throw new ErrorInvariantViolationBy('regions', 'SourcePos');
-        }
+        return this._sourceReader._inputContentsAt(this._theInputIndex);
     }
 
     /** The index indicating the input string in the source input.
      *  It is supposed to be used only by {@link SourceReader}.
-     *
-     * **PRECONDITION:** `!this.isUnknown()`
-     *
-     * It should throw {@link ErrorInvalidOperationForUnknownBy} if the position is unknown,
-     * but that situation is not controlled, as it is a protected operation and thus not usable
-     * by the user.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
      * @group Protected.SourceReader
      * @private
      */
     public get _theInputIndex(): number {
-        // This next if is only needed for typing
-        if (this._inputIndex !== undefined) {
-            return this._inputIndex;
-        } else {
-            throw new ErrorInvariantViolationBy('_theInputIndex', 'SourcePos');
-        }
+        return this._inputIndex;
     }
 
     /** The index indicating the exact char in the input string in the source input.
      * It is supposed to be used only by {@link SourceReader}.
-     *
-     * **PRECONDITION:** `!this.isUnknown()`
-     *
-     * It should throw {@link ErrorInvalidOperationForUnknownBy} if the position is unknown,
-     * but that situation is not controlled, as it is a protected operation and thus not usable
-     * by the user.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
      * @group Protected.SourceReader
      * @private
      */
     public get _theCharIndex(): number {
-        // This next if is only needed for typing
-        if (this._charIndex !== undefined) {
-            return this._charIndex;
-        } else {
-            throw new ErrorInvariantViolationBy('_theCharIndex', 'SourcePos');
-        }
+        return this._charIndex;
     }
 
     /** The index indicating the exact char in the visible input string in the source input.
      *  It is supposed to be used only by {@link SourceReader}.
-     *
-     * **PRECONDITION:** `!this.isUnknown()`
-     *
-     * It should throw {@link ErrorInvalidOperationForUnknownBy} if the position is unknown,
-     * but that situation is not controlled, as it is a protected operation and thus not usable
-     * by the user.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
      * @group Protected.SourceReader
      * @private
      */
     public get _theVisibleCharIndex(): number {
-        // This next if is only needed for typing
-        if (this._visibleCharIndex !== undefined) {
-            return this._visibleCharIndex;
-        } else {
-            throw new ErrorInvariantViolationBy('_theVisibleCharIndex', 'SourcePos');
-        }
-    }
-
-    /** Indicates if this position does not belong to any input.
-     * @group Access
-     */
-    public isUnknown(): boolean {
-        return this._sourceReader === undefined;
+        return this._visibleCharIndex;
     }
 
     /** Indicates if this position determines the end of input of the current input.
-     *
-     * **PRECONDITION:** `!this.isUnknown()`
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorInvariantViolationBy} if the position has invalid data.
      * @group Access
      */
     public isEOF(): boolean {
-        expect(this.isUnknown())
-            .toBe(false)
-            .orThrow(new ErrorInvalidOperationForUnknownBy('isEOF', 'SourcePos'));
-        // This next if is redundant, but needed for typing
-        if (
-            this._sourceReader !== undefined &&
-            this._theInputIndex !== undefined &&
-            this._theCharIndex !== undefined
-        ) {
-            return this._sourceReader._isEOFAt(this._theInputIndex, this._theCharIndex);
-        } else {
-            throw new ErrorInvariantViolationBy('isEOF', 'SourcePos');
-        }
+        return false;
     }
 
     /** Returns a string version of the position.
@@ -424,116 +703,43 @@ export class SourcePos {
      * @group Access
      */
     public toString(): string {
-        if (this.isUnknown()) {
-            return '<' + intl.translate('string.unknownPos') + '>';
-        } else if (this.isEOF()) {
-            return '<' + intl.translate('string.eof') + '>';
-        } else {
-            return `${this.inputName}@${this._line}:${this._column}`;
-        }
+        return `${this.inputName}@${this._line}:${this._column}`;
     }
 
-    /** The exact portion of the source that is enclosed between the `this` position and
-     * `to` position and is visible.
-     *  If `to` comes before `this`, he result is the empty string.
+    /** The implementation required by the superclass for the Template Method Pattern that
+     * is used by {@link KnownSourcePos.contentsTo | contentsTo}.
      *
-     * **PRECONDITIONS:**
-     *   * `!this.isUnknown() && !to.isUnknown()`
-     *   * both positions correspond to the same reader
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorUnmatchingPositionsBy} if the argument and `this` do not belong to
-     * the same reader.
+     * **PRECONDITION:** both positions correspond to the same reader (not verified).
      */
-    public contentsTo(to: SourcePos): string {
-        and(expect(this.isUnknown()).toBe(false), expect(to.isUnknown()).toBe(false)).orThrow(
-            new ErrorInvalidOperationForUnknownBy('contentsTo', 'SourcePos')
-        );
-
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && to._sourceReader !== undefined) {
-            expect(this._sourceReader)
-                .toBe(to._sourceReader)
-                .orThrow(new ErrorUnmatchingPositionsBy('contentsTo', 'SourcePos'));
-            return this._sourceReader._visibleInputFromTo(this, to);
-        } else {
-            throw new ErrorCannotHappenBy('contentsTo', 'SourcePos');
-        }
+    protected _contentsTo(to: KnownSourcePos): string {
+        return this._sourceReader._visibleInputFromTo(this, to);
     }
 
-    /** The exact portion of the source that is enclosed between the `from` position and `this`
-     * position and is visible.
-     * If `this` comes before `from`, the result is the empty string.
+    /** The implementation required by the superclass for the Template Method Pattern that
+     * is used by {@link KnownSourcePos.contentsFrom | contentsFrom}.
      *
-     * **PRECONDITIONS:**
-     *   * `!this.isUnknown() && !from.isUnknown()`
-     *   * both positions correspond to the same reader
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorUnmatchingPositionsBy} if the argument and `this` do not belong to
+     * **PRECONDITION:** both positions correspond to the same reader (not verified).
      */
-    public contentsFrom(from: SourcePos): string {
-        and(expect(this.isUnknown()).toBe(false), expect(from.isUnknown()).toBe(false)).orThrow(
-            new ErrorInvalidOperationForUnknownBy('contentsFrom', 'SourcePos')
-        );
-
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && from._sourceReader !== undefined) {
-            expect(this._sourceReader)
-                .toBe(from._sourceReader)
-                .orThrow(new ErrorUnmatchingPositionsBy('contentsFrom', 'SourcePos'));
-            return this._sourceReader._visibleInputFromTo(from, this);
-        } else {
-            throw new ErrorCannotHappenBy('contentsFrom', 'SourcePos');
-        }
+    protected _contentsFrom(from: KnownSourcePos): string {
+        return this._sourceReader._visibleInputFromTo(from, this);
     }
 
-    /** The exact portion of the source that is enclosed between the `this` position and `to`
-     * position (visible and non visible).
-     *  If `to` comes before `this`, the result is the empty string.
+    /** The implementation required by the superclass for the Template Method Pattern that
+     * is used by {@link KnownSourcePos.fullContentsTo | fullContentsTo}.
      *
-     * **PRECONDITIONS:**
-     *   * `! this.isUnknown() && ! to.isUnknown()`
-     *   * both positions correspond to the same reader
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorUnmatchingPositionsBy} if the argument and `this` do not belong to
+     * **PRECONDITION:** both positions correspond to the same reader (not verified).
      */
-    public fullContentsTo(to: SourcePos): string {
-        and(expect(this.isUnknown()).toBe(false), expect(to.isUnknown()).toBe(false)).orThrow(
-            new ErrorInvalidOperationForUnknownBy('fullContentsTo', 'SourcePos')
-        );
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && to._sourceReader !== undefined) {
-            expect(this._sourceReader)
-                .toBe(to._sourceReader)
-                .orThrow(new ErrorUnmatchingPositionsBy('fullContentsTo', 'SourcePos'));
-            return this._sourceReader._inputFromTo(this, to);
-        } else {
-            throw new ErrorCannotHappenBy('fullContentsTo', 'SourcePos');
-        }
+    protected _fullContentsTo(to: KnownSourcePos): string {
+        return this._sourceReader._inputFromTo(this, to);
     }
 
-    /** The exact portion of the source that is enclosed between the `from` position and `this`
-     * position (visible and non visible).
-     *  If `this` comes before `from`, the result is the empty string.
+    /** The implementation required by the superclass for the Template Method Pattern that
+     * is used by {@link KnownSourcePos.fullContentsFrom | fullContentsFrom}.
      *
-     * **PRECONDITIONS:**
-     *   * `!this.isUnknown() && !from.isUnknown()`
-     *   * both positions correspond to the same reader
-     * @throws {@link ErrorInvalidOperationForUnknownBy} if the position is unknown.
-     * @throws {@link ErrorUnmatchingPositionsBy} if the argument and `this` do not belong to
+     * **PRECONDITION:** both positions correspond to the same reader (not verified).
      */
-    public fullContentsFrom(from: SourcePos): string {
-        and(expect(this.isUnknown()).toBe(false), expect(from.isUnknown()).toBe(false)).orThrow(
-            new ErrorInvalidOperationForUnknownBy('fullContentsFrom', 'SourcePos')
-        );
-        // This next if is redundant, but needed for typing
-        if (this._sourceReader !== undefined && from._sourceReader !== undefined) {
-            expect(this._sourceReader)
-                .toBe(from._sourceReader)
-                .orThrow(new ErrorUnmatchingPositionsBy('fullContentsFrom', 'SourcePos'));
-            return this._sourceReader._inputFromTo(from, this);
-        } else {
-            throw new ErrorCannotHappenBy('fullContentsFrom', 'SourcePos');
-        }
+    protected _fullContentsFrom(from: KnownSourcePos): string {
+        return this._sourceReader._inputFromTo(from, this);
     }
 }
 
@@ -618,7 +824,7 @@ export class SourcePos {
  */
 export class SourceReader {
     /** A special position indicating that the position is not known. */
-    public static UnknownPos: SourcePos = new SourcePos();
+    public static UnknownPos: SourcePos = new UnknownSourcePos();
     // With no arguments it creates an unknown position.
     /** The string to use as a name for unnamed input strings.
      *  It is intended to be used only by instances and {@link SourcePos}.
@@ -762,16 +968,16 @@ export class SourceReader {
      */
     public constructor(input: SourceInput, lineEnders: string) {
         // No input string is not a valid option
-        // and(
-        //     // expect(input).toBeDefined(), // It cannot be undefined, by typing
-        //     expect(input).not.toBe([]),
-        //     expect(input).not.toBe({})
-        // ).orThrow(new ErrorNoInput());
-        if (input.length === 0) {
+        if (typeof input === 'object' && Object.keys(input).length === 0) {
             throw new ErrorNoInput();
         }
-        // Fix input to object in case of a string
-        // to satisfy `_inputs` invariant.
+        // The expectations do not pass the tests
+        // or(
+        //     expect(input).not.toHaveType('object'),
+        //     expect(Object.keys(input).length).not.toBe(0)
+        // ).orThrow(new ErrorNoInput());
+
+        // Fix input to object in case of a string to satisfy `_inputs` invariant.
         if (typeof input === 'string') {
             input = [input];
         }
@@ -814,7 +1020,10 @@ export class SourceReader {
         /* **OBSERVATION:** by the invariant of {@link SourceReader._charIndex}, the precondition
          *                  guarantees the existence of a current char.
          */
-        expect(this.atEOF()).toBe(false).orThrow(new ErrorAtEOFBy('peek', 'SourceReader'));
+        // expect(this.atEOF()).toBe(false).orThrow(new ErrorAtEOFBy('peek', 'SourceReader'));
+        if (this.atEOF()) {
+            throw new ErrorAtEOFBy('peek', 'SourceReader');
+        }
         return this._inputContentsAt(this._inputIndex)[this._charIndex];
     }
 
@@ -826,6 +1035,9 @@ export class SourceReader {
      * @group Access
      */
     public startsWith(str: string): boolean {
+        if (str === '') {
+            return true;
+        }
         if (this.atEOF()) {
             return false;
         }
@@ -836,21 +1048,24 @@ export class SourceReader {
     }
 
     /** It returns the current position as a {@link SourcePos}.
-     *  See {@link SourceReader} for an example
+     *  See {@link SourceReader} documentation for an example
      * @group Access
      */
-    public getPos(): SourcePos {
-        this._makeCurrentCharVisible();
-        return new SourcePos(
-            this,
-            this._inputIndex,
-            this._charIndex,
-            // length != 0 because the current char is visible
-            this._visibleInputs[this._inputIndex].length - 1,
-            this._line,
-            this._column,
-            this._cloneRegions()
-        );
+    public getPos(): KnownSourcePos {
+        if (this.atEOF()) {
+            return new EOFSourcePos(this, this._line, this._column, this._regions);
+        } else {
+            this._makeCurrentCharVisible();
+            return new DefinedSourcePos(
+                this,
+                this._line,
+                this._column,
+                this._cloneRegions(),
+                this._inputIndex,
+                this._charIndex,
+                this._visibleInputs[this._inputIndex].length - 1
+            );
+        }
     }
 
     /** It skips the given number of chars at the input string.
@@ -990,79 +1205,93 @@ export class SourceReader {
      * @group Protected.SourcePos
      * @private
      */
-    public _inputFromTo(from: SourcePos, to: SourcePos): string {
-        // This next if is necessary only because of typing :(
-        if (
-            from._theInputIndex !== undefined &&
-            from._theCharIndex !== undefined &&
-            to._theInputIndex !== undefined &&
-            to._theCharIndex !== undefined
-        ) {
-            const inputFrom: number = from._theInputIndex;
-            const charFrom: number = from._theCharIndex;
-            const inputTo: number = to._theInputIndex;
-            const charTo: number = to._theCharIndex;
-
-            if (inputFrom === inputTo && charFrom <= charTo) {
-                return this._inputContentsAt(inputFrom).slice(charFrom, charTo);
-            } else if (inputFrom < inputTo) {
-                let slice: string = this._inputContentsAt(inputFrom).slice(charFrom);
-                for (let i = inputFrom + 1; i < inputTo; i++) {
-                    slice += this._inputContentsAt(i);
-                }
-                slice += this._inputContentsAt(inputTo).slice(1, charTo);
-                return slice;
-            }
-            return ''; // Positions inverted
+    public _inputFromTo(from: KnownSourcePos, to: KnownSourcePos): string {
+        let inputFrom: number;
+        let charFrom: number;
+        // Distinguish between the two subclasses of KnownSourcePos
+        if (from.isEOF()) {
+            inputFrom = this._inputsNames.length - 1;
+            charFrom = this._visibleInputContentsAt(inputFrom).length;
         } else {
-            throw new ErrorInvariantViolationBy('_inputFromTo', 'SourceReader');
+            // As from is not EOF, it is safe to cast it down.
+            inputFrom = (to as DefinedSourcePos)._theInputIndex;
+            charFrom = (to as DefinedSourcePos)._theVisibleCharIndex;
         }
+        let inputTo: number;
+        let charTo: number;
+        // Distinguish between the two subclasses of KnownSourcePos
+        if (to.isEOF()) {
+            inputTo = this._inputsNames.length - 1;
+            charTo = this._visibleInputContentsAt(inputTo).length;
+        } else {
+            // As to is not EOF, it is safe to cast it down.
+            inputTo = (to as DefinedSourcePos)._theInputIndex;
+            charTo = (to as DefinedSourcePos)._theVisibleCharIndex;
+        }
+        // The construction of the contents that are required.
+        if (inputFrom === inputTo && charFrom <= charTo) {
+            return this._inputContentsAt(inputFrom).slice(charFrom, charTo);
+        } else if (inputFrom < inputTo) {
+            let slice: string = this._inputContentsAt(inputFrom).slice(charFrom);
+            for (let i = inputFrom + 1; i < inputTo; i++) {
+                slice += this._inputContentsAt(i);
+            }
+            slice += this._inputContentsAt(inputTo).slice(1, charTo);
+            return slice;
+        }
+        return ''; // Positions inverted
     }
 
     /** It returns the contents of the visible input between two positions.
      * If `from` is not before `to`, the result is the empty string.
-     *  It is intended to be used only by {@link SourcePos}.
+     * It is intended to be used only by {@link KnownSourcePos} subclasses.
      *
      * **PRECONDITION:** both positions correspond to this reader (and so are >= 0 -- not verified)
-     * @throws {@link ErrorInvariantViolationBy} if the positions do not belong to this source
-     *         reader (technically, it is not an invariant error, but as it is a protected
-     *         operation, it should not happen).
      * @group Protected.SourcePos
      * @private
      */
-    public _visibleInputFromTo(from: SourcePos, to: SourcePos): string {
-        // This next if is necessary only because of typing :(
-        if (
-            from._theInputIndex !== undefined &&
-            from._theVisibleCharIndex !== undefined &&
-            to._theInputIndex !== undefined &&
-            to._theVisibleCharIndex !== undefined
-        ) {
-            const inputFrom: number = from._theInputIndex;
-            const charFrom: number = from._theVisibleCharIndex;
-            const inputTo: number = to._theInputIndex;
-            const charTo: number = to._theVisibleCharIndex;
-            if (inputFrom === inputTo && charFrom <= charTo) {
-                return this._visibleInputContentsAt(inputFrom).slice(charFrom, charTo);
-            } else if (inputFrom < inputTo) {
-                let slice: string = this._visibleInputContentsAt(inputFrom).slice(charFrom);
-                for (let i = inputFrom + 1; i < inputTo; i++) {
-                    slice += this._visibleInputContentsAt(i);
-                }
-                slice += this._visibleInputContentsAt(inputTo).slice(1, charTo);
-                return slice;
-            }
-            return ''; // Positions inverted
+    public _visibleInputFromTo(from: KnownSourcePos, to: KnownSourcePos): string {
+        let inputFrom: number;
+        let charFrom: number;
+        // Distinguish between the two subclasses of KnownSourcePos
+        if (from.isEOF()) {
+            inputFrom = this._inputsNames.length - 1;
+            charFrom = this._visibleInputContentsAt(inputFrom).length;
         } else {
-            throw new ErrorInvariantViolationBy('_visibleInputFromTo', 'SourceReader');
+            // As from is not EOF, it is safe to cast it down.
+            inputFrom = (to as DefinedSourcePos)._theInputIndex;
+            charFrom = (to as DefinedSourcePos)._theVisibleCharIndex;
         }
+        let inputTo: number;
+        let charTo: number;
+        // Distinguish between the two subclasses of KnownSourcePos
+        if (to.isEOF()) {
+            inputTo = this._inputsNames.length - 1;
+            charTo = this._visibleInputContentsAt(inputTo).length;
+        } else {
+            // As to is not EOF, it is safe to cast it down.
+            inputTo = (to as DefinedSourcePos)._theInputIndex;
+            charTo = (to as DefinedSourcePos)._theVisibleCharIndex;
+        }
+        // The construction of the contents that are required.
+        if (inputFrom === inputTo && charFrom <= charTo) {
+            return this._visibleInputContentsAt(inputFrom).slice(charFrom, charTo);
+        } else if (inputFrom < inputTo) {
+            let slice: string = this._visibleInputContentsAt(inputFrom).slice(charFrom);
+            for (let i = inputFrom + 1; i < inputTo; i++) {
+                slice += this._visibleInputContentsAt(i);
+            }
+            slice += this._visibleInputContentsAt(inputTo).slice(1, charTo);
+            return slice;
+        }
+        return ''; // Positions inverted
     }
 
     /** It adds the current char to the current visible string, if it is not already added.
      * @group Auxiliaries
      */
     private _makeCurrentCharVisible(): void {
-        if (!this._currentCharVisible) {
+        if (!this._currentCharVisible && !this.atEOF()) {
             this._visibleInputs[this._inputIndex] += this.peek();
             this._currentCharVisible = true;
         }
