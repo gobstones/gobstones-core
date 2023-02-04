@@ -3,6 +3,7 @@
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  * @module SourceReader
  */
+// Imports
 import {
     ErrorAtEOFBy,
     ErrorIncompatibleSilentSkip,
@@ -35,8 +36,7 @@ import { SourceReaderIntl as intl } from './translations';
  */
 export type SourceInput = string | Record<string, string> | string[];
 
-/**
- * Instances of {@link SourcePos} point to particular positions in the source given by a
+/** Instances of {@link SourcePos} point to particular positions in the source given by a
  * {@link SourceReader}.
  * They may be unknown or they may point to a particular {@link SourceReader}.
  * All {@link SourcePos} are created through {@link SourceReader}.
@@ -58,6 +58,7 @@ export type SourceInput = string | Record<string, string> | string[];
  * strings).
  */
 export abstract class SourcePos {
+    // #region Private elements
     /** Instances of {@link SourcePos} are tightly coupled with {@link SourceReader}, because they
      * determine particular positions in the source input kept by those.
      * They are created exclusively by a {@link SourceReader}, either using the operation
@@ -75,7 +76,9 @@ export abstract class SourcePos {
      * @private
      */
     private static _implementationDetails = 'Dummy for documentation';
+    // #endregion
 
+    // #region API
     /** It indicates if this position does not belong to any input.
      * It must be implemented by concrete subclasses.
      * @group Access
@@ -88,6 +91,7 @@ export abstract class SourcePos {
      * @group Access
      */
     public abstract toString(): string;
+    // #endregion
 }
 
 /** An unknown source position does not point to any position in any source reader.
@@ -100,6 +104,7 @@ export abstract class SourcePos {
  * This positions responds with `true` to the operation {@link SourcePos.isUnknown | isUnknown}.
  */
 export class UnknownSourcePos extends SourcePos {
+    // #region Private elements
     /** Instances of {@link UnknownSourcePos} do not point to a particular {@link SourceReader}.
      * To preserve the property that only a {@link SourceReader} can produce source positions,
      * there is a static const * {@link SourceReader.UnknownPos | UnknownPos } of
@@ -118,7 +123,9 @@ export class UnknownSourcePos extends SourcePos {
     public constructor() {
         super();
     }
+    // #endregion
 
+    // #region API
     /** It indicates that this position does not belong to any input.
      * Implements the abstract operation of its superclass.
      * @group Access
@@ -134,6 +141,7 @@ export class UnknownSourcePos extends SourcePos {
     public toString(): string {
         return '<' + intl.translate('string.unknownPos') + '>';
     }
+    // #endregion
 }
 
 /** A {@link KnownSourcePos} points to a position in a specific {@link SourceReader}.
@@ -160,6 +168,7 @@ export class UnknownSourcePos extends SourcePos {
  *    {@link KnownSourcePos.fullContentsFrom | fullContentsFrom}.
  */
 export abstract class KnownSourcePos extends SourcePos {
+    // #region Private elements
     /** Instances of {@link KnownSourcePos} point to a particular {@link SourceReader}, given as
      * an argument during construction.
      * It is remembered in a protected property, {@link SourcePos._sourceReader | _sourceReader}.
@@ -252,7 +261,9 @@ export abstract class KnownSourcePos extends SourcePos {
         this._column = column;
         this._regions = regions;
     }
+    // #endregion
 
+    // #region API
     /** It returns the {@link SourceReader} this position belongs to.
      * @group Access
      */
@@ -363,7 +374,9 @@ export abstract class KnownSourcePos extends SourcePos {
         this._validateSourceReaders(from, 'fullContentsFrom', 'KnownSourcePos');
         return this._fullContentsFrom(from);
     }
+    // #endregion
 
+    // #region Private operations
     /** It validates that both positions correspond to the same reader
      *
      * Implements a common validation for the Template Method Pattern.
@@ -441,6 +454,7 @@ export abstract class KnownSourcePos extends SourcePos {
      * @private
      */
     protected abstract _fullContentsFrom(from: KnownSourcePos);
+    // #endregion
 }
 
 /** An {@link EOFSourcePos} points to the EOF position in a specific {@link SourceReader}.
@@ -449,6 +463,7 @@ export abstract class KnownSourcePos extends SourcePos {
  * source input, but to the end of it.
  */
 export class EOFSourcePos extends KnownSourcePos {
+    // #region Private elements
     /** Instances of {@link EOFSourcePos} point at the EOF of a particular {@link SourceReader}.
      *
      * The abstract operations of {@link KnownSourcePos} are implemented or reimplemented with the
@@ -474,7 +489,9 @@ export class EOFSourcePos extends KnownSourcePos {
     ) {
         super(sourceReader, line, column, regions);
     }
+    // #endregion
 
+    // #region API
     /** It indicates that this position is EOF.
      * It implements the abstract operation of its superclass.
      * @group Access
@@ -490,7 +507,9 @@ export class EOFSourcePos extends KnownSourcePos {
     public toString(): string {
         return '<' + intl.translate('string.eof') + '>';
     }
+    // #endregion
 
+    // #region Private operations
     /** The exact portion of the source that is enclosed between the `this` position and
      * `to` position and is visible.
      *
@@ -550,6 +569,7 @@ export class EOFSourcePos extends KnownSourcePos {
     protected _fullContentsFrom(from: KnownSourcePos): string {
         return this._sourceReader._inputFromTo(from, this);
     }
+    // #endregion
 }
 
 /** A {@link DefinedSourcePos} points to a particular position, different from EOF, in a source
@@ -567,6 +587,7 @@ export class EOFSourcePos extends KnownSourcePos {
  *    by this position.
  */
 export class DefinedSourcePos extends KnownSourcePos {
+    // #region Private elements
     /**
      * The implementation of {@link DefinedSourcePos} stores additional information to locate the
      * precise position it points to in its {@link SourceReader}, to be able to implement all the
@@ -641,7 +662,9 @@ export class DefinedSourcePos extends KnownSourcePos {
         this._charIndex = charIndex;
         this._visibleCharIndex = visibleCharIndex;
     }
+    // #endregion
 
+    // #region API getters
     /** The name of the input string this position belongs to. */
     public get inputName(): string {
         let name: string = this._sourceReader._inputNameAt(this._theInputIndex);
@@ -663,7 +686,9 @@ export class DefinedSourcePos extends KnownSourcePos {
     public get fullInputContents(): string {
         return this._sourceReader._inputContentsAt(this._theInputIndex);
     }
+    // #endregion
 
+    // #region Private getters
     /** The index indicating the input string in the source input.
      *  It is supposed to be used only by {@link SourceReader}.
      * @group Protected.SourceReader
@@ -690,7 +715,9 @@ export class DefinedSourcePos extends KnownSourcePos {
     public get _theVisibleCharIndex(): number {
         return this._visibleCharIndex;
     }
+    // #endregion
 
+    // #region API
     /** Indicates if this position determines the end of input of the current input.
      * @group Access
      */
@@ -705,7 +732,9 @@ export class DefinedSourcePos extends KnownSourcePos {
     public toString(): string {
         return `${this.inputName}@${this._line}:${this._column}`;
     }
+    // #endregion
 
+    // #region Private operations
     /** The implementation required by the superclass for the Template Method Pattern that
      * is used by {@link KnownSourcePos.contentsTo | contentsTo}.
      *
@@ -741,6 +770,7 @@ export class DefinedSourcePos extends KnownSourcePos {
     protected _fullContentsFrom(from: KnownSourcePos): string {
         return this._sourceReader._inputFromTo(from, this);
     }
+    // #endregion
 }
 
 /** A {@link SourceReader} allows you to read input from some source, either one single string of
@@ -823,8 +853,12 @@ export class DefinedSourcePos extends KnownSourcePos {
  * ```
  */
 export class SourceReader {
+    // #region StaticAPI
     /** A special position indicating that the position is not known. */
     public static UnknownPos: SourcePos = new UnknownSourcePos();
+    // #endregion
+
+    // #region Private elements
     // With no arguments it creates an unknown position.
     /** The string to use as a name for unnamed input strings.
      *  It is intended to be used only by instances and {@link SourcePos}.
@@ -1001,7 +1035,9 @@ export class SourceReader {
         // Adjust _inputIndex when there are empty inputs
         this._adjustInputIndex();
     }
+    // #endregion
 
+    // #region API
     /** It indicates if there are no more characters to read from the input.
      * @group Access
      */
@@ -1136,7 +1172,9 @@ export class SourceReader {
             this._regions.pop();
         }
     }
+    // #endregion
 
+    // #region Private operations
     /** It indicates if the given indexes determine the end of input, or a valid position.
      *  It is intended to be used only by {@link SourcePos}.
      *
@@ -1367,9 +1405,12 @@ export class SourceReader {
      */
     private _cloneRegions(): string[] {
         const newRegions: string[] = [];
-        for (let i = this._regions.length - 1; i >= 0; i--) {
-            newRegions.push(this._regions[i]);
+        // for (let i = this._regions.length - 1; i >= 0; i--) {
+        //     newRegions.push(this._regions[i]);
+        for (const region of this._regions) {
+            newRegions.push(region);
         }
         return newRegions;
     }
+    // #endregion
 }
