@@ -30,14 +30,14 @@ input can be read as if the annotations were not there, and</li>
 <li>to allow the relationship of parts of the input with identifiers naming &quot;regions&quot;, thus making
 it possible for external tools to identify those parts with ease.</li>
 </ul>
-<p>A <a href="SourceReader.SourceReader.html">SourceReader</a> is created using a <a href="../types/SourceReader.SourceInput.html">SourceInput</a> and then <a href="SourceReader.SourcePos.html">SourcePos</a> can be
-read from it.
+<p>A <a href="SourceReader.SourceReader.html">SourceReader</a> is created using a <a href="../types/SourceReader.SourceInput.html">SourceInput</a> and then <a href="SourceReader.SourcePos.html">SourcePos</a>, in
+particular <a href="SourceReader.KnownSourcePos.html">KnownSourcePos</a>, can be read from it.
 Possible interactions with a <a href="SourceReader.SourceReader.html">SourceReader</a> include:</p>
 <ul>
 <li>peek a character, with <a href="SourceReader.SourceReader.html#peek">peek</a>,</li>
 <li>check if a given strings occurs at the beginning of text without skipping it, with
 <a href="SourceReader.SourceReader.html#startsWith">startsWith</a>,</li>
-<li>get the current position (as a <a href="SourceReader.SourcePos.html">SourcePos</a>), with <a href="SourceReader.SourceReader.html#getPos">getPos</a>,</li>
+<li>get the current position as a <a href="SourceReader.KnownSourcePos.html">KnownSourcePos</a>, with <a href="SourceReader.SourceReader.html#getPos">getPos</a>,</li>
 <li>detect if the end of input was reached, with <a href="SourceReader.SourceReader.html#atEOF">atEOF</a>,</li>
 <li>skip one or more characters, with <a href="SourceReader.SourceReader.html#skip">skip</a>, and</li>
 <li>manipulate &quot;regions&quot;, with <a href="SourceReader.SourceReader.html#beginRegion">beginRegion</a>
@@ -46,15 +46,13 @@ When reading from sources with multiple string of input, skipping moves from one
 next transparently for the user (with the exception that regions are reset).</li>
 </ul>
 <p>A <a href="SourceReader.SourceReader.html">SourceReader</a> also has a special position,
-<a href="SourceReader.SourceReader.html#UnknownPos"><code>UnknownPos</code></a>, as a static member of the class, indicating that
+<a href="SourceReader.SourceReader.html#UnknownPos">UnknownPos</a>, as a static member of the class, indicating that
 the position is not known.</p>
 <p>Characters from the input are classified as either visible or non visible.
 Visible characters affect the line and column calculation, and, conversely, non visible
 characters do not.
-Characters can be marked as visible by skipping it normally or by getting their position;
-non visible characters are marked by silently skip over them (as long as its position has not
-been retrieved -- it is an error to attempt moving silently over a character marked visible by
-getting its position).
+Characters are marked as visible by skipping over them normally;
+characters are marked as non visible by silently skip over them.
 Visibility of the input affect the information that positions may provide.</p>
 <p>Regarding regions, a &quot;region&quot; is some part of the input that has an ID (as a string).
 It is used in handling automatically generated code.
@@ -80,14 +78,13 @@ A more complex program will use functions to organize the access with a logical 
 <h5 class="tsd-index-heading uppercase" role="button" aria-expanded="false" tabIndex=0><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 5.50969L8 11.6609L14.5 5.50969L12.5466 3.66086L8 7.96494L3.45341 3.66086L1.5 5.50969Z" fill="var(--color-text)"></path></svg> Index</h5></summary>
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Constructors</h3>
+<h3 class="tsd-index-heading">API: Creation</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#constructor" class="tsd-index-link tsd-kind-constructor tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#4D7FFF" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-512-path"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)" id="icon-512-text"></path></svg><span>constructor</span></a>
 </div></section>
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Properties</h3>
+<h3 class="tsd-index-heading">Implementation: Internal state</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_charIndex" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-1024-path"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)" id="icon-1024-text"></path></svg><span>_char<wbr/>Index</span></a>
 <a href="SourceReader.SourceReader.html#_column" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_column</span></a>
-<a href="SourceReader.SourceReader.html#_currentCharVisible" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_current<wbr/>Char<wbr/>Visible</span></a>
 <a href="SourceReader.SourceReader.html#_inputIndex" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_input<wbr/>Index</span></a>
 <a href="SourceReader.SourceReader.html#_inputs" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_inputs</span></a>
 <a href="SourceReader.SourceReader.html#_inputsNames" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_inputs<wbr/>Names</span></a>
@@ -95,54 +92,59 @@ A more complex program will use functions to organize the access with a logical 
 <a href="SourceReader.SourceReader.html#_lineEnders" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_line<wbr/>Enders</span></a>
 <a href="SourceReader.SourceReader.html#_regions" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_regions</span></a>
 <a href="SourceReader.SourceReader.html#_visibleInputs" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_visible<wbr/>Inputs</span></a>
-<a href="SourceReader.SourceReader.html#UnknownPos" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>Unknown<wbr/>Pos</span></a>
-<a href="SourceReader.SourceReader.html#_implementationDetails" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_implementation<wbr/>Details</span></a>
 </div></section>
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Protected.SourcePos</h3>
+<h3 class="tsd-index-heading">API: Static Elements</h3>
+<div class="tsd-index-list"><a href="SourceReader.SourceReader.html#UnknownPos" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>Unknown<wbr/>Pos</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Implementation: Summary</h3>
+<div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_implementationDetails" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_implementation<wbr/>Details</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Implementation: Protected for Source Positions</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_unnamedStr" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_unnamed<wbr/>Str</span></a>
 <a href="SourceReader.SourceReader.html#_inputContentsAt" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-2048-path"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)" id="icon-2048-text"></path></svg><span>_input<wbr/>Contents<wbr/>At</span></a>
 <a href="SourceReader.SourceReader.html#_inputFromTo" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_input<wbr/>From<wbr/>To</span></a>
 <a href="SourceReader.SourceReader.html#_inputNameAt" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_input<wbr/>Name<wbr/>At</span></a>
-<a href="SourceReader.SourceReader.html#_isEOFAt" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_isEOFAt</span></a>
 <a href="SourceReader.SourceReader.html#_visibleInputContentsAt" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_visible<wbr/>Input<wbr/>Contents<wbr/>At</span></a>
 <a href="SourceReader.SourceReader.html#_visibleInputFromTo" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_visible<wbr/>Input<wbr/>From<wbr/>To</span></a>
 </div></section>
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Auxiliaries</h3>
+<h3 class="tsd-index-heading">Implementation: Auxiliaries</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_adjustInputIndex" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_adjust<wbr/>Input<wbr/>Index</span></a>
 <a href="SourceReader.SourceReader.html#_adjustLineAndColumn" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_adjust<wbr/>Line<wbr/>And<wbr/>Column</span></a>
 <a href="SourceReader.SourceReader.html#_cloneRegions" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_clone<wbr/>Regions</span></a>
 <a href="SourceReader.SourceReader.html#_hasCurrentCharAtCurrentInput" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Input</span></a>
 <a href="SourceReader.SourceReader.html#_hasCurrentInput" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_has<wbr/>Current<wbr/>Input</span></a>
+<a href="SourceReader.SourceReader.html#_inputFromToIn" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_input<wbr/>From<wbr/>To<wbr/>In</span></a>
 <a href="SourceReader.SourceReader.html#_isEndOfLine" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_is<wbr/>End<wbr/>Of<wbr/>Line</span></a>
-<a href="SourceReader.SourceReader.html#_makeCurrentCharVisible" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_make<wbr/>Current<wbr/>Char<wbr/>Visible</span></a>
 </div></section>
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Access</h3>
+<h3 class="tsd-index-heading">API: Access</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#atEOF" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>atEOF</span></a>
 <a href="SourceReader.SourceReader.html#getPos" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>get<wbr/>Pos</span></a>
 <a href="SourceReader.SourceReader.html#peek" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>peek</span></a>
 <a href="SourceReader.SourceReader.html#startsWith" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>starts<wbr/>With</span></a>
 </div></section>
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Modification</h3>
+<h3 class="tsd-index-heading">API: Modification</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#beginRegion" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>begin<wbr/>Region</span></a>
 <a href="SourceReader.SourceReader.html#endRegion" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>end<wbr/>Region</span></a>
 <a href="SourceReader.SourceReader.html#skip" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>skip</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Constructors</h2>
+<h2>API: Creation</h2>
 <section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="constructor.new_SourceReader">new <wbr/>Source<wbr/>Reader<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><a href="../types/SourceReader.SourceInput.html" class="tsd-signature-type" data-tsd-kind="Type alias">SourceInput</a>, lineEnders<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SourceReader.SourceReader.html" class="tsd-signature-type" data-tsd-kind="Class">SourceReader</a><a href="#constructor.new_SourceReader" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>A new <a href="SourceReader.SourceReader.html">SourceReader</a> is created from the given <code>input</code>.
-It starts in the first position of the first input, if the input is not empty.
+It starts in the first position of the first non empty input string.
 Line enders must be provided, affecting the calculation of line and column for positions.
 If there are no line enders, all strings in the source are assumed as having only one line.</p>
-<p><strong>PRECONDITION:</strong> there is at least one input string</p>
+<p><strong>PRECONDITION:</strong> there is at least one input string.</p>
 
 <h3>Throws</h3><p><a href="SourceReader.ErrorNoInput.html">ErrorNoInput</a> if the arguments are undefined or has no strings.</p>
 </div>
@@ -161,7 +163,7 @@ If there are no line enders, all strings in the source are assumed as having onl
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="SourceReader.SourceReader.html" class="tsd-signature-type" data-tsd-kind="Class">SourceReader</a></h4></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Properties</h2>
+<h2>Implementation: Internal state</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_charIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_char<wbr/>Index</span><a href="#_charIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_char<wbr/>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -181,13 +183,6 @@ If there are no line enders, all strings in the source are assumed as having onl
  then <code>_column &lt; _inputs[_inputsNames[_inputIndex]].length</code></li>
 </ul>
 </div></section>
-<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_currentCharVisible" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_current<wbr/>Char<wbr/>Visible</span><a href="#_currentCharVisible" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">_current<wbr/>Char<wbr/>Visible<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-<div class="tsd-comment tsd-typography"><p>This boolean indicates wether the current char has been added to the visible inputs or not.
-It is needed because both <a href="SourceReader.SourceReader.html#skip">skip</a> and
-<a href="SourceReader.SourceReader.html#getPos">getPos</a> may do it, but it has to be added just once.</p>
-</div></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_inputIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>Index</span><a href="#_inputIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_input<wbr/>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
@@ -200,7 +195,7 @@ The current input is that in
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_inputs</span><a href="#_inputs" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_inputs<span class="tsd-signature-symbol">:</span> <a href="../types/SourceReader.SourceInput.html" class="tsd-signature-type" data-tsd-kind="Type alias">SourceInput</a></div>
 <div class="tsd-comment tsd-typography"><p>The actual input.</p>
-<p><strong>INVARIANT:</strong> it is always and object or array (not a string)</p>
+<p><strong>INVARIANT:</strong> it is always and object or array (not a string).</p>
 </div></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_inputsNames" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_inputs<wbr/>Names</span><a href="#_inputsNames" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -241,12 +236,16 @@ The current input is that in
 <li>it has the same keys as <code>_inputs</code></li>
 <li>the values of each key are contained in the values of the corresponding key at <code>_inputs</code></li>
 </ul>
-</div></section>
+</div></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>API: Static Elements</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="UnknownPos" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>Unknown<wbr/>Pos</span><a href="#UnknownPos" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">Unknown<wbr/>Pos<span class="tsd-signature-symbol">:</span> <a href="SourceReader.SourcePos.html" class="tsd-signature-type" data-tsd-kind="Class">SourcePos</a><span class="tsd-signature-symbol"> = ...</span></div>
 <div class="tsd-comment tsd-typography"><p>A special position indicating that the position is not known.</p>
-</div></section>
+</div></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Implementation: Summary</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_implementationDetails" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_implementation<wbr/>Details</span><a href="#_implementationDetails" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_implementation<wbr/>Details<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;Dummy for documentation&#39;</span></div>
@@ -263,8 +262,6 @@ The current input is that in
 <li>an index to the current visible input string in the array of inputs names
 (because it may be different from the input index),
 <a href="SourceReader.SourceReader.html#_charIndex">_charIndex</a>,</li>
-<li>a boolean indicating if the current char has been added to the visible inputs,
-<a href="SourceReader.SourceReader.html#_currentCharVisible">_currentCharVisible</a>,</li>
 <li>the current line and column in the current input string,
 <a href="SourceReader.SourceReader.html#_line">_line</a> and
 <a href="SourceReader.SourceReader.html#_column">_column</a>,</li>
@@ -281,16 +278,16 @@ current input string is reached, indexes are adjusted
 <p>Line and column numbers are adjusted depending on which characters are considered as ending a
 line, as given by the property <a href="SourceReader.SourceReader.html#_lineEnders">_lineEnders</a>, and which
 characters are considered visible, as indicating by the user through
-<a href="SourceReader.SourceReader.html#skip">skip</a> and <a href="SourceReader.SourceReader.html#getPos">getPos</a>.</p>
+<a href="SourceReader.SourceReader.html#skip">skip</a>.</p>
 <p>The visible input is conformed by those characters of the input that has been skipped
-normally or whose position has been retrieved. As visible and non visible characters can
-be interleaved with no restrictions, it is better to keep a copy of the visible parts:
-characters are copied to the visible inputs attribute when skipped normally or when
-getting their position.</p>
-<p>This class is tightly coupled with <a href="SourceReader.SourcePos.html">SourcePos</a>, because of instances of that class
-represent different positions in the source inputs kept by a <a href="SourceReader.SourceReader.html">SourceReader</a>.
+normally.
+As visible and non visible characters can be interleaved with no restrictions, it is better
+to keep a copy of the visible parts: characters are copied to the visible inputs attribute
+when skipped normally.</p>
+<p>This class is tightly coupled with <a href="SourceReader.SourcePos.html">SourcePos</a> and its subclasses, because of instances
+of that class represent different positions in the source inputs kept by a
+<a href="SourceReader.SourceReader.html">SourceReader</a>.
 The operations
-<a href="SourceReader.SourceReader.html#_isEOFAt">_isEOFAt</a>,
 <a href="SourceReader.SourceReader.html#_inputNameAt">_inputNameAt</a>,
 <a href="SourceReader.SourceReader.html#_visibleInputContentsAt">_visibleInputContentsAt</a>,
 and <a href="SourceReader.SourceReader.html#_visibleInputFromTo">_visibleInputFromTo</a>,
@@ -305,7 +302,7 @@ each new position produced with <a href="SourceReader.SourceReader.html#getPos">
 snapshot of the region stack, and not a mutable reference.</p>
 </div></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Protected.SourcePos</h2>
+<h2>Implementation: Protected for Source Positions</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_unnamedStr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_unnamed<wbr/>Str</span><a href="#_unnamedStr" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_unnamed<wbr/>Str<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;&lt;?&gt;&#39;</span></div>
@@ -338,10 +335,6 @@ If that happens, the results are not contemplated.</p>
  If <code>from</code> is not before <code>to</code>, the result is the empty string.
  It is intended to be used only by <a href="SourceReader.SourcePos.html">SourcePos</a>.</p>
 <p><strong>PRECONDITION:</strong> both positions correspond to this reader (and so are &gt;= 0 -- not verified)</p>
-
-<h3>Throws</h3><p>ErrorInvariantViolationBy if the positions do not belong to this source
-        reader (technically, it is not an invariant error, but as it is a protected
-        operation, it should not happen).</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -368,23 +361,6 @@ If that happens, the results are not contemplated.</p>
 <li>
 <h5>index: <span class="tsd-signature-type">number</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4></li></ul></section>
-<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_isEOFAt" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_isEOFAt</span><a href="#_isEOFAt" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_isEOFAt._isEOFAt-1">_isEOFAt<span class="tsd-signature-symbol">(</span>inputIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, charIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_isEOFAt._isEOFAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>It indicates if the given indexes determine the end of input, or a valid position.
- It is intended to be used only by <a href="SourceReader.SourcePos.html">SourcePos</a>.</p>
-<p><strong>PRECONDITION:</strong> <code>0 &lt;= inputIndex</code> and <code>0 &lt;= charIndex</code></p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5>inputIndex: <span class="tsd-signature-type">number</span></h5></li>
-<li>
-<h5>charIndex: <span class="tsd-signature-type">number</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_visibleInputContentsAt" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Input<wbr/>Contents<wbr/>At</span><a href="#_visibleInputContentsAt" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -421,7 +397,7 @@ It is intended to be used only by <a href="SourceReader.KnownSourcePos.html">Kno
 <h5>to: <a href="SourceReader.KnownSourcePos.html" class="tsd-signature-type" data-tsd-kind="Class">KnownSourcePos</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Auxiliaries</h2>
+<h2>Implementation: Auxiliaries</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_adjustInputIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_adjust<wbr/>Input<wbr/>Index</span><a href="#_adjustInputIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -444,7 +420,7 @@ That invariant may fail in the case of empty inputs, or when moving <code>_charI
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_clone<wbr/>Regions</span><a href="#_cloneRegions" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_cloneRegions._cloneRegions-1">_clone<wbr/>Regions<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#_cloneRegions._cloneRegions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
-<li class="tsd-description">
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
 <div class="tsd-comment tsd-typography"><p>Returns a clone of the stack of regions.
 Auxiliary for <a href="SourceReader.SourceReader.html#getPos">getPos</a>.
 It is necessary because regions of <a href="SourceReader.SourcePos.html">SourcePos</a> must correspond to those at that
@@ -468,6 +444,30 @@ position and do not change with changes in reader state.</p>
 <div class="tsd-comment tsd-typography"><p>Indicates if there are still input strings to be read.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_inputFromToIn" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>From<wbr/>To<wbr/>In</span><a href="#_inputFromToIn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_inputFromToIn._inputFromToIn-1">_input<wbr/>From<wbr/>To<wbr/>In<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><a href="SourceReader.KnownSourcePos.html" class="tsd-signature-type" data-tsd-kind="Class">KnownSourcePos</a>, to<span class="tsd-signature-symbol">: </span><a href="SourceReader.KnownSourcePos.html" class="tsd-signature-type" data-tsd-kind="Class">KnownSourcePos</a>, visible<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_inputFromToIn._inputFromToIn-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>It returns the contents of either the full or visible input between two positions,
+depending on the <code>visible</code> argument.
+If <code>from</code> is not before <code>to</code>, the result is the empty string.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>both positions correspond to this reader (and so are &gt;= 0 -- not verified)</li>
+<li>conts is one of the inputs of the source reader (either full or visible)</li>
+</ul>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>from: <a href="SourceReader.KnownSourcePos.html" class="tsd-signature-type" data-tsd-kind="Class">KnownSourcePos</a></h5></li>
+<li>
+<h5>to: <a href="SourceReader.KnownSourcePos.html" class="tsd-signature-type" data-tsd-kind="Class">KnownSourcePos</a></h5></li>
+<li>
+<h5>visible: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_isEndOfLine" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_is<wbr/>End<wbr/>Of<wbr/>Line</span><a href="#_isEndOfLine" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -481,17 +481,9 @@ to the configuration of the reader.</p>
 <ul class="tsd-parameter-list">
 <li>
 <h5>ch: <span class="tsd-signature-type">string</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section>
-<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_makeCurrentCharVisible" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_make<wbr/>Current<wbr/>Char<wbr/>Visible</span><a href="#_makeCurrentCharVisible" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_makeCurrentCharVisible._makeCurrentCharVisible-1">_make<wbr/>Current<wbr/>Char<wbr/>Visible<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_makeCurrentCharVisible._makeCurrentCharVisible-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>It adds the current char to the current visible string, if it is not already added.</p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Access</h2>
+<h2>API: Access</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="atEOF" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>atEOF</span><a href="#atEOF" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -540,7 +532,7 @@ See <a href="SourceReader.SourceReader.html">SourceReader</a> documentation for 
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Modification</h2>
+<h2>API: Modification</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="beginRegion" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>begin<wbr/>Region</span><a href="#beginRegion" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -579,18 +571,25 @@ automatically to the original input (the default is not
 silent).
 If the skip is not silent, the input is visible, and
 thus it is added to the visible inputs.</p>
-<p> See <a href="SourceReader.SourceReader.html">SourceReader</a> for an example of <code>skip</code>.</p>
-
-<h3>Throws</h3><p><a href="SourceReader.ErrorIncompatibleSilentSkip.html">ErrorIncompatibleSilentSkip</a> if the position was made visible by a
-        <a href="SourceReader.SourceReader.html#getPos">getPos</a> and the skip has to be silent.</p>
+<p> See <a href="SourceReader.SourceReader.html">SourceReader</a> for an example of visible <code>skip</code>s.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> howMuch: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5></li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> howMuch: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>An indication of how many characters have to be skipped.
+               It may be given as a number or as a string.
+               In this last case, the length of the string is used (the contents
+               are ignored).
+               If it is not given, it is assumed 1.</p>
+</div></li>
 <li>
-<h5>silently: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5></li></ul></div>
+<h5>silently: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>A boolean indicating if the skip must be silent.
+                If it is not given, it is assumed <code>false</code>, that is, a visible skip.
+                If the skip is visible, the char is added to the visible input.</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
@@ -617,10 +616,6 @@ thus it is added to the visible inputs.</p>
 <li class="tsd-kind-module"><a href="../modules/Expectations.html">Expectations</a></li>
 <li class="tsd-kind-module"><a href="../modules/RegExp.html">Reg<wbr/>Exp</a></li>
 <li class="current selected tsd-kind-module"><a href="../modules/SourceReader.html">Source<wbr/>Reader</a></li>
-<li class="tsd-kind-module"><a href="../modules/SourceReader_translations.html">Source<wbr/>Reader/translations</a></li>
-<li class="tsd-kind-module"><a href="../modules/SourceReader_translations_SR_Locale.html">Source<wbr/>Reader/translations/SR-<wbr/>Locale</a></li>
-<li class="tsd-kind-module"><a href="../modules/SourceReader_translations_SR_en.html">Source<wbr/>Reader/translations/SR-<wbr/>en</a></li>
-<li class="tsd-kind-module"><a href="../modules/SourceReader_translations_SR_es.html">Source<wbr/>Reader/translations/SR-<wbr/>es</a></li>
 <li class="tsd-kind-module"><a href="../modules/Translator.html">Translator</a></li>
 <li class="tsd-kind-module"><a href="../modules/cli.html">cli</a></li>
 <li class="tsd-kind-module"><a href="../modules/helpers.html">helpers</a></li></ul></li></ul></div></details></nav>
@@ -631,7 +626,6 @@ thus it is added to the visible inputs.</p>
 <li class="tsd-kind-constructor tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-512-path"></use><use href="#icon-512-text"></use></svg>constructor</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_charIndex" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>_char<wbr/>Index</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_column" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>_column</a></li>
-<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_currentCharVisible" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>_current<wbr/>Char<wbr/>Visible</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputIndex" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>_input<wbr/>Index</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputs" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>_inputs</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputsNames" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>_inputs<wbr/>Names</a></li>
@@ -649,10 +643,9 @@ thus it is added to the visible inputs.</p>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_hasCurrentInput" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_has<wbr/>Current<wbr/>Input</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputContentsAt" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_input<wbr/>Contents<wbr/>At</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputFromTo" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_input<wbr/>From<wbr/>To</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputFromToIn" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_input<wbr/>From<wbr/>To<wbr/>In</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputNameAt" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_input<wbr/>Name<wbr/>At</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_isEOFAt" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_isEOFAt</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_isEndOfLine" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_is<wbr/>End<wbr/>Of<wbr/>Line</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_makeCurrentCharVisible" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_make<wbr/>Current<wbr/>Char<wbr/>Visible</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_visibleInputContentsAt" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_visible<wbr/>Input<wbr/>Contents<wbr/>At</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_visibleInputFromTo" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_visible<wbr/>Input<wbr/>From<wbr/>To</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#atEOF" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>atEOF</a></li>
