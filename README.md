@@ -28,7 +28,7 @@ most code usage in Gobstones. Currently some of the exported utilities are:
 * SourceReader (A class to solve the problem of locating characters in source input)
 * helper tools (Such as a tool for creating matrices, a deepEqual comparison, and tools to flatten/unflatten an object)
 
-Just import then from the main module the tools you want. [Check the API](https://github.io/gobstones-core) for more information on what is exported and how it works.
+Just import then from the main module the tools you want. [Check the API](https://gobstones.github.io/gobstones-core) for more information on what is exported and how it works.
 
 ```typescript
 import { Board } from '@gobstones/gobstones-core';
