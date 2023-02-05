@@ -1,6 +1,9 @@
 /**
  * The translator to be used by {@link SourceReader} localization
  * of API strings.
+ *
+ * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
+ * @module SourceReader
  */
 
 import { SourceReaderLocale } from './SR-Locale';
@@ -11,6 +14,11 @@ import { es } from './SR-es';
 // ===========================================================
 // API: {
 // ===========================================================
+/** The locales available for translations for {@link SourceReader}.
+ * It is similar to other `availableLocales`, providing locales not only for English and Spanish,
+ * but also several local dialects (all defaulting to their base language).
+ * @group Implementation: Translations
+ */
 export const availableLocales = {
     en,
     'en-AU': en,
@@ -53,6 +61,11 @@ export const availableLocales = {
     'es-VE': es
 };
 
+/** The instance of the {@link Translator} for {@link SourceReader}.
+ * It specialize its langugage interface to {@link SourceReaderLocale}.
+ * It uses {@link availableLocales} to provide the locales, and defaults to English.
+ * @group Implementation: Translations
+ */
 export const SourceReaderIntl = new Translator<SourceReaderLocale>(availableLocales, 'en', true);
 // Flatten to allow dot notation
 // }

@@ -5,12 +5,16 @@
  */
 import { SourceReaderIntl as intl } from './translations';
 
+// ===============================================
+// Error superclasses
+// ===============================================
 /**
  * The superclass for all {@link SourceReader} errors.
  * It provides internationalization of error messages through a {@link Translator}.
  * It also restores the prototype chain, as described in the
  *  {@link https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#support-for-newtarget
  *   | Typescript Handbook}.
+ * @group API: Errors
  */
 export class SourceReaderError extends Error {
     /**
@@ -30,6 +34,7 @@ export class SourceReaderError extends Error {
 /**
  * The superclass for all {@link SourceReader} errors with `operation` and `context` as interpolations.
  * It constructs the corresponding interpolation.
+ * @group API: Errors
  */
 export class SourceReaderErrorBy extends SourceReaderError {
     /**
@@ -41,9 +46,14 @@ export class SourceReaderErrorBy extends SourceReaderError {
         super(key, { operation, context });
     }
 }
+// ===============================================
 
+// ===============================================
+// Error classes
+// ===============================================
 /**
- * The error to produce when a SourceReader is called with no input (undefined, or empty objects).
+ * The error to produce when a SourceReader is called with no input (an empty object or array).
+ * @group API: Errors
  */
 export class ErrorNoInput extends SourceReaderError {
     /**
@@ -55,23 +65,14 @@ export class ErrorNoInput extends SourceReaderError {
 }
 
 /**
- * The error to produce when .
- */
-export class ErrorIncompatibleSilentSkip extends SourceReaderError {
-    /**
-     * The constructor for {@link ErrorIncompatibleSilentSkip} errors.
-     */
-    public constructor() {
-        super('IncompatibleSilentSkip');
-    }
-}
-
-/**
- * The error to produce when a function that is not supposed to be used at EOF is called.
+ * The error to produce when two positions related with different readers are used to determine
+ * a portion of the contents.
+ * @group API: Errors
  */
 export class ErrorUnmatchingPositionsBy extends SourceReaderErrorBy {
     /**
-     * The constructor for {@link UnmatchingPositionsBy} errors.
+     * The constructor for
+     * {@link SourceReader.ErrorUnmatchingPositionsBy | ErrorUnmatchingPositionsBy} errors.
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
@@ -82,10 +83,11 @@ export class ErrorUnmatchingPositionsBy extends SourceReaderErrorBy {
 
 /**
  * The error to produce when a function that is not supposed to be used at EOF is called.
+ * @group API: Errors
  */
 export class ErrorAtEOFBy extends SourceReaderErrorBy {
     /**
-     * The constructor for {@link AtEOFBy} errors.
+     * The constructor for {@link SourceReader.ErrorAtEOFBy | ErrorAtEOFBy} errors.
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
@@ -93,3 +95,4 @@ export class ErrorAtEOFBy extends SourceReaderErrorBy {
         super('AtEOFBy', operation, context);
     }
 }
+// ===============================================

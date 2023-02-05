@@ -11,13 +11,14 @@ import { SourceReaderIntl as intl } from '../../src/SourceReader/translations';
 const defaultLineEnders: string = '\n';
 
 let pos: SR.KnownSourcePos;
+let pos2: SR.KnownSourcePos;
 let lin: number;
 let col: number;
 let regs: string[];
 let region: string;
 let region1: string;
 
-let input: string;
+let input: SR.SourceInput;
 let reader: SR.SourceReader;
 let reader2: SR.SourceReader;
 
@@ -40,6 +41,8 @@ let vLength: number;
 let inputName: string;
 let vInpConts: string;
 let inpConts: string;
+let vConts: string;
+let fConts: string;
 
 /* ALREADY WRITTEN
 1. SourceReader static members
@@ -182,6 +185,17 @@ function verifySourceReaderBasicOperations(): void {
     expect(reader.startsWith(badStartLong)).toBe(false);
 }
 
+function verifyContents(): void {
+    expect(pos.contentsTo(pos2)).toBe(vConts);
+    expect(pos.contentsFrom(pos2)).toBe('');
+    expect(pos.fullContentsTo(pos2)).toBe(fConts);
+    expect(pos.fullContentsFrom(pos2)).toBe('');
+    expect(pos2.contentsTo(pos)).toBe('');
+    expect(pos2.contentsFrom(pos)).toBe(vConts);
+    expect(pos2.fullContentsTo(pos)).toBe('');
+    expect(pos2.fullContentsFrom(pos)).toBe(fConts);
+}
+
 describe('SourceReader static members', () => {
     it('SR.static - Unknown position', () => {
         const posU: SR.UnknownSourcePos = SR.SourceReader.UnknownPos;
@@ -251,6 +265,7 @@ describe('SourceReader empty inputs', () => {
 describe('SourceReader array 1, single line', () => {
     beforeEach(() => {
         input = 'program { Poner(Verde) }';
+        //                 11111111112222
         //       012345678901234567890123
         reader = new SR.SourceReader([input], defaultLineEnders);
     });
@@ -259,7 +274,7 @@ describe('SourceReader array 1, single line', () => {
         beforeEach(() => {
             // Two reader that start equal, use different skips through tests
             // and remain equal
-            reader2 = new SR.SourceReader([input], defaultLineEnders);
+            reader2 = new SR.SourceReader([input as string], defaultLineEnders);
         });
         it('Equal starting readers', () => {
             expect(reader).toStrictEqual(reader2);
@@ -373,7 +388,7 @@ describe('SourceReader array 1, single line', () => {
             col = 1;
             regs = [];
             vStart = 0;
-            vLength = 1;
+            vLength = 0;
         });
 
         it('SR basic operations', () => {
@@ -381,8 +396,8 @@ describe('SourceReader array 1, single line', () => {
         });
         it('getPos, and SP basic operations', () => {
             inputName = SR.SourceReader._unnamedStr + '[0]';
-            vInpConts = input.slice(vStart, vLength);
-            inpConts = input;
+            vInpConts = (input as string).slice(vStart, vLength);
+            inpConts = input as string;
             pos = reader.getPos();
             expect(pos.isEOF()).toBe(eof);
             verifyPosKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
@@ -449,7 +464,7 @@ describe('SourceReader array 1, single line', () => {
             col = 2;
             regs = [];
             vStart = 0;
-            vLength = 2;
+            vLength = 1;
             reader.skip(1);
         });
         it('SR basic operations', () => {
@@ -457,8 +472,8 @@ describe('SourceReader array 1, single line', () => {
         });
         it('getPos, and SP basic operations', () => {
             inputName = SR.SourceReader._unnamedStr + '[0]';
-            vInpConts = input.slice(vStart, vLength);
-            inpConts = input;
+            vInpConts = (input as string).slice(vStart, vLength);
+            inpConts = input as string;
             pos = reader.getPos();
             expect(pos.isEOF()).toBe(eof);
             verifyPosKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
@@ -503,6 +518,381 @@ describe('SourceReader array 1, single line', () => {
                 // Regions of both positions are the same after 2nd begin
                 expect(pos.regions).toStrictEqual(regs);
             });
+        });
+    });
+});
+
+describe('Contents from SourceReader array 1, single line', () => {
+    beforeEach(() => {
+        input = 'program { Poner(Verde) }';
+        //                 11111111112222
+        //       012345678901234567890123
+        reader = new SR.SourceReader([input], defaultLineEnders);
+    });
+
+    describe('From the beginning', () => {
+        beforeEach(() => {
+            pos = reader.getPos();
+        });
+
+        it('7 chars, all visible', () => {
+            reader.skip(7);
+            pos2 = reader.getPos();
+            vConts = 'program';
+            fConts = 'program';
+            verifyContents();
+        });
+        it('9 chars, 8 visible (7-1-1)', () => {
+            reader.skip(7);
+            reader.skip(1, true);
+            reader.skip();
+            pos2 = reader.getPos();
+            vConts = 'program{';
+            fConts = 'program {';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(24);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = input as string;
+            fConts = input as string;
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(24, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = input as string;
+            verifyContents();
+        });
+    });
+
+    describe('From the middle', () => {
+        beforeEach(() => {
+            reader.skip(10);
+            pos = reader.getPos();
+        });
+
+        it('5 chars, all visible', () => {
+            reader.skip(5);
+            pos2 = reader.getPos();
+            vConts = 'Poner';
+            fConts = 'Poner';
+            verifyContents();
+        });
+        it('12 chars, 10 visible (5-1-5-1)', () => {
+            reader.skip(5);
+            reader.skip(1, true);
+            reader.skip(5);
+            reader.skip(1, true);
+            pos2 = reader.getPos();
+            vConts = 'PonerVerde';
+            fConts = 'Poner(Verde)';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(14);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = 'Poner(Verde) }';
+            fConts = 'Poner(Verde) }';
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(14, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = 'Poner(Verde) }';
+            verifyContents();
+        });
+    });
+});
+
+describe('Contents from SourceReader array 1, several lines', () => {
+    beforeEach(() => {
+        input = 'program {\n  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+        //                  11111111112222 22 2 2223333333333444444444455 555555556666666 66
+        //       012345678 901234567890123 45 6 7890123456789012345678901 234567890123456 78
+        reader = new SR.SourceReader([input], defaultLineEnders);
+    });
+
+    describe('From the beginning', () => {
+        beforeEach(() => {
+            pos = reader.getPos();
+        });
+
+        it('26 chars, all visible', () => {
+            reader.skip(26);
+            pos2 = reader.getPos();
+            vConts = 'program {\n  PonerVerde()\n}';
+            fConts = 'program {\n  PonerVerde()\n}';
+            verifyContents();
+        });
+        it('26 chars, 22 visible (9-3-12-1-1)', () => {
+            reader.skip('program {');
+            reader.skip(3, true);
+            reader.skip('PonerVerde()');
+            reader.skip(1, true);
+            reader.skip('}');
+            pos2 = reader.getPos();
+            vConts = 'program {PonerVerde()}';
+            fConts = 'program {\n  PonerVerde()\n}';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(69);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = input as string;
+            fConts = input as string;
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(69, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = input as string;
+            verifyContents();
+        });
+    });
+
+    describe('From the middle', () => {
+        beforeEach(() => {
+            reader.skip(10);
+            pos = reader.getPos();
+        });
+
+        it('12 chars, all visible', () => {
+            reader.skip(12);
+            pos2 = reader.getPos();
+            vConts = '  PonerVerde';
+            fConts = '  PonerVerde';
+            verifyContents();
+        });
+        it('18 chars, 12 visible (2-12-1-1-1)', () => {
+            reader.skip(2, true);
+            reader.skip('PonerVerde()');
+            reader.skip(1, true);
+            reader.skip();
+            reader.skip(1, true);
+            pos2 = reader.getPos();
+            vConts = 'PonerVerde()}';
+            fConts = '  PonerVerde()\n}\n';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(59);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            fConts = '  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(59, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = '  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            verifyContents();
+        });
+    });
+});
+
+describe('Contents from SourceReader array 2, several lines', () => {
+    beforeEach(() => {
+        input = ['program {\n  PonerVerde()\n}\n', 'procedure PonerVerde() {\n  Poner(Verde)\n}'];
+        //                   11111111112222 22 2              11111111112222 222222333333333 34
+        //        012345678 901234567890123 45 6    012345678901234567890123 456789012345678 90
+        reader = new SR.SourceReader(input, defaultLineEnders);
+    });
+
+    describe('From the beginning', () => {
+        beforeEach(() => {
+            pos = reader.getPos();
+        });
+
+        it('26 chars, all visible', () => {
+            reader.skip(26);
+            pos2 = reader.getPos();
+            vConts = 'program {\n  PonerVerde()\n}';
+            fConts = 'program {\n  PonerVerde()\n}';
+            verifyContents();
+        });
+        it('26 chars, 22 visible (9-3-12-1-1)', () => {
+            reader.skip('program {');
+            reader.skip(3, true);
+            reader.skip('PonerVerde()');
+            reader.skip(1, true);
+            reader.skip('}');
+            pos2 = reader.getPos();
+            vConts = 'program {PonerVerde()}';
+            fConts = 'program {\n  PonerVerde()\n}';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(68);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = input[0] + input[1];
+            fConts = input[0] + input[1];
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(68, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = input[0] + input[1];
+            verifyContents();
+        });
+    });
+
+    describe('From the middle', () => {
+        beforeEach(() => {
+            reader.skip(10);
+            pos = reader.getPos();
+        });
+
+        it('26 chars, all visible', () => {
+            reader.skip(26);
+            pos2 = reader.getPos();
+            vConts = '  PonerVerde()\n}\nprocedure';
+            fConts = '  PonerVerde()\n}\nprocedure';
+            verifyContents();
+        });
+        it('26 chars, 12 visible (2-12-1-1-1)', () => {
+            reader.skip(2, true);
+            reader.skip('PonerVerde()');
+            reader.skip(1, true);
+            reader.skip();
+            reader.skip(1, true);
+            reader.skip('procedure');
+            pos2 = reader.getPos();
+            vConts = 'PonerVerde()}procedure';
+            fConts = '  PonerVerde()\n}\nprocedure';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(59);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(59, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            verifyContents();
+        });
+    });
+});
+
+describe('Contents from SourceReader array 3, several lines', () => {
+    beforeEach(() => {
+        input = [
+            'program {\n  PonerVerde()\n}\n',
+            //          11111111112222 22 2
+            // 2345678 901234567890123 45 6
+            'procedure PonerVerde() ',
+            // 11111111222
+            // 234567890123456789012
+            '{\n  Poner(Verde)\n}'
+            //         1111111111
+            // 234567890123456789
+        ];
+        reader = new SR.SourceReader(input, defaultLineEnders);
+    });
+
+    describe('From the beginning', () => {
+        beforeEach(() => {
+            pos = reader.getPos();
+        });
+
+        it('26 chars, all visible', () => {
+            reader.skip(26);
+            pos2 = reader.getPos();
+            vConts = 'program {\n  PonerVerde()\n}';
+            fConts = 'program {\n  PonerVerde()\n}';
+            verifyContents();
+        });
+        it('26 chars, 22 visible (9-3-12-1-1)', () => {
+            reader.skip('program {');
+            reader.skip(3, true);
+            reader.skip('PonerVerde()');
+            reader.skip(1, true);
+            reader.skip('}');
+            pos2 = reader.getPos();
+            vConts = 'program {PonerVerde()}';
+            fConts = 'program {\n  PonerVerde()\n}';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(68);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = input[0] + input[1] + input[2];
+            fConts = input[0] + input[1] + input[2];
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(68, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = input[0] + input[1] + input[2];
+            verifyContents();
+        });
+    });
+
+    describe('From the middle', () => {
+        beforeEach(() => {
+            reader.skip(10);
+            pos = reader.getPos();
+        });
+
+        it('26 chars, all visible', () => {
+            reader.skip(26);
+            pos2 = reader.getPos();
+            vConts = '  PonerVerde()\n}\nprocedure';
+            fConts = '  PonerVerde()\n}\nprocedure';
+            verifyContents();
+        });
+        it('26 chars, 12 visible (2-12-1-1-1)', () => {
+            reader.skip(2, true);
+            reader.skip('PonerVerde()');
+            reader.skip(1, true);
+            reader.skip();
+            reader.skip(1, true);
+            reader.skip('procedure');
+            pos2 = reader.getPos();
+            vConts = 'PonerVerde()}procedure';
+            fConts = '  PonerVerde()\n}\nprocedure';
+            verifyContents();
+        });
+        it('all chars, visible', () => {
+            reader.skip(59);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            verifyContents();
+        });
+        it('all chars, non visible', () => {
+            reader.skip(59, true);
+            pos2 = reader.getPos();
+            expect(pos2.isEOF()).toBe(true);
+            vConts = '';
+            fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
+            verifyContents();
         });
     });
 });
