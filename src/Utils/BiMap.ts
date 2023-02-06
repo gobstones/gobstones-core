@@ -113,9 +113,7 @@ export class BiMap<K, V> {
      * @param key The key to search
      */
     public hasKey(key: K): boolean {
-        return !!this._mapKV.has(key);
-        // !! corrects the result if `has` responds `undefined`
-        // <<CHECK with Alan>>
+        return !!this._mapKV.has(key); // !! transforms falsy values into booleans
     }
 
     /** It retrieves the value associated with the given key in this BiMap.
@@ -158,9 +156,7 @@ export class BiMap<K, V> {
      * @param value The value to search
      */
     public hasValue(value: V): boolean {
-        return !!this._mapVK.has(value);
-        // !! corrects the result if `has` responds `undefined`
-        // <<CHECK with Alan>>
+        return !!this._mapVK.has(value); // !! transforms falsy values into booleans
     }
 
     /** It retrieves the key associated with the given value in this BiMap.
@@ -209,12 +205,16 @@ export class BiMap<K, V> {
      * @group API: Access
      */
     public toString(): string {
-        let str: string = 'BiMap{';
+        let str: string = 'BiMap:{ ';
         for (const k of this._mapKV.keys()) {
-            str += k + '<->' + this._mapKV.get(k) + ',';
+            str += k + ' <-> ' + this._mapKV.get(k) + ', ';
         }
         // Replace the last comma with '}', if it exists
-        return (str[str.length - 1] === ',' ? str.slice(1, str.length - 2) : str) + '}';
+        return (
+            (str[str.length - 2] === ',' && str[str.length - 1] === ' '
+                ? str.slice(0, str.length - 2)
+                : str) + ' }'
+        );
     }
     // #endregion
 
