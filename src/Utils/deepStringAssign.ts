@@ -8,7 +8,21 @@ import { Subset } from './Subset';
  * the corresponding keys of the sources objects, when they are present, recursively.
  * If the same key appears in more than one of the source objects, the last one is used.
  * If none of the objects has the key, or the key is not of string type, it is not changed.
- * It does not affect the target.
+ * It does not affect the target, nor the sources.
+ *
+ * This function is inspired by `Object.assign`, but it is parametric, so the type of the
+ * target is preserved.
+ * The sources of changes contains subsets of the keys of the target object, and only those
+ * are overwritten (if their values have type `string`).
+ *
+ * Different from the `Object.assign` function, {@link deepStringAssign} works by cloning the
+ * target object, and rewriting the corresponding keys with the values from the sources.
+ * This work is needed for the function to be used on existing constants without altering them.
+ * The function `Object.assign` can be used on an empty object, and all options can be assigned,
+ * but in that way, the type of the original object is lost (objects with any combination of keys
+ * may be created).
+ * The function {@link deepStringAssign} uses a copy of the target object, so all its keys are
+ * preserved, and only those can be overwritten.
  *
  * Its intended use is to provide a way to override defaults in words definitions.
  *

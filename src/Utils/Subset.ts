@@ -3,7 +3,7 @@
  * @module Utils
  */
 
-/** This Utility Type works similar to Partial, but it proceeds recursively applying Partial
+/** This Utility Type works similar to `Partial`, but it proceeds recursively applying `Partial`
  * to all attributes of the type argument `K`, included nested ones.
  *
  * It is taken from a
