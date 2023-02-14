@@ -24,6 +24,8 @@ let reader2: SR.SourceReader;
 
 let eof: boolean;
 let peeked: string;
+let read: string;
+let expected: string;
 let goodStartShortL0: string;
 let goodStartShortL1: string;
 let goodStartShortLm: string;
@@ -170,7 +172,9 @@ function verifyEmptySourceReader(readerArg: SR.SourceReader): void {
 
 function verifySourceReaderBasicOperations(): void {
     expect(reader.atEOF()).toBe(eof);
-    expect(reader.peek()).toBe(peeked);
+    if (!reader.atEOF()) {
+        expect(reader.peek()).toBe(peeked);
+    }
     expect(reader.startsWith('')).toBe(true);
     expect(reader.startsWith(goodStartShortL0)).toBe(true);
     expect(reader.startsWith(goodStartShortL1)).toBe(true);
@@ -516,6 +520,157 @@ describe('SourceReader array 1, single line', () => {
                 pos = reader.getPos();
                 reader.beginRegion('New region, not visible');
                 // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('TakeWhile.notSpace.v', () => {
+        beforeEach(() => {
+            eof = false;
+            peeked = ' ';
+            goodStartShortL0 = ' { ';
+            goodStartShortL1 = ' { Poner';
+            goodStartShortLm = ' { Poner(Verde)';
+            goodStartExact = ' { Poner(Verde) }';
+            badStartShortSimilarL0 = ' {Poner';
+            badStartShortSimilarL1 = ' ( Poner';
+            badStartShortSimilarLm = ' ( Poner(Verde)';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' { poner(Verde) }';
+            badStartExactDisimil = '78901234567890123';
+            badStartLong = '789012345678901234567890123456';
+            lin = 1;
+            col = 8;
+            regs = [];
+            vStart = 0;
+            vLength = 7;
+            read = reader.takeWhile((ch) => ch !== ' ');
+            expected = 'program';
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPos, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[0]';
+            vInpConts = (input as string).slice(vStart, vLength);
+            inpConts = input as string;
+            pos = reader.getPos();
+            expect(read).toBe(expected);
+            expect(pos.isEOF()).toBe(eof);
+            verifyPosKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = ' { ';
+                reader.beginRegion(region2);
+                regs.push(region2); // Begin pushes, |rs|=1
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region);
+                regs.push(region); // Begin pushes, |rs|=2
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested');
+                reader.endRegion(); // End is opposite of begin
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                reader.endRegion(); // Do nothing
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPos();
+                reader.beginRegion('New region, not visible');
+                // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('TakeWhile.allChars.v', () => {
+        beforeEach(() => {
+            eof = true;
+            peeked = 'not used, but undefined not accepted';
+            goodStartShortL0 = '';
+            goodStartShortL1 = '';
+            goodStartShortLm = '';
+            goodStartExact = '';
+            badStartShortSimilarL0 = ' {Poner';
+            badStartShortSimilarL1 = ' ( Poner';
+            badStartShortSimilarLm = ' ( Poner(Verde)';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' { poner(Verde) }';
+            badStartExactDisimil = '78901234567890123';
+            badStartLong = '789012345678901234567890123456';
+            lin = 1;
+            col = 1;
+            regs = [];
+            vStart = 0;
+            vLength = 23;
+            read = reader.takeWhile((ch) => ch !== '&');
+            expected = input as string;
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPos, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[0]';
+            vInpConts = (input as string).slice(vStart, vLength);
+            inpConts = input as string;
+            pos = reader.getPos();
+            expect(read).toBe(expected);
+            expect(pos.isEOF()).toBe(eof);
+            verifyPosKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = ' { ';
+                reader.beginRegion(region2); // At EOF, nothing is pushed, |rs|=0
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region); // At EOF, nothing is pushed, |rs|=0
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested'); // At EOF, nothing is pushed, |rs|=0
+                reader.endRegion(); // Nothing to pop, |rs|=0
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // At EOF, nothing is popped, |rs|=0
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // Nothing to pop, |rs|=0
+                reader.endRegion(); // Nothing to pop, |rs|=0
+                expect(reader.getPos().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPos();
+                reader.beginRegion('New region, not visible'); // At EOF, nothing is pushed, |rs|=0
                 expect(pos.regions).toStrictEqual(regs);
             });
         });

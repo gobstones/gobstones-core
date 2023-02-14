@@ -4,18 +4,20 @@
  * @module SourceReader
  */
 // ===============================================
-// Imports
-// ===============================================
+// #region Imports
+// -----------------------------------------------
 import { ErrorAtEOFBy, ErrorNoInput, ErrorUnmatchingPositionsBy } from './SR-Errors';
 
 import { expect } from '../Expectations';
 import { SourceReaderIntl as intl } from './translations';
 
+// -----------------------------------------------
+// #endregion Imports
 // ===============================================
 
 // ===============================================
-// Source Input
-// ===============================================
+// #region API: Main -- Source Input
+// -----------------------------------------------
 /** The type {@link SourceInput} establishes the different kinds of input a {@link SourceReader}
  * accepts to read, independently of how it was obtained (e.g. from files, web-services, or
  * command line arguments).
@@ -47,11 +49,13 @@ import { SourceReaderIntl as intl } from './translations';
  * @group API: Main
  */
 export type SourceInput = string | Record<string, string> | string[];
+// -----------------------------------------------
+// #endregion API: Main -- Source Input
 // ===============================================
 
 // ===============================================
-// Source Positions
-// ===============================================
+// #region API: Main -- SourcePositions
+// -----------------------------------------------
 /** Instances of {@link SourcePos} point to particular positions in the source given by a
  * {@link SourceReader}.
  * They may be unknown or they may point to a particular {@link SourceReader}.
@@ -75,7 +79,9 @@ export type SourceInput = string | Record<string, string> | string[];
  * @group API: Source Positions
  */
 export abstract class SourcePos {
-    // #region Private elements
+    // ==================
+    // #region Implementation Details
+    // ------------------
     /** Instances of {@link SourcePos} are tightly coupled with {@link SourceReader}, because they
      * determine particular positions in the source input kept by those.
      * They are created exclusively by a {@link SourceReader}, either using the operation
@@ -90,13 +96,17 @@ export abstract class SourcePos {
      *
      * See the documentation of {@link UnknownSourcePos} and {@link KnownSourcePos} for additional
      * implementation details.
-     * @group Implementation: Summary
+     * @group Implementation Details
      * @private
      */
     private static _implementationDetails = 'Dummy for documentation';
-    // #endregion
+    // ------------------
+    // #endregion Implementation Details
+    // ==================
 
-    // #region API
+    // ==================
+    // #region API: Access
+    // ------------------
     /** It indicates if this position does not belong to any input.
      * It must be implemented by concrete subclasses.
      * @group API: Access
@@ -109,7 +119,9 @@ export abstract class SourcePos {
      * @group API: Access
      */
     public abstract toString(): string;
-    // #endregion
+    // ------------------
+    // #endregion API: Access
+    // ==================
 }
 
 /** An unknown source position does not point to any position in any source reader.
@@ -123,7 +135,9 @@ export abstract class SourcePos {
  * @group API: Source Positions
  */
 export class UnknownSourcePos extends SourcePos {
-    // #region Private elements
+    // ==================
+    // #region Implementation Details
+    // ------------------
     /** Instances of {@link UnknownSourcePos} do not point to a particular {@link SourceReader}.
      * To preserve the property that only a {@link SourceReader} can produce source positions,
      * there is a static const * {@link SourceReader.UnknownPos | UnknownPos } of
@@ -131,11 +145,17 @@ export class UnknownSourcePos extends SourcePos {
      *
      * The implementation just implements the abstract operation of the superclass, with the
      * proper information.
-     * @group Implementation: Summary
+     * @group Implementation Details
      * @private
      */
     private static _implementationDetailsForUnknown = 'Dummy for documentation';
+    // ------------------
+    // #endregion Implementation Details
+    // ==================
 
+    // ==================
+    // #region Implementation: Protected for Source Reader
+    // ------------------
     /** It returns an unknown source position.
      *  It is intended to be used only by {@link SourceReader}.
      * @group Implementation: Protected for Source Reader
@@ -144,9 +164,13 @@ export class UnknownSourcePos extends SourcePos {
     public constructor() {
         super();
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Protected for Source Reader
+    // ==================
 
-    // #region API
+    // ==================
+    // #region API: Access
+    // ------------------
     /** It indicates that this position does not belong to any input.
      * Implements the abstract operation of its superclass.
      * @group API: Access
@@ -162,7 +186,9 @@ export class UnknownSourcePos extends SourcePos {
     public toString(): string {
         return '<' + intl.translate('string.unknownPos') + '>';
     }
-    // #endregion
+    // ------------------
+    // #endregion API: Access
+    // ==================
 }
 
 /** A {@link KnownSourcePos} points to a position in a specific {@link SourceReader}.
@@ -190,7 +216,9 @@ export class UnknownSourcePos extends SourcePos {
  * @group API: Source Positions
  */
 export abstract class KnownSourcePos extends SourcePos {
-    // #region Private elements
+    // ==================
+    // #region Implementation Details
+    // ------------------
     /** Instances of {@link KnownSourcePos} point to a particular {@link SourceReader}, given as
      * an argument during construction.
      * It is remembered in a protected property,
@@ -238,11 +266,17 @@ export abstract class KnownSourcePos extends SourcePos {
      * A {@link KnownSourcePos} works tightly coupled with its {@link SourceReader}, as the source
      * input referred by the position belongs to the latter.
      * Operations to access the source input uses protected methods of the {@link SourceReader}.
-     * @group Implementation: Summary
+     * @group Implementation Details
      * @private
      */
     private static _implementationDetailsForKnown = 'Dummy for documentation';
+    // ------------------
+    // #endregion Implementation Details
+    // ==================
 
+    // ==================
+    // #region Implementation: Internal state
+    // ------------------
     /** The {@link SourceReader} of the input this position belongs to.
      * @group Implementation: Internal state
      * @private
@@ -272,7 +306,13 @@ export abstract class KnownSourcePos extends SourcePos {
      * @private
      */
     protected _regions: string[];
+    // ------------------
+    // #endregion Implementation: Internal state
+    // ==================
 
+    // ==================
+    // #region Implementation: Protected for Source Reader
+    // ------------------
     /** It returns a source position belonging to some {@link SourceReader}.
      *  It is intended to be used only by {@link SourceReader}.
      *
@@ -294,9 +334,13 @@ export abstract class KnownSourcePos extends SourcePos {
         this._column = column;
         this._regions = regions;
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Protected for Source Reader
+    // ==================
 
+    // ==================
     // #region API: Access
+    // ------------------
     /** It returns the {@link SourceReader} this position belongs to.
      * @group API: Access
      */
@@ -339,9 +383,13 @@ export abstract class KnownSourcePos extends SourcePos {
      * @group API: Access
      */
     public abstract isEOF(): boolean;
-    // #endregion
+    // ------------------
+    // #endregion API: Access
+    // ==================
 
+    // ==================
     // #region API: Contents Access
+    // ------------------
     /** The exact portion of the source that is enclosed between the `this` position and
      * `to` position (not included) and is visible.
      * If `to` does not come after `this`, the result is the empty string.
@@ -421,15 +469,19 @@ export abstract class KnownSourcePos extends SourcePos {
         this._validateSourceReaders(from, 'fullContentsFrom', 'KnownSourcePos');
         return this._fullContentsFrom(from);
     }
-    // #endregion
+    // ------------------
+    // #endregion API: Contents Access
+    // ==================
 
-    // #region Private operations
+    // ==================
+    // #region Implementation: Auxiliaries
+    // ------------------
     /** It validates that both positions correspond to the same reader
      *
      * Implements a common validation for the Template Method Pattern.
      * @throws {@link ErrorUnmatchingPositionsBy}
      *         if `this` and `that` positions do not belong to the same reader.
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _validateSourceReaders(
@@ -456,7 +508,7 @@ export abstract class KnownSourcePos extends SourcePos {
      *           receiver.
      *           It indicates the final position to consult (not included), where the receiver
      *           is the first.
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected abstract _contentsTo(to: KnownSourcePos);
@@ -475,7 +527,7 @@ export abstract class KnownSourcePos extends SourcePos {
      *           receiver.
      *           It indicates the starting position to consult, where the receiver is the last
      *           (not included).
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected abstract _contentsFrom(from: KnownSourcePos);
@@ -494,7 +546,7 @@ export abstract class KnownSourcePos extends SourcePos {
      *           receiver.
      *           It indicates a final position to consult (not included), where the receiver
      *           is the first.
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected abstract _fullContentsTo(to: KnownSourcePos);
@@ -513,11 +565,13 @@ export abstract class KnownSourcePos extends SourcePos {
      *           receiver.
      *           It indicates the starting position to consult, where the receiver is the last
      *           (not included).
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected abstract _fullContentsFrom(from: KnownSourcePos);
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Auxiliaries
+    // ==================
 }
 
 /** An {@link EOFSourcePos} points to the EOF position in a specific {@link SourceReader}.
@@ -527,16 +581,24 @@ export abstract class KnownSourcePos extends SourcePos {
  * @group API: Source Positions
  */
 export class EOFSourcePos extends KnownSourcePos {
-    // #region Private elements
+    // ==================
+    // #region Implementation Details
+    // ------------------
     /** Instances of {@link EOFSourcePos} point at the EOF of a particular {@link SourceReader}.
      *
      * The abstract operations of {@link KnownSourcePos} are implemented or reimplemented with the
      * relevant information.
-     * @group Implementation: Summary
+     * @group Implementation Details
      * @private
      */
     private static _implementationDetailsForEOF = 'Dummy for documentation';
+    // ------------------
+    // #endregion Implementation Details
+    // ==================
 
+    // ==================
+    // #region Implementation: Protected for Source Reader
+    // ------------------
     /** It constructs the EOF position in an input source.
      *  It is intended to be used only by {@link SourceReader}.
      *
@@ -554,9 +616,13 @@ export class EOFSourcePos extends KnownSourcePos {
     ) {
         super(sourceReader, line, column, regions);
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Protected for Source Reader
+    // ==================
 
-    // #region API
+    // ==================
+    // #region API: Access
+    // ------------------
     /** It indicates that this position is EOF.
      * It implements the abstract operation of its superclass.
      * @group API: Access
@@ -572,9 +638,13 @@ export class EOFSourcePos extends KnownSourcePos {
     public toString(): string {
         return '<' + intl.translate('string.eof') + '>';
     }
-    // #endregion
+    // ------------------
+    // #endregion API: Access
+    // ==================
 
-    // #region Private operations
+    // ==================
+    // #region Implementation: Auxiliaries
+    // ------------------
     /** The implementation required by the superclass for the Template Method Pattern that
      * is used by {@link KnownSourcePos.contentsTo | contentsTo}.
      *
@@ -584,7 +654,7 @@ export class EOFSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the final position to consult (not included), where the receiver
      *           is the first.
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _contentsTo(to: KnownSourcePos): string {
@@ -600,7 +670,7 @@ export class EOFSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the starting position to consult, where the receiver is the last
      *           (not included).
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _contentsFrom(from: KnownSourcePos): string {
@@ -616,7 +686,7 @@ export class EOFSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the final position to consult (not included), where the receiver
      *           is the first.
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _fullContentsTo(to: KnownSourcePos): string {
@@ -632,13 +702,15 @@ export class EOFSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the starting position to consult, where the receiver is the last
      *           (not included).
-     * @group Implementation: Protected for subclasses
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _fullContentsFrom(from: KnownSourcePos): string {
         return this._sourceReader._inputFromTo(from, this);
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Auxiliaries
+    // ==================
 }
 
 /** A {@link DefinedSourcePos} points to a particular position, different from EOF, in a source
@@ -657,7 +729,9 @@ export class EOFSourcePos extends KnownSourcePos {
  * @group API: Source Positions
  */
 export class DefinedSourcePos extends KnownSourcePos {
-    // #region Private elements
+    // ==================
+    // #region Implementation Details
+    // ------------------
     /**
      * The implementation of {@link DefinedSourcePos} stores additional information to locate the
      * precise position it points to in its {@link SourceReader}, to be able to implement all the
@@ -688,11 +762,17 @@ export class DefinedSourcePos extends KnownSourcePos {
      *  * {@link DefinedSourcePos.fullInputContents | fullInputContents}, the contents (both visible
      *    and non-visible) of the particular string in the source input that has the char pointed to
      *    by this position.
-     * @group Implementation: Summary
+     * @group Implementation Details
      * @private
      */
     private static _implementationDetailsForDefPos = 'Dummy for documentation';
+    // ------------------
+    // #endregion Implementation Details
+    // ==================
 
+    // ==================
+    // #region Implementation: Internal state
+    // ------------------
     /** The index with information about the input string in the `_sourceReader`.
      *
      * **INVARIANT**: `0 <= _inputIndex` and it is a valid index in that reader.
@@ -716,7 +796,13 @@ export class DefinedSourcePos extends KnownSourcePos {
      * @private
      */
     private _visibleCharIndex: number;
+    // ------------------
+    // #endregion Implementation: Internal state
+    // ==================
 
+    // ==================
+    // #region Implementation: Protected for Source Reader
+    // ------------------
     /** Constructs a specific position different from EOF in an input source.
      *  It is intended to be used only by {@link SourceReader}.
      *
@@ -740,9 +826,13 @@ export class DefinedSourcePos extends KnownSourcePos {
         this._charIndex = charIndex;
         this._visibleCharIndex = visibleCharIndex;
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Protected for Source Reader
+    // ==================
 
-    // #region API getters
+    // ==================
+    // #region API: Access
+    // ------------------
     /** The name of the input string this position belongs to.
      * @group API: Access
      */
@@ -756,7 +846,7 @@ export class DefinedSourcePos extends KnownSourcePos {
     }
 
     /** The contents of the visible input string this position belongs to.
-     * @group API: Contents Access
+     * @group API: Access
      */
     public get inputContents(): string {
         return this._sourceReader._visibleInputContentsAt(this._theInputIndex);
@@ -764,14 +854,18 @@ export class DefinedSourcePos extends KnownSourcePos {
 
     /** The contents of the input string this position belongs to
      *  (both visible and non visible).
-     * @group API: Contents Access
+     * @group API: Access
      */
     public get fullInputContents(): string {
         return this._sourceReader._inputContentsAt(this._theInputIndex);
     }
-    // #endregion
+    // ------------------
+    // #endregion API: Access
+    // ==================
 
-    // #region Private getters
+    // ==================
+    // #region Implementation: Protected for Source Reader
+    // ------------------
     /** The index indicating the input string in the source input.
      *
      *  It is supposed to be used only by {@link SourceReader}.
@@ -801,9 +895,13 @@ export class DefinedSourcePos extends KnownSourcePos {
     public get _theVisibleCharIndex(): number {
         return this._visibleCharIndex;
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Protected for Source Reader
+    // ==================
 
-    // #region API
+    // ==================
+    // #region  API: Access - 2
+    // ------------------
     /** Indicates if this position determines the end of input of the current input.
      * @group API: Access
      */
@@ -818,9 +916,13 @@ export class DefinedSourcePos extends KnownSourcePos {
     public toString(): string {
         return `${this.inputName}@${this._line}:${this._column}`;
     }
-    // #endregion
+    // ------------------
+    // #endregion API: Access - 2
+    // ==================
 
-    // #region Private operations
+    // ==================
+    // #region Implementation: Auxiliaries
+    // ------------------
     /** The implementation required by the superclass for the Template Method Pattern that
      * is used by {@link KnownSourcePos.contentsTo | contentsTo}.
      *
@@ -829,7 +931,7 @@ export class DefinedSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the final position to consult (not included), where the receiver
      *           is the first.
-     * @group Implementation: Private operations
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _contentsTo(to: KnownSourcePos): string {
@@ -844,7 +946,7 @@ export class DefinedSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the starting position to consult, where the receiver is the last
      *           (not included).
-     * @group Implementation: Private operations
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _contentsFrom(from: KnownSourcePos): string {
@@ -859,7 +961,7 @@ export class DefinedSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the final position to consult (not included), where the receiver
      *           is the first.
-     * @group Implementation: Private operations
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _fullContentsTo(to: KnownSourcePos): string {
@@ -874,19 +976,23 @@ export class DefinedSourcePos extends KnownSourcePos {
      *           receiver.
      *           It indicates the starting position to consult, where the receiver is the last
      *           (not included).
-     * @group Implementation: Private operations
+     * @group Implementation: Auxiliaries
      * @private
      */
     protected _fullContentsFrom(from: KnownSourcePos): string {
         return this._sourceReader._inputFromTo(from, this);
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Auxiliaries
+    // ==================
 }
+// -----------------------------------------------
+// #endregion API: Main -- SourcePositions
 // ===============================================
 
 // ===============================================
-// Source Reader
-// ===============================================
+// #region API: Main -- SourceReader
+// -----------------------------------------------
 /** A {@link SourceReader} allows you to read input from some source, either one single string of
  * content or several named or indexed source strings, in such a way that each character read
  * registers its position in the source as a tuple index-line-column.
@@ -907,7 +1013,8 @@ export class DefinedSourcePos extends KnownSourcePos {
  *    {@link SourceReader.startsWith},
  *  - get the current position as a {@link KnownSourcePos}, with {@link SourceReader.getPos},
  *  - detect if the end of input was reached, with {@link SourceReader.atEOF},
- *  - skip one or more characters, with {@link skip}, and
+ *  - skip one or more characters, with {@link skip},
+ *  - read some characters based on a condition, with {@link takeWhile}, and
  *  - manipulate "regions", with {@link SourceReader.beginRegion}
  *    and {@link SourceReader.endRegion}.
  * When reading from sources with multiple string of input, skipping moves from one of them to the
@@ -966,22 +1073,34 @@ export class DefinedSourcePos extends KnownSourcePos {
  * @group API: Main
  */
 export class SourceReader {
-    // #region StaticAPI
+    // ==================
+    // #region API: Static Elements
+    // ------------------
     /** A special position indicating that the position is not known.
      * @group API: Static Elements
      */
     public static UnknownPos: SourcePos = new UnknownSourcePos();
-    // #endregion
+    // ------------------
+    // #endregion API: Static Elements
+    // ==================
 
-    // #region Private elements
+    // ==================
+    // #region Implementation: Protected for Source Positions
+    // ------------------
     /** The string to use as a name for unnamed input strings.
      *  It is intended to be used only by instances and {@link SourcePos}.
      * @group Implementation: Protected for Source Positions
      * @private
      */
     public static _unnamedStr: string = '<?>';
-    /**
-     * The implementation of {@link SourceReader} keeps:
+    // ------------------
+    // #endregion Implementation: Protected for Source Positions
+    // ==================
+
+    // ==================
+    // #region Implementation Details
+    // ------------------
+    /** The implementation of {@link SourceReader} keeps:
      *  * an object associating input string names to input string contents,
      *    {@link SourceReader._inputs | _inputs},
      *  * an object associating input string names to visible input string contents,
@@ -1031,15 +1150,22 @@ export class SourceReader {
      * are meant to be used only by {@link SourcePos}, to complete their operations, and so they
      * are grouped as Protected.
      *
-     * The remaining auxiliary operations are meant for internal usage, to provide readability.
+     * The remaining auxiliary operations are meant for internal usage, to provide readability or
+     * to avoid code duplication.
      * The auxiliary operation {@link SourceReader._cloneRegions | _cloneRegions } is needed because
      * each new position produced with {@link SourceReader.getPos | getPos } need to have a
      * snapshot of the region stack, and not a mutable reference.
-     * @group Implementation: Summary
+     * @group Implementation Details
      * @private
      */
     private static _implementationDetails = 'Dummy for documentation';
+    // ------------------
+    // #endregion Implementation Details
+    // ==================
 
+    // ==================
+    // #region Implementation: Internal state
+    // ------------------
     /** The names with which input strings are identified.
      *
      * **INVARIANT:** is always equal to `Object.keys(_input)`
@@ -1114,9 +1240,13 @@ export class SourceReader {
      * @private
      */
     private _lineEnders: string;
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Internal state
+    // ==================
 
-    // #region API
+    // ==================
+    // #region API: Creation
+    // ------------------
     /** A new {@link SourceReader} is created from the given `input`.
      * It starts in the first position of the first non empty input string.
      * Line enders must be provided, affecting the calculation of line and column for positions.
@@ -1164,7 +1294,13 @@ export class SourceReader {
         // Adjust _inputIndex when there are empty inputs
         this._adjustInputIndex();
     }
+    // ------------------
+    // #endregion API: Creation
+    // ==================
 
+    // ==================
+    // #region API: Access
+    // ------------------
     /** It indicates if there are no more characters to read from the input.
      * @group API: Access
      */
@@ -1229,7 +1365,13 @@ export class SourceReader {
             );
         }
     }
+    // ------------------
+    // #endregion Access
+    // ==================
 
+    // ==================
+    // #region API: Modification
+    // ------------------
     /** It skips the given number of chars at the input string.
      *  If the argument is a string, only its length is used
      *  (i.e. its contents are ignored).
@@ -1261,23 +1403,38 @@ export class SourceReader {
             cant = howMuch ?? 1;
         }
         for (let i = 0; i < cant && !this.atEOF(); i++) {
-            if (!silently) {
-                // It has to be done before adjusting the input and
-                // char index, because that changes the current char
-                // and it may change the line and column.
-
-                // Precondition satisfied: !atEOF().
-                this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
-                // The use of the previous procedure is less efficient
-                // than necessary in case of long skips, but those are
-                // not so common, and thus, it may be tolerated.
-
-                // Precondition satisfied: !atEOF().
-                this._adjustLineAndColumn();
-            }
-            this._charIndex++;
-            this._adjustInputIndex();
+            this._skipOne(silently);
         }
+    }
+
+    /** It skips a variable number of characters on the input, returning the characters skipped.
+     * All contiguous characters from the initial position satisfying the predicate are read.
+     * It guarantees that the first character after skipping, if it exists, does not satisfy the
+     * predicate.
+     * @param contCondition A predicate on strings, indicating the chars to read.
+     * @param silently A boolean indicating if the reading must be silent.
+     *                 If it is not given, it is assumed `false`, that is, a visible read.
+     *                 If the read is visible, the char is added to the visible input.
+     * @result The string read from the initial position until the character that do not satisfy the
+     *         condition.
+     * @group API: Modification
+     */
+    public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
+        let strRead = '';
+        if (!this.atEOF()) {
+            let ch = this.peek();
+            while (contCondition(ch)) {
+                this._skipOne(silently);
+                strRead += ch;
+                if (this.atEOF()) {
+                    // This check is not redundant with the one at the beginning,
+                    // and guarantees the precondition of the following peek.
+                    break;
+                }
+                ch = this.peek();
+            }
+        }
+        return strRead;
     }
 
     /** It pushes a region in the stack of regions.
@@ -1299,9 +1456,13 @@ export class SourceReader {
             this._regions.pop();
         }
     }
-    // #endregion
+    // ------------------
+    // #endregion Modification
+    // ==================
 
-    // #region Private operations
+    // ==================
+    // #region Implementation: Protected for Source Positions
+    // ------------------
     /** The name of the input string at the given index.
      *  It is intended to be used only by {@link SourcePos}.
      *
@@ -1365,6 +1526,44 @@ export class SourceReader {
      */
     public _visibleInputFromTo(from: KnownSourcePos, to: KnownSourcePos): string {
         return this._inputFromToIn(from, to, true);
+    }
+    // ------------------
+    // #endregion Implementation: Protected for Source Positions
+    // ==================
+
+    // ==================
+    // #region Implementation: Auxiliaries
+    // ------------------
+    /** It skips one char at the input string.
+     *
+     * If the skipping is `silent`, line and column do not
+     * change, usually because the input being read was added
+     * automatically to the original input (the default is not
+     * silent).
+     * If the skip is not silent, the input is visible, and
+     * thus it is added to the visible inputs.
+     *
+     * Its used by API operations to skip one or more characters.
+     *
+     * @param silently A boolean indicating if the skip must be silent.
+     * @group Implementation: Auxiliaries
+     * @private
+     */
+    private _skipOne(silently: boolean): void {
+        if (!silently) {
+            // It has to be done before adjusting the input and
+            // char index, because that changes the current char
+            // and it may change the line and column.
+            // Precondition satisfied: !atEOF().
+            this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
+            // The use of the previous procedure is less efficient
+            // than necessary in case of long skips, but those are
+            // not so common, and thus, it may be tolerated.
+            // Precondition satisfied: !atEOF().
+            this._adjustLineAndColumn();
+        }
+        this._charIndex++;
+        this._adjustInputIndex();
     }
 
     /** It returns the contents of either the full or visible input between two positions,
@@ -1510,6 +1709,10 @@ export class SourceReader {
         }
         return newRegions;
     }
-    // #endregion
+    // ------------------
+    // #endregion Implementation: Auxiliaries
+    // ==================
 }
+// -----------------------------------------------
+// #endregion API: Main -- SourceReader
 // ===============================================
