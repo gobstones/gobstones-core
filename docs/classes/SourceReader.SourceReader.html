@@ -39,7 +39,8 @@ Possible interactions with a <a href="SourceReader.SourceReader.html">SourceRead
 <a href="SourceReader.SourceReader.html#startsWith">startsWith</a>,</li>
 <li>get the current position as a <a href="SourceReader.KnownSourcePos.html">KnownSourcePos</a>, with <a href="SourceReader.SourceReader.html#getPos">getPos</a>,</li>
 <li>detect if the end of input was reached, with <a href="SourceReader.SourceReader.html#atEOF">atEOF</a>,</li>
-<li>skip one or more characters, with <a href="SourceReader.SourceReader.html#skip">skip</a>, and</li>
+<li>skip one or more characters, with <a href="SourceReader.SourceReader.html#skip">skip</a>,</li>
+<li>read some characters based on a condition, with <a href="SourceReader.SourceReader.html#takeWhile">takeWhile</a>, and</li>
 <li>manipulate &quot;regions&quot;, with <a href="SourceReader.SourceReader.html#beginRegion">beginRegion</a>
 and <a href="SourceReader.SourceReader.html#endRegion">endRegion</a>.
 When reading from sources with multiple string of input, skipping moves from one of them to the
@@ -98,7 +99,7 @@ A more complex program will use functions to organize the access with a logical 
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#UnknownPos" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>Unknown<wbr/>Pos</span></a>
 </div></section>
 <section class="tsd-index-section">
-<h3 class="tsd-index-heading">Implementation: Summary</h3>
+<h3 class="tsd-index-heading">Implementation Details</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_implementationDetails" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>_implementation<wbr/>Details</span></a>
 </div></section>
 <section class="tsd-index-section">
@@ -119,6 +120,7 @@ A more complex program will use functions to organize the access with a logical 
 <a href="SourceReader.SourceReader.html#_hasCurrentInput" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_has<wbr/>Current<wbr/>Input</span></a>
 <a href="SourceReader.SourceReader.html#_inputFromToIn" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_input<wbr/>From<wbr/>To<wbr/>In</span></a>
 <a href="SourceReader.SourceReader.html#_isEndOfLine" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_is<wbr/>End<wbr/>Of<wbr/>Line</span></a>
+<a href="SourceReader.SourceReader.html#_skipOne" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_skip<wbr/>One</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">API: Access</h3>
@@ -132,6 +134,7 @@ A more complex program will use functions to organize the access with a logical 
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#beginRegion" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>begin<wbr/>Region</span></a>
 <a href="SourceReader.SourceReader.html#endRegion" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>end<wbr/>Region</span></a>
 <a href="SourceReader.SourceReader.html#skip" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>skip</span></a>
+<a href="SourceReader.SourceReader.html#takeWhile" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>take<wbr/>While</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Creation</h2>
@@ -245,7 +248,7 @@ The current input is that in
 <div class="tsd-comment tsd-typography"><p>A special position indicating that the position is not known.</p>
 </div></section></section>
 <section class="tsd-panel-group tsd-member-group">
-<h2>Implementation: Summary</h2>
+<h2>Implementation Details</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_implementationDetails" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_implementation<wbr/>Details</span><a href="#_implementationDetails" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_implementation<wbr/>Details<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;Dummy for documentation&#39;</span></div>
@@ -296,7 +299,8 @@ and <a href="SourceReader.SourceReader.html#_inputFromTo">_inputFromTo</a>, and
 the static value <a href="SourceReader.SourceReader.html#_unnamedStr">_unnamedStr</a>
 are meant to be used only by <a href="SourceReader.SourcePos.html">SourcePos</a>, to complete their operations, and so they
 are grouped as Protected.</p>
-<p>The remaining auxiliary operations are meant for internal usage, to provide readability.
+<p>The remaining auxiliary operations are meant for internal usage, to provide readability or
+to avoid code duplication.
 The auxiliary operation <a href="SourceReader.SourceReader.html#_cloneRegions">_cloneRegions</a> is needed because
 each new position produced with <a href="SourceReader.SourceReader.html#getPos">getPos</a> need to have a
 snapshot of the region stack, and not a mutable reference.</p>
@@ -481,7 +485,31 @@ to the configuration of the reader.</p>
 <ul class="tsd-parameter-list">
 <li>
 <h5>ch: <span class="tsd-signature-type">string</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section></section>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_skipOne" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_skip<wbr/>One</span><a href="#_skipOne" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_skipOne._skipOne-1">_skip<wbr/>One<span class="tsd-signature-symbol">(</span>silently<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_skipOne._skipOne-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>It skips one char at the input string.</p>
+<p>If the skipping is <code>silent</code>, line and column do not
+change, usually because the input being read was added
+automatically to the original input (the default is not
+silent).
+If the skip is not silent, the input is visible, and
+thus it is added to the visible inputs.</p>
+<p>Its used by API operations to skip one or more characters.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>silently: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>A boolean indicating if the skip must be silent.
+                If it is not given, it is assumed <code>false</code>, that is, a visible skip.
+                If the skip is visible, the char is added to the visible input.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Access</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="atEOF" class="tsd-anchor"></a>
@@ -590,7 +618,45 @@ thus it is added to the visible inputs.</p>
                 If it is not given, it is assumed <code>false</code>, that is, a visible skip.
                 If the skip is visible, the char is added to the visible input.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section></section></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="takeWhile" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>take<wbr/>While</span><a href="#takeWhile" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="takeWhile.takeWhile-1">take<wbr/>While<span class="tsd-signature-symbol">(</span>contCondition<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span>, silently<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#takeWhile.takeWhile-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>It skips a variable number of characters on the input, returning the characters skipped.
+All contiguous characters from the initial position satisfying the predicate are read.
+It guarantees that the first character after skipping, if it exists, does not satisfy the
+predicate.</p>
+
+<h3>Result</h3><p>The string read from the initial position until the character that do not satisfy the
+        condition.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>contCondition: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>ch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span></h5>
+<div class="tsd-comment tsd-typography"><p>A predicate on strings, indicating the chars to read.</p>
+</div>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures tsd-kind-type-literal">
+<li class="tsd-signature"><span class="tsd-signature-symbol">(</span>ch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>ch: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4></li></ul></li></ul></li>
+<li>
+<h5>silently: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+<div class="tsd-comment tsd-typography"><p>A boolean indicating if the reading must be silent.
+                If it is not given, it is assumed <code>false</code>, that is, a visible read.
+                If the read is visible, the char is added to the visible input.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -646,6 +712,7 @@ thus it is added to the visible inputs.</p>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputFromToIn" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_input<wbr/>From<wbr/>To<wbr/>In</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_inputNameAt" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_input<wbr/>Name<wbr/>At</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_isEndOfLine" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_is<wbr/>End<wbr/>Of<wbr/>Line</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_skipOne" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_skip<wbr/>One</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_visibleInputContentsAt" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_visible<wbr/>Input<wbr/>Contents<wbr/>At</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SourceReader.SourceReader.html#_visibleInputFromTo" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_visible<wbr/>Input<wbr/>From<wbr/>To</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#atEOF" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>atEOF</a></li>
@@ -654,5 +721,6 @@ thus it is added to the visible inputs.</p>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#getPos" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>get<wbr/>Pos</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#peek" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>peek</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#skip" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>skip</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#startsWith" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>starts<wbr/>With</a></li></ul></li></ul></nav></div></div>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#startsWith" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>starts<wbr/>With</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="SourceReader.SourceReader.html#takeWhile" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>take<wbr/>While</a></li></ul></li></ul></nav></div></div>
 <div class="overlay"></div><script src="../assets/main.js"></script></body></html>
