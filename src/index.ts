@@ -7,3 +7,4 @@ export * from './Translations';
 export * from './Events/EventEmitter';
 export * from './Regexp';
 export * from './helpers';
+export * from './Utils';
