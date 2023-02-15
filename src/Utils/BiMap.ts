@@ -1,22 +1,21 @@
-/* eslint-disable no-underscore-dangle */
 /**
- * A bidirectional map is a map that represents biyective association between keys and values, and
- * such that it can be accessed both by the keys or by the values. The types of both the keys and
- * the values should be comparable by identity (`===` comparison).
- *
- * See the documentation for the class {@link BiMap} for details.
- * @module BiMap
+ * @module Utils
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
-/** A bidirectional map is a map that represents biyective association between keys and values, and
- * such that it can be accessed both by the keys or by the values. The types of both the keys and
- * the values should be comparable by identity (`===` comparison).
- * The order of association is important, so for example a `BiMap<string, number>` strings can be
- * accessed by value using numbers, and numbers can accessed by key using strings,.
+/**
+ * A bidirectional map is a map that represents biyective association between
+ * keys and values, and such that it can be accessed both by the keys or by the
+ * values. The types of both the keys and the values should be comparable by
+ * identity (`===` comparison).
  *
- * The API of BiMaps resembles that of a Map, but with two versions for each operation involving
- * keys or values.
+ * The order of association is important, so for example a `BiMap<string, number>`
+ * strings can be accessed by value using numbers, and numbers can accessed by
+ * key using strings.
+ *
+ * The API of BiMaps resembles that of a Map, but with two versions for each
+ * operation involving keys or values.
+ *
  * The operations allow:
  *  * to create one BiMap, with `new BiMap` (and an optional list of pairs key-value for
  *    initialization -- if some values are associated to more than one key, information is lost),
@@ -36,43 +35,50 @@
  *    {@link BiMap.keys | keys}, {@link BiMap.values | values}, and {@link BiMap.entries | entries},
  *    and
  *  * to produce a string version of a BiMap, with {@link BiMap.toString | toString}.
+ *
+ * Instances of BiMap can be iterated directly through for-of loops, which
+ * achieves the same result as iterating through the entries of such BiMap.
+ *
+ * #### Implementation details
+ *
+ * The implementation of a BiMap is given by two synchronized maps: a straight one, from keys
+ * to values, and a reversed one, from values to keys.
+ * These maps satisfy the invariant that every association in one of them has its reversed
+ * counterpart in the other one.
+ * The auxiliary operations take care of keeping the invariant, by allowing the deletion of a
+ * given key or value in the map where they are values, if they appear there, and the
+ * association of a new pair key-value, deleting the old associations for both, if they exist.
+ *
+ * @param K The type of the keys.
+ * @param V The type of the values.
  */
 export class BiMap<K, V> {
-    // #region Private elements
-    /** The implementation of a BiMap is given by two synchronized maps: a straight one, from keys
-     * to values, and a reversed one, from values to keys.
-     * These maps satisfy the invariant that every association in one of them has its reversed
-     * counterpart in the other one.
-     * The auxiliary operations take care of keeping the invariant, by allowing the deletion of a
-     * given key or value in the map where they are values, if they appear there, and the
-     * association of a new pair key-value, deleting the old associations for both, if they exist.
-     * @group Implementation: Summary
-     */
-    private static _implementationDetails = 'Dummy for documentation';
-    /** The map from key to values.
+    /**
+     * The map from key to values.
      *
      * **INVARIANT:** for any key `k` associated with a value `v` in this map,
      *                `v` is a key in `_mapVK` with value `k`.
-     * @group Implementation: State
+     *
      * @private
      */
-    private _mapKV: Map<K, V>;
+    private mapKV: Map<K, V>;
+
     /** The map from values to keys.
      *
      * **INVARIANT:** for any key `v` associated with a value `k` in this map,
      *                `k` is a key in `_mapKV` with value `v`.
-     * @group Implementation: State
+     *
      * @private
      */
-    private _mapVK: Map<V, K>;
-    // #endregion
+    private mapVK: Map<V, K>;
 
-    // #region API
-    /** It creates a new BiMap associating keys to values biyectively.
+    /**
+     * Create a new BiMap associating keys to values biyectively.
      *
-     * An optional list of pairs key-value can be used for initialization, but if some values are
-     * associated to more than one key (that is, the relationship is not biyective, information is
-     * lost -- only the last value is associated, so the list order is relevant.
+     * An optional list of pairs key-value can be used for initialization, but
+     * if some values are associated to more than one key (that is, the
+     * relationship is not biyective, information is lost -- only the last value
+     * is associated, so the list order is relevant.
      *
      * Examples:
      *   ```
@@ -82,178 +88,231 @@ export class BiMap<K, V> {
      *     new BiMap([['A', 1],['B',1],['B',2]])         -> { 'B' <-> 2 }
      *     new BiMap([['A', 1],['B',1],['B',2],['C',2]]) -> { 'C' <-> 2 }
      *   ```
-     * @group API: Creation
+     *
+     * @group Constructors
+     * @param map Optional list of associations to contain in the new BiMap.
      */
     public constructor(map?: [K, V][]) {
-        this._mapKV = new Map<K, V>();
-        this._mapVK = new Map<V, K>();
+        this.mapKV = new Map<K, V>();
+        this.mapVK = new Map<V, K>();
         for (const [key, value] of map || []) {
-            this._biassociateKeyAndValue(key, value);
+            this.biassociateKeyAndValue(key, value);
         }
     }
 
-    /** It returns the number of associations this BiMap kept.
-     * @group API: Access
+    /**
+     * Return the number of associations this BiMap has.
+     *
+     * @group Querying
+     * @returns An integer with the number of associations in the map.
      */
     public get size(): number {
-        return this._mapKV.size;
-        // By the invariants, `_mapVK.size` is the same number.
+        return this.mapKV.size;
+        // By the invariants, `mapVK.size` is the same number.
     }
 
-    /** It deletes all associations in this BiMap.
-     * @group API: Modification
+    /**
+     * Delete all associations in this BiMap.
+     *
+     * @group Manipulation
      */
     public clear(): void {
-        this._mapKV.clear();
-        this._mapVK.clear();
+        this.mapKV.clear();
+        this.mapVK.clear();
     }
 
-    /** It indicates if this BiMap has the given key associated with a value.
-     * @group API: Access
+    /**
+     * Answer if this BiMap has the given key associated with a value.
+     *
+     * @group Querying
      * @param key The key to search
+     * @returns true if the key is present, false otherwise.
      */
     public hasKey(key: K): boolean {
-        return !!this._mapKV.has(key); // !! transforms falsy values into booleans
+        return !!this.mapKV.has(key); // !! transforms falsy values into booleans
     }
 
-    /** It retrieves the value associated with the given key in this BiMap.
-     *  It returns undefined if the key is not associated with any value.
-     * @group API: Access
+    /**
+     * Retrieve the value associated with the given key in this BiMap or
+     * undefined if the key is not associated with any value.
+     *
+     * @group Querying
      * @param key The key to retrieve the associated value
+     * @returns true if the key is present, false otherwise.
      */
     public getByKey(key: K): V | undefined {
-        return this._mapKV.get(key);
+        return this.mapKV.get(key);
     }
 
-    /** It associates the given key to the given value in this BiMap.
+    /**
+     * Associate the given key to the given value in this BiMap.
      * If any of both have previous associations, they are lost.
-     * @group API: Modification
+     *
+     * @group Manipulation
      * @param key The key to associate with the value
      * @param value The value to associate with the key
      */
     public setByKey(key: K, value: V): void {
-        this._biassociateKeyAndValue(key, value);
+        this.biassociateKeyAndValue(key, value);
     }
 
-    /** It deletes the association between the given key and its value, if it exists.
-     * @group API: Modification
+    /**
+     * Delete the association between the given key and its value, if it exists.
+     *
+     * @group Manipulation
      * @param key The key to delete its association
      */
     public deleteByKey(key: K): void {
-        this._revDeleteKey(key);
-        this._mapKV.delete(key);
+        this.reverseDeleteKey(key);
+        this.mapKV.delete(key);
     }
 
-    /** It returns an iterator for the keys of this BiMap.
-     * @group API: Access
-     */
-    public keys(): Iterable<K> {
-        return this._mapKV.keys();
-    }
-
-    /** It indicates if this BiMap has the given value associated with a key.
-     * @group API: Access
+    /**
+     * Answer if this BiMap has the given value associated with a key.
+     *
+     * @group Querying
      * @param value The value to search
      */
     public hasValue(value: V): boolean {
-        return !!this._mapVK.has(value); // !! transforms falsy values into booleans
+        return !!this.mapVK.has(value); // !! transforms falsy values into booleans
     }
 
-    /** It retrieves the key associated with the given value in this BiMap.
-     *  It returns undefined if the value is not associated with any key.
-     * @group API: Access
+    /**
+     * Retrieve the key associated with the given value in this BiMap or
+     * undefined if the value is not associated with any key.
+     *
+     * @group Querying
      * @param value The value to retrieve the associated key
      */
     public getByValue(value: V): K | undefined {
-        return this._mapVK.get(value);
+        return this.mapVK.get(value);
     }
 
-    /** It associates the given value to the given key in this BiMap.
+    /**
+     * Associate the given value to the given key in this BiMap.
      * If any of both have previous associations, they are lost.
-     * @group API: Modification
+     *
+     * @group Manipulation
      * @param value The value to associate with the key
      * @param key The key to associate with the value
      */
     public setByValue(value: V, key: K): void {
-        this._biassociateKeyAndValue(key, value);
+        this.biassociateKeyAndValue(key, value);
     }
 
-    /** It deletes the association between the given key and its value, if it exists.
-     * @group API: Modification
+    /**
+     * Delete the association between the given key and its value, if it exists.
+     *
+     * @group Manipulation
      * @param value The value to delete its association.
      */
     public deleteByValue(value: V): void {
-        this._revDeleteValue(value);
-        this._mapVK.delete(value);
+        this.reverseDeleteValue(value);
+        this.mapVK.delete(value);
     }
 
-    /** It returns an iterator for the values of this BiMap.
-     * @group API: Access
+    /**
+     * Return an iterator for the keys of this BiMap.
+     *
+     * @group Querying
      */
-    public values(): Iterable<V> {
-        return this._mapVK.keys();
+    public keys(): K[] {
+        return [...this.mapKV.keys()];
     }
 
-    /** It returns an iterator for the entries of this BiMap.
-     * @group API: Access
+    /**
+     * Return an iterator for the values of this BiMap.
+     *
+     * @group Querying
      */
-    public entries(): Iterable<[K, V]> {
-        return this._mapKV.entries();
+    public values(): V[] {
+        return [...this.mapVK.keys()];
     }
 
-    /** It returns string version of this BiMap.
-     * @group API: Access
+    /**
+     * Return an iterator for the entries of this BiMap, from keys to values.
+     *
+     * @group Querying
+     */
+    public entries(): [K, V][] {
+        return [...this.mapKV.entries()];
+    }
+
+    /**
+     * Retrieve an iterator that can be used in a for-of loop.
+     *
+     * @group Querying
+     */
+    public *[Symbol.iterator](): IterableIterator<[K, V]> {
+        let counter = 0;
+        const entries = this.entries();
+        while (counter < entries.length) {
+            yield entries[counter++];
+        }
+    }
+
+    /**
+     * Return a string representation of this BiMap.
+     *
+     * @group Printing
      */
     public toString(): string {
         let str: string = 'BiMap:{ ';
-        for (const k of this._mapKV.keys()) {
-            str += k + ' <-> ' + this._mapKV.get(k) + ', ';
+        const entries = this.entries();
+        if (entries.length > 0) {
+            let k: K;
+            let v: V;
+            for (let i = 0; i < entries.length - 1; i++) {
+                [k, v] = entries[i];
+                str += k + ' <-> ' + v + ', ';
+            }
+            [k, v] = entries[entries.length - 1];
+            str += k + ' <-> ' + v + ' ';
         }
-        // Replace the last comma with '}', if it exists
-        return (
-            (str[str.length - 2] === ',' && str[str.length - 1] === ' '
-                ? str.slice(0, str.length - 2)
-                : str) + ' }'
-        );
-    }
-    // #endregion
-
-    // #region Implementation: Auxiliaries
-    /** It implements the association of a key-value pair biyectively, deleting the old associations
-     * between both the key and the value given.
-     * @group Implementation: Auxiliaries
-     */
-    private _biassociateKeyAndValue(key: K, value: V): void {
-        this._revDeleteKey(key);
-        this._revDeleteValue(value);
-        this._mapKV.set(key, value);
-        this._mapVK.set(value, key);
+        str += '}';
+        return str;
     }
 
-    /** It deletes the occurrence of the given key as a value in the reversed map by retrieving
-     * its value from the straight map, if it is associated.
+    /**
+     * Implement the association of a key-value pair biyectively, deleting the
+     * old associations between both the key and the value given.
      *
-     *  It may left the BiMap inconsistent, so it MUST NOT be used by itself alone.
-     * @group Implementation: Auxiliaries
+     * @group Private
      */
-    private _revDeleteKey(key: K): void {
-        const oldValue: V | undefined = this._mapKV.get(key);
+    private biassociateKeyAndValue(key: K, value: V): void {
+        this.reverseDeleteKey(key);
+        this.reverseDeleteValue(value);
+        this.mapKV.set(key, value);
+        this.mapVK.set(value, key);
+    }
+
+    /**
+     * Delete the occurrence of the given key as a value in the reversed map by
+     * retrieving its value from the straight map, if it is associated.
+     *
+     * It may left the BiMap inconsistent, so it MUST NOT be used by itself alone.
+     *
+     * @group Private
+     */
+    private reverseDeleteKey(key: K): void {
+        const oldValue: V | undefined = this.mapKV.get(key);
         if (oldValue !== undefined) {
-            this._mapVK.delete(oldValue);
+            this.mapVK.delete(oldValue);
         }
     }
 
-    /** It deletes the occurrence of the given value in the straight map by retrieving its key from
-     * the reversed map, if it is associated.
+    /**
+     * Delete the occurrence of the given value in the straight map by retrieving
+     * its key from the reversed map, if it is associated.
      *
-     *  It may left the BiMap inconsistent, so it MUST NOT be used by itself alone.
-     * @group Implementation: Auxiliaries
+     * It may left the BiMap inconsistent, so it MUST NOT be used by itself alone.
+     *
+     * @group Private
      */
-    private _revDeleteValue(value: V): void {
-        const oldKey: K | undefined = this._mapVK.get(value);
+    private reverseDeleteValue(value: V): void {
+        const oldKey: K | undefined = this.mapVK.get(value);
         if (oldKey !== undefined) {
-            this._mapKV.delete(oldKey);
+            this.mapKV.delete(oldKey);
         }
     }
-    // #endregion
 }

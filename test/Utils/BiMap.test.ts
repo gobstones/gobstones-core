@@ -3,12 +3,13 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import { BiMap } from '../../src/Utils/BiMap';
 
 const given = describe;
+
 let bimap: BiMap<string, number>;
 let ks: Iterable<string>;
 let vs: Iterable<number>;
 let es: Iterable<[string, number]>;
 
-describe('BiMap created empty', () => {
+given('BiMap created empty', () => {
     beforeEach(() => {
         bimap = new BiMap<string, number>();
     });
@@ -39,7 +40,7 @@ describe('BiMap created empty', () => {
         it('works fine, deleting everything', () => {
             bimap.clear();
             expect(bimap.size).toBe(0);
-            expect(bimap.toString()).toBe('BiMap:{  }');
+            expect(bimap.toString()).toBe('BiMap:{ }');
         });
     });
 
@@ -139,12 +140,23 @@ describe('BiMap created empty', () => {
 
     describe('toString', () => {
         it('works as expected', () => {
-            expect(bimap.toString()).toBe('BiMap:{  }');
+            expect(bimap.toString()).toBe('BiMap:{ }');
+        });
+    });
+
+    describe('iteration', () => {
+        it('has the right number of elements', () => {
+            let i = 0;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            for (const e of bimap) {
+                i++;
+            }
+            expect(i).toBe(0);
         });
     });
 });
 
-describe('BiMap with 5 associations', () => {
+given('BiMap with 5 associations', () => {
     beforeEach(() => {
         bimap = new BiMap<string, number>([
             ['a', 1],
@@ -191,7 +203,7 @@ describe('BiMap with 5 associations', () => {
             expect(bimap.getByValue(3)).toBeUndefined();
             expect(bimap.getByValue(4)).toBeUndefined();
             expect(bimap.getByValue(5)).toBeUndefined();
-            expect(bimap.toString()).toBe('BiMap:{  }');
+            expect(bimap.toString()).toBe('BiMap:{ }');
         });
     });
 
@@ -368,6 +380,17 @@ describe('BiMap with 5 associations', () => {
             let i = 0;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             for (const e of es) {
+                i++;
+            }
+            expect(i).toBe(5);
+        });
+    });
+
+    describe('iteration', () => {
+        it('has the right number of elements', () => {
+            let i = 0;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            for (const e of bimap) {
                 i++;
             }
             expect(i).toBe(5);
