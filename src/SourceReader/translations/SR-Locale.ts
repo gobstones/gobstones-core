@@ -21,6 +21,7 @@ export interface SourceReaderLocale {
     };
     string: {
         unknownPos: string;
+        endOfInput: string;
         eof: string;
     };
 }

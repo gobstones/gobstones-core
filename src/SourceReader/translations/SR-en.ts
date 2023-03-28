@@ -19,6 +19,7 @@ export const en: SourceReaderLocale = {
     },
     string: {
         unknownPos: 'Unknown position',
+        endOfInput: 'End of Input',
         eof: 'eof'
     }
 };

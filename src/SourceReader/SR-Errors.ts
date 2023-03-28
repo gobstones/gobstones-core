@@ -82,17 +82,17 @@ export class ErrorUnmatchingPositionsBy extends SourceReaderErrorBy {
 }
 
 /**
- * The error to produce when a function that is not supposed to be used at EOF is called.
+ * The error to produce when a function that is not supposed to be used at EndOfInput is called.
  * @group API: Errors
  */
-export class ErrorAtEOFBy extends SourceReaderErrorBy {
+export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
     /**
-     * The constructor for {@link SourceReader.ErrorAtEOFBy | ErrorAtEOFBy} errors.
+     * The constructor for {@link SourceReader.ErrorAtEndOfInputBy | ErrorAtEndOfInputBy} errors.
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
     public constructor(operation: string, context: string) {
-        super('AtEOFBy', operation, context);
+        super('AtEndOfInputBy', operation, context);
     }
 }
 // ===============================================
