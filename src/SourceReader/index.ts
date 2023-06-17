@@ -11,12 +11,12 @@
  *   * to allow the relationship of parts of the input with identifiers naming "regions", thus
  *     making it possible for external tools to identify those parts with ease.
  *
- * A {@link SourceReader} is created using a {@link SourceInput}, and then {@link SourcePos} can
- * be read from it.
+ * A {@link SourceReader} is created using a {@link SourceInput}, and then {@link SourcePosition}
+ * can be read from it.
  * Possible interactions with a {@link SourceReader} include:
  *  - peek a character,
  *  - check if a given string occurs at the beginning of text without skipping it,
- *  - get the current position (as a {@link SourcePos}
+ *  - get the current position (as a {@link SourcePosition}),
  *  - detect if the end of input was reached,
  *  - skip one or more characters, and
  *  - manipulate "regions".

@@ -92,7 +92,7 @@ export abstract class SourcePosition {
      * Instances of {@link SourcePosition} are tightly coupled with {@link SourceReader}, because
      * they determine particular positions in the source input kept by those.
      * They are created exclusively by a {@link SourceReader}, either using the operation
-     * {@link SourceReader.getPos | getPos } or by the static const
+     * {@link SourceReader.getPosition | getPosition } or by the static const
      * {@link SourceReader.UnknownPosition | UnknownPosition } of {@link SourceReader}.
      *
      * The implementation of {@link SourcePosition} uses subclasses to distinguish between unknown
@@ -141,7 +141,8 @@ export abstract class SourcePosition {
  * a static member of it, the {@link SourceReader.UnknownPosition | UnknownPosition},
  * with an instance of this class.
  *
- * This positions responds with `true` to the operation {@link SourcePos.isUnknown | isUnknown}.
+ * This positions responds with `true` to the operation
+ * {@link SourcePosition.isUnknown | isUnknown}.
  * @group API: Source Positions
  */
 export class UnknownSourcePosition extends SourcePosition {
@@ -1075,8 +1076,8 @@ export class DefinedSourcePosition extends KnownSourcePosition {
  *  * to allow the relationship of parts of the input with identifiers naming "regions", thus making
  *    it possible for external tools to identify those parts with ease.
  *
- * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePos}, in
- * particular {@link KnownSourcePos}, can be read from it.
+ * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePosition}, in
+ * particular {@link KnownSourcePosition}, can be read from it.
  * Possible interactions with a {@link SourceReader} include:
  *  - peek a character, with {@link SourceReader.peek},
  *  - check if a given strings occurs at the beginning of text without skipping it, with
@@ -1116,12 +1117,12 @@ export class DefinedSourcePosition extends KnownSourcePosition {
  * This is a basic example using all basic operations.
  * A more complex program will use functions to organize the access with a logical structure.
  * ```
- *  let pos: SourcePos;
+ *  let pos: SourcePosition;
  *  let cond: boolean;
  *  let str: string;
  *  const reader = new SourceReader('program { Poner(Verde) }');
  *  if (reader.startsWith("program")) { // ~~> true
- *    pos = reader.getCurrentPos();     // ~~> (1,1) as a SourcePos
+ *    pos = reader.getCurrentPos();     // ~~> (1,1) as a SourcePosition
  *    reader.skip("program");           // Move 7 chars forward
  *    while (reader.peek() === " ")     // ~~> " "
  *      { reader.skip(); }              // Move 1 char forward
@@ -1137,7 +1138,7 @@ export class DefinedSourcePosition extends KnownSourcePosition {
  *   if (reader.atEndOfInput())              // ~~> false
  *     { fail("Unclosed block"); }
  *   str += reader.peek();
- *   pos = reader.getCurrentPos();  // ~~> (1,24) as a SourcePos
+ *   pos = reader.getCurrentPos();  // ~~> (1,24) as a SourcePosition
  *   reader.closeRegion();
  *   reader.skip();
  * ```
@@ -1212,8 +1213,8 @@ export class SourceReader {
      * to keep a copy of the visible parts: characters are copied to the visible inputs attribute
      * when skipped normally.
      *
-     * This class is tightly coupled with {@link SourcePos} and its subclasses, because of instances
-     * of that class represent different positions in the source inputs kept by a
+     * This class is tightly coupled with {@link SourcePosition} and its subclasses, because of
+     * instances of that class represent different positions in the source inputs kept by a
      * {@link SourceReader}.
      * The operations
      * {@link SourceReader._inputNameAt | _inputNameAt},
@@ -1222,14 +1223,14 @@ export class SourceReader {
      * {@link SourceReader._inputContentsAt | _inputContentsAt},
      * and {@link SourceReader._inputFromTo | _inputFromTo}, and
      * the static value {@link SourceReader._unnamedStr | _unnamedStr}
-     * are meant to be used only by {@link SourcePos}, to complete their operations, and so they
-     * are grouped as Protected.
+     * are meant to be used only by {@link SourcePosition}, to complete their operations, and so
+     * they are grouped as Protected.
      *
      * The remaining auxiliary operations are meant for internal usage, to provide readability or
      * to avoid code duplication.
      * The auxiliary operation {@link SourceReader._cloneRegions | _cloneRegions } is needed because
-     * each new position produced with {@link SourceReader.getPos | getPos } need to have a
-     * snapshot of the region stack, and not a mutable reference.
+     * each new position produced with {@link SourceReader.getPosition | getPosition } need to have
+     * a snapshot of the region stack, and not a mutable reference.
      * @group Implementation Details
      * @private
      */
@@ -1620,7 +1621,7 @@ export class SourceReader {
     /**
      * Gives the contents of the visible input between two positions.
      * If `from` is not before `to`, the result is the empty string.
-     * It is intended to be used only by {@link KnownSourcePos} subclasses.
+     * It is intended to be used only by {@link KnownSourcePosition} subclasses.
      *
      * **PRECONDITION:** both positions correspond to this reader (and so are >= 0 -- not verified)
      * @group Implementation: Protected for Source Positions
@@ -1682,7 +1683,7 @@ export class SourceReader {
     ): string {
         let inputFrom: number;
         let charFrom: number;
-        // Distinguish between the two subclasses of KnownSourcePos
+        // Distinguish between the two subclasses of KnownSourcePosition
         if (from.isEndOfInput()) {
             inputFrom = this._inputsNames.length - 1;
             charFrom = visible
@@ -1797,8 +1798,8 @@ export class SourceReader {
 
     /**
      * Gives a clone of the stack of regions.
-     * Auxiliary for {@link SourceReader.getPos | getPos}.
-     * It is necessary because regions of {@link SourcePos} must correspond to those at that
+     * Auxiliary for {@link SourceReader.getPosition | getPosition}.
+     * It is necessary because regions of {@link SourcePosition} must correspond to those at that
      * position and do not change with changes in reader state.
      * @group Implementation: Auxiliaries
      * @private
