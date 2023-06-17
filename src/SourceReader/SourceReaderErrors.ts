@@ -6,7 +6,7 @@
 import { SourceReaderIntl as intl } from './translations';
 
 // ===============================================
-// Error superclasses
+// #region Error superclasses {
 // ===============================================
 /**
  * The superclass for all {@link SourceReader} errors.
@@ -32,7 +32,8 @@ export class SourceReaderError extends Error {
 }
 
 /**
- * The superclass for all {@link SourceReader} errors with `operation` and `context` as interpolations.
+ * The superclass for all {@link SourceReader} errors with `operation` and `context` as
+ * interpolations.
  * It constructs the corresponding interpolation.
  * @group API: Errors
  */
@@ -46,10 +47,11 @@ export class SourceReaderErrorBy extends SourceReaderError {
         super(key, { operation, context });
     }
 }
+// #endregion } Error superclasses
 // ===============================================
 
 // ===============================================
-// Error classes
+// #region Error classes {
 // ===============================================
 /**
  * The error to produce when a SourceReader is called with no input (an empty object or array).
@@ -95,4 +97,5 @@ export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
         super('AtEndOfInputBy', operation, context);
     }
 }
+// #endregion } Error classes
 // ===============================================

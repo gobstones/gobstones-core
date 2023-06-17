@@ -6,15 +6,16 @@
  * @module SourceReader
  */
 
-import { SourceReaderLocale } from './SR-Locale';
+import { SourceReaderLocale } from './SourceReaderLocale';
 import { Translator } from '../../Translations';
-import { en } from './SR-en';
-import { es } from './SR-es';
+import { en } from './SourceReaderLocaleEN';
+import { es } from './SourceReaderLocaleES';
 
 // ===========================================================
-// API: {
+// #region Implementation: Translations {
 // ===========================================================
-/** The locales available for translations for {@link SourceReader}.
+/**
+ * The locales available for translations for {@link SourceReader}.
  * It is similar to other `availableLocales`, providing locales not only for English and Spanish,
  * but also several local dialects (all defaulting to their base language).
  * @group Implementation: Translations
@@ -61,12 +62,13 @@ export const availableLocales = {
     'es-VE': es
 };
 
-/** The instance of the {@link Translator} for {@link SourceReader}.
- * It specialize its langugage interface to {@link SourceReaderLocale}.
+/**
+ * The instance of the {@link Translator} for {@link SourceReader}.
+ * It specialize its language interface to {@link SourceReaderLocale}.
  * It uses {@link availableLocales} to provide the locales, and defaults to English.
+ * The translator is flattened to allow dot notation.
  * @group Implementation: Translations
  */
 export const SourceReaderIntl = new Translator<SourceReaderLocale>(availableLocales, 'en', true);
-// Flatten to allow dot notation
-// }
+// #endregion } Implementation: Translations
 // ===========================================================

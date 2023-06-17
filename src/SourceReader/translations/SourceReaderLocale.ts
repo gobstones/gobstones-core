@@ -20,8 +20,7 @@ export interface SourceReaderLocale {
         AtEOFBy: string;
     };
     string: {
-        unknownPos: string;
-        endOfInput: string;
-        eof: string;
+        UnknownPosition: string;
+        EndOfInput: string;
     };
 }

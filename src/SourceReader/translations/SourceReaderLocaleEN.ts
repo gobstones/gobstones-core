@@ -2,7 +2,7 @@
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  * @module SourceReader
  */
-import { SourceReaderLocale } from './SR-Locale';
+import { SourceReaderLocale } from './SourceReaderLocale';
 
 /**
  * The locale for English language, for {@link SourceReader}.
@@ -18,8 +18,7 @@ export const en: SourceReaderLocale = {
             'Operation `${operation}` of `${context}` cannot work at the end of the source input.'
     },
     string: {
-        unknownPos: 'Unknown position',
-        endOfInput: 'End of Input',
-        eof: 'eof'
+        UnknownPosition: 'Unknown position',
+        EndOfInput: 'End of Input'
     }
 };
