@@ -22,5 +22,6 @@ export interface SourceReaderLocale {
     string: {
         UnknownPosition: string;
         EndOfInput: string;
+        EndOfString: string;
     };
 }
