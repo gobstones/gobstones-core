@@ -2,7 +2,11 @@
 // Imports
 import * as SR from '../../src/SourceReader';
 
-import { ErrorAtEndOfInputBy, ErrorNoInput } from '../../src/SourceReader/SourceReaderErrors';
+import {
+    ErrorAtEndOfInputBy,
+    ErrorAtEndOfStringBy,
+    ErrorNoInput
+} from '../../src/SourceReader/SourceReaderErrors';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import { SourceReaderIntl as intl } from '../../src/SourceReader/translations';
@@ -146,7 +150,10 @@ function verifyPositionKnown(
     expect(posArg.isUnknown()).toBe(false); // It is a known position
     // isEndOfInput is related to the subclass
     expect(posArg.isEndOfInput()).toBe(posArg instanceof SR.EndOfInputSourcePosition);
-    expect(posArg.isEndOfInput()).toBe(!(posArg instanceof SR.DefinedSourcePosition));
+    expect(posArg.isEndOfInput()).toBe(!(posArg instanceof SR.StringSourcePosition));
+    const sposArg = posArg as SR.StringSourcePosition;
+    expect(sposArg.isEndOfString()).toBe(sposArg instanceof SR.EndOfStringSourcePosition);
+    expect(sposArg.isEndOfString()).toBe(!(sposArg instanceof SR.DefinedSourcePosition));
     expect(posArg.sourceReader).toBe(readerArg);
     expect(posArg.line).toBe(linArg);
     expect(posArg.column).toBe(colArg);
@@ -160,14 +167,16 @@ function verifyPositionKnown(
     }
 }
 
-function verifyEmptySourceReader(readerArg: SR.SourceReader): void {
-    expect(readerArg.atEndOfInput()).toBe(true);
-    expect(() => readerArg.peek()).toThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
+function verifyEmptyFileInSourceReader(readerArg: SR.SourceReader): void {
+    expect(readerArg.atEndOfInput()).toBe(false);
+    expect(readerArg.atEndOfString()).toBe(true);
+    expect(() => readerArg.peek()).toThrow(new ErrorAtEndOfStringBy('peek', 'SourceReader'));
     expect(readerArg.startsWith('')).toBe(true);
     expect(readerArg.startsWith('any other')).toBe(false);
     pos = readerArg.getPosition();
-    expect(pos.isEndOfInput()).toBe(true); // Position in an empty reader is EndOfInput
-    expect(pos.toString()).toBe('<' + intl.translate('string.EndOfInput') + '>');
+    expect(pos.isEndOfInput()).toBe(false);
+    expect((pos as SR.StringSourcePosition).isEndOfString()).toBe(true);
+    expect(pos.toString()).toBe('<' + intl.translate('string.EndOfString') + '>');
     verifyPositionKnown(pos, readerArg, 1, 1, []); // Satisfy all the position methods
 }
 

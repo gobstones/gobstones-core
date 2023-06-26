@@ -1244,6 +1244,8 @@ export class DefinedSourcePosition extends StringSourcePosition {
  *    skipping it, with {@link SourceReader.startsWith},
  *  - get the current position as a {@link KnownSourcePosition}, with
  *    {@link SourceReader.getPosition},
+ *  - get the current position as a {@link StringSourcePosition}, with
+ *    {@link SourceReader.getStringPosition}, provided the end of input was not reached,
  *  - detect if the end of input was reached, with {@link SourceReader.atEndOfInput},
  *  - detect if the end of the current string was reached, with {@link SourceReader.atEndOfString},
  *  - skip one or more characters, with {@link skip},
@@ -1616,7 +1618,7 @@ export class SourceReader {
     }
 
     /**
-     * Gives the current position as a {@link SourcePosition}.
+     * Gives the current position as a {@link KnownSourcePosition}.
      * See {@link SourceReader} documentation for an example.
      * @group API: Access
      */
@@ -1628,7 +1630,23 @@ export class SourceReader {
                 this._column,
                 this._cloneRegions()
             );
-        } else if (this.atEndOfString()) {
+        } else {
+            return this.getStringPosition();
+        }
+    }
+
+    /**
+     * Gives the current position as a {@link StringSourcePosition}.
+     * See {@link SourceReader} documentation for an example.
+     *
+     * **PRECONDITION:** `!this.atEndOfInput()`
+     * @group API: Access
+     */
+    public getStringPosition(): StringSourcePosition {
+        expect(this.atEndOfInput())
+            .toBe(false)
+            .orThrow(new ErrorAtEndOfInputBy('getStringPosition', 'SourceReader'));
+        if (this.atEndOfString()) {
             return new EndOfStringSourcePosition(
                 this,
                 this._line,
