@@ -1290,20 +1290,20 @@ export class DefinedSourcePosition extends StringSourcePosition {
  *    reader.skip("program");           // Move 7 chars forward
  *    while (reader.peek() === " ")     // ~~> " "
  *      { reader.skip(); }              // Move 1 char forward
- *    if (reader.peek() !== "{")        // ~~> "{"
+ *    if (!reader.atEndOfString()
+ *     && reader.peek() !== "{")        // ~~> "{"
  *      { fail("Block expected"); }
  *    reader.beginRegion("program-body");
  *    str = "";
- *    while (!reader.atEndOfInput()
- *        && !reader.atEndOfString()
+ *    while (!reader.atEndOfString()
  *        && reader.peek() !== "}") {
  *        str += reader.peek();
  *        reader.skip();
  *    }
- *   if (reader.atEndOfInput() || reader.atEndOfString) // ~~> false
+ *   if (reader.atEndOfString())         // ~~> false
  *     { fail("Unclosed block"); }
  *   str += reader.peek();
- *   pos = reader.getCurrentPos();  // ~~> (1,24) as a SourcePosition
+ *   pos = reader.getCurrentPos();       // ~~> (1,24) as a SourcePosition
  *   reader.closeRegion();
  *   reader.skip();
  * ```
@@ -1708,7 +1708,8 @@ export class SourceReader {
     }
 
     /**
-     * Skips a variable number of characters on the input, returning the characters skipped.
+     * Skips a variable number of characters on the current string of the input, returning the
+     * characters skipped.
      * All contiguous characters from the initial position satisfying the predicate are read.
      * It guarantees that the first character after skipping, if it exists, does not satisfy the
      * predicate.
@@ -1722,14 +1723,16 @@ export class SourceReader {
      */
     public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
         let strRead = '';
-        if (!this.atEndOfInput()) {
+        if (!this.atEndOfInput() && !this.atEndOfString()) {
             let ch = this.peek();
             while (contCondition(ch)) {
                 this._skipOne(silently);
                 strRead += ch;
-                if (this.atEndOfInput()) {
+                if (this.atEndOfString()) {
                     // This check is NOT redundant with the one at the beginning (because of skips),
                     // and guarantees the precondition of the following peek.
+                    // Not necessary to check endOfInput, because skipping inside a string reach
+                    // first the endOfString.
                     break;
                 }
                 ch = this.peek();

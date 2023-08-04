@@ -2,16 +2,15 @@
 // Imports
 import * as SR from '../../src/SourceReader';
 
-import {
-    ErrorAtEndOfInputBy,
-    ErrorAtEndOfStringBy,
-    ErrorNoInput
-} from '../../src/SourceReader/SourceReaderErrors';
+import { ErrorAtEndOfStringBy, ErrorNoInput } from '../../src/SourceReader/SourceReaderErrors';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import { SourceReaderIntl as intl } from '../../src/SourceReader/translations';
 
 // Global variables declarations
+// (they are needed in order for different forEachs to prepare the expected values,
+//  reused by several tests -- they are initialized inside a forEach, but used later
+//  inside an it)
 const defaultLineEnders: string = '\n';
 
 let pos: SR.KnownSourcePosition;
@@ -27,6 +26,7 @@ let reader: SR.SourceReader;
 let reader2: SR.SourceReader;
 
 let endOfInput: boolean;
+let endOfString: boolean;
 let peeked: string;
 let read: string;
 let expected: string;
@@ -182,7 +182,8 @@ function verifyEmptyFileInSourceReader(readerArg: SR.SourceReader): void {
 
 function verifySourceReaderBasicOperations(): void {
     expect(reader.atEndOfInput()).toBe(endOfInput);
-    if (!reader.atEndOfInput()) {
+    expect(reader.atEndOfString()).toBe(endOfString);
+    if (!reader.atEndOfInput() && !reader.atEndOfString()) {
         expect(reader.peek()).toBe(peeked);
     }
     expect(reader.startsWith('')).toBe(true);
@@ -252,22 +253,24 @@ describe('SourceReader creation equivalences', () => {
 
 describe('SourceReader empty inputs', () => {
     it('SR.empty - a1.0', () => {
-        verifyEmptySourceReader(new SR.SourceReader([''], defaultLineEnders));
+        verifyEmptyFileInSourceReader(new SR.SourceReader([''], defaultLineEnders));
     });
     it('SR.empty - a2.0*', () => {
-        verifyEmptySourceReader(new SR.SourceReader(['', ''], defaultLineEnders));
+        verifyEmptyFileInSourceReader(new SR.SourceReader(['', ''], defaultLineEnders));
     });
     it('SR.empty - aN.0*', () => {
-        verifyEmptySourceReader(new SR.SourceReader(['', '', '', ''], defaultLineEnders));
+        verifyEmptyFileInSourceReader(new SR.SourceReader(['', '', '', ''], defaultLineEnders));
     });
     it('SR.empty - o1.0', () => {
-        verifyEmptySourceReader(new SR.SourceReader({ empty1: '' }, defaultLineEnders));
+        verifyEmptyFileInSourceReader(new SR.SourceReader({ empty1: '' }, defaultLineEnders));
     });
     it('SR.empty - o2.0*', () => {
-        verifyEmptySourceReader(new SR.SourceReader({ empty1: '', empty2: '' }, defaultLineEnders));
+        verifyEmptyFileInSourceReader(
+            new SR.SourceReader({ empty1: '', empty2: '' }, defaultLineEnders)
+        );
     });
     it('SR.empty - oN.0*', () => {
-        verifyEmptySourceReader(
+        verifyEmptyFileInSourceReader(
             new SR.SourceReader(
                 { empty1: '', empty2: '', empty3: '', empty4: '' },
                 defaultLineEnders
@@ -386,6 +389,7 @@ describe('SourceReader array 1, single line', () => {
     describe('No skip', () => {
         beforeEach(() => {
             endOfInput = false;
+            endOfString = false;
             peeked = 'p';
             goodStartShortL0 = 'program';
             goodStartShortL1 = 'program {'; // There are no lines to include 1
@@ -462,6 +466,7 @@ describe('SourceReader array 1, single line', () => {
     describe('Skip.1.v', () => {
         beforeEach(() => {
             endOfInput = false;
+            endOfString = false;
             peeked = 'r';
             goodStartShortL0 = 'rogram ';
             goodStartShortL1 = 'rogram { ';
@@ -538,6 +543,7 @@ describe('SourceReader array 1, single line', () => {
     describe('TakeWhile.notSpace.v', () => {
         beforeEach(() => {
             endOfInput = false;
+            endOfString = false;
             peeked = ' ';
             goodStartShortL0 = ' { ';
             goodStartShortL1 = ' { Poner';
@@ -615,7 +621,8 @@ describe('SourceReader array 1, single line', () => {
 
     describe('TakeWhile.allChars.v', () => {
         beforeEach(() => {
-            endOfInput = true;
+            endOfInput = false;
+            endOfString = true;
             peeked = 'not used, but undefined not accepted';
             goodStartShortL0 = '';
             goodStartShortL1 = '';
@@ -629,7 +636,7 @@ describe('SourceReader array 1, single line', () => {
             badStartExactDisimil = '78901234567890123';
             badStartLong = '789012345678901234567890123456';
             lin = 1;
-            col = 1;
+            col = 24;
             regs = [];
             vStart = 0;
             vLength = 23;
