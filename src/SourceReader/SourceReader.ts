@@ -1574,7 +1574,7 @@ export class SourceReader {
      * Gives the current char of the current input.
      * See {@link SourceReader} for an example.
      *
-     * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfFile`
+     * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfString`
      * @throws {@link ErrorAtEndOfInputBy} if the source reader is at EndOfInput in the
      *         current position.
      * @group API: Access
@@ -1747,7 +1747,7 @@ export class SourceReader {
      * @group API: Modification
      */
     public beginRegion(regionId: string): void {
-        if (!this.atEndOfInput()) {
+        if (!this.atEndOfInput() && !this.atEndOfString()) {
             this._regions.push(regionId);
         }
     }
@@ -1861,19 +1861,28 @@ export class SourceReader {
      */
     private _skipOne(silently: boolean): void {
         if (this.atEndOfString()) {
-            this._adjustLineAndColumn();
-        } else if (!silently) {
+            // Starts a new line and column
+            this._line = 1;
+            this._column = 1;
+            // perform skip to new string
+            this._inputIndex++;
+            this._charIndex = 0;
+            this._regions = [];
+        } else {
             // It has to be done before adjusting the input and char index, because that changes the
             // current char and it may change the line and column.
-            // Precondition satisfied: !atEndOfInput().
-            this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
-            // This repetition of adjust avoids a more complex (and expensive) condition.
-            this._adjustLineAndColumn();
+            // Precondition satisfied: !atEndOfInput() && !atEndOfSting().
+            if (!silently) {
+                this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
+                if (this._isEndOfLine(this.peek())) {
+                    this._line++;
+                    this._column = 1;
+                } else {
+                    this._column++;
+                }
+            }
+            this._charIndex++;
         }
-        // The use of this._adjustLineAndColumn is less efficient than necessary in case of long
-        // skips, but those are not so common, and thus, it may be tolerated.
-        // Precondition satisfied: !atEndOfInput().
-        this._charIndex++;
     }
 
     /**
@@ -1939,28 +1948,6 @@ export class SourceReader {
             return slice;
         }
         return ''; // Positions inverted (to before from)
-    }
-
-    /**
-     * Adjusts the `_line` and `_column` before skipping one char.
-     *
-     * **PRECONDITION:** `!this.atEndOfInput()` (not verified)
-     * @group Implementation: Auxiliaries
-     * @private
-     */
-    private _adjustLineAndColumn(): void {
-        if (this.atEndOfString()) {
-            this._inputIndex++;
-            this._charIndex = 0;
-            this._line = 1;
-            this._column = 1;
-            this._regions = [];
-        } else if (this._isEndOfLine(this.peek())) {
-            this._line++;
-            this._column = 1;
-        } else {
-            this._column++;
-        }
     }
 
     /**
