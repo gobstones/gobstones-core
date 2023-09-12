@@ -5,9 +5,16 @@ import * as SR from '../../src/SourceReader';
 import { ErrorAtEndOfStringBy, ErrorNoInput } from '../../src/SourceReader/SourceReaderErrors';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
+import { fail } from 'assert';
 import { SourceReaderIntl as intl } from '../../src/SourceReader/translations';
 
-// Global variables declarations
+// TO BE DONE:
+//  - add tests to verify that skipping over end of string forces regions to []
+//  - add tests to verify that (!atEndOfString() && peek() === CHR) is equivalent to startsWith(CHR)
+//  - check "Comments about the test", at the end (VARIATIONS and OTHER THINGS)
+
+// ===============================================
+// #region Global variables declarations {
 // (they are needed in order for different forEachs to prepare the expected values,
 //  reused by several tests -- they are initialized inside a forEach, but used later
 //  inside an it)
@@ -50,7 +57,11 @@ let vInpConts: string;
 let inpConts: string;
 let vConts: string;
 let fConts: string;
+// #endregion } Global variables declarations
+// ===============================================
 
+// ===============================================
+// #region Comments about the tests {
 /* ALREADY WRITTEN
 1. SourceReader static members
    * SR.static - Unknown position
@@ -112,13 +123,12 @@ let fConts: string;
       * SR.a1.1 - Sk.1 - Regions returned.0
       * SR.a1.1 - Sk.1 - Extra endRegion
       * SR.a1.1 - Sk.1 - New begins neutral
-
-TO ADD, VARIATIONS
+*/
+/* TO ADD, VARIATIONS
 5.3. Skip.N, N short
 5.4. Skip.N, N exact
 5.5. Skip.N, N long
 5.6-5.10. idem, but silently
-
 
 6. a1.M
 7. a2.1-0
@@ -131,13 +141,17 @@ TO ADD, VARIATIONS
 13. a2.1*
 14. a2.M*
 15. aN-M*
-
-OTHER THINGS TO CONSIDER
+*/
+/* OTHER THINGS TO CONSIDER
 More on Regions (combined with SourcePosition)
 Testing for SourcePosition contentsTo and From, both common and full,
 and relationship with SourceReader
 */
+// #endregion } Comments about the tests
+// ===============================================
 
+// ===============================================
+// #region Utility functions to perform tests {
 function verifyPositionKnown(
     posArg: SR.KnownSourcePosition,
     readerArg: SR.SourceReader,
@@ -211,7 +225,14 @@ function verifyContents(): void {
     expect(pos2.fullContentsTo(pos)).toBe('');
     expect(pos2.fullContentsFrom(pos)).toBe(fConts);
 }
+// #endregion } Utility functions to perform tests
+// ===============================================
 
+// ===============================================
+// #region The test groups {
+// --------------------------------------
+//     ===============================================
+//     #region Basic SourceReader testing {
 describe('SourceReader static members', () => {
     it('SR.static - Unknown position', () => {
         const posU: SR.UnknownSourcePosition = SR.SourceReader.UnknownPosition;
@@ -279,7 +300,11 @@ describe('SourceReader empty inputs', () => {
         );
     });
 });
+//     #endregion } Basic SourceReader testing
+//     ===============================================
 
+//     ===============================================
+//     #region One input string {
 describe('SourceReader array 1, single line', () => {
     beforeEach(() => {
         input = 'program { Poner(Verde) }';
@@ -904,7 +929,11 @@ describe('Contents from SourceReader array 1, several lines', () => {
         });
     });
 });
+//     #endregion } One input string
+//     ===============================================
 
+//     ===============================================
+//     #region Several input strings {
 describe('Contents from SourceReader array 2, several lines', () => {
     beforeEach(() => {
         input = ['program {\n  PonerVerde()\n}\n', 'procedure PonerVerde() {\n  Poner(Verde)\n}'];
@@ -1114,3 +1143,92 @@ describe('Contents from SourceReader array 3, several lines', () => {
         });
     });
 });
+//     #endregion } Several input strings
+//     ===============================================
+
+//     ===============================================
+//     #region Usage example from documentation {
+describe('Usage example from documentation', () => {
+    it('Testing that the example is working properly', () => {
+        let posEx: SR.KnownSourcePosition;
+        let str: string;
+        inpConts = 'program { Poner(Verde) }';
+        vInpConts = 'program { Poner(Verde) ';
+        const readerEx = new SR.SourceReader(inpConts, '\n');
+        inputName = SR.SourceReader._unnamedStr + '[0]';
+        // ---------------------------------
+        // Read a basic Gobstones program
+        expect(readerEx.startsWith('program')).toBe(true);
+        if (readerEx.startsWith('program')) {
+            posEx = readerEx.getPosition();
+            // Visible contents is empty, as the traversal has not started.
+            verifyPositionKnown(posEx, readerEx, 1, 1, [], inputName, '', inpConts);
+            // ---------------------------------
+            // Skip over the first token
+            readerEx.skip('program');
+            // ---------------------------------
+            // Skip whitespaces between tokens
+            expect(readerEx.startsWith(' ')).toBe(true);
+            while (readerEx.startsWith(' ')) {
+                readerEx.skip();
+            }
+            // ---------------------------------
+            // Detect block start
+            expect(readerEx.startsWith('{')).toBe(true);
+            if (!readerEx.startsWith('{')) {
+                fail('Block expected');
+            }
+            readerEx.beginRegion('program-body');
+            str = '';
+            // ---------------------------------
+            // Read block body (includes '{')
+            // NOTE: CANNOT use !startsWith('}') instead because
+            //       !atEndOfString() is REQUIRED to guarantee precondition of peek()
+            while (!readerEx.atEndOfString() && readerEx.peek() !== '}') {
+                str += readerEx.peek();
+                readerEx.skip();
+            }
+            expect(str).toBe('{ Poner(Verde) ');
+            // ---------------------------------
+            // Detect block end
+            expect(readerEx.atEndOfString()).toBe(false);
+            if (readerEx.atEndOfString()) {
+                fail('Unclosed block');
+            }
+            // Add '}' to the body
+            expect(readerEx.peek()).toBe('}');
+            str += readerEx.peek();
+            posEx = readerEx.getPosition();
+            region = 'program-body';
+            verifyPositionKnown(posEx, readerEx, 1, 24, [region], inputName, vInpConts, inpConts);
+            // Pop 'program-body' from the region stack
+            readerEx.endRegion();
+            readerEx.skip();
+            // ---------------------------------
+            // Skip whitespaces at the end (none in this example)
+            expect(readerEx.startsWith(' ')).toBe(false);
+            while (readerEx.startsWith(' ')) {
+                readerEx.skip();
+                // NOT executed
+            }
+            // ---------------------------------
+            // Verify there are no more chars at input
+            expect(readerEx.atEndOfString()).toBe(true);
+            if (!readerEx.atEndOfString()) {
+                fail('Unexpected additional chars after program');
+            }
+            readerEx.skip();
+            // ---------------------------------
+            // Verify there are no more input strings
+            expect(readerEx.atEndOfInput()).toBe(true);
+            if (!readerEx.atEndOfInput()) {
+                fail('Unexpected additional inputs');
+            }
+        }
+    });
+});
+//     #endregion } Usage example from documentation
+//     ===============================================
+// -----------------------------------------------
+// #endregion } The test groups
+// ===============================================

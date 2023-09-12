@@ -1265,6 +1265,10 @@ export class DefinedSourcePosition extends StringSourcePosition {
  * Characters are marked as visible by skipping over them normally;
  * characters are marked as non visible by silently skip over them.
  * Visibility of the input affect the information that positions may provide.
+ * When skipping characters, at the end of each of the input strings there is a special position
+ * that must be skipped, but that has no character, and thus, cannot be peeked
+ * -- the {@link EndOfStringSourcePosition}. This position cannot be skipped as non visible, as
+ * every input string is apparent for the user.
  *
  * Regarding regions, a "region" is some part of the input that has an ID (as a string).
  * It is used in handling automatically generated code.
@@ -1277,36 +1281,74 @@ export class DefinedSourcePosition extends StringSourcePosition {
  *
  *  **Example**
  *
- * This is a basic example using all basic operations.
+ * This is a very basic example using all basic operations.
  * A more complex program will use functions to organize the access with a logical structure,
- * and also consider different inputs in the source.
+ * and it will also consider different inputs in the source.
+ * Just use this example to understand the behavior of operations
+ * -- common usage do NOT follow this structure.
  * ```
  *  let pos: SourcePosition;
- *  let cond: boolean;
  *  let str: string;
- *  const reader = new SourceReader('program { Poner(Verde) }');
- *  if (reader.startsWith("program")) { // ~~> true
- *    pos = reader.getCurrentPos();     // ~~> (1,1) as a SourcePosition
- *    reader.skip("program");           // Move 7 chars forward
- *    while (reader.peek() === " ")     // ~~> " "
- *      { reader.skip(); }              // Move 1 char forward
- *    if (!reader.atEndOfString()
- *     && reader.peek() !== "{")        // ~~> "{"
- *      { fail("Block expected"); }
- *    reader.beginRegion("program-body");
- *    str = "";
- *    while (!reader.atEndOfString()
- *        && reader.peek() !== "}") {
- *        str += reader.peek();
- *        reader.skip();
+ *  const reader = new SourceReader('program { Poner(Verde) }', '\n');
+ *  // ---------------------------------
+ *  // Read a basic Gobstones program
+ *  if (reader.startsWith('program')) {   // ~~> true
+ *    pos = reader.getPosition();         // ~~> (1,1) as a SourcePosition, with no regions
+ *    // ---------------------------------
+ *    // Skip over the first token
+ *    reader.skip('program');             // Move 7 chars forward
+ *    // ---------------------------------
+ *    // Skip whitespaces between tokens
+ *    while (reader.startsWith(' '))      // ~~> true 1 time
+ *      { reader.skip(); }                // Move 1 char forward (' ')
+ *    // ---------------------------------
+ *    // Detect block start
+ *    if (!reader.startsWith('{'))        // ~~> false (function returns true)
+ *      { fail('Block expected'); }
+ *    reader.beginRegion('program-body'); // Push 'program-body' to the region stack
+ *    str = '';
+ *    // ---------------------------------
+ *    // Read block body (includes '{')
+ *    // NOTE: CANNOT use !startsWith('}') instead because
+ *    //       !atEndOfString() is REQUIRED to guarantee precondition of peek()
+ *    while (!reader.atEndOfString()      // false
+ *        && reader.peek() !== '}') {     // false 15 times
+ *        str += reader.peek();           // '{', ' ', 'P', ... 'd', 'e', ')', ' '
+ *        reader.skip();                  // Move 15 times ahead
  *    }
- *   if (reader.atEndOfString())         // ~~> false
- *     { fail("Unclosed block"); }
- *   str += reader.peek();
- *   pos = reader.getCurrentPos();       // ~~> (1,24) as a SourcePosition
- *   reader.closeRegion();
- *   reader.skip();
+ *    // ---------------------------------
+ *    // Detect block end
+ *    if (reader.atEndOfString())         // ~~> false
+ *      { fail('Unclosed block'); }
+ *    // Add '}' to the body
+ *    str += reader.peek();               // ~~> '}'
+ *    pos = reader.getPosition();         // ~~> (1,24) as a SourcePosition,
+ *                                        //     with region 'program-body'
+ *    reader.endRegion();                 // Pop 'program-body' from the region stack
+ *    reader.skip();                      // Move 1 char forward ('}')
+ *    // ---------------------------------
+ *    // Skip whitespaces at the end (none in this example)
+ *    while (reader.startsWith(' '))      // ~~> false
+ *      { reader.skip(); }                // NOT executed
+ *    // ---------------------------------
+ *    // Verify there are no more chars at input
+ *    if (!reader.atEndOfString())        // ~~> false (function returns true)
+ *      { fail('Unexpected additional chars after program'); }
+ *    reader.skip();                      // Skips end of string,
+ *                                        //  reaching next string or end of input
+ *    // ---------------------------------
+ *    // Verify there are no more input strings
+ *    if (!reader.atEndOfInput())         // ~~> false (function returns true)
+ *      { fail('Unexpected additional inputs'); }
+ *  }
  * ```
+ *
+ * NOTE: as {@link SourceReader.peek} is partial, not working at the end of strings,
+ *       each of its uses must be done after confirming that {@link SourceReader.atEndOfString}
+ *       is false.
+ *       For that reason it is better to use {@link SourceReader.startsWith} to verify
+ *       if the input starts with some character (or string), when peeking for something
+ *       specific.
  * @group API: Main
  */
 export class SourceReader {
@@ -1577,6 +1619,8 @@ export class SourceReader {
      * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfString`
      * @throws {@link ErrorAtEndOfInputBy} if the source reader is at EndOfInput in the
      *         current position.
+     * @throws {@link ErrorAtEndOfStringBy} if the source reader is at EndOfString in the
+     *         current position.
      * @group API: Access
      */
     public peek(): string {
@@ -1604,22 +1648,28 @@ export class SourceReader {
      * @group API: Access
      */
     public startsWith(str: string): boolean {
+        // The input ALWAYS starts with nothing, even at the end of input
         if (str === '') {
             return true;
         }
+        // Needed as there is no current input if it is true
         if (this.atEndOfInput()) {
             return false;
         }
         // Grab all the contents of the current string
-        const currentInput: string = this._inputContentsAt(this._inputIndex);
+        const currentString: string = this._inputContentsAt(this._inputIndex);
         const i = this._charIndex;
         const j = this._charIndex + str.length;
-        return j <= currentInput.length && currentInput.substring(i, j) === str;
+        // If atEndOfString is true, j will be greater that the current string length
+        return j <= currentString.length && currentString.substring(i, j) === str;
     }
 
     /**
      * Gives the current position as a {@link KnownSourcePosition}.
      * See {@link SourceReader} documentation for an example.
+     *
+     * NOTE: the special positions at the end of each input string, and at the end of the input
+     *       can be accessed by {@link SourceReader.getPosition}, but they cannot be peeked.
      * @group API: Access
      */
     public getPosition(): KnownSourcePosition {
@@ -1679,10 +1729,14 @@ export class SourceReader {
      * Skips the given number of chars at the input string.
      * If the argument is a string, only its length is used (i.e. its contents are ignored).
      * Negative numbers do not skip (are equivalent to 0).
+     * At the end of each input string, an additional skip is needed to start the next input string.
+     * This behavior allows the user to be aware of the ending of strings.
+     * Regions are reset at the end of each string (the regions stack is emptied).
      *
      * If the skipping is `silent`, line and column do not change, usually because the input being
      * read was added automatically to the original input (the default is not silent).
      * If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
+     * The end of each input string cannot be skipped silently.
      *
      * See {@link SourceReader} for an example of visible `skip`s.
      * @param howMuch An indication of how many characters have to be skipped.
