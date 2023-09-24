@@ -651,10 +651,11 @@ The end of each input string cannot be skipped silently.</p>
 characters skipped.
 All contiguous characters from the initial position satisfying the predicate are read.
 It guarantees that the first character after skipping, if it exists, does not satisfy the
-predicate.</p>
+predicate.
+It does not go beyond the end of the current string, if starting inside one.</p>
 
 <h3>Result</h3><p>The string read from the initial position until the character that do not satisfy the
-        condition.</p>
+        condition or the end of the current string.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>

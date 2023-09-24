@@ -1767,12 +1767,13 @@ export class SourceReader {
      * All contiguous characters from the initial position satisfying the predicate are read.
      * It guarantees that the first character after skipping, if it exists, does not satisfy the
      * predicate.
+     * It does not go beyond the end of the current string, if starting inside one.
      * @param contCondition A predicate on strings, indicating the chars to read.
      * @param silently A boolean indicating if the reading must be silent.
      *                 If it is not given, it is assumed `false`, that is, a visible read.
      *                 If the read is visible, the char is added to the visible input.
      * @result The string read from the initial position until the character that do not satisfy the
-     *         condition.
+     *         condition or the end of the current string.
      * @group API: Modification
      */
     public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
