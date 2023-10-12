@@ -97,5 +97,20 @@ export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
         super('AtEndOfInputBy', operation, context);
     }
 }
+
+/**
+ * The error to produce when a function that is not supposed to be used at EndOfString is called.
+ * @group API: Errors
+ */
+export class ErrorAtEndOfStringBy extends SourceReaderErrorBy {
+    /**
+     * The constructor for {@link SourceReader.ErrorAtEndOfStringBy | ErrorAtEndOfStringBy} errors.
+     * @param operation A string indicating which function inform as the producer of the error.
+     * @param context A string indicating the context in which the function produce the error.
+     */
+    public constructor(operation: string, context: string) {
+        super('AtEndOfInputBy', operation, context);
+    }
+}
 // #endregion } Error classes
 // ===============================================

@@ -20,6 +20,7 @@ export const es: SourceReaderLocale = {
     },
     string: {
         UnknownPosition: 'Posición desconocida',
-        EndOfInput: 'Final de la entrada de datos'
+        EndOfInput: 'Final de la entrada de datos',
+        EndOfString: 'Final del string de entrada'
     }
 };

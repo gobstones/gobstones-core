@@ -8,6 +8,7 @@
 // -----------------------------------------------
 import {
     ErrorAtEndOfInputBy,
+    ErrorAtEndOfStringBy,
     ErrorNoInput,
     ErrorUnmatchingPositionsBy
 } from './SourceReaderErrors';
@@ -766,59 +767,59 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
 }
 
 /**
- * A {@link DefinedSourcePosition} points to a particular position, different from EndOfInput,
+ * A {@link StringSourcePosition} points to a particular position, different from EndOfInput,
  * in a source given by a {@link SourceReader}.
  *
  * It provides the right implementation for the operations given by its superclasses,
  * {@link KnownSourcePosition} and {@link SourcePosition}.
  * Additionally, it provides three new operations that only have sense for defined positions:
- *  * {@link DefinedSourcePosition.inputName | inputName}, the name of the particular string in the
+ *  * {@link StringSourcePosition.inputName | inputName}, the name of the particular string in the
  *    source input that has the char pointed to by this position,
- *  * {@link DefinedSourcePosition.inputContents | inputContents}, the visible contents of the
+ *  * {@link StringSourcePosition.inputContents | inputContents}, the visible contents of the
  *    particular string in the source input that has the char pointed to by this position, and
- *  * {@link DefinedSourcePosition.fullInputContents | fullInputContents}, the contents (both
+ *  * {@link StringSourcePosition.fullInputContents | fullInputContents}, the contents (both
  *    visible and non-visible) of the particular string in the source input that has the char
  *    pointed to by this position.
  * @group API: Source Positions
  */
-export class DefinedSourcePosition extends KnownSourcePosition {
+export abstract class StringSourcePosition extends KnownSourcePosition {
     // ==================
     // #region Implementation Details {
     // ------------------
     /**
-     * The implementation of {@link DefinedSourcePosition} stores additional information to locate
+     * The implementation of {@link StringSourcePosition} stores additional information to locate
      * the precise position it points to in its {@link SourceReader}, to be able to implement all
      * the required operations.
      * The values stored are tightly coupled with the implementation in the {@link SourceReader};
      * they are:
-     * * {@link DefinedSourcePosition._inputIndex | _inputIndex}, with information about which
+     * * {@link StringSourcePosition._inputIndex | _inputIndex}, with information about which
      *   string in the {@link SourceReader} contains the char pointed to by this position, that is,
      *   the _current source string_,
-     * * {@link DefinedSourcePosition._charIndex | _charIndex}, with information about which
+     * * {@link StringSourcePosition._charIndex | _charIndex}, with information about which
      *   character in the _current source string_ is the char pointed to, and
-     * * {@link DefinedSourcePosition._visibleCharIndex | _visibleCharIndex}, with information about
+     * * {@link StringSourcePosition._visibleCharIndex | _visibleCharIndex}, with information about
      *   which character in the visible part of the _current source string_ is the one pointed to
      *   (see the {@link SourceReader} documentation for explanation on visible parts of the input).
      * This information must be provided by the {@link SourceReader} during creation, and it will
      * be accessed by it when calculating sections of the source input in the implementation of
      * operations
-     * {@link DefinedSourcePosition._contentsTo | _contentsTo},
-     * {@link DefinedSourcePosition._contentsFrom | _contentsFrom},
-     * {@link DefinedSourcePosition._contentsTo | _contentsTo}, and
-     * {@link DefinedSourcePosition._fullContentsFrom | _fullContentsFrom}.
+     * {@link StringSourcePosition._contentsTo | _contentsTo},
+     * {@link StringSourcePosition._contentsFrom | _contentsFrom},
+     * {@link StringSourcePosition._contentsTo | _contentsTo}, and
+     * {@link StringSourcePosition._fullContentsFrom | _fullContentsFrom}.
      *
      * Additionally, it provides three new operations that only have sense for defined positions:
-     *  * {@link DefinedSourcePosition.inputName | inputName}, the name of the particular string in
+     *  * {@link StringSourcePosition.inputName | inputName}, the name of the particular string in
      *    the source input that has the char pointed to by this position,
-     *  * {@link DefinedSourcePosition.inputContents | inputContents}, the visible contents of the
+     *  * {@link StringSourcePosition.inputContents | inputContents}, the visible contents of the
      *    particular string in the source input that has the char pointed to by this position, and
-     *  * {@link DefinedSourcePosition.fullInputContents | fullInputContents}, the contents (both
+     *  * {@link StringSourcePosition.fullInputContents | fullInputContents}, the contents (both
      *    visible and non-visible) of the particular string in the source input that has the char
      *    pointed to by this position.
      * @group Implementation Details
      * @private
      */
-    private static _implementationDetailsForDefPos = 'Dummy for documentation';
+    private static _implementationDetailsForString = 'Dummy for documentation';
     // ------------------
     // #endregion } Implementation Details
     // ==================
@@ -860,7 +861,7 @@ export class DefinedSourcePosition extends KnownSourcePosition {
     // #region Implementation: Protected for Source Reader {
     // ------------------
     /**
-     * Constructs a specific position different from EndOfInput in an input source.
+     * Returns a source position belonging to some {@link SourceReader}.
      * It is intended to be used only by {@link SourceReader}.
      *
      * **PRECONDITIONS:** (not verified during execution)
@@ -964,10 +965,12 @@ export class DefinedSourcePosition extends KnownSourcePosition {
     // ==================
 
     // ==================
-    // #region  API: Access - 2 {
+    // #region API: Access - 2 {
     // ------------------
     /**
-     * Indicates if this position determines the end of input of the current input.
+     * Answers if this position correspond to the end of input of the
+     * {@link SourceReader} it belongs, or not.
+     * It implements the abstract operation of its superclass.
      * @group API: Access
      */
     public isEndOfInput(): boolean {
@@ -975,15 +978,14 @@ export class DefinedSourcePosition extends KnownSourcePosition {
     }
 
     /**
-     * Gives a string version of the position.
-     * It is not useful for persistence, as it looses information.
+     * Answers if this position correspond to the end of string of the current
+     * string in the {@link SourceReader} it belongs, or not.
+     * It must be implemented by concrete subclasses.
      * @group API: Access
      */
-    public toString(): string {
-        return `${this.inputName}@${this._line}:${this._column}`;
-    }
+    public abstract isEndOfString(): boolean;
     // ------------------
-    // #endregion } API: Access - 2
+    // #endregion } API: Access
     // ==================
 
     // ==================
@@ -1056,6 +1058,164 @@ export class DefinedSourcePosition extends KnownSourcePosition {
     // #endregion } Implementation: Auxiliaries
     // ==================
 }
+
+/**
+ * An {@link EndOfStringSourcePosition} points to the EndOfString position in a specific
+ * {@link SourceReader}.
+ * That position is reached when all characters in the current input string have been processed.
+ * It is a special position, because it does not point to a particular position inside the
+ * source input, but to the end of one of the strings in it.
+ * @group API: Source Positions
+ */
+export class EndOfStringSourcePosition extends StringSourcePosition {
+    // ==================
+    // #region Implementation Details {
+    // ------------------
+    /**
+     * Instances of {@link EndOfStringSourcePosition} point at the EndOfString of
+     * the current string in a particular {@link SourceReader}.
+     *
+     * The abstract operations of {@link StringSourcePosition} are implemented or reimplemented
+     * with the relevant information.
+     * @group Implementation Details
+     * @private
+     */
+    private static _implementationDetailsForEndOfStringSourcePosition = 'Dummy for documentation';
+    // ------------------
+    // #endregion } Implementation Details
+    // ==================
+
+    // ==================
+    // #region Implementation: Protected for Source Reader {
+    // ------------------
+    /**
+     * Constructs the EndOfString position in an input source.
+     * It is intended to be used only by {@link SourceReader}.
+     *
+     * **PRECONDITIONS:** (not verified during execution)
+     *  * all numbers are >= 0
+     *  * numbers are consistent with the reader state
+     * @group Implementation: Protected for Source Reader
+     * @private
+     */
+    public constructor(
+        sourceReader: SourceReader,
+        line: number,
+        column: number,
+        regions: string[],
+        inputIndex: number,
+        charIndex: number,
+        visibleCharIndex: number
+    ) {
+        super(sourceReader, line, column, regions, inputIndex, charIndex, visibleCharIndex);
+    }
+    // ------------------
+    // #endregion } Implementation: Protected for Source Reader
+    // ==================
+
+    // ==================
+    // #region API: Access {
+    // ------------------
+    /**
+     * Answers if this position is EndOfString.
+     * It implements the abstract operation of its superclass.
+     * @group API: Access
+     */
+    public isEndOfString(): boolean {
+        return true;
+    }
+
+    /**
+     * Gives the string representation of EndOfString positions.
+     * Implements the abstract operation of its superclass.
+     * @group API: Access
+     */
+    public toString(): string {
+        return '<' + intl.translate('string.EndOfString') + '>';
+    }
+    // ------------------
+    // #endregion } API: Access
+    // ==================
+}
+
+/**
+ * A {@link DefinedSourcePosition} points to a particular position, different from EndOfString,
+ * in a source given by a {@link SourceReader}.
+ *
+ * It provides the right implementation for the operations given by its superclasses.
+ * @group API: Source Positions
+ */
+export class DefinedSourcePosition extends StringSourcePosition {
+    // ==================
+    // #region Implementation Details {
+    // ------------------
+    /**
+     * Instances of {@link DefinedSourcePosition} point at some character in an
+     * input string in a particular {@link SourceReader}.
+     *
+     * The abstract operations of {@link StringSourcePosition} are implemented or reimplemented
+     * with the relevant information.
+     * @group Implementation Details
+     * @private
+     */
+    private static _implementationDetailsForDefPos = 'Dummy for documentation';
+    // ------------------
+    // #endregion } Implementation Details
+    // ==================
+
+    // ==================
+    // #region Implementation: Protected for Source Reader {
+    // ------------------
+    /**
+     * Constructs a specific position different from EndOfInput in an input source.
+     * It is intended to be used only by {@link SourceReader}.
+     *
+     * **PRECONDITIONS:** (not verified during execution)
+     *  * all numbers are >= 0
+     *  * numbers are consistent with the reader state
+     * @group Implementation: Protected for Source Reader
+     * @private
+     */
+    public constructor(
+        sourceReader: SourceReader,
+        line: number,
+        column: number,
+        regions: string[],
+        inputIndex: number,
+        charIndex: number,
+        visibleCharIndex: number
+    ) {
+        super(sourceReader, line, column, regions, inputIndex, charIndex, visibleCharIndex);
+    }
+    // ------------------
+    // #endregion } Implementation: Protected for Source Reader
+    // ==================
+
+    // ==================
+    // #region  API: Access {
+    // ------------------
+    /**
+     * Answers if this position correspond to the end of string for the
+     * current string of the {@link SourceReader} it belongs, or not.
+     * It implements the abstract operation of its superclass.
+     * @group API: Access
+     */
+    public isEndOfString(): boolean {
+        return false;
+    }
+
+    /**
+     * Gives a string version of the position.
+     * It is not useful for persistence, as it looses information.
+     * @group API: Access
+     */
+    public toString(): string {
+        return `${this.inputName}@${this._line}:${this._column}`;
+    }
+    // ------------------
+    // #endregion } API: Access
+    // ==================
+}
 // -----------------------------------------------
 // #endregion } API: Main -- SourcePositions
 // ===============================================
@@ -1080,13 +1240,16 @@ export class DefinedSourcePosition extends KnownSourcePosition {
  * particular {@link KnownSourcePosition}, can be read from it.
  * Possible interactions with a {@link SourceReader} include:
  *  - peek a character, with {@link SourceReader.peek},
- *  - check if a given strings occurs at the beginning of text without skipping it, with
- *    {@link SourceReader.startsWith},
+ *  - check if a given strings occurs at the beginning of the text in the current string, without
+ *    skipping it, with {@link SourceReader.startsWith},
  *  - get the current position as a {@link KnownSourcePosition}, with
  *    {@link SourceReader.getPosition},
+ *  - get the current position as a {@link StringSourcePosition}, with
+ *    {@link SourceReader.getStringPosition}, provided the end of input was not reached,
  *  - detect if the end of input was reached, with {@link SourceReader.atEndOfInput},
+ *  - detect if the end of the current string was reached, with {@link SourceReader.atEndOfString},
  *  - skip one or more characters, with {@link skip},
- *  - read some characters based on a condition, with {@link takeWhile}, and
+ *  - read some characters from the current string based on a condition, with {@link takeWhile}, and
  *  - manipulate "regions", with {@link SourceReader.beginRegion}
  *    and {@link SourceReader.endRegion}.
  * When reading from sources with multiple string of input, skipping moves from one of them to the
@@ -1102,6 +1265,10 @@ export class DefinedSourcePosition extends KnownSourcePosition {
  * Characters are marked as visible by skipping over them normally;
  * characters are marked as non visible by silently skip over them.
  * Visibility of the input affect the information that positions may provide.
+ * When skipping characters, at the end of each of the input strings there is a special position
+ * that must be skipped, but that has no character, and thus, cannot be peeked
+ * -- the {@link EndOfStringSourcePosition}. This position cannot be skipped as non visible, as
+ * every input string is apparent for the user.
  *
  * Regarding regions, a "region" is some part of the input that has an ID (as a string).
  * It is used in handling automatically generated code.
@@ -1114,34 +1281,74 @@ export class DefinedSourcePosition extends KnownSourcePosition {
  *
  *  **Example**
  *
- * This is a basic example using all basic operations.
- * A more complex program will use functions to organize the access with a logical structure.
+ * This is a very basic example using all basic operations.
+ * A more complex program will use functions to organize the access with a logical structure,
+ * and it will also consider different inputs in the source.
+ * Just use this example to understand the behavior of operations
+ * -- common usage do NOT follow this structure.
  * ```
  *  let pos: SourcePosition;
- *  let cond: boolean;
  *  let str: string;
- *  const reader = new SourceReader('program { Poner(Verde) }');
- *  if (reader.startsWith("program")) { // ~~> true
- *    pos = reader.getCurrentPos();     // ~~> (1,1) as a SourcePosition
- *    reader.skip("program");           // Move 7 chars forward
- *    while (reader.peek() === " ")     // ~~> " "
- *      { reader.skip(); }              // Move 1 char forward
- *    if (reader.peek() !== "{")        // ~~> "{"
- *      { fail("Block expected"); }
- *    reader.beginRegion("program-body");
- *    str = "";
- *    while (!reader.atEndOfInput()
- *        && reader.peek() !== "}") {
- *        str += reader.peek();
- *        reader.skip();
+ *  const reader = new SourceReader('program { Poner(Verde) }', '\n');
+ *  // ---------------------------------
+ *  // Read a basic Gobstones program
+ *  if (reader.startsWith('program')) {   // ~~> true
+ *    pos = reader.getPosition();         // ~~> (1,1) as a SourcePosition, with no regions
+ *    // ---------------------------------
+ *    // Skip over the first token
+ *    reader.skip('program');             // Move 7 chars forward
+ *    // ---------------------------------
+ *    // Skip whitespaces between tokens
+ *    while (reader.startsWith(' '))      // ~~> true 1 time
+ *      { reader.skip(); }                // Move 1 char forward (' ')
+ *    // ---------------------------------
+ *    // Detect block start
+ *    if (!reader.startsWith('{'))        // ~~> false (function returns true)
+ *      { fail('Block expected'); }
+ *    reader.beginRegion('program-body'); // Push 'program-body' to the region stack
+ *    str = '';
+ *    // ---------------------------------
+ *    // Read block body (includes '{')
+ *    // NOTE: CANNOT use !startsWith('}') instead because
+ *    //       !atEndOfString() is REQUIRED to guarantee precondition of peek()
+ *    while (!reader.atEndOfString()      // false
+ *        && reader.peek() !== '}') {     // false 15 times
+ *        str += reader.peek();           // '{', ' ', 'P', ... 'd', 'e', ')', ' '
+ *        reader.skip();                  // Move 15 times ahead
  *    }
- *   if (reader.atEndOfInput())              // ~~> false
- *     { fail("Unclosed block"); }
- *   str += reader.peek();
- *   pos = reader.getCurrentPos();  // ~~> (1,24) as a SourcePosition
- *   reader.closeRegion();
- *   reader.skip();
+ *    // ---------------------------------
+ *    // Detect block end
+ *    if (reader.atEndOfString())         // ~~> false
+ *      { fail('Unclosed block'); }
+ *    // Add '}' to the body
+ *    str += reader.peek();               // ~~> '}'
+ *    pos = reader.getPosition();         // ~~> (1,24) as a SourcePosition,
+ *                                        //     with region 'program-body'
+ *    reader.endRegion();                 // Pop 'program-body' from the region stack
+ *    reader.skip();                      // Move 1 char forward ('}')
+ *    // ---------------------------------
+ *    // Skip whitespaces at the end (none in this example)
+ *    while (reader.startsWith(' '))      // ~~> false
+ *      { reader.skip(); }                // NOT executed
+ *    // ---------------------------------
+ *    // Verify there are no more chars at input
+ *    if (!reader.atEndOfString())        // ~~> false (function returns true)
+ *      { fail('Unexpected additional chars after program'); }
+ *    reader.skip();                      // Skips end of string,
+ *                                        //  reaching next string or end of input
+ *    // ---------------------------------
+ *    // Verify there are no more input strings
+ *    if (!reader.atEndOfInput())         // ~~> false (function returns true)
+ *      { fail('Unexpected additional inputs'); }
+ *  }
  * ```
+ *
+ * NOTE: as {@link SourceReader.peek} is partial, not working at the end of strings,
+ *       each of its uses must be done after confirming that {@link SourceReader.atEndOfString}
+ *       is false.
+ *       For that reason it is better to use {@link SourceReader.startsWith} to verify
+ *       if the input starts with some character (or string), when peeking for something
+ *       specific.
  * @group API: Main
  */
 export class SourceReader {
@@ -1196,22 +1403,24 @@ export class SourceReader {
      *    {@link SourceReader._lineEnders | _lineEnders}.
      *
      * The object of {@link SourceReader._inputs | _inputs } cannot be empty (with no input string),
-     * and the {@link SourceReader._charIndex | _charIndex } always points to a valid position in
-     * an input string, except when the end of input was reached (that is, when the end of the
-     * current input string is reached).
-     * Indexes are adjusted (using {@link SourceReader._adjustInputIndex | _adjustInputIndex}) to
-     * satisfy this last invariant.
+     * and the {@link SourceReader._charIndex | _charIndex } either points to
+     * a valid position in an input string, or
+     * at the end of an input string, or
+     * the end of input was reached (that is, when there are no more input strings to read).
      *
      * Line and column numbers are adjusted depending on which characters are considered as ending a
      * line, as given by the property {@link SourceReader._lineEnders | _lineEnders}, and which
      * characters are considered visible, as indicating by the user through
      * {@link SourceReader.skip | skip}.
+     * When changing from one string to the next, line and column numbers are reset.
      *
      * The visible input is conformed by those characters of the input that has been skipped
      * normally.
      * As visible and non visible characters can be interleaved with no restrictions, it is better
      * to keep a copy of the visible parts: characters are copied to the visible inputs attribute
      * when skipped normally.
+     * Visible inputs always have a copy of those characters that have been processed as visible;
+     * unprocessed characters do not appear (yet) on visible inputs.
      *
      * This class is tightly coupled with {@link SourcePosition} and its subclasses, because of
      * instances of that class represent different positions in the source inputs kept by a
@@ -1334,7 +1543,8 @@ export class SourceReader {
     // ------------------
     /**
      * A new {@link SourceReader} is created from the given `input`.
-     * It starts in the first position of the first non empty input string.
+     * It starts in the first position of the first input string
+     * (if it is empty, starts in an EndOfString position).
      * Line enders must be provided, affecting the calculation of line and column for positions.
      * If there are no line enders, all strings in the source are assumed as having only one line.
      *
@@ -1377,8 +1587,7 @@ export class SourceReader {
         this._column = 1;
         this._regions = [];
         this._lineEnders = lineEnders;
-        // Adjust _inputIndex when there are empty inputs
-        this._adjustInputIndex();
+        // If the first file is empty, starts at End Of String
     }
     // ------------------
     // #endregion } API: Creation
@@ -1396,24 +1605,37 @@ export class SourceReader {
     }
 
     /**
+     * Answers if there are no more characters to read from the current string.
+     * @group API: Access
+     */
+    public atEndOfString(): boolean {
+        return this._hasCurrentInput() && !this._hasCurrentCharAtCurrentInput();
+    }
+
+    /**
      * Gives the current char of the current input.
      * See {@link SourceReader} for an example.
      *
-     * **PRECONDITION:** `!this.atEndOfInput()`
+     * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfString`
      * @throws {@link ErrorAtEndOfInputBy} if the source reader is at EndOfInput in the
+     *         current position.
+     * @throws {@link ErrorAtEndOfStringBy} if the source reader is at EndOfString in the
      *         current position.
      * @group API: Access
      */
     public peek(): string {
-        /*
-         * **OBSERVATION:** by the invariant of {@link SourceReader._charIndex}, the precondition
-         *                  guarantees the existence of a current char.
-         */
-        // expect(this.atEndOfInput()).toBe(false)
-        //          .orThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
-        if (this.atEndOfInput()) {
-            throw new ErrorAtEndOfInputBy('peek', 'SourceReader');
-        }
+        expect(this.atEndOfInput())
+            .toBe(false)
+            .orThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
+        // if (this.atEndOfInput()) {
+        //     throw new ErrorAtEndOfInputBy('peek', 'SourceReader');
+        // }
+        expect(this.atEndOfString())
+            .toBe(false)
+            .orThrow(new ErrorAtEndOfStringBy('peek', 'SourceReader'));
+        // if (this.atEndOfString()) {
+        //     throw new ErrorAtEndOfStringBy('peek', 'SourceReader');
+        // }
         return this._inputContentsAt(this._inputIndex)[this._charIndex];
     }
 
@@ -1426,21 +1648,28 @@ export class SourceReader {
      * @group API: Access
      */
     public startsWith(str: string): boolean {
+        // The input ALWAYS starts with nothing, even at the end of input
         if (str === '') {
             return true;
         }
+        // Needed as there is no current input if it is true
         if (this.atEndOfInput()) {
             return false;
         }
-        const currentInput: string = this._inputContentsAt(this._inputIndex);
+        // Grab all the contents of the current string
+        const currentString: string = this._inputContentsAt(this._inputIndex);
         const i = this._charIndex;
         const j = this._charIndex + str.length;
-        return j <= currentInput.length && currentInput.substring(i, j) === str;
+        // If atEndOfString is true, j will be greater that the current string length
+        return j <= currentString.length && currentString.substring(i, j) === str;
     }
 
     /**
-     * Gives the current position as a {@link SourcePosition}.
+     * Gives the current position as a {@link KnownSourcePosition}.
      * See {@link SourceReader} documentation for an example.
+     *
+     * NOTE: the special positions at the end of each input string, and at the end of the input
+     *       can be accessed by {@link SourceReader.getPosition}, but they cannot be peeked.
      * @group API: Access
      */
     public getPosition(): KnownSourcePosition {
@@ -1450,6 +1679,32 @@ export class SourceReader {
                 this._line,
                 this._column,
                 this._cloneRegions()
+            );
+        } else {
+            return this.getStringPosition();
+        }
+    }
+
+    /**
+     * Gives the current position as a {@link StringSourcePosition}.
+     * See {@link SourceReader} documentation for an example.
+     *
+     * **PRECONDITION:** `!this.atEndOfInput()`
+     * @group API: Access
+     */
+    public getStringPosition(): StringSourcePosition {
+        expect(this.atEndOfInput())
+            .toBe(false)
+            .orThrow(new ErrorAtEndOfInputBy('getStringPosition', 'SourceReader'));
+        if (this.atEndOfString()) {
+            return new EndOfStringSourcePosition(
+                this,
+                this._line,
+                this._column,
+                this._cloneRegions(),
+                this._inputIndex,
+                this._charIndex,
+                this._visibleInputs[this._inputsNames[this._inputIndex]].length
             );
         } else {
             return new DefinedSourcePosition(
@@ -1474,10 +1729,14 @@ export class SourceReader {
      * Skips the given number of chars at the input string.
      * If the argument is a string, only its length is used (i.e. its contents are ignored).
      * Negative numbers do not skip (are equivalent to 0).
+     * At the end of each input string, an additional skip is needed to start the next input string.
+     * This behavior allows the user to be aware of the ending of strings.
+     * Regions are reset at the end of each string (the regions stack is emptied).
      *
      * If the skipping is `silent`, line and column do not change, usually because the input being
      * read was added automatically to the original input (the default is not silent).
      * If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
+     * The end of each input string cannot be skipped silently.
      *
      * See {@link SourceReader} for an example of visible `skip`s.
      * @param howMuch An indication of how many characters have to be skipped.
@@ -1503,28 +1762,32 @@ export class SourceReader {
     }
 
     /**
-     * Skips a variable number of characters on the input, returning the characters skipped.
+     * Skips a variable number of characters on the current string of the input, returning the
+     * characters skipped.
      * All contiguous characters from the initial position satisfying the predicate are read.
      * It guarantees that the first character after skipping, if it exists, does not satisfy the
      * predicate.
+     * It does not go beyond the end of the current string, if starting inside one.
      * @param contCondition A predicate on strings, indicating the chars to read.
      * @param silently A boolean indicating if the reading must be silent.
      *                 If it is not given, it is assumed `false`, that is, a visible read.
      *                 If the read is visible, the char is added to the visible input.
      * @result The string read from the initial position until the character that do not satisfy the
-     *         condition.
+     *         condition or the end of the current string.
      * @group API: Modification
      */
     public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
         let strRead = '';
-        if (!this.atEndOfInput()) {
+        if (!this.atEndOfInput() && !this.atEndOfString()) {
             let ch = this.peek();
             while (contCondition(ch)) {
                 this._skipOne(silently);
                 strRead += ch;
-                if (this.atEndOfInput()) {
+                if (this.atEndOfString()) {
                     // This check is NOT redundant with the one at the beginning (because of skips),
                     // and guarantees the precondition of the following peek.
+                    // Not necessary to check endOfInput, because skipping inside a string reach
+                    // first the endOfString.
                     break;
                 }
                 ch = this.peek();
@@ -1539,7 +1802,7 @@ export class SourceReader {
      * @group API: Modification
      */
     public beginRegion(regionId: string): void {
-        if (!this.atEndOfInput()) {
+        if (!this.atEndOfInput() && !this.atEndOfString()) {
             this._regions.push(regionId);
         }
     }
@@ -1566,7 +1829,6 @@ export class SourceReader {
      * It is intended to be used only by {@link SourcePosition}.
      *
      * **PRECONDITION:** `index <= this._inputsNames.length` (not verified)
-     *
      * As it is a protected operation, it is not expectable to receive invalid indexes.
      * It is not taken into account which are the results if that happens.
      * @group Implementation: Protected for Source Positions
@@ -1643,26 +1905,39 @@ export class SourceReader {
      * If the skipping is `silent`, line and column do not change, usually because the input being
      * read was added automatically to the original input (the default is not silent).
      * If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
+     * Skip cannot be silent on the EndOfString, so at EndOfString silent flag is ignored.
      *
      * Its used by API operations to skip one or more characters.
      *
+     * **PRECONDITION:** `!this.atEndOfInput()` (not verified)
      * @param silently A boolean indicating if the skip must be silent.
      * @group Implementation: Auxiliaries
      * @private
      */
     private _skipOne(silently: boolean): void {
-        if (!silently) {
+        if (this.atEndOfString()) {
+            // Starts a new line and column
+            this._line = 1;
+            this._column = 1;
+            // perform skip to new string
+            this._inputIndex++;
+            this._charIndex = 0;
+            this._regions = [];
+        } else {
             // It has to be done before adjusting the input and char index, because that changes the
             // current char and it may change the line and column.
-            // Precondition satisfied: !atEndOfInput().
-            this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
-            // The use of the previous procedure is less efficient than necessary in case of long
-            // skips, but those are not so common, and thus, it may be tolerated.
-            // Precondition satisfied: !atEndOfInput().
-            this._adjustLineAndColumn();
+            // Precondition satisfied: !atEndOfInput() && !atEndOfSting().
+            if (!silently) {
+                this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
+                if (this._isEndOfLine(this.peek())) {
+                    this._line++;
+                    this._column = 1;
+                } else {
+                    this._column++;
+                }
+            }
+            this._charIndex++;
         }
-        this._charIndex++;
-        this._adjustInputIndex();
     }
 
     /**
@@ -1672,7 +1947,6 @@ export class SourceReader {
      *
      * **PRECONDITIONS:**
      *  * both positions correspond to this reader (and so are >= 0 -- not verified)
-     *  * conts is one of the inputs of the source reader (either full or visible)
      * @group Implementation: Auxiliaries
      * @private
      */
@@ -1691,10 +1965,10 @@ export class SourceReader {
                 : this._inputContentsAt(inputFrom).length;
         } else {
             // As from is not EndOfInput, it is safe to cast it down.
-            inputFrom = (from as DefinedSourcePosition)._theInputIndex;
+            inputFrom = (from as StringSourcePosition)._theInputIndex;
             charFrom = visible
-                ? (from as DefinedSourcePosition)._theVisibleCharIndex
-                : (from as DefinedSourcePosition)._theCharIndex;
+                ? (from as StringSourcePosition)._theVisibleCharIndex
+                : (from as StringSourcePosition)._theCharIndex;
         }
         let inputTo: number;
         let charTo: number;
@@ -1706,10 +1980,10 @@ export class SourceReader {
                 : this._inputContentsAt(inputTo).length;
         } else {
             // As to is not EndOfInput, it is safe to cast it down.
-            inputTo = (to as DefinedSourcePosition)._theInputIndex;
+            inputTo = (to as StringSourcePosition)._theInputIndex;
             charTo = visible
-                ? (to as DefinedSourcePosition)._theVisibleCharIndex
-                : (to as DefinedSourcePosition)._theCharIndex;
+                ? (to as StringSourcePosition)._theVisibleCharIndex
+                : (to as StringSourcePosition)._theCharIndex;
         }
         // The construction of the contents that are required.
         if (inputFrom === inputTo && charFrom <= charTo) {
@@ -1729,41 +2003,6 @@ export class SourceReader {
             return slice;
         }
         return ''; // Positions inverted (to before from)
-    }
-
-    /**
-     * Adjusts the `_inputIndex` to satisfy `_charIndex` invariant.
-     * That invariant may fail in the case of empty inputs, or when moving `_charIndex` forward.
-     * @group Implementation: Auxiliaries
-     * @private
-     */
-    private _adjustInputIndex(): void {
-        while (this._hasCurrentInput() && !this._hasCurrentCharAtCurrentInput()) {
-            // Precondition satisfied: _hasCurrentInput
-            this._inputIndex++;
-            this._charIndex = 0;
-            this._line = 1;
-            this._column = 1;
-            this._regions = [];
-            // These last assignments are cheaper reassigned on each iteration, because to avoid
-            // that, a more complex calculation is needed, and that one occurs far more often.
-        }
-    }
-
-    /**
-     * Adjusts the `_line` and `_column` before skipping one char.
-     *
-     * **PRECONDITION:** `!this.atEndOfInput()` (not verified)
-     * @group Implementation: Auxiliaries
-     * @private
-     */
-    private _adjustLineAndColumn(): void {
-        if (this._isEndOfLine(this.peek())) {
-            this._line++;
-            this._column = 1;
-        } else {
-            this._column++;
-        }
     }
 
     /**
