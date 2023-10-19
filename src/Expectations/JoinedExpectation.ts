@@ -13,7 +13,7 @@ import { IFinishedExpectation } from './Interfaces';
  * Currently two join forms are provided, {@link Expectations!and},
  * and {@link Expectations!or}.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export class JoinedExpectation extends FinishedExpectation {
     /**

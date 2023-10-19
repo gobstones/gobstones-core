@@ -17,6 +17,8 @@ import fs from 'fs';
 /**
  * The general flags that a CLI app accepts, when configured to used them.
  * Note that currently the default flags cannot be changed.
+ *
+ * @group API: Options
  */
 export interface CLIGeneralFlags {
     /** The help flags, both short and long */
@@ -34,6 +36,8 @@ export interface CLIGeneralFlags {
 /**
  * A set of options for initially configure a CLI application.
  * If a translation is given
+ *
+ * @group API: Options
  */
 export interface CLIAppOptions {
     /**
@@ -71,12 +75,14 @@ export interface CLIAppOptions {
      * * input file for a command: -i, --in
      * * output file for a command: -o, --out
      */
-    flags?: CLIGeneralFlags;
+    flags: CLIGeneralFlags;
 }
 
 /**
  * A builder for a CLI command. May be the main command of the app ({@link CLIApp})
  * extends this class) or a sub-command.
+ *
+ * @group Internal: Types
  */
 export class CLICommandBuilder {
     private static SHORT_HELP_FLAG = '-h';
@@ -170,7 +176,9 @@ export class CLICommandBuilder {
     public option(flags: string, description?: string, defaultValue?: string | boolean): this {
         this.program.option(
             flags,
-            this.options.translator ? this.options.translator.translate(description) : description,
+            this.options.translator
+                ? this.options.translator.translate(description ?? '')
+                : description,
             defaultValue
         );
         return this;
@@ -321,27 +329,35 @@ export class CLICommandBuilder {
     protected setCorrectLanguage(language?: string): void {
         if (language) {
             this.validateLanguageFlag(language);
-            this.options.translator.setLocale(language);
+            this.options.translator?.setLocale(language);
         }
     }
 
     /** Validate that the given language flag, if any, is a valid translation */
     protected validateLanguageFlag(locale: string): void {
-        const availableLangs = Object.keys(this.options.translator.getAvailableTranslations())
+        const availableLangs = Object.keys(
+            this.options.translator?.getAvailableTranslations() || {}
+        )
             .map((e) => '"' + e + '"')
             .join(' | ');
         this.ensureOrFailAndExit(
-            this.options.translator.hasLocale(locale),
+            this.options.translator !== undefined && this.options.translator.hasLocale(locale),
             this.options.translator
-                ? this.options.translator.translate(this.options.texts.languageError, {
+                ? this.options.translator.translate(this.options.texts.languageError ?? '', {
                       locale,
                       availableLangs
                   })
-                : this.options.texts.languageError
+                : this.options.texts.languageError ?? ''
         );
     }
 }
 
+/**
+ * The CLIApp class is the class to extend in order to define your CLI based
+ * application.
+ *
+ * @group API: Main
+ */
 export class CLIApp extends CLICommandBuilder {
     /** The arguments passed to the application */
     private processArgs: string[];
@@ -424,7 +440,9 @@ export class CLIApp extends CLICommandBuilder {
             cmd.option(
                 // eslint-disable-next-line max-len
                 `${this.options.flags.language.short}, ${this.options.flags.language.long}, <locale>`,
-                this.options.translator.translate(this.options.texts.language, { availableLangs }),
+                this.options.translator.translate(this.options.texts.language ?? '', {
+                    availableLangs
+                }),
                 language
             );
         }
@@ -458,7 +476,7 @@ export class CLIApp extends CLICommandBuilder {
         const env = process.env ?? {};
         // Retrieve locale from environment
         const locale: string =
-            env.LANG ?? env.LANGUAGE ?? env.LC_NAME ?? env.LC_ALL ?? env.LC_MESSAGES;
+            env.LANG ?? env.LANGUAGE ?? env.LC_NAME ?? env.LC_ALL ?? env.LC_MESSAGES ?? '';
         // The locale from environment is returned as something like 'es_ES.UTF-8'.
         // The encoding is not needed at all for our translation system.
         const localeName = locale?.split('.')?.[0];
@@ -468,18 +486,25 @@ export class CLIApp extends CLICommandBuilder {
         // Now check for each language in the list if such a locale exists
         if (localeList.length > 0) {
             for (const each of localeList) {
-                if (this.options.translator.hasLocale(each)) {
+                if (this.options.translator?.hasLocale(each)) {
                     return each;
                 }
             }
         }
-        return this.options.translator.getDefaultLocale();
+        return this.options.translator?.getDefaultLocale() ?? '';
     }
 }
 
+/**
+ * The Type of a CLI application
+ *
+ * @group API: Main
+ */
 export type cli = CLIApp;
 /**
  * Create a new CLI application.
  * @param options The application options.
+ *
+ * @group API: Main
  */
 export const cli = (options: CLIAppOptions): CLIApp => new CLIApp(options);

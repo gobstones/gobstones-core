@@ -1,11 +1,10 @@
 /**
  * @ignore
  */
-export * from './Board';
+export * from './Types';
+export * from './Functions';
+export * from './Events/EventEmitter';
 export * from './Expectations';
 export * from './Translations';
-export * from './Events/EventEmitter';
-export * from './Regexp';
 export * from './SourceReader';
-export * from './helpers';
-export * from './Utils';
+export * from './GobstonesLang';

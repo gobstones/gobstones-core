@@ -1,0 +1,29 @@
+name: on-commit-test
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+jobs:
+    test:
+        name: Run tests
+        runs-on: ubuntu-latest
+        env:
+            NODE_OPTIONS: --experimental-modules
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+            - name: Setup node version
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
+            - name: Remove Husky on prepare
+              run: npm pkg delete scripts.prepare
+            - name: Installing project dependencies
+              run: npm install
+            - name: Build the code
+              run: npm test
+              env:
+                  CI: true

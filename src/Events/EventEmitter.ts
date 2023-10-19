@@ -10,7 +10,7 @@
  * Multiple events could be added, with different signatures for each
  * subscriber.
  *
- * @group Internal definition types
+ * @group Internal: Definition types
  */
 export type EventSignature<L> = {
     [E in keyof L]: (...args: any[]) => any;
@@ -19,10 +19,10 @@ export type EventSignature<L> = {
 /**
  * This type is a specification of {@link EventSignature} where each
  * event is key is a string (the most common case), and the subscriber
- * functions are any functions. This is the default behavior of most
+ * functions are any function. This is the default behavior of most
  * JavaScript event emitter, and the DOM event's signature.
  *
- * @group Internal definition types
+ * @group Internal: Definition types
  */
 export type DefaultEventSignature = {
     [k: string]: (...args: any[]) => any;
@@ -38,7 +38,7 @@ export type DefaultEventSignature = {
  * a set of event names together with the expected parameters that the observer
  * will be called with when the event occurs.
  *
- * @group Main module definitions
+ * @group API: Main
  */
 export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
     /** A map of event to observers for the full time observers. */

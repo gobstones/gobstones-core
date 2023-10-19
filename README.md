@@ -22,11 +22,12 @@ Unless you are developing a library for the Gobstones Platform you probably won'
 
 The main module is `@gobstones/gobstones-core` and contains useful classes and abstraction to
 most code usage in Gobstones. Currently some of the exported utilities are:
-* Board related classes and interfaces (Board, Cell, Color, Direction)
-* Expectations (The `expect` function and all it's associated matchers)
-* Translator (Mainly the translator class and it's associated behavior)
-* SourceReader (A class to solve the problem of locating characters in source input)
-* helper tools (Such as a tool for creating matrices, a deepEqual comparison, and tools to flatten/unflatten an object)
+
+-   Board related classes and interfaces (Board, Cell, Color, Direction)
+-   Expectations (The `expect` function and all it's associated matchers)
+-   Translator (Mainly the translator class and it's associated behavior)
+-   SourceReader (A class to solve the problem of locating characters in source input)
+-   helper tools (Such as a tool for creating matrices, a deepEqual comparison, and tools to flatten/unflatten an object)
 
 Just import then from the main module the tools you want. [Check the API](https://gobstones.github.io/gobstones-core) for more information on what is exported and how it works.
 

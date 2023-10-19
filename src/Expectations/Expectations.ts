@@ -65,7 +65,7 @@ import { JoinedExpectation } from './JoinedExpectation';
  *
  * @param element The element that is going to be queried by the created expectation.
  *
- * @group Main module functions
+ * @group API: Main
  */
 export function expect(element?: number): INumberExpectation;
 export function expect(element?: string): IStringExpectation;
@@ -83,7 +83,7 @@ export function expect(element?: any): any {
  * @param expectations A list of expectations that need to be fulfilled in order to
  *      return `true` as result.
  *
- * @group Main module functions
+ * @group API: Main
  */
 export const and = (...expectations: IFinishedExpectation[]): IFinishedExpectation =>
     new JoinedExpectation(expectations, (exp) => exp.reduce((r, e) => r && e.getResult(), true));
@@ -95,7 +95,7 @@ export const and = (...expectations: IFinishedExpectation[]): IFinishedExpectati
  * @param expectations A list of expectations where one need to be fulfilled in order to
  *      return `true` as result.
  *
- * @group Main module functions
+ * @group API: Main
  */
 export const or = (...expectations: IFinishedExpectation[]): IFinishedExpectation =>
     new JoinedExpectation(expectations, (exp) => exp.reduce((r, e) => r || e.getResult(), false));

@@ -550,7 +550,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected abstract _contentsTo(to: KnownSourcePosition);
+    protected abstract _contentsTo(to: KnownSourcePosition): any;
 
     /**
      * The exact portion of the source that is enclosed between `from` position and `this`
@@ -570,7 +570,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected abstract _contentsFrom(from: KnownSourcePosition);
+    protected abstract _contentsFrom(from: KnownSourcePosition): any;
 
     /**
      * The exact portion of the source that is enclosed between `this` position and `to`
@@ -590,7 +590,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected abstract _fullContentsTo(to: KnownSourcePosition);
+    protected abstract _fullContentsTo(to: KnownSourcePosition): any;
 
     /**
      * The exact portion of the source that is enclosed between `from` position and `this`
@@ -610,7 +610,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected abstract _fullContentsFrom(from: KnownSourcePosition);
+    protected abstract _fullContentsFrom(from: KnownSourcePosition): any;
     // ------------------
     // #endregion } Implementation: Auxiliaries
     // ==================
@@ -1514,7 +1514,7 @@ export class SourceReader {
      * The current column number in the current input.
      *
      * **INVARIANTS:**
-     *   * `0 <= _column`
+     *   * `0 <= _column`<
      *   * if `_inputIndex < _inputsNames.length`,
      *      then `_column < _inputs[_inputsNames[_inputIndex]].length`
      * @group Implementation: Internal state
@@ -1849,7 +1849,7 @@ export class SourceReader {
      * @private
      */
     public _inputContentsAt(index: number): string {
-        return this._inputs[this._inputsNames[index]];
+        return (this._inputs as Record<string, string>)[this._inputsNames[index]];
     }
 
     /**

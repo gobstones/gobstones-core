@@ -11,7 +11,8 @@
  * To provide a translation to a new language, define an instance
  * of this interface and place it with the current ones (those for
  * English, {@link SourceReader.en | en}, and Spanish, {@link SourceReader.es | es}).
- * @group Implementation: Translations
+ *
+ * @group Internal: Translations
  */
 export interface SourceReaderLocale {
     error: {

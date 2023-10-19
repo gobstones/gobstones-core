@@ -18,7 +18,8 @@ import { es } from './SourceReaderLocaleES';
  * The locales available for translations for {@link SourceReader}.
  * It is similar to other `availableLocales`, providing locales not only for English and Spanish,
  * but also several local dialects (all defaulting to their base language).
- * @group Implementation: Translations
+ *
+ * @group Internal: Translations
  */
 export const availableLocales = {
     en,
@@ -67,7 +68,8 @@ export const availableLocales = {
  * It specialize its language interface to {@link SourceReaderLocale}.
  * It uses {@link availableLocales} to provide the locales, and defaults to English.
  * The translator is flattened to allow dot notation.
- * @group Implementation: Translations
+ *
+ * @group Internal: Translations
  */
 export const SourceReaderIntl = new Translator<SourceReaderLocale>(availableLocales, 'en', true);
 // #endregion } Implementation: Translations

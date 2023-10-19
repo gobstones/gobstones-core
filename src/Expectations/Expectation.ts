@@ -12,7 +12,7 @@ import { IFinishedExpectation } from './Interfaces';
  * any expectation. It implements all interfaces for expectations, even
  * the finished expectation ones.
  *
- * @group Helper classes and interfaces
+ * @group Internal: Types
  */
 export class Expectation<T> extends FinishedExpectation {
     /**
@@ -159,6 +159,10 @@ export class Expectation<T> extends FinishedExpectation {
 
     // IArrayExpectation
 
+    /** @inheritDoc {@link IArrayExpectation.toBeEmptyArray} */
+    public toBeEmptyArray(count: number): this & IFinishedExpectation {
+        return this.runMatcher('toBeEmptyArray', [count]);
+    }
     /** @inheritDoc {@link IArrayExpectation.toHaveLength} */
     public toHaveLength(count: number): this & IFinishedExpectation {
         return this.runMatcher('toHaveLength', [count]);
@@ -189,6 +193,10 @@ export class Expectation<T> extends FinishedExpectation {
 
     // IObjectExpectation
 
+    /** @inheritDoc {@link IObjectExpectation.toBeEmptyObject} */
+    public toBeEmptyObject(count: number): this & IFinishedExpectation {
+        return this.runMatcher('toBeEmptyObject', [count]);
+    }
     /** @inheritDoc {@link IObjectExpectation.toHavePropertyCount} */
     public toHavePropertyCount(count: number): this & IFinishedExpectation {
         return this.runMatcher('toHavePropertyCount', [count]);

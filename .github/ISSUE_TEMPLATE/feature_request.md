@@ -1,7 +1,6 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-
 ---
 
 Before opening a new feature request, please take a moment to review our [**guidelines**](https://github.com/gobstones/gobstones-guidelines) to make the contribution process easy and effective for everyone involved.

@@ -1,4 +1,4 @@
-# Contibution Guidelines
+# Contribution Guidelines
 
 ## On Submitting Bug Reports
 
@@ -15,14 +15,15 @@ Please specify thoroughly the feature you want, and what is the reason for such 
 ## On Submitting New Code
 
 Please make sure your code complies with the following practices:
-* All code is documented
-* The code passes the linting process (Without disabling linter)
-* Use relevant, descriptive names for functions, parameters, variables or other symbols.
-* Test pass OK.
-* On new features, tests for additional cases are provided.
+
+-   All code is documented
+-   The code passes the linting process (Without disabling linter)
+-   Use relevant, descriptive names for functions, parameters, variables or other symbols.
+-   Test pass OK.
+-   On new features, tests for additional cases are provided.
 
 Make sure to open an issue and discuss about it before throwing yourself into coding something that may not be merged, specially when adding new features, modifying the API, or adding/changing libraries.
 
 Provide clear concise description of the changes in the commit message and pull requests.
 
-Make sure to only contribute to `dev` branch, as we follow git-flow.
+Make sure to only contribute to `develop` branch, as we follow git-flow.

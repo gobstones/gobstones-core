@@ -2,7 +2,7 @@
  * @module Translator
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { flatten } from '../helpers/flatten';
+import { flatten } from '../Functions/flatten';
 
 /**
  * A Translation consist of an object that hold the state of the current
@@ -18,7 +18,7 @@ import { flatten } from '../helpers/flatten';
  * language as a state object. Rather, this should be created once, setted
  * with the desired language, and used always through the full library.
  *
- * @group Main module definitions
+ * @group API: Main
  */
 export class Translator<TLocale extends Record<string, any>> {
     /**

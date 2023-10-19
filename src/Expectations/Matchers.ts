@@ -2,13 +2,13 @@
  * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { deepEquals } from '../helpers/deepEquals';
+import { deepEquals } from '../Functions/deepEquals';
 
 /**
  * A matcher call represents a call to a matcher with it's corresponding
  * arguments and the actual result.
  *
- * @group Helper classes and interfaces
+ * @group Internal: Types
  */
 export interface MatcherCall {
     matcher: string;
@@ -25,7 +25,7 @@ export interface MatcherCall {
  * Having the matchers separated from the instances that use the matchers allow for
  * greater extensibility.
  *
- * @group Helper classes and interfaces
+ * @group Internal: Types
  */
 export class Matchers {
     // Generic
@@ -136,6 +136,9 @@ export class Matchers {
         return typeof actual === 'string' && expected.test(actual);
     }
     // Arrays
+    public static toBeEmptyArray(actual: any): boolean {
+        return typeof actual === 'object' && actual instanceof Array && actual.length === 0;
+    }
     /** Answer if the actual value has a length of expected number. */
     public static toHaveLength(actual: any[], expected: number): boolean {
         return typeof actual === 'object' && actual instanceof Array && actual.length === expected;
@@ -186,6 +189,13 @@ export class Matchers {
         );
     }
     // Objects
+    /** Answer if the actual value is empty. */
+    public static toBeEmptyObject(actual: any): boolean {
+        return (
+            typeof actual === 'object' &&
+            Object.keys(actual).filter((e) => Object.hasOwnProperty.call(actual, e)).length === 0
+        );
+    }
     /** Answer if the actual element has the given amount of properties. */
     public static toHavePropertyCount(actual: any, amount: number): boolean {
         return (

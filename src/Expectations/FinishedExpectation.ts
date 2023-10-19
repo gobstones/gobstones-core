@@ -9,7 +9,7 @@ import { IFinishedExpectation } from './Interfaces';
  * all actions based on the fact that it's subclass provides
  * an implementation for {@link getResult}.
  *
- * @group Helper classes and interfaces
+ * @group Internal: Types
  */
 export abstract class FinishedExpectation implements IFinishedExpectation {
     /** @inheritDoc {@link IFinishedExpectation.orThrow} */

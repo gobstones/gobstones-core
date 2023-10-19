@@ -9,7 +9,7 @@
  * strict comparison with other elements, be undefined, be null,
  * or any other checks.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export interface IGenericExpectation<T> {
     // Generic values
@@ -64,7 +64,7 @@ export interface IGenericExpectation<T> {
 /**
  * This interface represents an expectation that is performed over a number.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export interface INumberExpectation extends IGenericExpectation<number> {
     /**
@@ -108,7 +108,7 @@ export interface INumberExpectation extends IGenericExpectation<number> {
 /**
  * This interface represents an expectation that is performed over a string.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export interface IStringExpectation extends IGenericExpectation<string> {
     /**
@@ -132,9 +132,13 @@ export interface IStringExpectation extends IGenericExpectation<string> {
 /**
  * This interface represents an expectation that is performed over an array.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export interface IArrayExpectation<T> extends IGenericExpectation<T[]> {
+    /**
+     * Answer if the actual value is empty.
+     */
+    toBeEmptyArray(): this & IFinishedExpectation;
     /**
      * Answer if the actual value has a length of expected number.
      */
@@ -165,9 +169,13 @@ export interface IArrayExpectation<T> extends IGenericExpectation<T[]> {
 /**
  * This interface represents an expectation that is performed over an object.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export interface IObjectExpectation<T> extends IGenericExpectation<T> {
+    /**
+     * Answer if the actual element is empty.
+     */
+    toBeEmptyObject(): this & IFinishedExpectation;
     /**
      * Answer if the actual element has the given amount of properties.
      */
@@ -197,7 +205,7 @@ export interface IObjectExpectation<T> extends IGenericExpectation<T> {
  * This interface represents an expectation after a matcher has been executed
  * and the result can be accessed.
  *
- * @group Helper classes and interfaces
+ * @group API: Types
  */
 export interface IFinishedExpectation {
     /**

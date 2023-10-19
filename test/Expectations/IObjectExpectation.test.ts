@@ -6,6 +6,22 @@ import { expect as assert } from '../../src/Expectations';
 const given = describe;
 
 describe('IObjectExpectation', () => {
+    describe('toBeEmptyObject', () => {
+        given('actual is empty if empty', () => {
+            it('Should have true result for empty objects', () => {
+                expect(assert({}).toBeEmptyObject().getResult()).toBe(true);
+            });
+        });
+        given('actual is empty if non empty', () => {
+            it('Should have false result for empty objects', () => {
+                expect(assert({ a: 'hello' }).toBeEmptyObject().getResult()).toBe(false);
+                // eslint-disable-next-line no-null/no-null
+                expect(assert({ a: 'hello', b: 5, c: null }).toBeEmptyObject().getResult()).toBe(
+                    false
+                );
+            });
+        });
+    });
     describe('toHavePropertyCount', () => {
         given('actual has the expected amount of properties', () => {
             it('Should have true result', () => {

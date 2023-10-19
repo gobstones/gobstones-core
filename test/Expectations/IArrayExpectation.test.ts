@@ -5,6 +5,19 @@ import { expect as assert } from '../../src/Expectations';
 const given = describe;
 
 describe('IArrayExpectation', () => {
+    describe('toBeEmptyArray', () => {
+        given('actual is empty if empty', () => {
+            it('Should have true result for empty arrays', () => {
+                expect(assert([]).toBeEmptyArray().getResult()).toBe(true);
+            });
+        });
+        given('actual is empty if non empty', () => {
+            it('Should have false result for empty arrays', () => {
+                expect(assert([1]).toBeEmptyArray().getResult()).toBe(false);
+                expect(assert([1, 2, 3]).toBeEmptyArray().getResult()).toBe(false);
+            });
+        });
+    });
     describe('toHaveLength', () => {
         given('actual has the expected length', () => {
             it('Should have true result', () => {
