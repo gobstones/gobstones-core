@@ -1466,7 +1466,7 @@ export class SourceReader {
      * @group Implementation: Internal state
      * @private
      */
-    private _inputs: SourceInput;
+    private _inputs: Record<string, string>;
     /**
      * The current input index.
      * The current input is that in
@@ -1575,7 +1575,7 @@ export class SourceReader {
         this._inputsNames = Object.keys(input);
         this._inputsNames.sort();
         // Initialize _inputs and _visibleInputs
-        this._inputs = input;
+        this._inputs = input as Record<string, string>;
         this._visibleInputs = {};
         for (const inputName of this._inputsNames) {
             this._visibleInputs[inputName] = '';
@@ -1849,7 +1849,7 @@ export class SourceReader {
      * @private
      */
     public _inputContentsAt(index: number): string {
-        return (this._inputs as Record<string, string>)[this._inputsNames[index]];
+        return this._inputs[this._inputsNames[index]];
     }
 
     /**
