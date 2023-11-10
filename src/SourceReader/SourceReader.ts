@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 /**
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  * @module SourceReader
