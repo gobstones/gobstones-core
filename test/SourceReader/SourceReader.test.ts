@@ -2,7 +2,11 @@
 // Imports
 import * as SR from '../../src/SourceReader';
 
-import { ErrorAtEndOfStringBy, ErrorNoInput } from '../../src/SourceReader/SourceReaderErrors';
+import {
+    ErrorAtEndOfStringBy,
+    ErrorAtEndOfInputBy,
+    ErrorNoInput
+} from '../../src/SourceReader/SourceReaderErrors';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import { fail } from 'assert';
@@ -166,9 +170,10 @@ function verifyPositionKnown(
     // isEndOfInput is related to the subclass
     expect(posArg.isEndOfInput()).toBe(posArg instanceof SR.EndOfInputSourcePosition);
     expect(posArg.isEndOfInput()).toBe(!(posArg instanceof SR.StringSourcePosition));
-    const sposArg = posArg as SR.StringSourcePosition;
-    expect(sposArg.isEndOfString()).toBe(sposArg instanceof SR.EndOfStringSourcePosition);
-    expect(sposArg.isEndOfString()).toBe(!(sposArg instanceof SR.DefinedSourcePosition));
+    if (posArg instanceof SR.StringSourcePosition) {
+        expect(posArg.isEndOfString()).toBe(posArg instanceof SR.EndOfStringSourcePosition);
+        expect(posArg.isEndOfString()).toBe(!(posArg instanceof SR.DefinedSourcePosition));
+    }
     expect(posArg.sourceReader).toBe(readerArg);
     expect(posArg.line).toBe(linArg);
     expect(posArg.column).toBe(colArg);
@@ -198,7 +203,11 @@ function verifyEmptyFileInSourceReader(readerArg: SR.SourceReader): void {
 function verifySourceReaderBasicOperations(): void {
     expect(reader.atEndOfInput()).toBe(endOfInput);
     expect(reader.atEndOfString()).toBe(endOfString);
-    if (!reader.atEndOfInput() && !reader.atEndOfString()) {
+    if (reader.atEndOfInput()) {
+        expect(() => reader.peek()).toThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
+    } else if (reader.atEndOfString()) {
+        expect(() => reader.peek()).toThrow(new ErrorAtEndOfStringBy('peek', 'SourceReader'));
+    } else {
         expect(reader.peek()).toBe(peeked);
     }
     expect(reader.startsWith('')).toBe(true);
@@ -439,7 +448,7 @@ describe('SourceReader array 1, single line', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = ''; // When only one unnamed input, the name is empty
             vInpConts = (input as string).slice(vStart, vLength);
             inpConts = input as string;
             pos = reader.getPosition();
@@ -516,7 +525,7 @@ describe('SourceReader array 1, single line', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = ''; // When only one unnamed input, the name is empty
             vInpConts = (input as string).slice(vStart, vLength);
             inpConts = input as string;
             pos = reader.getPosition();
@@ -594,7 +603,7 @@ describe('SourceReader array 1, single line', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = ''; // When only one unnamed input, the name is empty
             vInpConts = (input as string).slice(vStart, vLength);
             inpConts = input as string;
             pos = reader.getPosition();
@@ -673,7 +682,7 @@ describe('SourceReader array 1, single line', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = ''; // When only one unnamed input, the name is empty
             vInpConts = (input as string).slice(vStart, vLength);
             inpConts = input as string;
             pos = reader.getPosition();
@@ -718,6 +727,43 @@ describe('SourceReader array 1, single line', () => {
                 // At EndOfInput, nothing is pushed, |rs|=0
                 expect(pos.regions).toStrictEqual(regs);
             });
+        });
+    });
+
+    describe('GoToEndOfInput', () => {
+        beforeEach(() => {
+            endOfInput = true;
+            endOfString = false;
+            peeked = 'not used, but undefined not accepted';
+            goodStartShortL0 = '';
+            goodStartShortL1 = '';
+            goodStartShortLm = '';
+            goodStartExact = '';
+            badStartShortSimilarL0 = ' {Poner';
+            badStartShortSimilarL1 = ' ( Poner';
+            badStartShortSimilarLm = ' ( Poner(Verde)';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' { poner(Verde) }';
+            badStartExactDisimil = '78901234567890123';
+            badStartLong = '789012345678901234567890123456';
+            lin = 1;
+            col = 1;
+            regs = [];
+            vStart = 0;
+            vLength = 0;
+            reader.takeWhile((ch) => ch !== '&'); // Read all the current document
+            reader.skip(); // Skip EOF
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = ''; // No document name on the end of input
+            vInpConts = (input as string).slice(vStart, vLength);
+            inpConts = input as string;
+            pos = reader.getPosition();
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
         });
     });
 });
@@ -934,6 +980,619 @@ describe('Contents from SourceReader array 1, several lines', () => {
 
 //     ===============================================
 //     #region Several input strings {
+describe('SourceReader array 2, several lines', () => {
+    beforeEach(() => {
+        input = ['program {\n  PonerVerde()\n}\n', 'procedure PonerVerde() {\n  Poner(Verde)\n}'];
+        //                   11111111112222 22 2              11111111112222 222222333333333 34
+        //        012345678 901234567890123 45 6    012345678901234567890123 456789012345678 90
+        reader = new SR.SourceReader(input, defaultLineEnders);
+    });
+
+    describe('Skip equivalences', () => {
+        beforeEach(() => {
+            // Two reader that start equal, use different skips through tests
+            // and remain equal
+            reader2 = new SR.SourceReader(input, defaultLineEnders);
+        });
+        it('Equal starting readers', () => {
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.0 equals NoSkip', () => {
+            reader.skip(0);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip equals Skip.1', () => {
+            reader.skip();
+            reader2.skip(1);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip- equals Skip.0', () => {
+            reader.skip(-10);
+            reader2.skip(0);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.s0 equals Skip.0', () => {
+            reader.skip('');
+            reader2.skip(0);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.s1 equals Skip.1', () => {
+            reader.skip('a');
+            reader2.skip(1);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.N, N short', () => {
+            reader.skip('skip nine');
+            reader2.skip(9);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.N, N exact', () => {
+            reader.skip('012345678901234567890123');
+            reader2.skip(24);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.N, N long', () => {
+            reader.skip('01234567890123456789012345678');
+            reader2.skip(29);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.sN, N short', () => {
+            reader.skip('skip nine');
+            reader2.skip('012345678');
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.0 equals NoSkip, silent', () => {
+            reader.skip(0, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip equals Skip.1, silent', () => {
+            reader.skip(undefined, true);
+            reader2.skip(1, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.- equals Skip.0, silent', () => {
+            reader.skip(-10, true);
+            reader2.skip(0, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.s0 equals Skip.0, silent', () => {
+            reader.skip('', true);
+            reader2.skip(0, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.s1 equals Skip.1, silent', () => {
+            reader.skip('a', true);
+            reader2.skip(1, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.N, N short, silent', () => {
+            reader.skip('skip nine', true);
+            reader2.skip(9, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.N, N exact, silent', () => {
+            reader.skip('012345678901234567890123', true);
+            reader2.skip(24, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.N, N long, silent', () => {
+            reader.skip('01234567890123456789012345678', true);
+            reader2.skip(29, true);
+            expect(reader).toStrictEqual(reader2);
+        });
+        it('Skip.sN equals Skip.sN, N short, silent', () => {
+            reader.skip('skip nine', true);
+            reader2.skip('012345678', true);
+            expect(reader).toStrictEqual(reader2);
+        });
+    });
+
+    describe('No skip', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = false;
+            peeked = 'p';
+            goodStartShortL0 = 'program';
+            goodStartShortL1 = 'program {'; // There are no lines to include 1
+            goodStartShortLm = 'program {\n  Pon'; // There are no lines to include m
+            goodStartExact = 'program {\n  PonerVerde()\n}\n';
+            badStartShortSimilarL0 = 'Program';
+            badStartShortSimilarL1 = 'Program {'; // There are no lines to include 1
+            badStartShortSimilarLm = 'Program {\n  Pon'; // There are no lines to include m
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = 'Program {\n  PonerVerde()\n}\n';
+            badStartExactDisimil = '012345678901234567890123456';
+            badStartLong = '01234567890123456789012345678';
+            lin = 1;
+            col = 1;
+            regs = [];
+            vStart = 0;
+            vLength = 0;
+        });
+
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[0]';
+            vInpConts = (input[0] as string).slice(vStart, vLength);
+            inpConts = input[0] as string;
+            pos = reader.getPosition();
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                region1 = 'Whole program';
+                reader.beginRegion(region1);
+                regs.push(region1); // Begin pushes, |rs|=1
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region);
+                regs.push(region); // Begin pushes, |rs|=2
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested');
+                reader.endRegion(); // End is opposite of begin
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion();
+                regs.pop(); // End pops, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion();
+                regs.pop(); // End pops, |rs|=0
+                reader.endRegion(); // Do nothing
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('New beginRegion does not have side effects', () => {
+                pos = reader.getPosition(); // |rs|=1. The unchanged position of the reader
+                reader.beginRegion('New region, not visible');
+                // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('Skip.1.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = false;
+            peeked = 'r';
+            goodStartShortL0 = 'rogram ';
+            goodStartShortL1 = 'rogram {\n  ';
+            goodStartShortLm = 'rogram {\n  Pon';
+            goodStartExact = 'rogram {\n  PonerVerde()\n}\n';
+            badStartShortSimilarL0 = 'rogram{';
+            badStartShortSimilarL1 = 'rogram (';
+            badStartShortSimilarLm = 'rogram (\n  Pon';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = 'rogram {\n  ponerVerde()\n}\n';
+            badStartExactDisimil = '01234567890123456789012345';
+            badStartLong = '01234567890123456789012345678';
+            lin = 1;
+            col = 2;
+            regs = [];
+            vStart = 0;
+            vLength = 1;
+            reader.skip(1);
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[0]';
+            vInpConts = (input[0] as string).slice(vStart, vLength);
+            inpConts = input[0] as string;
+            pos = reader.getPosition();
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = 'rogram';
+                reader.beginRegion(region2);
+                regs.push(region2); // Begin pushes, |rs|=1
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region);
+                regs.push(region); // Begin pushes, |rs|=2
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested');
+                reader.endRegion(); // End is opposite of begin
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                reader.endRegion(); // Do nothing
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPosition();
+                reader.beginRegion('New region, not visible');
+                // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('TakeWhile.notSpace.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = false;
+            peeked = ' ';
+            goodStartShortL0 = ' {\n  ';
+            goodStartShortL1 = ' {\n  Poner';
+            goodStartShortLm = ' {\n  PonerVerde()';
+            goodStartExact = ' {\n  PonerVerde()\n}\n';
+            badStartShortSimilarL0 = ' {Poner';
+            badStartShortSimilarL1 = ' (\n  Poner';
+            badStartShortSimilarLm = ' (\n  PonerVerde()';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' {\n  ponerVerde()\n}\n';
+            badStartExactDisimil = '78901234567890123456';
+            badStartLong = '789012345678901234567890123456';
+            lin = 1;
+            col = 8;
+            regs = [];
+            vStart = 0;
+            vLength = 7;
+            read = reader.takeWhile((ch) => ch !== ' ');
+            expected = 'program';
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[0]';
+            vInpConts = (input[0] as string).slice(vStart, vLength);
+            inpConts = input[0] as string;
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = ' { ';
+                reader.beginRegion(region2);
+                regs.push(region2); // Begin pushes, |rs|=1
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region);
+                regs.push(region); // Begin pushes, |rs|=2
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested');
+                reader.endRegion(); // End is opposite of begin
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                reader.endRegion(); // Do nothing
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPosition();
+                reader.beginRegion('New region, not visible');
+                // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('TakeWhile.allChars.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = true;
+            peeked = 'not used, but undefined not accepted';
+            goodStartShortL0 = '';
+            goodStartShortL1 = '';
+            goodStartShortLm = '';
+            goodStartExact = '';
+            badStartShortSimilarL0 = ' {Poner';
+            badStartShortSimilarL1 = ' ( Poner';
+            badStartShortSimilarLm = ' ( Poner(Verde)';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' { poner(Verde) }';
+            badStartExactDisimil = '78901234567890123';
+            badStartLong = '789012345678901234567890123456';
+            lin = 4;
+            col = 1;
+            regs = [];
+            vStart = 0;
+            vLength = 26;
+            read = reader.takeWhile((ch) => ch !== '&');
+            expected = input[0] as string;
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[0]';
+            vInpConts = (input[0] as string).slice(vStart, vLength);
+            inpConts = input[0] as string;
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = ' { ';
+                reader.beginRegion(region2); // At EndOfInput, nothing is pushed, |rs|=0
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                const position = reader.getPosition().regions;
+                expect(position).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region); // At EndOfInput, nothing is pushed, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested'); // At EndOfInput, nothing is pushed, |rs|=0
+                reader.endRegion(); // Nothing to pop, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // At EndOfInput, nothing is popped, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // Nothing to pop, |rs|=0
+                reader.endRegion(); // Nothing to pop, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPosition();
+                reader.beginRegion('New region, not visible');
+                // At EndOfInput, nothing is pushed, |rs|=0
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('GoTo2ndFile.Then.NoSkip', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = false;
+            peeked = 'p';
+            goodStartShortL0 = 'procedure';
+            goodStartShortL1 = 'procedure PonerVerde';
+            goodStartShortLm = 'procedure PonerVerde() {\n';
+            goodStartExact = 'procedure PonerVerde() {\n  Poner(Verde)\n}';
+            badStartShortSimilarL0 = 'Procedure';
+            badStartShortSimilarL1 = 'Procedure PonerVerde';
+            badStartShortSimilarLm = 'Procedure PonerVerde() {\n';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = 'Procedure PonerVerde() {\n  Poner(Verde)\n}';
+            badStartExactDisimil = '01234567890123456789012345678901234567890';
+            badStartLong = '012345678901234567890123456789012345678901234567890123456';
+            lin = 1;
+            col = 1;
+            regs = [];
+            vStart = 0;
+            vLength = 0;
+            reader.takeWhile((ch) => ch !== '&'); // Move to next document
+            reader.skip(); // Skip EOF
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[1]';
+            vInpConts = (input[1] as string).slice(vStart, vLength);
+            inpConts = input[1] as string;
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+    });
+
+    describe('GoTo2ndFile.Then.Skip.1.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = false;
+            peeked = 'r';
+            goodStartShortL0 = 'rocedure';
+            goodStartShortL1 = 'rocedure PonerVerde';
+            goodStartShortLm = 'rocedure PonerVerde() {\n';
+            goodStartExact = 'rocedure PonerVerde() {\n  Poner(Verde)\n}';
+            badStartShortSimilarL0 = 'rosedure';
+            badStartShortSimilarL1 = 'rosedure PonerVerde';
+            badStartShortSimilarLm = 'rosedure PonerVerde() {\n';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = 'rosedure PonerVerde() {\n  Poner(Verde)\n}';
+            badStartExactDisimil = '1234567890123456789012345678901234567890';
+            badStartLong = '12345678901234567890123456789012345678901234567890123456';
+            lin = 1;
+            col = 2;
+            regs = [];
+            vStart = 0;
+            vLength = 1;
+            reader.takeWhile((ch) => ch !== '&'); // Move to next document
+            reader.skip(); // Skip EOF
+            reader.skip(1);
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[1]';
+            vInpConts = (input[1] as string).slice(vStart, vLength);
+            inpConts = input[1] as string;
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+    });
+
+    describe('GoTo2ndFile.Then.TakeWhile.notSpace.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = false;
+            peeked = ' ';
+            goodStartShortL0 = ' Poner';
+            goodStartShortL1 = ' PonerVerde';
+            goodStartShortLm = ' PonerVerde() {\n';
+            goodStartExact = ' PonerVerde() {\n  Poner(Verde)\n}';
+            badStartShortSimilarL0 = ' poner';
+            badStartShortSimilarL1 = ' ponerVerde';
+            badStartShortSimilarLm = ' ponerVerde() {\n';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' ponerVerde() {\n  Poner(Verde)\n}';
+            badStartExactDisimil = '0123456789012345678901234567890';
+            badStartLong = '01234567890123456789012345678901234567890123456';
+            lin = 1;
+            col = 10;
+            regs = [];
+            vStart = 0;
+            vLength = 9;
+            reader.takeWhile((ch) => ch !== '&'); // Move to next document
+            reader.skip(); // Skip EOF
+            read = reader.takeWhile((ch) => ch !== ' ');
+            expected = 'procedure';
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[1]';
+            vInpConts = (input[1] as string).slice(vStart, vLength);
+            inpConts = input[1] as string;
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+    });
+
+    describe('GoTo2ndFile.Then.TakeWhile.allChars.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfString = true;
+            peeked = ' ';
+            goodStartShortL0 = '';
+            goodStartShortL1 = '';
+            goodStartShortLm = '';
+            goodStartExact = '';
+            badStartShortSimilarL0 = ' poner';
+            badStartShortSimilarL1 = ' ponerVerde';
+            badStartShortSimilarLm = ' ponerVerde() {\n';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' ponerVerde() {\n  Poner(Verde)\n}';
+            badStartExactDisimil = '0123456789012345678901234567890';
+            badStartLong = '01234567890123456789012345678901234567890123456';
+            lin = 3;
+            col = 2;
+            regs = [];
+            vStart = 0;
+            vLength = 41;
+            reader.takeWhile((ch) => ch !== '&'); // Move to EOF of current document
+            reader.skip(); // Skip EOF
+            read = reader.takeWhile((ch) => ch !== '&'); // Move to EOF of current document
+            expected = input[1] as string;
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedStr + '[1]';
+            vInpConts = (input[1] as string).slice(vStart, vLength);
+            inpConts = input[1] as string;
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+    });
+
+    describe('GoToEndOfInput', () => {
+        beforeEach(() => {
+            endOfInput = true;
+            endOfString = false;
+            peeked = 'not used, but undefined not accepted';
+            goodStartShortL0 = '';
+            goodStartShortL1 = '';
+            goodStartShortLm = '';
+            goodStartExact = '';
+            badStartShortSimilarL0 = ' {Poner';
+            badStartShortSimilarL1 = ' ( Poner';
+            badStartShortSimilarLm = ' ( Poner(Verde)';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = ' { poner(Verde) }';
+            badStartExactDisimil = '78901234567890123';
+            badStartLong = '789012345678901234567890123456';
+            lin = 1;
+            col = 1;
+            regs = [];
+            vStart = 0;
+            vLength = 0;
+            reader.takeWhile((ch) => ch !== '&'); // Move to EOF of current document
+            reader.skip(); // Skip EOF
+            reader.takeWhile((ch) => ch !== '&'); // Move to EOF of current document
+            reader.skip(); // Skip EOF
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = ''; // No document name on the end of input
+            vInpConts = (input as string).slice(vStart, vLength);
+            inpConts = input as string;
+            pos = reader.getPosition();
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+        });
+    });
+});
+
 describe('Contents from SourceReader array 2, several lines', () => {
     beforeEach(() => {
         input = ['program {\n  PonerVerde()\n}\n', 'procedure PonerVerde() {\n  Poner(Verde)\n}'];
@@ -1155,7 +1814,7 @@ describe('Usage example from documentation', () => {
         inpConts = 'program { Poner(Verde) }';
         vInpConts = 'program { Poner(Verde) ';
         const readerEx = new SR.SourceReader(inpConts, '\n');
-        inputName = SR.SourceReader._unnamedStr + '[0]';
+        inputName = ''; // When only one unnamed input, the name is empty
         // ---------------------------------
         // Read a basic Gobstones program
         expect(readerEx.startsWith('program')).toBe(true);

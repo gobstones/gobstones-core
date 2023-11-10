@@ -898,8 +898,9 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     public get inputName(): string {
         let name: string = this._sourceReader._inputNameAt(this._theInputIndex);
         const allDigits: RegExp = /^[0-9]*$/;
+
         // Unnamed inputs contains only digits.
-        if (allDigits.test(name)) {
+        if (allDigits.test(name) && name !== '') {
             name = SourceReader._unnamedStr + '[' + name + ']';
         }
         return name;
@@ -1373,7 +1374,7 @@ export class SourceReader {
      * @group Implementation: Protected for Source Positions
      * @private
      */
-    public static _unnamedStr: string = '<?>';
+    public static _unnamedStr: string = 'doc';
     // ------------------
     // #endregion } Implementation: Protected for Source Positions
     // ==================
@@ -1839,7 +1840,11 @@ export class SourceReader {
      * @private
      */
     public _inputNameAt(index: number): string {
-        return this._inputsNames[index];
+        if (this._inputsNames.length === 1 && this._inputsNames[index] === '0') {
+            return '';
+        } else {
+            return this._inputsNames[index];
+        }
     }
 
     /**
