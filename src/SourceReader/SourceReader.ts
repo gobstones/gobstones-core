@@ -1403,10 +1403,11 @@ export class SourceReader {
      *    {@link SourceReader._lineEnders | _lineEnders}.
      *
      * The object of {@link SourceReader._inputs | _inputs } cannot be empty (with no input string),
-     * and the {@link SourceReader._charIndex | _charIndex } either points to
-     * a valid position in an input string, or
-     * at the end of an input string, or
-     * the end of input was reached (that is, when there are no more input strings to read).
+     * and all the {@link SourceInput} forms are converted to `Record<string, string>` for ease of
+     * access.
+     * The {@link SourceReader._charIndex | _charIndex } either points to a valid position in an
+     * input string, or at the end of an input string, or the end of input was reached (that is,
+     * when there are no more input strings to read).
      *
      * Line and column numbers are adjusted depending on which characters are considered as ending a
      * line, as given by the property {@link SourceReader._lineEnders | _lineEnders}, and which
@@ -1460,13 +1461,13 @@ export class SourceReader {
      */
     private _inputsNames: string[];
     /**
-     * The actual input.
+     * The actual input, converted to a Record of strings.
      *
      * **INVARIANT:** it is always and object or array (not a string).
      * @group Implementation: Internal state
      * @private
      */
-    private _inputs: SourceInput;
+    private _inputs: Record<string, string>;
     /**
      * The current input index.
      * The current input is that in
@@ -1574,8 +1575,11 @@ export class SourceReader {
         // Initialize _inputsNames
         this._inputsNames = Object.keys(input);
         this._inputsNames.sort();
-        // Initialize _inputs and _visibleInputs
-        this._inputs = input;
+        // Initialize _inputs
+        //   The cast is done to have uniform access.
+        //   It is secure, as the only possible types are either a Record or an array of strings.
+        this._inputs = input as Record<string, string>;
+        // Initialize _visibleInputs
         this._visibleInputs = {};
         for (const inputName of this._inputsNames) {
             this._visibleInputs[inputName] = '';
@@ -1849,7 +1853,7 @@ export class SourceReader {
      * @private
      */
     public _inputContentsAt(index: number): string {
-        return (this._inputs as Record<string, string>)[this._inputsNames[index]];
+        return this._inputs[this._inputsNames[index]];
     }
 
     /**

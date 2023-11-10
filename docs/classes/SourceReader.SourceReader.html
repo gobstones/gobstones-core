@@ -411,10 +411,11 @@ It does not go beyond the end of the current string, if starting inside one.</p>
 <a href="SourceReader.SourceReader.html#_lineEnders" class="tsd-kind-property">_lineEnders</a>.</li>
 </ul>
 <p>The object of <a href="SourceReader.SourceReader.html#_inputs" class="tsd-kind-property">_inputs </a> cannot be empty (with no input string),
-and the <a href="SourceReader.SourceReader.html#_charIndex" class="tsd-kind-property">_charIndex </a> either points to
-a valid position in an input string, or
-at the end of an input string, or
-the end of input was reached (that is, when there are no more input strings to read).</p>
+and all the <a href="../types/SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> forms are converted to <code>Record&lt;string, string&gt;</code> for ease of
+access.
+The <a href="SourceReader.SourceReader.html#_charIndex" class="tsd-kind-property">_charIndex </a> either points to a valid position in an
+input string, or at the end of an input string, or the end of input was reached (that is,
+when there are no more input strings to read).</p>
 <p>Line and column numbers are adjusted depending on which characters are considered as ending a
 line, as given by the property <a href="SourceReader.SourceReader.html#_lineEnders" class="tsd-kind-property">_lineEnders</a>, and which
 characters are considered visible, as indicating by the user through
@@ -575,8 +576,8 @@ The current input is that in
 <div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_inputs" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_inputs</span><a href="#_inputs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_inputs</span><span class="tsd-signature-symbol">:</span> <a href="../types/SourceReader.SourceInput.html" class="tsd-signature-type tsd-kind-type-alias">SourceInput</a></div>
-<div class="tsd-comment tsd-typography"><p>The actual input.</p>
+<div class="tsd-signature"><span class="tsd-kind-property">_inputs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-comment tsd-typography"><p>The actual input, converted to a Record of strings.</p>
 <p><strong>INVARIANT:</strong> it is always and object or array (not a string).</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
