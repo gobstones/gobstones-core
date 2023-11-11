@@ -1,11 +1,15 @@
+## <small>0.4.5 (2023-11-11)</small>
+
+* chore: update scripts to version 5 ([4e2f67d](https://github.com/gobstones/gobstones-core/commit/4e2f67d))
+
+
+
 ## <small>0.4.4 (2023-11-10)</small>
 
-* [PARTIAL] Docs completed for the change. ([1e0864c](https://github.com/gobstones/gobstones-core/commit/1e0864c))
-* [PARTIAL] Docs regenerated ([132eb3c](https://github.com/gobstones/gobstones-core/commit/132eb3c))
-* [PARTIAL] Input name changed, tests updated ([947a16c](https://github.com/gobstones/gobstones-core/commit/947a16c))
-* Fixed, although the casting is now on the constructor... ([fd8eece](https://github.com/gobstones/gobstones-core/commit/fd8eece))
-
-
+-   [PARTIAL] Docs completed for the change. ([1e0864c](https://github.com/gobstones/gobstones-core/commit/1e0864c))
+-   [PARTIAL] Docs regenerated ([132eb3c](https://github.com/gobstones/gobstones-core/commit/132eb3c))
+-   [PARTIAL] Input name changed, tests updated ([947a16c](https://github.com/gobstones/gobstones-core/commit/947a16c))
+-   Fixed, although the casting is now on the constructor... ([fd8eece](https://github.com/gobstones/gobstones-core/commit/fd8eece))
 
 ## <small>0.4.4 (2023-11-10)</small>
 

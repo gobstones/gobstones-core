@@ -21,6 +21,8 @@ jobs:
               run: npm pkg delete scripts.prepare
             - name: Installing project dependencies
               run: npm install
+            - name: Building the project
+              run: npm run build
             - name: Publishing to NPM
               uses: JS-DevTools/npm-publish@v3
               with:
