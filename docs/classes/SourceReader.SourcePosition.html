@@ -20,9 +20,10 @@
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Instances of <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> point to particular positions in the source given by a
 <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.
-They may be unknown or they may point to a particular <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.
+They may be unknown or they may point to a particular position into a <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.
 All <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> are created through <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
-<p>Subclasses of <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> determine if the position is known or unknown.
+<p>Subclasses of <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> determine if the position is known or unknown, and in
+the case of being known, which kind of position it is.
 The operation <a href="SourceReader.SourcePosition.html#isUnknown" class="tsd-kind-method">isUnknown</a> indicates which is the case.
 Additionally, all <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> can be converted to a string, for showing
 purposes, with the operation <a href="SourceReader.SourcePosition.html#toString" class="tsd-kind-method">toString</a>.
@@ -36,7 +37,7 @@ with <a href="SourceReader.SourcePosition.html#toString" class="tsd-kind-method"
 </ul>
 <p>A typical use of <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> is relating nodes of an AST representation of code to
 particular positions in the string version of the source code (that may come from several input
-strings).</p>
+documents).</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-hierarchy">
@@ -105,11 +106,11 @@ they determine particular positions in the source input kept by those.
 They are created exclusively by a <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>, either using the operation
 <a href="SourceReader.SourceReader.html#getPosition" class="tsd-kind-method">getPosition </a> or by the static const
 <a href="SourceReader.SourceReader.html#UnknownPosition" class="tsd-kind-property">UnknownPosition </a> of <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
-<p>The implementation of <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> uses subclasses to distinguish between unknown
-positions and known ones.
+<p>The implementation of the abstract class <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> uses subclasses to
+distinguish between unknown positions and known ones.
 The method <a href="SourceReader.SourcePosition.html#isUnknown" class="tsd-kind-method">isUnknown</a> is used to distinguish that.
-Additionally, the method <a href="SourceReader.SourcePosition.html#toString" class="tsd-kind-method">toString</a> provides a string version
-of the position (not suitable for persistance, as it looses information).</p>
+Additionally, the method <a href="SourceReader.SourcePosition.html#toString" class="tsd-kind-method">toString</a> provides a string
+version of the position (not suitable for persistance, as it looses information).</p>
 <p>See the documentation of <a href="SourceReader.UnknownSourcePosition.html" class="tsd-kind-class">UnknownSourcePosition</a> and <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> for
 additional implementation details.</p>
 </div>

@@ -15,12 +15,15 @@ export const en: SourceReaderLocale = {
         NoInput: 'Cannot create a source reader with no input strings.',
         UnmatchingPositionsBy:
             'Positions determine different source inputs at `${operation}` of `${context}`.',
-        AtEOFBy:
-            'Operation `${operation}` of `${context}` cannot work at the end of the source input.'
+        AtEndOfInputBy:
+            'Operation `${operation}` of `${context}` cannot work at the end of the source input.',
+        AtEndOfDocumentBy:
+            'Operation `${operation}` of `${context}` cannot work at the end of a document ' +
+            'in the source input.'
     },
     string: {
         UnknownPosition: 'Unknown position',
-        EndOfInput: 'End of Input',
-        EndOfString: 'End of String'
+        EndOfInput: 'End of input',
+        EndOfDocument: 'End of document'
     }
 };

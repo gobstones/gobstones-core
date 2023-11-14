@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>StringSourcePosition | gobstones-core - v0.4.3</title><meta name="description" content="Documentation for gobstones-core"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><link rel="icon" href="../favicon.ico" />
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>DocumentSourcePosition | gobstones-core - v0.4.3</title><meta name="description" content="Documentation for gobstones-core"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><link rel="icon" href="../favicon.ico" />
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
@@ -15,22 +15,23 @@
 <ul class="tsd-breadcrumb">
 <li><a href="../index.html">gobstones-core</a></li>
 <li><a href="../modules/SourceReader.html">SourceReader</a></li>
-<li><a href="SourceReader.StringSourcePosition.html">StringSourcePosition</a></li></ul>
-<h1>Class StringSourcePosition<code class="tsd-tag ts-flagAbstract">Abstract</code> </h1></div>
+<li><a href="SourceReader.DocumentSourcePosition.html">DocumentSourcePosition</a></li></ul>
+<h1>Class DocumentSourcePosition<code class="tsd-tag ts-flagAbstract">Abstract</code> </h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.StringSourcePosition.html" class="tsd-kind-class">StringSourcePosition</a> points to a particular position, different from EndOfInput,
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.DocumentSourcePosition.html" class="tsd-kind-class">DocumentSourcePosition</a> points to a particular position, different from EndOfInput,
 in a source given by a <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
 <p>It provides the right implementation for the operations given by its superclasses,
 <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> and <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>.
 Additionally, it provides three new operations that only have sense for defined positions:</p>
 <ul>
-<li><a href="SourceReader.StringSourcePosition.html#inputName" class="tsd-kind-accessor">inputName</a>, the name of the particular string in the
-source input that has the char pointed to by this position,</li>
-<li><a href="SourceReader.StringSourcePosition.html#inputContents" class="tsd-kind-accessor">inputContents</a>, the visible contents of the
-particular string in the source input that has the char pointed to by this position, and</li>
-<li><a href="SourceReader.StringSourcePosition.html#fullInputContents" class="tsd-kind-accessor">fullInputContents</a>, the contents (both
-visible and non-visible) of the particular string in the source input that has the char
-pointed to by this position.</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#documentName" class="tsd-kind-accessor">documentName</a>, the name of the particular
+document in the source input that has the char pointed to by this position,</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#visibleDocumentContents" class="tsd-kind-accessor">visibleDocumentContents</a>, the visible
+contents of the particular document in the source input that this position points to,
+and</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#fullDocumentContents" class="tsd-kind-accessor">fullDocumentContents</a>, the contents
+(both visible and non-visible) of the particular document in the source input that this
+position point to.</li>
 </ul>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
@@ -39,9 +40,9 @@ pointed to by this position.</li>
 <ul class="tsd-hierarchy">
 <li><a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a>
 <ul class="tsd-hierarchy">
-<li><span class="target">StringSourcePosition</span>
+<li><span class="target">DocumentSourcePosition</span>
 <ul class="tsd-hierarchy">
-<li><a href="SourceReader.EndOfStringSourcePosition.html" class="tsd-signature-type tsd-kind-class">EndOfStringSourcePosition</a></li>
+<li><a href="SourceReader.EndOfDocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">EndOfDocumentSourcePosition</a></li>
 <li><a href="SourceReader.DefinedSourcePosition.html" class="tsd-signature-type tsd-kind-class">DefinedSourcePosition</a></li></ul></li></ul></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
@@ -50,53 +51,53 @@ pointed to by this position.</li>
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">API: Access</h3>
-<div class="tsd-index-list"><a href="SourceReader.StringSourcePosition.html#column" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>column</span></a>
-<a href="SourceReader.StringSourcePosition.html#fullInputContents" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>full<wbr/>Input<wbr/>Contents</span></a>
-<a href="SourceReader.StringSourcePosition.html#inputContents" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>input<wbr/>Contents</span></a>
-<a href="SourceReader.StringSourcePosition.html#inputName" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>input<wbr/>Name</span></a>
-<a href="SourceReader.StringSourcePosition.html#line" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>line</span></a>
-<a href="SourceReader.StringSourcePosition.html#regions" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>regions</span></a>
-<a href="SourceReader.StringSourcePosition.html#sourceReader" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>source<wbr/>Reader</span></a>
-<a href="SourceReader.StringSourcePosition.html#isEndOfInput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Input</span></a>
-<a href="SourceReader.StringSourcePosition.html#isEndOfString" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>String</span></a>
-<a href="SourceReader.StringSourcePosition.html#isUnknown" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Unknown</span></a>
-<a href="SourceReader.StringSourcePosition.html#toString" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a>
+<div class="tsd-index-list"><a href="SourceReader.DocumentSourcePosition.html#column" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>column</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#documentName" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>document<wbr/>Name</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#fullDocumentContents" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>full<wbr/>Document<wbr/>Contents</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#line" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>line</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#regions" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>regions</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#sourceReader" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>source<wbr/>Reader</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#visibleDocumentContents" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>visible<wbr/>Document<wbr/>Contents</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#isEndOfDocument" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Document</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#isEndOfInput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Input</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#isUnknown" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Unknown</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#toString" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">API: Contents Access</h3>
-<div class="tsd-index-list"><a href="SourceReader.StringSourcePosition.html#contentsFrom" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>From</span></a>
-<a href="SourceReader.StringSourcePosition.html#contentsTo" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>To</span></a>
-<a href="SourceReader.StringSourcePosition.html#fullContentsFrom" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>From</span></a>
-<a href="SourceReader.StringSourcePosition.html#fullContentsTo" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>To</span></a>
+<div class="tsd-index-list"><a href="SourceReader.DocumentSourcePosition.html#fullContentsFrom" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>From</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#fullContentsTo" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>To</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#visibleContentsFrom" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>From</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#visibleContentsTo" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>To</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation Details</h3>
-<div class="tsd-index-list"><a href="SourceReader.StringSourcePosition.html#_implementationDetailsForString" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_implementation<wbr/>Details<wbr/>For<wbr/>String</span></a>
+<div class="tsd-index-list"><a href="SourceReader.DocumentSourcePosition.html#_implementationDetailsForString" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_implementation<wbr/>Details<wbr/>For<wbr/>String</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Auxiliaries</h3>
-<div class="tsd-index-list"><a href="SourceReader.StringSourcePosition.html#_contentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>From</span></a>
-<a href="SourceReader.StringSourcePosition.html#_contentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>To</span></a>
-<a href="SourceReader.StringSourcePosition.html#_fullContentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>From</span></a>
-<a href="SourceReader.StringSourcePosition.html#_fullContentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>To</span></a>
-<a href="SourceReader.StringSourcePosition.html#_validateSourceReaders" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_validate<wbr/>Source<wbr/>Readers</span></a>
+<div class="tsd-index-list"><a href="SourceReader.DocumentSourcePosition.html#_fullContentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>From</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_fullContentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>To</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_validateSourceReaders" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_validate<wbr/>Source<wbr/>Readers</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_visibleContentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>From</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_visibleContentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>To</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Internal state</h3>
-<div class="tsd-index-list"><a href="SourceReader.StringSourcePosition.html#_charIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_char<wbr/>Index</span></a>
-<a href="SourceReader.StringSourcePosition.html#_column" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a>
-<a href="SourceReader.StringSourcePosition.html#_inputIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_input<wbr/>Index</span></a>
-<a href="SourceReader.StringSourcePosition.html#_line" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line</span></a>
-<a href="SourceReader.StringSourcePosition.html#_regions" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_regions</span></a>
-<a href="SourceReader.StringSourcePosition.html#_sourceReader" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_source<wbr/>Reader</span></a>
-<a href="SourceReader.StringSourcePosition.html#_visibleCharIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Char<wbr/>Index</span></a>
+<div class="tsd-index-list"><a href="SourceReader.DocumentSourcePosition.html#_charIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_char<wbr/>Index</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_column" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_documentIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_document<wbr/>Index</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_line" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_regions" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_regions</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_sourceReader" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_source<wbr/>Reader</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_visibleCharIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Char<wbr/>Index</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Protected for Source Reader</h3>
-<div class="tsd-index-list"><a href="SourceReader.StringSourcePosition.html#constructor" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a>
-<a href="SourceReader.StringSourcePosition.html#_theCharIndex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Char<wbr/>Index</span></a>
-<a href="SourceReader.StringSourcePosition.html#_theInputIndex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Input<wbr/>Index</span></a>
-<a href="SourceReader.StringSourcePosition.html#_theVisibleCharIndex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Visible<wbr/>Char<wbr/>Index</span></a>
+<div class="tsd-index-list"><a href="SourceReader.DocumentSourcePosition.html#constructor" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_theCharIndex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Char<wbr/>Index</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_theDocumentIndex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Document<wbr/>Index</span></a>
+<a href="SourceReader.DocumentSourcePosition.html#_theVisibleCharIndex" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Visible<wbr/>Char<wbr/>Index</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Access</h2>
@@ -110,31 +111,22 @@ pointed to by this position.</li>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from KnownSourcePosition.column</p></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="fullInputContents" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>full<wbr/>Input<wbr/>Contents</span><a href="#fullInputContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member"><a id="documentName" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>document<wbr/>Name</span><a href="#documentName" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature" id="fullInputContents.fullInputContents-1"><span class="tsd-signature-symbol">get</span> fullInputContents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+<li class="tsd-signature" id="documentName.documentName-1"><span class="tsd-signature-symbol">get</span> documentName<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The contents of the input string this position belongs to
+<div class="tsd-comment tsd-typography"><p>The name of the input document this position belongs to.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="fullDocumentContents" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>full<wbr/>Document<wbr/>Contents</span><a href="#fullDocumentContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature" id="fullDocumentContents.fullDocumentContents-1"><span class="tsd-signature-symbol">get</span> fullDocumentContents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The contents of the input document this position belongs to
  (both visible and non visible).</p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="inputContents" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>input<wbr/>Contents</span><a href="#inputContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature" id="inputContents.inputContents-1"><span class="tsd-signature-symbol">get</span> inputContents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The contents of the visible input string this position belongs to.</p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="inputName" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>input<wbr/>Name</span><a href="#inputName" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature" id="inputName.inputName-1"><span class="tsd-signature-symbol">get</span> inputName<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The name of the input string this position belongs to.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
@@ -168,6 +160,26 @@ pointed to by this position.</li>
 <h4 class="tsd-returns-title">Returns <a href="SourceReader.SourceReader.html" class="tsd-signature-type tsd-kind-class">SourceReader</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from KnownSourcePosition.sourceReader</p></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="visibleDocumentContents" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visible<wbr/>Document<wbr/>Contents</span><a href="#visibleDocumentContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature" id="visibleDocumentContents.visibleDocumentContents-1"><span class="tsd-signature-symbol">get</span> visibleDocumentContents<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The contents of the visible input document this position belongs to.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="isEndOfDocument" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>is<wbr/>End<wbr/>Of<wbr/>Document</span><a href="#isEndOfDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="isEndOfDocument.isEndOfDocument-1"><span class="tsd-kind-call-signature">is<wbr/>End<wbr/>Of<wbr/>Document</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#isEndOfDocument.isEndOfDocument-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Answers if this position correspond to the end of document of the current
+document in the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> it belongs, or not.
+It must be implemented by concrete subclasses.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="isEndOfInput" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>End<wbr/>Of<wbr/>Input</span><a href="#isEndOfInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -175,22 +187,12 @@ pointed to by this position.</li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Answers if this position correspond to the end of input of the
 <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> it belongs, or not.
-It implements the abstract operation of its superclass.</p>
+It implements the abstract operation of its superclass.
+As this is a document source position, the answer is always false.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#isEndOfInput">isEndOfInput</a></p></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="isEndOfString" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>is<wbr/>End<wbr/>Of<wbr/>String</span><a href="#isEndOfString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="isEndOfString.isEndOfString-1"><span class="tsd-kind-call-signature">is<wbr/>End<wbr/>Of<wbr/>String</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#isEndOfString.isEndOfString-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Answers if this position correspond to the end of string of the current
-string in the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> it belongs, or not.
-It must be implemented by concrete subclasses.</p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="isUnknown" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>Unknown</span><a href="#isUnknown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -216,62 +218,6 @@ It must be reimplemented by concrete subclasses.</p>
 <p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#toString">toString</a></p></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Contents Access</h2>
-<section class="tsd-panel tsd-member tsd-is-inherited"><a id="contentsFrom" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>contents<wbr/>From</span><a href="#contentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="contentsFrom.contentsFrom-1"><span class="tsd-kind-call-signature">contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#contentsFrom.contentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>from</code> position and <code>this</code>
-position (not included) and is visible.
-If <code>this</code> does not come after <code>from</code>, the result is the empty string.</p>
-<p>The implementation uses the Template Method Pattern, to have a common validation
-and specific logic given by subclasses.</p>
-<p><strong>PRECONDITIONS:</strong> both positions correspond to the same reader.</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
-          receiver.
-          It indicates a starting position to consult, where the receiver is the last.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
-        if the argument and <code>this</code> do not belong to the same reader.</p>
-</div><aside class="tsd-sources">
-<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#contentsFrom">contentsFrom</a></p></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-inherited"><a id="contentsTo" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>contents<wbr/>To</span><a href="#contentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="contentsTo.contentsTo-1"><span class="tsd-kind-call-signature">contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#contentsTo.contentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>this</code> position and
-<code>to</code> position (not included) and is visible.
-If <code>to</code> does not come after <code>this</code>, the result is the empty string.</p>
-<p>The implementation uses the Template Method Pattern, to have a common validation
-and specific logic given by subclasses.</p>
-<p><strong>PRECONDITION:</strong> both positions correspond to the same reader.</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
-          receiver.
-          It indicates a final position to consult, where the receiver is the first.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
-        if the argument and <code>this</code> do not belong to the same reader.</p>
-</div><aside class="tsd-sources">
-<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#contentsTo">contentsTo</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="fullContentsFrom" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>full<wbr/>Contents<wbr/>From</span><a href="#fullContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -327,56 +273,18 @@ and specific logic given by subclasses.</p>
 <h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
         if the argument and <code>this</code> do not belong to the same reader.</p>
 </div><aside class="tsd-sources">
-<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#fullContentsTo">fullContentsTo</a></p></aside></li></ul></section></section>
-<section class="tsd-panel-group tsd-member-group">
-<h2>Implementation Details</h2>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_implementationDetailsForString" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_implementation<wbr/>Details<wbr/>For<wbr/>String</span><a href="#_implementationDetailsForString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_implementation<wbr/>Details<wbr/>For<wbr/>String</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;Dummy for documentation&#39;</span></div>
-<div class="tsd-comment tsd-typography"><p>The implementation of <a href="SourceReader.StringSourcePosition.html" class="tsd-kind-class">StringSourcePosition</a> stores additional information to locate
-the precise position it points to in its <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>, to be able to implement all
-the required operations.
-The values stored are tightly coupled with the implementation in the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>;
-they are:</p>
-<ul>
-<li><a href="SourceReader.StringSourcePosition.html#_inputIndex" class="tsd-kind-property">_inputIndex</a>, with information about which
-string in the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> contains the char pointed to by this position, that is,
-the <em>current source string</em>,</li>
-<li><a href="SourceReader.StringSourcePosition.html#_charIndex" class="tsd-kind-property">_charIndex</a>, with information about which
-character in the <em>current source string</em> is the char pointed to, and</li>
-<li><a href="SourceReader.StringSourcePosition.html#_visibleCharIndex" class="tsd-kind-property">_visibleCharIndex</a>, with information about
-which character in the visible part of the <em>current source string</em> is the one pointed to
-(see the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> documentation for explanation on visible parts of the input).
-This information must be provided by the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> during creation, and it will
-be accessed by it when calculating sections of the source input in the implementation of
-operations
-<a href="SourceReader.StringSourcePosition.html#_contentsTo" class="tsd-kind-method">_contentsTo</a>,
-<a href="SourceReader.StringSourcePosition.html#_contentsFrom" class="tsd-kind-method">_contentsFrom</a>,
-<a href="SourceReader.StringSourcePosition.html#_contentsTo" class="tsd-kind-method">_contentsTo</a>, and
-<a href="SourceReader.StringSourcePosition.html#_fullContentsFrom" class="tsd-kind-method">_fullContentsFrom</a>.</li>
-</ul>
-<p>Additionally, it provides three new operations that only have sense for defined positions:</p>
-<ul>
-<li><a href="SourceReader.StringSourcePosition.html#inputName" class="tsd-kind-accessor">inputName</a>, the name of the particular string in
-the source input that has the char pointed to by this position,</li>
-<li><a href="SourceReader.StringSourcePosition.html#inputContents" class="tsd-kind-accessor">inputContents</a>, the visible contents of the
-particular string in the source input that has the char pointed to by this position, and</li>
-<li><a href="SourceReader.StringSourcePosition.html#fullInputContents" class="tsd-kind-accessor">fullInputContents</a>, the contents (both
-visible and non-visible) of the particular string in the source input that has the char
-pointed to by this position.</li>
-</ul>
-</div>
-<div class="tsd-comment tsd-typography"></div></section></section>
-<section class="tsd-panel-group tsd-member-group">
-<h2>Implementation: Auxiliaries</h2>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_contentsFrom" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_contents<wbr/>From</span><a href="#_contentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_contentsFrom._contentsFrom-1"><span class="tsd-kind-call-signature">_contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_contentsFrom._contentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The implementation required by the superclass for the Template Method Pattern that
-is used by <a href="SourceReader.KnownSourcePosition.html#contentsFrom" class="tsd-kind-method">contentsFrom</a>.</p>
-<p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not verified).</p>
+<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#fullContentsTo">fullContentsTo</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="visibleContentsFrom" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visible<wbr/>Contents<wbr/>From</span><a href="#visibleContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="visibleContentsFrom.visibleContentsFrom-1"><span class="tsd-kind-call-signature">visible<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#visibleContentsFrom.visibleContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>from</code> position and <code>this</code>
+position (not included) and is visible.
+If <code>this</code> does not come after <code>from</code>, the result is the empty string.</p>
+<p>The implementation uses the Template Method Pattern, to have a common validation
+and specific logic given by subclasses.</p>
+<p><strong>PRECONDITIONS:</strong> both positions correspond to the same reader.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -385,21 +293,26 @@ is used by <a href="SourceReader.KnownSourcePosition.html#contentsFrom" class="t
 <h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
 <div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
           receiver.
-          It indicates the starting position to consult, where the receiver is the last
-          (not included).</p>
+          It indicates a starting position to consult, where the receiver is the last.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<p>Overrides <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_contentsFrom">_contentsFrom</a></p></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_contentsTo" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_contents<wbr/>To</span><a href="#_contentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_contentsTo._contentsTo-1"><span class="tsd-kind-call-signature">_contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_contentsTo._contentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The implementation required by the superclass for the Template Method Pattern that
-is used by <a href="SourceReader.KnownSourcePosition.html#contentsTo" class="tsd-kind-method">contentsTo</a>.</p>
-<p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not verified).</p>
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
+        if the argument and <code>this</code> do not belong to the same reader.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#visibleContentsFrom">visibleContentsFrom</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="visibleContentsTo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visible<wbr/>Contents<wbr/>To</span><a href="#visibleContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="visibleContentsTo.visibleContentsTo-1"><span class="tsd-kind-call-signature">visible<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#visibleContentsTo.visibleContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>this</code> position and
+<code>to</code> position (not included) and is visible.
+If <code>to</code> does not come after <code>this</code>, the result is the empty string.</p>
+<p>The implementation uses the Template Method Pattern, to have a common validation
+and specific logic given by subclasses.</p>
+<p><strong>PRECONDITION:</strong> both positions correspond to the same reader.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -408,13 +321,58 @@ is used by <a href="SourceReader.KnownSourcePosition.html#contentsTo" class="tsd
 <h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
 <div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
           receiver.
-          It indicates the final position to consult (not included), where the receiver
-          is the first.</p>
+          It indicates a final position to consult, where the receiver is the first.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<p>Overrides <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_contentsTo">_contentsTo</a></p></aside></li></ul></section>
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
+        if the argument and <code>this</code> do not belong to the same reader.</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#visibleContentsTo">visibleContentsTo</a></p></aside></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Implementation Details</h2>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_implementationDetailsForString" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_implementation<wbr/>Details<wbr/>For<wbr/>String</span><a href="#_implementationDetailsForString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_implementation<wbr/>Details<wbr/>For<wbr/>String</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;Dummy for documentation&#39;</span></div>
+<div class="tsd-comment tsd-typography"><p>The implementation of <a href="SourceReader.DocumentSourcePosition.html" class="tsd-kind-class">DocumentSourcePosition</a> stores additional information to locate
+the precise position it points to in its <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>, to be able to implement all
+the required operations.
+The values stored are tightly coupled with the implementation in the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>;
+they are:</p>
+<ul>
+<li><a href="SourceReader.DocumentSourcePosition.html#_documentIndex" class="tsd-kind-property">_documentIndex</a>, with information about
+which document in the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> contains the char pointed to by this position,
+that is, the <em>current source document</em>,</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#_charIndex" class="tsd-kind-property">_charIndex</a>, with information about which
+character in the <em>current source document</em> is the char pointed to, and</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#_visibleCharIndex" class="tsd-kind-property">_visibleCharIndex</a>, with information
+about which character in the visible part of the <em>current source document</em> is the one
+pointed to (see the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> documentation for explanation on visible parts
+of the input).
+This information must be provided by the <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> during creation, and it will
+be accessed by it when calculating sections of the source input in the implementation of
+operations
+<a href="SourceReader.DocumentSourcePosition.html#_visibleContentsTo" class="tsd-kind-method">_visibleContentsTo</a>,
+<a href="SourceReader.DocumentSourcePosition.html#_visibleContentsFrom" class="tsd-kind-method">_visibleContentsFrom</a>,
+<a href="SourceReader.DocumentSourcePosition.html#_fullContentsTo" class="tsd-kind-method">_fullContentsTo</a>, and
+<a href="SourceReader.DocumentSourcePosition.html#_fullContentsFrom" class="tsd-kind-method">_fullContentsFrom</a>.</li>
+</ul>
+<p>Additionally, it provides three new operations that only have sense for defined positions:</p>
+<ul>
+<li><a href="SourceReader.DocumentSourcePosition.html#documentName" class="tsd-kind-accessor">documentName</a>, the name of the particular
+document in the source input that this position points to,</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#visibleDocumentContents" class="tsd-kind-accessor">visibleDocumentContents</a>, the
+visible contents of the particular document in the source input that this position points
+to, and</li>
+<li><a href="SourceReader.DocumentSourcePosition.html#fullDocumentContents" class="tsd-kind-accessor">fullDocumentContents</a>, the contents
+(both visible and non-visible) of the particular document in the source input that this
+position points to.</li>
+</ul>
+</div>
+<div class="tsd-comment tsd-typography"></div></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Implementation: Auxiliaries</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_fullContentsFrom" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_full<wbr/>Contents<wbr/>From</span><a href="#_fullContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -483,14 +441,60 @@ is used by <a href="SourceReader.KnownSourcePosition.html#fullContentsTo" class=
 <h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
         if <code>this</code> and <code>that</code> positions do not belong to the same reader.</p>
 </div><aside class="tsd-sources">
-<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_validateSourceReaders">_validateSourceReaders</a></p></aside></li></ul></section></section>
+<p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_validateSourceReaders">_validateSourceReaders</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleContentsFrom" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Contents<wbr/>From</span><a href="#_visibleContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_visibleContentsFrom._visibleContentsFrom-1"><span class="tsd-kind-call-signature">_visible<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_visibleContentsFrom._visibleContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>The implementation required by the superclass for the Template Method Pattern that
+is used by <a href="SourceReader.KnownSourcePosition.html#visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom</a>.</p>
+<p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not verified).</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
+          receiver.
+          It indicates the starting position to consult, where the receiver is the last
+          (not included).</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Overrides <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_visibleContentsFrom">_visibleContentsFrom</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleContentsTo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Contents<wbr/>To</span><a href="#_visibleContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_visibleContentsTo._visibleContentsTo-1"><span class="tsd-kind-call-signature">_visible<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_visibleContentsTo._visibleContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>The implementation required by the superclass for the Template Method Pattern that
+is used by <a href="SourceReader.KnownSourcePosition.html#visibleContentsTo" class="tsd-kind-method">visibleContentsTo</a>.</p>
+<p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not verified).</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
+          receiver.
+          It indicates the final position to consult (not included), where the receiver
+          is the first.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Overrides <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_visibleContentsTo">_visibleContentsTo</a></p></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Implementation: Internal state</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_charIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_char<wbr/>Index</span><a href="#_charIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_char<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The index with information about the exact char pointed to by this position in the input
-string.</p>
+document.</p>
 <p><strong>INVARIANT:</strong> <code>0 &lt;= _charIndex</code> and it is a valid index in that reader.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
@@ -503,11 +507,11 @@ It will be modified only by the constructor.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#_column">_column</a></p></aside></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputIndex" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>Index</span><a href="#_inputIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_input<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The index with information about the input string in the <code>_sourceReader</code>.</p>
-<p><strong>INVARIANT</strong>: <code>0 &lt;= _inputIndex</code> and it is a valid index in that reader.</p>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_documentIndex" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_document<wbr/>Index</span><a href="#_documentIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_document<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>The index with information about the input document in the <code>_sourceReader</code>.</p>
+<p><strong>INVARIANT</strong>: <code>0 &lt;= _documentIndex</code> and it is a valid index in that reader.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-member tsd-is-private tsd-is-inherited"><a id="_line" class="tsd-anchor"></a>
@@ -539,7 +543,7 @@ It will be modified only by the constructor.</p>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Char<wbr/>Index</span><a href="#_visibleCharIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_visible<wbr/>Char<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The index with information about the exact char pointed to by this position in the visible
-input string.</p>
+input document.</p>
 <p><strong>INVARIANT:</strong> <code>0 &lt;= _visibleCharIndex</code> and it is a valid index in that reader.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section></section>
@@ -548,9 +552,9 @@ input string.</p>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_StringSourcePosition"><span class="tsd-kind-constructor-signature">new <wbr/>String<wbr/>Source<wbr/>Position</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">sourceReader</span>, <span class="tsd-kind-parameter">line</span>, <span class="tsd-kind-parameter">column</span>, <span class="tsd-kind-parameter">regions</span>, <span class="tsd-kind-parameter">inputIndex</span>, <span class="tsd-kind-parameter">charIndex</span>, <span class="tsd-kind-parameter">visibleCharIndex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SourceReader.StringSourcePosition.html" class="tsd-signature-type tsd-kind-class">StringSourcePosition</a><a href="#constructor.new_StringSourcePosition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_DocumentSourcePosition"><span class="tsd-kind-constructor-signature">new <wbr/>Document<wbr/>Source<wbr/>Position</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">sourceReader</span>, <span class="tsd-kind-parameter">line</span>, <span class="tsd-kind-parameter">column</span>, <span class="tsd-kind-parameter">regions</span>, <span class="tsd-kind-parameter">documentIndex</span>, <span class="tsd-kind-parameter">charIndex</span>, <span class="tsd-kind-parameter">visibleCharIndex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SourceReader.DocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">DocumentSourcePosition</a><a href="#constructor.new_DocumentSourcePosition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Returns a source position belonging to some <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.
+<div class="tsd-comment tsd-typography"><p>Returns a document source position belonging to some <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.
 It is intended to be used only by <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
 <p><strong>PRECONDITIONS:</strong> (not verified during execution)</p>
 <ul>
@@ -570,12 +574,12 @@ It is intended to be used only by <a href="SourceReader.SourceReader.html" class
 <li>
 <h5><span class="tsd-kind-parameter">regions</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5></li>
 <li>
-<h5><span class="tsd-kind-parameter">inputIndex</span>: <span class="tsd-signature-type">number</span></h5></li>
+<h5><span class="tsd-kind-parameter">documentIndex</span>: <span class="tsd-signature-type">number</span></h5></li>
 <li>
 <h5><span class="tsd-kind-parameter">charIndex</span>: <span class="tsd-signature-type">number</span></h5></li>
 <li>
 <h5><span class="tsd-kind-parameter">visibleCharIndex</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="SourceReader.StringSourcePosition.html" class="tsd-signature-type tsd-kind-class">StringSourcePosition</a></h4>
+<h4 class="tsd-returns-title">Returns <a href="SourceReader.DocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">DocumentSourcePosition</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides <a href="SourceReader.KnownSourcePosition.html">KnownSourcePosition</a>.<a href="SourceReader.KnownSourcePosition.html#constructor">constructor</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="_theCharIndex" class="tsd-anchor"></a>
@@ -583,17 +587,17 @@ It is intended to be used only by <a href="SourceReader.SourceReader.html" class
 <ul class="tsd-signatures">
 <li class="tsd-signature" id="_theCharIndex._theCharIndex-1"><span class="tsd-signature-symbol">get</span> _theCharIndex<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The index indicating the exact char in the input string in the source input.</p>
+<div class="tsd-comment tsd-typography"><p>The index indicating the exact char in the input document in the source input.</p>
 <p>It is supposed to be used only by <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="_theInputIndex" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>_the<wbr/>Input<wbr/>Index</span><a href="#_theInputIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member"><a id="_theDocumentIndex" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>_the<wbr/>Document<wbr/>Index</span><a href="#_theDocumentIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature" id="_theInputIndex._theInputIndex-1"><span class="tsd-signature-symbol">get</span> _theInputIndex<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+<li class="tsd-signature" id="_theDocumentIndex._theDocumentIndex-1"><span class="tsd-signature-symbol">get</span> _theDocumentIndex<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The index indicating the input string in the source input.</p>
+<div class="tsd-comment tsd-typography"><p>The index indicating the input document in the source input.</p>
 <p>It is supposed to be used only by <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -603,7 +607,7 @@ It is intended to be used only by <a href="SourceReader.SourceReader.html" class
 <ul class="tsd-signatures">
 <li class="tsd-signature" id="_theVisibleCharIndex._theVisibleCharIndex-1"><span class="tsd-signature-symbol">get</span> _theVisibleCharIndex<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The index indicating the exact char in the visible input string in the source input.</p>
+<div class="tsd-comment tsd-typography"><p>The index indicating the exact char in the visible input document in the source input.</p>
 <p>It is supposed to be used only by <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -627,36 +631,36 @@ It is intended to be used only by <a href="SourceReader.SourceReader.html" class
 <div class="tsd-accordion-details">
 <ul>
 <li><a href="#column" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>column</span></a></li>
-<li><a href="#fullInputContents" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>full<wbr/>Input<wbr/>Contents</span></a></li>
-<li><a href="#inputContents" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>input<wbr/>Contents</span></a></li>
-<li><a href="#inputName" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>input<wbr/>Name</span></a></li>
+<li><a href="#documentName" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>document<wbr/>Name</span></a></li>
+<li><a href="#fullDocumentContents" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>full<wbr/>Document<wbr/>Contents</span></a></li>
 <li><a href="#line" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>line</span></a></li>
 <li><a href="#regions" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>regions</span></a></li>
 <li><a href="#sourceReader" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>source<wbr/>Reader</span></a></li>
+<li><a href="#visibleDocumentContents" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>visible<wbr/>Document<wbr/>Contents</span></a></li>
+<li><a href="#isEndOfDocument" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Document</span></a></li>
 <li><a href="#isEndOfInput" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Input</span></a></li>
-<li><a href="#isEndOfString" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>String</span></a></li>
 <li><a href="#isUnknown" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Unknown</span></a></li>
 <li><a href="#toString" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a></li>
-<li><a href="#contentsFrom" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>From</span></a></li>
-<li><a href="#contentsTo" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>To</span></a></li>
 <li><a href="#fullContentsFrom" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>From</span></a></li>
 <li><a href="#fullContentsTo" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>To</span></a></li>
+<li><a href="#visibleContentsFrom" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>From</span></a></li>
+<li><a href="#visibleContentsTo" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>To</span></a></li>
 <li><a href="#_implementationDetailsForString" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_implementation<wbr/>Details<wbr/>For<wbr/>String</span></a></li>
-<li><a href="#_contentsFrom" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>From</span></a></li>
-<li><a href="#_contentsTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>To</span></a></li>
 <li><a href="#_fullContentsFrom" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>From</span></a></li>
 <li><a href="#_fullContentsTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>To</span></a></li>
 <li><a href="#_validateSourceReaders" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_validate<wbr/>Source<wbr/>Readers</span></a></li>
+<li><a href="#_visibleContentsFrom" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>From</span></a></li>
+<li><a href="#_visibleContentsTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>To</span></a></li>
 <li><a href="#_charIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_char<wbr/>Index</span></a></li>
 <li><a href="#_column" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a></li>
-<li><a href="#_inputIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_input<wbr/>Index</span></a></li>
+<li><a href="#_documentIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_document<wbr/>Index</span></a></li>
 <li><a href="#_line" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line</span></a></li>
 <li><a href="#_regions" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_regions</span></a></li>
 <li><a href="#_sourceReader" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_source<wbr/>Reader</span></a></li>
 <li><a href="#_visibleCharIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Char<wbr/>Index</span></a></li>
 <li><a href="#constructor" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
 <li><a href="#_theCharIndex" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Char<wbr/>Index</span></a></li>
-<li><a href="#_theInputIndex" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Input<wbr/>Index</span></a></li>
+<li><a href="#_theDocumentIndex" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Document<wbr/>Index</span></a></li>
 <li><a href="#_theVisibleCharIndex" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>_the<wbr/>Visible<wbr/>Char<wbr/>Index</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>gobstones-core - v0.4.3</span></a>

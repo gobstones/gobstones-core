@@ -22,7 +22,8 @@
 It is created using the <a href="SourceReader.SourceReader.html#getPosition" class="tsd-kind-method">getPosition</a> operation of a
 particular <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> instance.
 The obtained object indicates a position in the source associated with that reader, that may be
-EndOfInput or a defined position.
+EndOfInput (after all input documents has been processed) or a defined position (that is, one
+that corresponds to one of the documents of the input).
 This difference is given by subclasses.</p>
 <p>Valid operations on a <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a>, in addition to those of the superclasses,
 include:</p>
@@ -37,8 +38,8 @@ include:</p>
 <a href="SourceReader.KnownSourcePosition.html#regions" class="tsd-kind-accessor">regions</a>, and</li>
 <li>get the visible or full portion of the source between a known position and some other
 known position related with the same reader, with
-<a href="SourceReader.KnownSourcePosition.html#contentsTo" class="tsd-kind-method">contentsTo</a>,
-<a href="SourceReader.KnownSourcePosition.html#contentsFrom" class="tsd-kind-method">contentsFrom</a>,
+<a href="SourceReader.KnownSourcePosition.html#visibleContentsTo" class="tsd-kind-method">visibleContentsTo</a>,
+<a href="SourceReader.KnownSourcePosition.html#visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom</a>,
 <a href="SourceReader.KnownSourcePosition.html#fullContentsTo" class="tsd-kind-method">fullContentsTo</a>, and
 <a href="SourceReader.KnownSourcePosition.html#fullContentsFrom" class="tsd-kind-method">fullContentsFrom</a>.</li>
 </ul>
@@ -52,7 +53,7 @@ known position related with the same reader, with
 <li><span class="target">KnownSourcePosition</span>
 <ul class="tsd-hierarchy">
 <li><a href="SourceReader.EndOfInputSourcePosition.html" class="tsd-signature-type tsd-kind-class">EndOfInputSourcePosition</a></li>
-<li><a href="SourceReader.StringSourcePosition.html" class="tsd-signature-type tsd-kind-class">StringSourcePosition</a></li></ul></li></ul></li></ul></section>
+<li><a href="SourceReader.DocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">DocumentSourcePosition</a></li></ul></li></ul></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -70,10 +71,10 @@ known position related with the same reader, with
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">API: Contents Access</h3>
-<div class="tsd-index-list"><a href="SourceReader.KnownSourcePosition.html#contentsFrom" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>From</span></a>
-<a href="SourceReader.KnownSourcePosition.html#contentsTo" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>To</span></a>
-<a href="SourceReader.KnownSourcePosition.html#fullContentsFrom" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>From</span></a>
+<div class="tsd-index-list"><a href="SourceReader.KnownSourcePosition.html#fullContentsFrom" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>From</span></a>
 <a href="SourceReader.KnownSourcePosition.html#fullContentsTo" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>To</span></a>
+<a href="SourceReader.KnownSourcePosition.html#visibleContentsFrom" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>From</span></a>
+<a href="SourceReader.KnownSourcePosition.html#visibleContentsTo" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>To</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation Details</h3>
@@ -81,11 +82,11 @@ known position related with the same reader, with
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Auxiliaries</h3>
-<div class="tsd-index-list"><a href="SourceReader.KnownSourcePosition.html#_contentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>From</span></a>
-<a href="SourceReader.KnownSourcePosition.html#_contentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>To</span></a>
-<a href="SourceReader.KnownSourcePosition.html#_fullContentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>From</span></a>
+<div class="tsd-index-list"><a href="SourceReader.KnownSourcePosition.html#_fullContentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>From</span></a>
 <a href="SourceReader.KnownSourcePosition.html#_fullContentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>To</span></a>
 <a href="SourceReader.KnownSourcePosition.html#_validateSourceReaders" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_validate<wbr/>Source<wbr/>Readers</span></a>
+<a href="SourceReader.KnownSourcePosition.html#_visibleContentsFrom" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>From</span></a>
+<a href="SourceReader.KnownSourcePosition.html#_visibleContentsTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>To</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Internal state</h3>
@@ -143,7 +144,8 @@ known position related with the same reader, with
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Answers if this position correspond to the end of input of the
 <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> it belongs, or not.
- It must be implemented by concrete subclasses.</p>
+The EndOfInput is reached when all documents in the source input has been processed.
+It must be implemented by concrete subclasses.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
@@ -172,60 +174,6 @@ It must be reimplemented by concrete subclasses.</p>
 <p>Inherited from <a href="SourceReader.SourcePosition.html">SourcePosition</a>.<a href="SourceReader.SourcePosition.html#toString">toString</a></p></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Contents Access</h2>
-<section class="tsd-panel tsd-member"><a id="contentsFrom" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>contents<wbr/>From</span><a href="#contentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="contentsFrom.contentsFrom-1"><span class="tsd-kind-call-signature">contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#contentsFrom.contentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>from</code> position and <code>this</code>
-position (not included) and is visible.
-If <code>this</code> does not come after <code>from</code>, the result is the empty string.</p>
-<p>The implementation uses the Template Method Pattern, to have a common validation
-and specific logic given by subclasses.</p>
-<p><strong>PRECONDITIONS:</strong> both positions correspond to the same reader.</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
-          receiver.
-          It indicates a starting position to consult, where the receiver is the last.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
-        if the argument and <code>this</code> do not belong to the same reader.</p>
-</div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="contentsTo" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>contents<wbr/>To</span><a href="#contentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="contentsTo.contentsTo-1"><span class="tsd-kind-call-signature">contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#contentsTo.contentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>this</code> position and
-<code>to</code> position (not included) and is visible.
-If <code>to</code> does not come after <code>this</code>, the result is the empty string.</p>
-<p>The implementation uses the Template Method Pattern, to have a common validation
-and specific logic given by subclasses.</p>
-<p><strong>PRECONDITION:</strong> both positions correspond to the same reader.</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
-          receiver.
-          It indicates a final position to consult, where the receiver is the first.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
-        if the argument and <code>this</code> do not belong to the same reader.</p>
-</div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="fullContentsFrom" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>full<wbr/>Contents<wbr/>From</span><a href="#fullContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -279,14 +227,68 @@ and specific logic given by subclasses.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
         if the argument and <code>this</code> do not belong to the same reader.</p>
+</div></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="visibleContentsFrom" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visible<wbr/>Contents<wbr/>From</span><a href="#visibleContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="visibleContentsFrom.visibleContentsFrom-1"><span class="tsd-kind-call-signature">visible<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#visibleContentsFrom.visibleContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>from</code> position and <code>this</code>
+position (not included) and is visible.
+If <code>this</code> does not come after <code>from</code>, the result is the empty string.</p>
+<p>The implementation uses the Template Method Pattern, to have a common validation
+and specific logic given by subclasses.</p>
+<p><strong>PRECONDITIONS:</strong> both positions correspond to the same reader.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
+          receiver.
+          It indicates a starting position to consult, where the receiver is the last.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
+        if the argument and <code>this</code> do not belong to the same reader.</p>
+</div></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="visibleContentsTo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visible<wbr/>Contents<wbr/>To</span><a href="#visibleContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="visibleContentsTo.visibleContentsTo-1"><span class="tsd-kind-call-signature">visible<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#visibleContentsTo.visibleContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>this</code> position and
+<code>to</code> position (not included) and is visible.
+If <code>to</code> does not come after <code>this</code>, the result is the empty string.</p>
+<p>The implementation uses the Template Method Pattern, to have a common validation
+and specific logic given by subclasses.</p>
+<p><strong>PRECONDITION:</strong> both positions correspond to the same reader.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
+          receiver.
+          It indicates a final position to consult, where the receiver is the first.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
+        if the argument and <code>this</code> do not belong to the same reader.</p>
 </div></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Implementation Details</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_implementationDetailsForKnown" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_implementation<wbr/>Details<wbr/>For<wbr/>Known</span><a href="#_implementationDetailsForKnown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_implementation<wbr/>Details<wbr/>For<wbr/>Known</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;Dummy for documentation&#39;</span></div>
-<div class="tsd-comment tsd-typography"><p>Instances of <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> point to a particular <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>, given
-as an argument during construction.
+<div class="tsd-comment tsd-typography"><p>Instances of the abstract class <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> point to a particular
+<a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>, given as an argument during construction.
 It is remembered in a protected property,
 <a href="SourceReader.KnownSourcePosition.html#_sourceReader" class="tsd-kind-property">_sourceReader</a>.</p>
 <p>The abstract operations of <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a> are implemented with the relevant
@@ -304,16 +306,16 @@ They are the getters of the protected properties,
 <a href="SourceReader.KnownSourcePosition.html#_column" class="tsd-kind-property">_column</a>, and
 <a href="SourceReader.KnownSourcePosition.html#_regions" class="tsd-kind-property">_regions</a>.</p>
 <p>There are also four new operations to determine sections of the source input:
-<a href="SourceReader.KnownSourcePosition.html#contentsTo" class="tsd-kind-method">contentsTo</a>,
-<a href="SourceReader.KnownSourcePosition.html#contentsFrom" class="tsd-kind-method">contentsFrom</a>,
+<a href="SourceReader.KnownSourcePosition.html#visibleContentsTo" class="tsd-kind-method">visibleContentsTo</a>,
+<a href="SourceReader.KnownSourcePosition.html#visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom</a>,
 <a href="SourceReader.KnownSourcePosition.html#fullContentsTo" class="tsd-kind-method">fullContentsTo</a>, and
 <a href="SourceReader.KnownSourcePosition.html#fullContentsFrom" class="tsd-kind-method">fullContentsFrom</a>.
 They use the Template Method Pattern to provide a common validation and different logics
 depending on the subclass.
 Protected methods
 <a href="SourceReader.KnownSourcePosition.html#_validateSourceReaders" class="tsd-kind-method">_validateSourceReaders</a>,
-<a href="SourceReader.KnownSourcePosition.html#_contentsTo" class="tsd-kind-method">contentsTo </a>,
-<a href="SourceReader.KnownSourcePosition.html#_contentsFrom" class="tsd-kind-method">contentsFrom </a>,
+<a href="SourceReader.KnownSourcePosition.html#_visibleContentsTo" class="tsd-kind-method">visibleContentsTo </a>,
+<a href="SourceReader.KnownSourcePosition.html#_visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom </a>,
 <a href="SourceReader.KnownSourcePosition.html#_fullContentsTo" class="tsd-kind-method">fullContentsTo </a>, and
 <a href="SourceReader.KnownSourcePosition.html#_fullContentsFrom" class="tsd-kind-method">fullContentsFrom </a>,
 are used to implement this Template Method Pattern.</p>
@@ -335,60 +337,6 @@ Operations to access the source input uses protected methods of the <a href="Sou
 <div class="tsd-comment tsd-typography"></div></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Implementation: Auxiliaries</h2>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_contentsFrom" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_contents<wbr/>From</span><a href="#_contentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_contentsFrom._contentsFrom-1"><span class="tsd-kind-call-signature">_contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><a href="#_contentsFrom._contentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>from</code> position and <code>this</code>
-position (not included) and is visible.
-If <code>from</code> comes after <code>this</code>, the result is the empty string.</p>
-<p>It implements the specific logic of each subclass for the Template Method Pattern
-of <a href="SourceReader.KnownSourcePosition.html#contentsFrom" class="tsd-kind-method">contentsFrom</a>.
-It must be reimplemented by subclasses.</p>
-<p><strong>PRECONDITION:</strong> both positions correspond to the same reader
-                  (not validated, as it is a protected operation).</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
-          receiver.
-          It indicates the starting position to consult, where the receiver is the last
-          (not included).</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_contentsTo" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_contents<wbr/>To</span><a href="#_contentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_contentsTo._contentsTo-1"><span class="tsd-kind-call-signature">_contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><a href="#_contentsTo._contentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>this</code> position and <code>to</code>
-position (not included) and is visible.
-If <code>this</code> comes after <code>to</code>, the result is the empty string.</p>
-<p>It implements the specific logic of each subclass for the Template Method Pattern
-of <a href="SourceReader.KnownSourcePosition.html#contentsTo" class="tsd-kind-method">contentsTo</a>.
-It must be reimplemented by subclasses.</p>
-<p><strong>PRECONDITION:</strong> both positions correspond to the same reader
-                  (not validated, as it is a protected operation).</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
-          receiver.
-          It indicates the final position to consult (not included), where the receiver
-          is the first.</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_fullContentsFrom" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_full<wbr/>Contents<wbr/>From</span><a href="#_fullContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -464,7 +412,61 @@ It must be reimplemented by subclasses.</p>
 <div class="tsd-comment tsd-typography">
 <h4>Throws</h4><p><a href="SourceReader.ErrorUnmatchingPositionsBy.html" class="tsd-kind-class">ErrorUnmatchingPositionsBy</a>
         if <code>this</code> and <code>that</code> positions do not belong to the same reader.</p>
-</div></li></ul></section></section>
+</div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleContentsFrom" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Contents<wbr/>From</span><a href="#_visibleContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_visibleContentsFrom._visibleContentsFrom-1"><span class="tsd-kind-call-signature">_visible<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><a href="#_visibleContentsFrom._visibleContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>from</code> position and <code>this</code>
+position (not included) and is visible.
+If <code>from</code> comes after <code>this</code>, the result is the empty string.</p>
+<p>It implements the specific logic of each subclass for the Template Method Pattern
+of <a href="SourceReader.KnownSourcePosition.html#visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom</a>.
+It must be reimplemented by subclasses.</p>
+<p><strong>PRECONDITION:</strong> both positions correspond to the same reader
+                  (not validated, as it is a protected operation).</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
+          receiver.
+          It indicates the starting position to consult, where the receiver is the last
+          (not included).</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleContentsTo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Contents<wbr/>To</span><a href="#_visibleContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_visibleContentsTo._visibleContentsTo-1"><span class="tsd-kind-call-signature">_visible<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><a href="#_visibleContentsTo._visibleContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>this</code> position and <code>to</code>
+position (not included) and is visible.
+If <code>this</code> comes after <code>to</code>, the result is the empty string.</p>
+<p>It implements the specific logic of each subclass for the Template Method Pattern
+of <a href="SourceReader.KnownSourcePosition.html#visibleContentsTo" class="tsd-kind-method">visibleContentsTo</a>.
+It must be reimplemented by subclasses.</p>
+<p><strong>PRECONDITION:</strong> both positions correspond to the same reader
+                  (not validated, as it is a protected operation).</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5>
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a> related with the same <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that the
+          receiver.
+          It indicates the final position to consult (not included), where the receiver
+          is the first.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Implementation: Internal state</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_column" class="tsd-anchor"></a>
@@ -551,16 +553,16 @@ It is intended to be used only by <a href="SourceReader.SourceReader.html" class
 <li><a href="#isEndOfInput" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Input</span></a></li>
 <li><a href="#isUnknown" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Unknown</span></a></li>
 <li><a href="#toString" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a></li>
-<li><a href="#contentsFrom" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>From</span></a></li>
-<li><a href="#contentsTo" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>contents<wbr/>To</span></a></li>
 <li><a href="#fullContentsFrom" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>From</span></a></li>
 <li><a href="#fullContentsTo" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>full<wbr/>Contents<wbr/>To</span></a></li>
+<li><a href="#visibleContentsFrom" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>From</span></a></li>
+<li><a href="#visibleContentsTo" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visible<wbr/>Contents<wbr/>To</span></a></li>
 <li><a href="#_implementationDetailsForKnown" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_implementation<wbr/>Details<wbr/>For<wbr/>Known</span></a></li>
-<li><a href="#_contentsFrom" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>From</span></a></li>
-<li><a href="#_contentsTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_contents<wbr/>To</span></a></li>
 <li><a href="#_fullContentsFrom" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>From</span></a></li>
 <li><a href="#_fullContentsTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Contents<wbr/>To</span></a></li>
 <li><a href="#_validateSourceReaders" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_validate<wbr/>Source<wbr/>Readers</span></a></li>
+<li><a href="#_visibleContentsFrom" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>From</span></a></li>
+<li><a href="#_visibleContentsTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Contents<wbr/>To</span></a></li>
 <li><a href="#_column" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a></li>
 <li><a href="#_line" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line</span></a></li>
 <li><a href="#_regions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_regions</span></a></li>

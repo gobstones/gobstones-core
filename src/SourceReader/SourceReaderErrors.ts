@@ -99,17 +99,17 @@ export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
 }
 
 /**
- * The error to produce when a function that is not supposed to be used at EndOfString is called.
+ * The error to produce when a function that is not supposed to be used at EndOfDocument is called.
  * @group API: Errors
  */
-export class ErrorAtEndOfStringBy extends SourceReaderErrorBy {
+export class ErrorAtEndOfDocumentBy extends SourceReaderErrorBy {
     /**
-     * The constructor for {@link SourceReader.ErrorAtEndOfStringBy | ErrorAtEndOfStringBy} errors.
+     * The constructor for {@link SourceReader.ErrorAtEndOfDocumentBy | ErrorAtEndOfDocumentBy} errors.
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
     public constructor(operation: string, context: string) {
-        super('AtEndOfInputBy', operation, context);
+        super('AtEndOfDocumentBy', operation, context);
     }
 }
 // #endregion } Error classes

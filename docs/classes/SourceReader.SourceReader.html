@@ -18,38 +18,44 @@
 <li><a href="SourceReader.SourceReader.html">SourceReader</a></li></ul>
 <h1>Class SourceReader</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> allows you to read input from some source, either one single string of
-content or several named or indexed source strings, in such a way that each character read
+<div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> allows you to read input from some source, either one single document of
+content or several named or indexed source documents, in such a way that each character read
 registers its position in the source as a tuple index-line-column.
 That is, the main problem it solves is that of calculating the position of each character read
 by taking into account characters indicating the end-of-line.
-It also solves the problem of input divided among several strings, as it is usually the case with
-source code, and it provides a couple of additional features:</p>
+It also solves the problem of input divided among several documents, as it is usually the case
+with source code, and it provides a couple of additional features:</p>
 <ul>
 <li>to use some parts of the input as extra annotations by marking them as non visible, so the
 input can be read as if the annotations were not there, and</li>
-<li>to allow the relationship of parts of the input with identifiers naming &quot;regions&quot;, thus making
-it possible for external tools to identify those parts with ease.</li>
+<li>to allow the relationship of parts of the input with identifiers naming &quot;regions&quot;, thus
+making it possible for external tools to identify those parts with ease.</li>
 </ul>
-<p>A <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> is created using a <a href="../types/SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> and then <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>, in
-particular <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a>, can be read from it.
+<p>A <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> is created using a <a href="../types/SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> and then <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>s,
+in particular <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a>s, can be read from it.
 Possible interactions with a <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> include:</p>
 <ul>
 <li>peek a character, with <a href="SourceReader.SourceReader.html#peek" class="tsd-kind-method">SourceReader.peek</a>,</li>
-<li>check if a given strings occurs at the beginning of the text in the current string, without
+<li>check if a given strings occurs at the beginning of the text in the current document, without
 skipping it, with <a href="SourceReader.SourceReader.html#startsWith" class="tsd-kind-method">SourceReader.startsWith</a>,</li>
 <li>get the current position as a <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a>, with
 <a href="SourceReader.SourceReader.html#getPosition" class="tsd-kind-method">SourceReader.getPosition</a>,</li>
-<li>get the current position as a <a href="SourceReader.StringSourcePosition.html" class="tsd-kind-class">StringSourcePosition</a>, with
-<a href="SourceReader.SourceReader.html#getStringPosition" class="tsd-kind-method">SourceReader.getStringPosition</a>, provided the end of input was not reached,</li>
+<li>get the current position as a <a href="SourceReader.DocumentSourcePosition.html" class="tsd-kind-class">DocumentSourcePosition</a>, with
+<a href="SourceReader.SourceReader.html#getDocumentPosition" class="tsd-kind-method">SourceReader.getDocumentPosition</a>, provided the end of input was not reached,</li>
 <li>detect if the end of input was reached, with <a href="SourceReader.SourceReader.html#atEndOfInput" class="tsd-kind-method">SourceReader.atEndOfInput</a>,</li>
-<li>detect if the end of the current string was reached, with <a href="SourceReader.SourceReader.html#atEndOfString" class="tsd-kind-method">SourceReader.atEndOfString</a>,</li>
+<li>detect if the end of the current document was reached, with
+<a href="SourceReader.SourceReader.html#atEndOfDocument" class="tsd-kind-method">SourceReader.atEndOfDocument</a>,</li>
 <li>skip one or more characters, with <a href="SourceReader.SourceReader.html#skip" class="tsd-kind-method">skip</a>,</li>
-<li>read some characters from the current string based on a condition, with <a href="SourceReader.SourceReader.html#takeWhile" class="tsd-kind-method">takeWhile</a>, and</li>
+<li>read some characters from the current document based on a condition, with <a href="SourceReader.SourceReader.html#takeWhile" class="tsd-kind-method">takeWhile</a>,
+and</li>
 <li>manipulate &quot;regions&quot;, with <a href="SourceReader.SourceReader.html#beginRegion" class="tsd-kind-method">SourceReader.beginRegion</a>
 and <a href="SourceReader.SourceReader.html#endRegion" class="tsd-kind-method">SourceReader.endRegion</a>.
-When reading from sources with multiple string of input, skipping moves from one of them to the
-next transparently for the user (with the exception that regions are reset).</li>
+When reading from sources with multiple documents of input, skipping moves inside a document
+until there are no more characters, then an end of document position is reached (a special
+position just after the last character of that document), and then a new document is started.
+Regions are reset at the beginning of each document.
+When the last document has been processed, and the last end of document has been skipped, the
+end of input is reached (a special position just after all the documents).</li>
 </ul>
 <p>A <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> also has a special position,
 <a href="SourceReader.SourceReader.html#UnknownPosition" class="tsd-kind-property">UnknownPosition</a>, as a static member of the class,
@@ -60,30 +66,30 @@ characters do not.
 Characters are marked as visible by skipping over them normally;
 characters are marked as non visible by silently skip over them.
 Visibility of the input affect the information that positions may provide.
-When skipping characters, at the end of each of the input strings there is a special position
+When skipping characters, at the end of each of the input document there is a special position
 that must be skipped, but that has no character, and thus, cannot be peeked
--- the <a href="SourceReader.EndOfStringSourcePosition.html" class="tsd-kind-class">EndOfStringSourcePosition</a>. This position cannot be skipped as non visible, as
-every input string is apparent for the user.</p>
+-- the <a href="SourceReader.EndOfDocumentSourcePosition.html" class="tsd-kind-class">EndOfDocumentSourcePosition</a>.
+This position cannot be skipped as non visible, as every input document is known by the user.</p>
 <p>Regarding regions, a &quot;region&quot; is some part of the input that has an ID (as a string).
 It is used in handling automatically generated code.
 A typical use is to identify parts of code generated by some external tool, in such a way as to
 link that part with the element generating it through region IDs.
 Regions are supposed to be nested, so a stack is used, but no check is made on their balance,
 being the user responsible for the correct pushing and popping of regions.
-When skipping moves from one source string to the next, regions are reset, as regions are not
-supposed to cross different strings of the input.</p>
+When skipping moves from one source document to the next, regions are reset, as regions are not
+supposed to cross different documents of the input.</p>
 <p> <strong>Example</strong></p>
 <p>This is a very basic example using all basic operations.
 A more complex program will use functions to organize the access with a logical structure,
 and it will also consider different inputs in the source.
 Just use this example to understand the behavior of operations
 -- common usage do NOT follow this structure.</p>
-<pre><code><span class="hl-1"> </span><span class="hl-4">let</span><span class="hl-1"> </span><span class="hl-0">pos</span><span class="hl-1">: </span><span class="hl-5">SourcePosition</span><span class="hl-1">;</span><br/><span class="hl-1"> </span><span class="hl-4">let</span><span class="hl-1"> </span><span class="hl-0">str</span><span class="hl-1">: </span><span class="hl-5">string</span><span class="hl-1">;</span><br/><span class="hl-1"> </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-7">reader</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">SourceReader</span><span class="hl-1">(</span><span class="hl-3">&#39;program { Poner(Verde) }&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;</span><span class="hl-13">\n</span><span class="hl-3">&#39;</span><span class="hl-1">);</span><br/><span class="hl-1"> </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1"> </span><span class="hl-9">// Read a basic Gobstones program</span><br/><span class="hl-1"> </span><span class="hl-2">if</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39;program&#39;</span><span class="hl-1">)) {   </span><span class="hl-9">// ~~&gt; true</span><br/><span class="hl-1">   </span><span class="hl-0">pos</span><span class="hl-1"> = </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">getPosition</span><span class="hl-1">();         </span><span class="hl-9">// ~~&gt; (1,1) as a SourcePosition, with no regions</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Skip over the first token</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">(</span><span class="hl-3">&#39;program&#39;</span><span class="hl-1">);             </span><span class="hl-9">// Move 7 chars forward</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Skip whitespaces between tokens</span><br/><span class="hl-1">   </span><span class="hl-2">while</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39; &#39;</span><span class="hl-1">))      </span><span class="hl-9">// ~~&gt; true 1 time</span><br/><span class="hl-1">     { </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">(); }                </span><span class="hl-9">// Move 1 char forward (&#39; &#39;)</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Detect block start</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39;{&#39;</span><span class="hl-1">))        </span><span class="hl-9">// ~~&gt; false (function returns true)</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Block expected&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">beginRegion</span><span class="hl-1">(</span><span class="hl-3">&#39;program-body&#39;</span><span class="hl-1">); </span><span class="hl-9">// Push &#39;program-body&#39; to the region stack</span><br/><span class="hl-1">   </span><span class="hl-0">str</span><span class="hl-1"> = </span><span class="hl-3">&#39;&#39;</span><span class="hl-1">;</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Read block body (includes &#39;{&#39;)</span><br/><span class="hl-1">   </span><span class="hl-9">// NOTE: CANNOT use !startsWith(&#39;}&#39;) instead because</span><br/><span class="hl-1">   </span><span class="hl-9">//       !atEndOfString() is REQUIRED to guarantee precondition of peek()</span><br/><span class="hl-1">   </span><span class="hl-2">while</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfString</span><span class="hl-1">()      </span><span class="hl-9">// false</span><br/><span class="hl-1">       &amp;&amp; </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">peek</span><span class="hl-1">() !== </span><span class="hl-3">&#39;}&#39;</span><span class="hl-1">) {     </span><span class="hl-9">// false 15 times</span><br/><span class="hl-1">       </span><span class="hl-0">str</span><span class="hl-1"> += </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">peek</span><span class="hl-1">();           </span><span class="hl-9">// &#39;{&#39;, &#39; &#39;, &#39;P&#39;, ... &#39;d&#39;, &#39;e&#39;, &#39;)&#39;, &#39; &#39;</span><br/><span class="hl-1">       </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">();                  </span><span class="hl-9">// Move 15 times ahead</span><br/><span class="hl-1">   }</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Detect block end</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfString</span><span class="hl-1">())         </span><span class="hl-9">// ~~&gt; false</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Unclosed block&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">   </span><span class="hl-9">// Add &#39;}&#39; to the body</span><br/><span class="hl-1">   </span><span class="hl-0">str</span><span class="hl-1"> += </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">peek</span><span class="hl-1">();               </span><span class="hl-9">// ~~&gt; &#39;}&#39;</span><br/><span class="hl-1">   </span><span class="hl-0">pos</span><span class="hl-1"> = </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">getPosition</span><span class="hl-1">();         </span><span class="hl-9">// ~~&gt; (1,24) as a SourcePosition,</span><br/><span class="hl-1">                                       </span><span class="hl-9">//     with region &#39;program-body&#39;</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">endRegion</span><span class="hl-1">();                 </span><span class="hl-9">// Pop &#39;program-body&#39; from the region stack</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">();                      </span><span class="hl-9">// Move 1 char forward (&#39;}&#39;)</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Skip whitespaces at the end (none in this example)</span><br/><span class="hl-1">   </span><span class="hl-2">while</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39; &#39;</span><span class="hl-1">))      </span><span class="hl-9">// ~~&gt; false</span><br/><span class="hl-1">     { </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">(); }                </span><span class="hl-9">// NOT executed</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Verify there are no more chars at input</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfString</span><span class="hl-1">())        </span><span class="hl-9">// ~~&gt; false (function returns true)</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Unexpected additional chars after program&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">();                      </span><span class="hl-9">// Skips end of string,</span><br/><span class="hl-1">                                       </span><span class="hl-9">//  reaching next string or end of input</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Verify there are no more input strings</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfInput</span><span class="hl-1">())         </span><span class="hl-9">// ~~&gt; false (function returns true)</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Unexpected additional inputs&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1"> }</span>
+<pre><code><span class="hl-1"> </span><span class="hl-4">let</span><span class="hl-1"> </span><span class="hl-0">pos</span><span class="hl-1">: </span><span class="hl-5">SourcePosition</span><span class="hl-1">;</span><br/><span class="hl-1"> </span><span class="hl-4">let</span><span class="hl-1"> </span><span class="hl-0">str</span><span class="hl-1">: </span><span class="hl-5">string</span><span class="hl-1">;</span><br/><span class="hl-1"> </span><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-7">reader</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">SourceReader</span><span class="hl-1">(</span><span class="hl-3">&#39;program { Poner(Verde) }&#39;</span><span class="hl-1">, </span><span class="hl-3">&#39;</span><span class="hl-13">\n</span><span class="hl-3">&#39;</span><span class="hl-1">);</span><br/><span class="hl-1"> </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1"> </span><span class="hl-9">// Read a basic Gobstones program</span><br/><span class="hl-1"> </span><span class="hl-2">if</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39;program&#39;</span><span class="hl-1">)) {   </span><span class="hl-9">// ~~&gt; true</span><br/><span class="hl-1">   </span><span class="hl-0">pos</span><span class="hl-1"> = </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">getPosition</span><span class="hl-1">();         </span><span class="hl-9">// ~~&gt; (1,1) as a SourcePosition, with no regions</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Skip over the first token</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">(</span><span class="hl-3">&#39;program&#39;</span><span class="hl-1">);             </span><span class="hl-9">// Move 7 chars forward</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Skip whitespaces between tokens</span><br/><span class="hl-1">   </span><span class="hl-2">while</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39; &#39;</span><span class="hl-1">))      </span><span class="hl-9">// ~~&gt; true 1 time</span><br/><span class="hl-1">     { </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">(); }                </span><span class="hl-9">// Move 1 char forward (&#39; &#39;)</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Detect block start</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39;{&#39;</span><span class="hl-1">))        </span><span class="hl-9">// ~~&gt; false (function returns true)</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Block expected&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">beginRegion</span><span class="hl-1">(</span><span class="hl-3">&#39;program-body&#39;</span><span class="hl-1">); </span><span class="hl-9">// Push &#39;program-body&#39; to the region stack</span><br/><span class="hl-1">   </span><span class="hl-0">str</span><span class="hl-1"> = </span><span class="hl-3">&#39;&#39;</span><span class="hl-1">;</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Read block body (includes &#39;{&#39;)</span><br/><span class="hl-1">   </span><span class="hl-9">// NOTE: CANNOT use !startsWith(&#39;}&#39;) instead because</span><br/><span class="hl-1">   </span><span class="hl-9">//       !atEndOfDocument() is REQUIRED to guarantee precondition of peek()</span><br/><span class="hl-1">   </span><span class="hl-2">while</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfDocument</span><span class="hl-1">()    </span><span class="hl-9">// false</span><br/><span class="hl-1">       &amp;&amp; </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">peek</span><span class="hl-1">() !== </span><span class="hl-3">&#39;}&#39;</span><span class="hl-1">) {     </span><span class="hl-0">document</span><span class="hl-1"> </span><span class="hl-4">false</span><span class="hl-1"> </span><span class="hl-8">15</span><span class="hl-1"> </span><span class="hl-0">times</span><br/><span class="hl-1">       </span><span class="hl-0">str</span><span class="hl-1"> += </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">peek</span><span class="hl-1">();           </span><span class="hl-9">// &#39;{&#39;, &#39; &#39;, &#39;P&#39;, ... &#39;d&#39;, &#39;e&#39;, &#39;)&#39;, &#39; &#39;</span><br/><span class="hl-1">       </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">();                  </span><span class="hl-9">// Move 15 times ahead</span><br/><span class="hl-1">   }</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Detect block end</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfDocument</span><span class="hl-1">())         </span><span class="hl-9">// ~~&gt; false</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Unclosed document&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">   </span><span class="hl-9">// Add &#39;}&#39; to the body</span><br/><span class="hl-1">   </span><span class="hl-0">str</span><span class="hl-1"> += </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">peek</span><span class="hl-1">();               </span><span class="hl-9">// ~~&gt; &#39;}&#39;</span><br/><span class="hl-1">   </span><span class="hl-0">pos</span><span class="hl-1"> = </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">getPosition</span><span class="hl-1">();         </span><span class="hl-9">// ~~&gt; (1,24) as a SourcePosition,</span><br/><span class="hl-1">                                       </span><span class="hl-9">//     with region &#39;program-body&#39;</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">endRegion</span><span class="hl-1">();                 </span><span class="hl-9">// Pop &#39;program-body&#39; from the region stack</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">();                      </span><span class="hl-9">// Move 1 char forward (&#39;}&#39;)</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Skip whitespaces at the end (none in this example)</span><br/><span class="hl-1">   </span><span class="hl-2">while</span><span class="hl-1"> (</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">startsWith</span><span class="hl-1">(</span><span class="hl-3">&#39; &#39;</span><span class="hl-1">))      </span><span class="hl-9">// ~~&gt; false</span><br/><span class="hl-1">     { </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">(); }                </span><span class="hl-9">// NOT executed</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Verify there are no more chars at input</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfDocument</span><span class="hl-1">())      </span><span class="hl-9">// ~~&gt; false (function returns true)</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Unexpected document chars after program&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1">   </span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">skip</span><span class="hl-1">();                      </span><span class="hl-9">// Skips end of document,</span><br/><span class="hl-1">                                       </span><span class="hl-9">//  reaching next document or end of input</span><br/><span class="hl-1">   </span><span class="hl-9">// ---------------------------------</span><br/><span class="hl-1">   </span><span class="hl-9">// Verify there are no more input documents</span><br/><span class="hl-1">   </span><span class="hl-2">if</span><span class="hl-1"> (!</span><span class="hl-0">reader</span><span class="hl-1">.</span><span class="hl-6">atEndOfInput</span><span class="hl-1">())         </span><span class="hl-9">// ~~&gt; false (function returns true)</span><br/><span class="hl-1">     { </span><span class="hl-6">fail</span><span class="hl-1">(</span><span class="hl-3">&#39;Unexpected additional inputs&#39;</span><span class="hl-1">); }</span><br/><span class="hl-1"> }</span>
 </code><button>Copy</button></pre>
-<p>NOTE: as <a href="SourceReader.SourceReader.html#peek" class="tsd-kind-method">SourceReader.peek</a> is partial, not working at the end of strings,
-      each of its uses must be done after confirming that <a href="SourceReader.SourceReader.html#atEndOfString" class="tsd-kind-method">SourceReader.atEndOfString</a>
+<p>NOTE: as <a href="SourceReader.SourceReader.html#peek" class="tsd-kind-method">SourceReader.peek</a> is partial, not working at the end of documents,
+      each of its uses must be done after confirming that <a href="SourceReader.SourceReader.html#atEndOfDocument" class="tsd-kind-method">SourceReader.atEndOfDocument</a>
       is false.
-      For that reason it is better to use <a href="SourceReader.SourceReader.html#startsWith" class="tsd-kind-method">SourceReader.startsWith</a> to verify
+      For that reason document is better to use <a href="SourceReader.SourceReader.html#startsWith" class="tsd-kind-method">SourceReader.startsWith</a> to verify
       if the input starts with some character (or string), when peeking for something
       specific.</p>
 </div>
@@ -99,10 +105,10 @@ Just use this example to understand the behavior of operations
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">API: Access</h3>
-<div class="tsd-index-list"><a href="SourceReader.SourceReader.html#atEndOfInput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>Input</span></a>
-<a href="SourceReader.SourceReader.html#atEndOfString" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>String</span></a>
+<div class="tsd-index-list"><a href="SourceReader.SourceReader.html#atEndOfDocument" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>Document</span></a>
+<a href="SourceReader.SourceReader.html#atEndOfInput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>Input</span></a>
+<a href="SourceReader.SourceReader.html#getDocumentPosition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Document<wbr/>Position</span></a>
 <a href="SourceReader.SourceReader.html#getPosition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Position</span></a>
-<a href="SourceReader.SourceReader.html#getStringPosition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>String<wbr/>Position</span></a>
 <a href="SourceReader.SourceReader.html#peek" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>peek</span></a>
 <a href="SourceReader.SourceReader.html#startsWith" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>starts<wbr/>With</span></a>
 </div></section>
@@ -128,8 +134,8 @@ Just use this example to understand the behavior of operations
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Auxiliaries</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_cloneRegions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_clone<wbr/>Regions</span></a>
-<a href="SourceReader.SourceReader.html#_hasCurrentCharAtCurrentInput" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Input</span></a>
-<a href="SourceReader.SourceReader.html#_hasCurrentInput" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Input</span></a>
+<a href="SourceReader.SourceReader.html#_hasCurrentCharAtCurrentDocument" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Document</span></a>
+<a href="SourceReader.SourceReader.html#_hasCurrentDocument" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Document</span></a>
 <a href="SourceReader.SourceReader.html#_inputFromToIn" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>From<wbr/>To<wbr/>In</span></a>
 <a href="SourceReader.SourceReader.html#_isEndOfLine" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_is<wbr/>End<wbr/>Of<wbr/>Line</span></a>
 <a href="SourceReader.SourceReader.html#_skipOne" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_skip<wbr/>One</span></a>
@@ -138,25 +144,34 @@ Just use this example to understand the behavior of operations
 <h3 class="tsd-index-heading">Implementation: Internal state</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_charIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_char<wbr/>Index</span></a>
 <a href="SourceReader.SourceReader.html#_column" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a>
-<a href="SourceReader.SourceReader.html#_inputIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_input<wbr/>Index</span></a>
-<a href="SourceReader.SourceReader.html#_inputs" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_inputs</span></a>
-<a href="SourceReader.SourceReader.html#_inputsNames" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_inputs<wbr/>Names</span></a>
+<a href="SourceReader.SourceReader.html#_documentIndex" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_document<wbr/>Index</span></a>
+<a href="SourceReader.SourceReader.html#_documents" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_documents</span></a>
+<a href="SourceReader.SourceReader.html#_documentsNames" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_documents<wbr/>Names</span></a>
 <a href="SourceReader.SourceReader.html#_line" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line</span></a>
 <a href="SourceReader.SourceReader.html#_lineEnders" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line<wbr/>Enders</span></a>
 <a href="SourceReader.SourceReader.html#_regions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_regions</span></a>
-<a href="SourceReader.SourceReader.html#_visibleInputs" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Inputs</span></a>
+<a href="SourceReader.SourceReader.html#_visibleDocumentContents" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Document<wbr/>Contents</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Protected for Source Positions</h3>
-<div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_unnamedStr" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_unnamed<wbr/>Str</span></a>
-<a href="SourceReader.SourceReader.html#_inputContentsAt" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>Contents<wbr/>At</span></a>
-<a href="SourceReader.SourceReader.html#_inputFromTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>From<wbr/>To</span></a>
-<a href="SourceReader.SourceReader.html#_inputNameAt" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>Name<wbr/>At</span></a>
-<a href="SourceReader.SourceReader.html#_visibleInputContentsAt" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Input<wbr/>Contents<wbr/>At</span></a>
+<div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_unnamedDocument" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_unnamed<wbr/>Document</span></a>
+<a href="SourceReader.SourceReader.html#_documentNameAt" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_document<wbr/>Name<wbr/>At</span></a>
+<a href="SourceReader.SourceReader.html#_fullDocumentContentsAt" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Document<wbr/>Contents<wbr/>At</span></a>
+<a href="SourceReader.SourceReader.html#_fullInputFromTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Input<wbr/>From<wbr/>To</span></a>
+<a href="SourceReader.SourceReader.html#_visibleDocumentContentsAt" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Document<wbr/>Contents<wbr/>At</span></a>
 <a href="SourceReader.SourceReader.html#_visibleInputFromTo" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Input<wbr/>From<wbr/>To</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Access</h2>
+<section class="tsd-panel tsd-member"><a id="atEndOfDocument" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>at<wbr/>End<wbr/>Of<wbr/>Document</span><a href="#atEndOfDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="atEndOfDocument.atEndOfDocument-1"><span class="tsd-kind-call-signature">at<wbr/>End<wbr/>Of<wbr/>Document</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#atEndOfDocument.atEndOfDocument-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Answers if there are no more characters to read from the current document.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="atEndOfInput" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>at<wbr/>End<wbr/>Of<wbr/>Input</span><a href="#atEndOfInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -166,14 +181,16 @@ Just use this example to understand the behavior of operations
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="atEndOfString" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>at<wbr/>End<wbr/>Of<wbr/>String</span><a href="#atEndOfString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member"><a id="getDocumentPosition" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Document<wbr/>Position</span><a href="#getDocumentPosition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="atEndOfString.atEndOfString-1"><span class="tsd-kind-call-signature">at<wbr/>End<wbr/>Of<wbr/>String</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#atEndOfString.atEndOfString-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="getDocumentPosition.getDocumentPosition-1"><span class="tsd-kind-call-signature">get<wbr/>Document<wbr/>Position</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SourceReader.DocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">DocumentSourcePosition</a><a href="#getDocumentPosition.getDocumentPosition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Answers if there are no more characters to read from the current string.</p>
+<div class="tsd-comment tsd-typography"><p>Gives the current position as a <a href="SourceReader.DocumentSourcePosition.html" class="tsd-kind-class">DocumentSourcePosition</a>.
+See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> documentation for an example.</p>
+<p><strong>PRECONDITION:</strong> <code>!this.atEndOfInput()</code></p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<h4 class="tsd-returns-title">Returns <a href="SourceReader.DocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">DocumentSourcePosition</a></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getPosition" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Position</span><a href="#getPosition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
@@ -182,47 +199,36 @@ Just use this example to understand the behavior of operations
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Gives the current position as a <a href="SourceReader.KnownSourcePosition.html" class="tsd-kind-class">KnownSourcePosition</a>.
 See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> documentation for an example.</p>
-<p>NOTE: the special positions at the end of each input string, and at the end of the input
+<p>NOTE: the special positions at the end of each input document, and at the end of the input
       can be accessed by <a href="SourceReader.SourceReader.html#getPosition" class="tsd-kind-method">SourceReader.getPosition</a>, but they cannot be peeked.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="getStringPosition" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>get<wbr/>String<wbr/>Position</span><a href="#getStringPosition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="getStringPosition.getStringPosition-1"><span class="tsd-kind-call-signature">get<wbr/>String<wbr/>Position</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SourceReader.StringSourcePosition.html" class="tsd-signature-type tsd-kind-class">StringSourcePosition</a><a href="#getStringPosition.getStringPosition-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Gives the current position as a <a href="SourceReader.StringSourcePosition.html" class="tsd-kind-class">StringSourcePosition</a>.
-See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> documentation for an example.</p>
-<p><strong>PRECONDITION:</strong> <code>!this.atEndOfInput()</code></p>
-</div>
-<h4 class="tsd-returns-title">Returns <a href="SourceReader.StringSourcePosition.html" class="tsd-signature-type tsd-kind-class">StringSourcePosition</a></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="peek" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>peek</span><a href="#peek" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="peek.peek-1"><span class="tsd-kind-call-signature">peek</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#peek.peek-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Gives the current char of the current input.
+<div class="tsd-comment tsd-typography"><p>Gives the current char of the current input document.
 See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> for an example.</p>
-<p><strong>PRECONDITION:</strong> <code>!this.atEndOfInput() &amp;&amp; !this.atEndOfString</code></p>
+<p><strong>PRECONDITION:</strong> <code>!this.atEndOfInput() &amp;&amp; !this.atEndOfDocument</code></p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography">
 <h4>Throws</h4><p><a href="SourceReader.ErrorAtEndOfInputBy.html" class="tsd-kind-class">ErrorAtEndOfInputBy</a> if the source reader is at EndOfInput in the
         current position.</p>
 
-<h4>Throws</h4><p><a href="SourceReader.ErrorAtEndOfStringBy.html" class="tsd-kind-class">ErrorAtEndOfStringBy</a> if the source reader is at EndOfString in the
-        current position.</p>
+<h4>Throws</h4><p><a href="SourceReader.ErrorAtEndOfDocumentBy.html" class="tsd-kind-class">ErrorAtEndOfDocumentBy</a> if the source reader is at EndOfDocument in
+        the current position.</p>
 </div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="startsWith" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>starts<wbr/>With</span><a href="#startsWith" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="startsWith.startsWith-1"><span class="tsd-kind-call-signature">starts<wbr/>With</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">str</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#startsWith.startsWith-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Answers if the current input string at the current char starts with the given string.
-It does not split the given string across different input strings -- that is, only the
-current input string is checked.
+<div class="tsd-comment tsd-typography"><p>Answers if the current input document at the current char starts with the given string.
+It does not split the given string across different input documents -- that is, only the
+current input document is checked.
 See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> documentation for an example.</p>
 </div>
 <div class="tsd-parameters">
@@ -243,11 +249,12 @@ See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader
 <li class="tsd-signature tsd-anchor-link" id="constructor.new_SourceReader"><span class="tsd-kind-constructor-signature">new <wbr/>Source<wbr/>Reader</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input</span>, <span class="tsd-kind-parameter">lineEnders</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="SourceReader.SourceReader.html" class="tsd-signature-type tsd-kind-class">SourceReader</a><a href="#constructor.new_SourceReader" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>A new <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> is created from the given <code>input</code>.
-It starts in the first position of the first input string
-(if it is empty, starts in an EndOfString position).
+It starts in the first position of the first input document
+(if it is empty, starts in the end of document position of that document).
 Line enders must be provided, affecting the calculation of line and column for positions.
-If there are no line enders, all strings in the source are assumed as having only one line.</p>
-<p><strong>PRECONDITION:</strong> there is at least one input string.</p>
+If there are no line enders, all documents in the source input are assumed as having only
+one line.</p>
+<p><strong>PRECONDITION:</strong> there is at least one input document.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -266,7 +273,7 @@ If there are no line enders, all strings in the source are assumed as having onl
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="SourceReader.SourceReader.html" class="tsd-signature-type tsd-kind-class">SourceReader</a></h4>
 <div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p><a href="SourceReader.ErrorNoInput.html" class="tsd-kind-class">ErrorNoInput</a> if the arguments are undefined or has no strings.</p>
+<h4>Throws</h4><p><a href="SourceReader.ErrorNoInput.html" class="tsd-kind-class">ErrorNoInput</a> if the arguments are undefined or has no documents.</p>
 </div></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>API: Modification</h2>
@@ -276,7 +283,7 @@ If there are no line enders, all strings in the source are assumed as having onl
 <li class="tsd-signature tsd-anchor-link" id="beginRegion.beginRegion-1"><span class="tsd-kind-call-signature">begin<wbr/>Region</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">regionId</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#beginRegion.beginRegion-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Pushes a region in the stack of regions.
-It does not work at EndOfInput (it does nothing).</p>
+It does not work at the EndOfInput or the EndOfDocument (it does nothing).</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -300,16 +307,19 @@ It does nothing if there are no regions in the stack.</p>
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="skip.skip-1"><span class="tsd-kind-call-signature">skip</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">howMuch</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">silently</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#skip.skip-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Skips the given number of chars at the input string.
-If the argument is a string, only its length is used (i.e. its contents are ignored).
+<div class="tsd-comment tsd-typography"><p>Skips the given number of chars in the input, moving forward.
+It may skip documents, considering the end of document as a &#39;virtual&#39; char.</p>
+<p>If the argument is a string, only its length is used (i.e. its contents are ignored).
 Negative numbers do not skip (are equivalent to 0).
-At the end of each input string, an additional skip is needed to start the next input string.
-This behavior allows the user to be aware of the ending of strings.
-Regions are reset at the end of each string (the regions stack is emptied).</p>
-<p>If the skipping is <code>silent</code>, line and column do not change, usually because the input being
+At the end of each input document, an additional skip is needed to start the next input
+document.
+This behavior allows the user to be aware of the ending of documents.
+Regions are reset at the end of each documents (the regions stack is emptied).</p>
+<p>If the skipping is <em>silent</em>, line and column do not change, usually because the input being
 read was added automatically to the original input (the default is not silent).
 If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
-The end of each input string cannot be skipped silently.</p>
+The end of each input document cannot be skipped silently, and thus for that particular
+position, <code>silently</code> is ignored.</p>
 <p>See <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> for an example of visible <code>skip</code>s.</p>
 </div>
 <div class="tsd-parameters">
@@ -343,7 +353,7 @@ characters skipped.
 All contiguous characters from the initial position satisfying the predicate are read.
 It guarantees that the first character after skipping, if it exists, does not satisfy the
 predicate.
-It does not go beyond the end of the current string, if starting inside one.</p>
+It does not go beyond the end of the current document, if starting inside one.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -391,18 +401,18 @@ It does not go beyond the end of the current string, if starting inside one.</p>
 <div class="tsd-signature"><span class="tsd-kind-property">_implementation<wbr/>Details</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;Dummy for documentation&#39;</span></div>
 <div class="tsd-comment tsd-typography"><p>The implementation of <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> keeps:</p>
 <ul>
-<li>an object associating input string names to input string contents,
-<a href="SourceReader.SourceReader.html#_inputs" class="tsd-kind-property">_inputs</a>,</li>
-<li>an object associating input string names to visible input string contents,
-<a href="SourceReader.SourceReader.html#_visibleInputs" class="tsd-kind-property">_visibleInputs</a>,</li>
+<li>an object associating input document names to input document contents,
+<a href="SourceReader.SourceReader.html#_documents" class="tsd-kind-property">_documents</a>,</li>
+<li>an object associating input document names to visible input document contents,
+<a href="SourceReader.SourceReader.html#_visibleDocumentContents" class="tsd-kind-property">_visibleDocumentContents</a>,</li>
 <li>an array of the keys of that object for sequential access,
-<a href="SourceReader.SourceReader.html#_inputsNames" class="tsd-kind-property">_inputsNames</a>,</li>
-<li>an index to the current input string in the array of inputs names,
-<a href="SourceReader.SourceReader.html#_inputIndex" class="tsd-kind-property">_inputIndex</a>,</li>
-<li>an index to the current visible input string in the array of inputs names
-(because it may be different from the input index),
+<a href="SourceReader.SourceReader.html#_documentsNames" class="tsd-kind-property">_documentsNames</a>,</li>
+<li>an index to the current input document in the array of inputs names,
+<a href="SourceReader.SourceReader.html#_documentIndex" class="tsd-kind-property">_documentIndex</a>,</li>
+<li>an index to the current visible input document in the array of inputs names
+(because it may be different from the document index),
 <a href="SourceReader.SourceReader.html#_charIndex" class="tsd-kind-property">_charIndex</a>,</li>
-<li>the current line and column in the current input string,
+<li>the current line and column in the current input document,
 <a href="SourceReader.SourceReader.html#_line" class="tsd-kind-property">_line</a> and
 <a href="SourceReader.SourceReader.html#_column" class="tsd-kind-property">_column</a>,</li>
 <li>a stack of strings representing the regions&#39; IDs,
@@ -410,17 +420,17 @@ It does not go beyond the end of the current string, if starting inside one.</p>
 <li>the characters used to determine line ends,
 <a href="SourceReader.SourceReader.html#_lineEnders" class="tsd-kind-property">_lineEnders</a>.</li>
 </ul>
-<p>The object of <a href="SourceReader.SourceReader.html#_inputs" class="tsd-kind-property">_inputs </a> cannot be empty (with no input string),
-and all the <a href="../types/SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> forms are converted to <code>Record&lt;string, string&gt;</code> for ease of
-access.
+<p>The object of <a href="SourceReader.SourceReader.html#_documents" class="tsd-kind-property">_documents </a> cannot be empty (with no input
+document), and all the <a href="../types/SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> forms are converted to <code>Record&lt;string, string&gt;</code>
+for ease of access.
 The <a href="SourceReader.SourceReader.html#_charIndex" class="tsd-kind-property">_charIndex </a> either points to a valid position in an
-input string, or at the end of an input string, or the end of input was reached (that is,
-when there are no more input strings to read).</p>
+input document, or at the end of an input document, or the end of input was reached (that is,
+when there are no more input documents to read).</p>
 <p>Line and column numbers are adjusted depending on which characters are considered as ending a
 line, as given by the property <a href="SourceReader.SourceReader.html#_lineEnders" class="tsd-kind-property">_lineEnders</a>, and which
 characters are considered visible, as indicating by the user through
 <a href="SourceReader.SourceReader.html#skip" class="tsd-kind-method">skip</a>.
-When changing from one string to the next, line and column numbers are reset.</p>
+When changing from one document to the next, line and column numbers are reset.</p>
 <p>The visible input is conformed by those characters of the input that has been skipped
 normally.
 As visible and non visible characters can be interleaved with no restrictions, it is better
@@ -432,12 +442,12 @@ unprocessed characters do not appear (yet) on visible inputs.</p>
 instances of that class represent different positions in the source inputs kept by a
 <a href="SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>.
 The operations
-<a href="SourceReader.SourceReader.html#_inputNameAt" class="tsd-kind-method">_inputNameAt</a>,
-<a href="SourceReader.SourceReader.html#_visibleInputContentsAt" class="tsd-kind-method">_visibleInputContentsAt</a>,
+<a href="SourceReader.SourceReader.html#_documentNameAt" class="tsd-kind-method">_documentNameAt</a>,
+<a href="SourceReader.SourceReader.html#_visibleDocumentContentsAt" class="tsd-kind-method">_visibleDocumentContentsAt</a>,
 and <a href="SourceReader.SourceReader.html#_visibleInputFromTo" class="tsd-kind-method">_visibleInputFromTo </a>,
-<a href="SourceReader.SourceReader.html#_inputContentsAt" class="tsd-kind-method">_inputContentsAt</a>,
-and <a href="SourceReader.SourceReader.html#_inputFromTo" class="tsd-kind-method">_inputFromTo</a>, and
-the static value <a href="SourceReader.SourceReader.html#_unnamedStr" class="tsd-kind-property">_unnamedStr</a>
+<a href="SourceReader.SourceReader.html#_fullDocumentContentsAt" class="tsd-kind-method">_fullDocumentContentsAt</a>,
+and <a href="SourceReader.SourceReader.html#_fullInputFromTo" class="tsd-kind-method">_fullInputFromTo</a>, and
+the static value <a href="SourceReader.SourceReader.html#_unnamedDocument" class="tsd-kind-property">_unnamedDocument</a>
 are meant to be used only by <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>, to complete their operations, and so
 they are grouped as Protected.</p>
 <p>The remaining auxiliary operations are meant for internal usage, to provide readability or
@@ -461,22 +471,22 @@ position and do not change with changes in reader state.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_hasCurrentCharAtCurrentInput" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Input</span><a href="#_hasCurrentCharAtCurrentInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_hasCurrentCharAtCurrentDocument" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Document</span><a href="#_hasCurrentCharAtCurrentDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_hasCurrentCharAtCurrentInput._hasCurrentCharAtCurrentInput-1"><span class="tsd-kind-call-signature">_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Input</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_hasCurrentCharAtCurrentInput._hasCurrentCharAtCurrentInput-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="_hasCurrentCharAtCurrentDocument._hasCurrentCharAtCurrentDocument-1"><span class="tsd-kind-call-signature">_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Document</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_hasCurrentCharAtCurrentDocument._hasCurrentCharAtCurrentDocument-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Answers that the current input has a current char.</p>
-<p><strong>PRECONDITION:</strong> <code>this._hasCurrentInput()</code></p>
+<div class="tsd-comment tsd-typography"><p>Answers if there are still chars in the current document.</p>
+<p><strong>PRECONDITION:</strong> <code>this._hasCurrentDocument()</code></p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_hasCurrentInput" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_has<wbr/>Current<wbr/>Input</span><a href="#_hasCurrentInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_hasCurrentDocument" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_has<wbr/>Current<wbr/>Document</span><a href="#_hasCurrentDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_hasCurrentInput._hasCurrentInput-1"><span class="tsd-kind-call-signature">_has<wbr/>Current<wbr/>Input</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_hasCurrentInput._hasCurrentInput-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="_hasCurrentDocument._hasCurrentDocument-1"><span class="tsd-kind-call-signature">_has<wbr/>Current<wbr/>Document</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_hasCurrentDocument._hasCurrentDocument-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Answers if there are still input strings to be read.</p>
+<div class="tsd-comment tsd-typography"><p>Answers if there are still input documents to be read.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
@@ -524,11 +534,11 @@ to the configuration of the reader.</p>
 <ul class="tsd-signatures tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_skipOne._skipOne-1"><span class="tsd-kind-call-signature">_skip<wbr/>One</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">silently</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_skipOne._skipOne-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Skips one char at the input string.</p>
+<div class="tsd-comment tsd-typography"><p>Skips one char at the input.</p>
 <p>If the skipping is <code>silent</code>, line and column do not change, usually because the input being
 read was added automatically to the original input (the default is not silent).
 If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
-Skip cannot be silent on the EndOfString, so at EndOfString silent flag is ignored.</p>
+Skip cannot be silent on the EndOfDocument, so at EndOfDocument silent flag is ignored.</p>
 <p>Its used by API operations to skip one or more characters.</p>
 <p><strong>PRECONDITION:</strong> <code>!this.atEndOfInput()</code> (not verified)</p>
 </div>
@@ -547,56 +557,57 @@ Skip cannot be silent on the EndOfString, so at EndOfString silent flag is ignor
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_charIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_char<wbr/>Index</span><a href="#_charIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_char<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The current char index in the current input.</p>
+<div class="tsd-comment tsd-typography"><p>The current char index in the current input document.</p>
 <p><strong>INVARIANT:</strong>
- if <code>_inputIndex &lt; _inputsNames.length</code>
-  then <code>0 &lt;= _charIndex &lt; _inputs[_inputsNames[_inputIndex]].length</code></p>
+ if <code>_documentIndex &lt; _documentsNames.length</code>
+  then <code>0 &lt;= _charIndex &lt; _documents[_documentsNames[_documentIndex]].length</code></p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_column" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_column</span><a href="#_column" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_column</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The current column number in the current input.</p>
+<div class="tsd-comment tsd-typography"><p>The current column number in the current input document.</p>
 <p><strong>INVARIANTS:</strong></p>
 <ul>
 <li><code>0 &lt;= _column</code>&lt;</li>
-<li>if <code>_inputIndex &lt; _inputsNames.length</code>,
- then <code>_column &lt; _inputs[_inputsNames[_inputIndex]].length</code></li>
+<li>if <code>_documentIndex &lt; _documentsNames.length</code>,
+ then <code>_column &lt; _documents[_documentsNames[_documentIndex]].length</code></li>
 </ul>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputIndex" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>Index</span><a href="#_inputIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_input<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_documentIndex" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_document<wbr/>Index</span><a href="#_documentIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_document<wbr/>Index</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The current input index.
 The current input is that in
-<code>_inputs[_inputsNames[_inputIndex]]</code> when <code>_inputIndex &lt; _inputsNames.length</code>.</p>
-<p><strong>INVARIANT:</strong> <code>0 &lt;= _inputIndex &lt;= _inputsNames.length</code></p>
+<code>_documents[_documentsNames[_documentIndex]]</code>
+when <code>_documentIndex &lt; _documentsNames.length</code>.</p>
+<p><strong>INVARIANT:</strong> <code>0 &lt;= _documentIndex &lt;= _documentsNames.length</code></p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputs" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_inputs</span><a href="#_inputs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_inputs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
-<div class="tsd-comment tsd-typography"><p>The actual input, converted to a Record of strings.</p>
-<p><strong>INVARIANT:</strong> it is always and object or array (not a string).</p>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_documents" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_documents</span><a href="#_documents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_documents</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-comment tsd-typography"><p>The actual input, converted to a Record of document names to document contents.</p>
+<p><strong>INVARIANT:</strong> it is always and object (not a string).</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputsNames" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_inputs<wbr/>Names</span><a href="#_inputsNames" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_inputs<wbr/>Names</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-<div class="tsd-comment tsd-typography"><p>The names with which input strings are identified.</p>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_documentsNames" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_documents<wbr/>Names</span><a href="#_documentsNames" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_documents<wbr/>Names</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-comment tsd-typography"><p>The names with which input documents are identified.</p>
 <p><strong>INVARIANT:</strong> is always equal to <code>Object.keys(_input)</code></p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_line" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_line</span><a href="#_line" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_line</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-<div class="tsd-comment tsd-typography"><p>The current line number in the current input.</p>
+<div class="tsd-comment tsd-typography"><p>The current line number in the current input document.</p>
 <p><strong>INVARIANTS:</strong></p>
 <ul>
 <li><code>0 &lt;= _line</code></li>
-<li>if <code>_inputIndex &lt; _inputsNames.length</code>
- then <code>_line &lt; _inputs[_inputsNames[_inputIndex]].length</code></li>
+<li>if <code>_documentIndex &lt; _documentsNames.length</code>
+ then <code>_line &lt; _documents[_documentsNames[_documentIndex]].length</code></li>
 </ul>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
@@ -610,39 +621,40 @@ These characters affect the calculation of line and column numbers for positions
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_regions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_regions</span><a href="#_regions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_regions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-<div class="tsd-comment tsd-typography"><p>The active regions in the current input.</p>
+<div class="tsd-comment tsd-typography"><p>The active regions in the current input document.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleInputs" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Inputs</span><a href="#_visibleInputs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_visible<wbr/>Inputs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
-<div class="tsd-comment tsd-typography"><p>A copy of the visible parts of the input.
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleDocumentContents" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Document<wbr/>Contents</span><a href="#_visibleDocumentContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_visible<wbr/>Document<wbr/>Contents</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+<div class="tsd-comment tsd-typography"><p>A copy of the visible parts of the input documents.
 A part is visible if it has been skipped, and that skip was not silent
 (see <a href="SourceReader.SourceReader.html#skip" class="tsd-kind-method">skip</a>).</p>
 <p><strong>INVARIANTS:</strong></p>
 <ul>
-<li>it has the same keys as <code>_inputs</code></li>
-<li>the values of each key are contained in the values of the corresponding key at <code>_inputs</code></li>
+<li>it has the same keys as <code>_documents</code></li>
+<li>the values of each key are contained in the values of the corresponding key at
+<code>_documents</code></li>
 </ul>
 </div>
 <div class="tsd-comment tsd-typography"></div></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Implementation: Protected for Source Positions</h2>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_unnamedStr" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_unnamed<wbr/>Str</span><a href="#_unnamedStr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">_unnamed<wbr/>Str</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;doc&#39;</span></div>
-<div class="tsd-comment tsd-typography"><p>The string to use as a name for unnamed input strings.
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_unnamedDocument" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <span>_unnamed<wbr/>Document</span><a href="#_unnamedDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_unnamed<wbr/>Document</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;doc&#39;</span></div>
+<div class="tsd-comment tsd-typography"><p>The string to use as a name for unnamed input documents.
 It is intended to be used only by instances and <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputContentsAt" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>Contents<wbr/>At</span><a href="#_inputContentsAt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_documentNameAt" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_document<wbr/>Name<wbr/>At</span><a href="#_documentNameAt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_inputContentsAt._inputContentsAt-1"><span class="tsd-kind-call-signature">_input<wbr/>Contents<wbr/>At</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_inputContentsAt._inputContentsAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="_documentNameAt._documentNameAt-1"><span class="tsd-kind-call-signature">_document<wbr/>Name<wbr/>At</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_documentNameAt._documentNameAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Gives the contents of the input string at the given index.
+<div class="tsd-comment tsd-typography"><p>Gives the name of the input document at the given index.
 It is intended to be used only by <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>.</p>
-<p><strong>PRECONDITION:</strong> <code>index &lt; this._inputsNames.length</code> (not verified)
+<p><strong>PRECONDITION:</strong> <code>index &lt;= this._documentsNames.length</code> (not verified)
 As it is a protected operation, it is not expectable to receive invalid indexes.
 It is not taken into account which are the results if that happens.</p>
 </div>
@@ -653,10 +665,29 @@ It is not taken into account which are the results if that happens.</p>
 <h5><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputFromTo" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>From<wbr/>To</span><a href="#_inputFromTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_fullDocumentContentsAt" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_full<wbr/>Document<wbr/>Contents<wbr/>At</span><a href="#_fullDocumentContentsAt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_inputFromTo._inputFromTo-1"><span class="tsd-kind-call-signature">_input<wbr/>From<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span>, <span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_inputFromTo._inputFromTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="_fullDocumentContentsAt._fullDocumentContentsAt-1"><span class="tsd-kind-call-signature">_full<wbr/>Document<wbr/>Contents<wbr/>At</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_fullDocumentContentsAt._fullDocumentContentsAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>Gives the contents of the input document at the given index,
+both visible and non-visible.
+It is intended to be used only by <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>.</p>
+<p><strong>PRECONDITION:</strong> <code>index &lt; this._documentsNames.length</code> (not verified)</p>
+<p>As it is a protected operation, it is not expectable to receive invalid indexes.
+It is not taken into account which are the results if that happens.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_fullInputFromTo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_full<wbr/>Input<wbr/>From<wbr/>To</span><a href="#_fullInputFromTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_fullInputFromTo._fullInputFromTo-1"><span class="tsd-kind-call-signature">_full<wbr/>Input<wbr/>From<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span>, <span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_fullInputFromTo._fullInputFromTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
 <div class="tsd-comment tsd-typography"><p>Gives the contents of the input between two positions.
 If <code>from</code> is not before <code>to</code>, the result is the empty string.
@@ -672,32 +703,14 @@ It is intended to be used only by <a href="SourceReader.SourcePosition.html" cla
 <h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.KnownSourcePosition.html" class="tsd-signature-type tsd-kind-class">KnownSourcePosition</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_inputNameAt" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>Name<wbr/>At</span><a href="#_inputNameAt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleDocumentContentsAt" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Document<wbr/>Contents<wbr/>At</span><a href="#_visibleDocumentContentsAt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_inputNameAt._inputNameAt-1"><span class="tsd-kind-call-signature">_input<wbr/>Name<wbr/>At</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_inputNameAt._inputNameAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="_visibleDocumentContentsAt._visibleDocumentContentsAt-1"><span class="tsd-kind-call-signature">_visible<wbr/>Document<wbr/>Contents<wbr/>At</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_visibleDocumentContentsAt._visibleDocumentContentsAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Gives the name of the input string at the given index.
+<div class="tsd-comment tsd-typography"><p>Gives the contents of the visible input document at the given index.
 It is intended to be used only by <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>.</p>
-<p><strong>PRECONDITION:</strong> <code>index &lt;= this._inputsNames.length</code> (not verified)
-As it is a protected operation, it is not expectable to receive invalid indexes.
-It is not taken into account which are the results if that happens.</p>
-</div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">index</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_visibleInputContentsAt" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_visible<wbr/>Input<wbr/>Contents<wbr/>At</span><a href="#_visibleInputContentsAt" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_visibleInputContentsAt._visibleInputContentsAt-1"><span class="tsd-kind-call-signature">_visible<wbr/>Input<wbr/>Contents<wbr/>At</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">index</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_visibleInputContentsAt._visibleInputContentsAt-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Gives the contents of the visible input string at the given index.
-It is intended to be used only by <a href="SourceReader.SourcePosition.html" class="tsd-kind-class">SourcePosition</a>.</p>
-<p>PRECONDITION: <code>index &lt; this._inputsNames.length</code> (not verified).</p>
+<p>PRECONDITION: <code>index &lt; this._documentsNames.length</code> (not verified).</p>
 <p>As it is a protected operation, it is not expectable to receive invalid indexes.
 It is not taken into account which are the results if that happens.</p>
 </div>
@@ -745,10 +758,10 @@ It is intended to be used only by <a href="SourceReader.KnownSourcePosition.html
 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
 <div class="tsd-accordion-details">
 <ul>
+<li><a href="#atEndOfDocument" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>Document</span></a></li>
 <li><a href="#atEndOfInput" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>Input</span></a></li>
-<li><a href="#atEndOfString" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>at<wbr/>End<wbr/>Of<wbr/>String</span></a></li>
+<li><a href="#getDocumentPosition" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Document<wbr/>Position</span></a></li>
 <li><a href="#getPosition" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Position</span></a></li>
-<li><a href="#getStringPosition" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>String<wbr/>Position</span></a></li>
 <li><a href="#peek" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>peek</span></a></li>
 <li><a href="#startsWith" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>starts<wbr/>With</span></a></li>
 <li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
@@ -759,25 +772,25 @@ It is intended to be used only by <a href="SourceReader.KnownSourcePosition.html
 <li><a href="#UnknownPosition" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>Unknown<wbr/>Position</span></a></li>
 <li><a href="#_implementationDetails" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_implementation<wbr/>Details</span></a></li>
 <li><a href="#_cloneRegions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_clone<wbr/>Regions</span></a></li>
-<li><a href="#_hasCurrentCharAtCurrentInput" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Input</span></a></li>
-<li><a href="#_hasCurrentInput" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Input</span></a></li>
+<li><a href="#_hasCurrentCharAtCurrentDocument" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Char<wbr/>At<wbr/>Current<wbr/>Document</span></a></li>
+<li><a href="#_hasCurrentDocument" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>Current<wbr/>Document</span></a></li>
 <li><a href="#_inputFromToIn" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>From<wbr/>To<wbr/>In</span></a></li>
 <li><a href="#_isEndOfLine" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_is<wbr/>End<wbr/>Of<wbr/>Line</span></a></li>
 <li><a href="#_skipOne" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_skip<wbr/>One</span></a></li>
 <li><a href="#_charIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_char<wbr/>Index</span></a></li>
 <li><a href="#_column" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a></li>
-<li><a href="#_inputIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_input<wbr/>Index</span></a></li>
-<li><a href="#_inputs" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_inputs</span></a></li>
-<li><a href="#_inputsNames" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_inputs<wbr/>Names</span></a></li>
+<li><a href="#_documentIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_document<wbr/>Index</span></a></li>
+<li><a href="#_documents" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_documents</span></a></li>
+<li><a href="#_documentsNames" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_documents<wbr/>Names</span></a></li>
 <li><a href="#_line" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line</span></a></li>
 <li><a href="#_lineEnders" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_line<wbr/>Enders</span></a></li>
 <li><a href="#_regions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_regions</span></a></li>
-<li><a href="#_visibleInputs" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Inputs</span></a></li>
-<li><a href="#_unnamedStr" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_unnamed<wbr/>Str</span></a></li>
-<li><a href="#_inputContentsAt" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>Contents<wbr/>At</span></a></li>
-<li><a href="#_inputFromTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>From<wbr/>To</span></a></li>
-<li><a href="#_inputNameAt" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>Name<wbr/>At</span></a></li>
-<li><a href="#_visibleInputContentsAt" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Input<wbr/>Contents<wbr/>At</span></a></li>
+<li><a href="#_visibleDocumentContents" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_visible<wbr/>Document<wbr/>Contents</span></a></li>
+<li><a href="#_unnamedDocument" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_unnamed<wbr/>Document</span></a></li>
+<li><a href="#_documentNameAt" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_document<wbr/>Name<wbr/>At</span></a></li>
+<li><a href="#_fullDocumentContentsAt" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Document<wbr/>Contents<wbr/>At</span></a></li>
+<li><a href="#_fullInputFromTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_full<wbr/>Input<wbr/>From<wbr/>To</span></a></li>
+<li><a href="#_visibleDocumentContentsAt" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Document<wbr/>Contents<wbr/>At</span></a></li>
 <li><a href="#_visibleInputFromTo" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_visible<wbr/>Input<wbr/>From<wbr/>To</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>gobstones-core - v0.4.3</span></a>

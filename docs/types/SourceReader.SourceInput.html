@@ -18,21 +18,22 @@
 <li><a href="SourceReader.SourceInput.html">SourceInput</a></li></ul>
 <h1>Type alias SourceInput</h1></div>
 <div class="tsd-signature"><span class="tsd-kind-type-alias">Source<wbr/>Input</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-<div class="tsd-comment tsd-typography"><p>The type <a href="SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> establishes the different kinds of input a <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>
-accepts to read, independently of how it was obtained (e.g. from files, web-services, or
-command line arguments).</p>
+<div class="tsd-comment tsd-typography"><p>A Source Input is composed of one or more &#39;documents&#39;, that may be obtained (and identified)
+in different ways: e.g. from files, web-services, or command line arguments, etc.
+The type <a href="SourceReader.SourceInput.html" class="tsd-kind-type-alias">SourceInput</a> establishes the different kinds of input a <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>
+accepts to read, independently of how it was obtained.</p>
 <ul>
-<li>A single string represents a unique source, for example as that coming from a command line
-argument, e.g.<pre><code><span class="hl-3">&#39;program { }&#39;</span>
+<li>A single string represents a unique unnamed source document, for example as that coming from
+a command line argument, e.g.<pre><code><span class="hl-3">&#39;program { }&#39;</span>
 </code><button>Copy</button></pre>
 </li>
-<li>The Record represents different sources identified by a name, for example, different
+<li>The Record represents different source documents identified by a name, for example, different
 filenames and their contents, e.g.<pre><code><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-3">&#39;foo.gbs&#39;</span><span class="hl-1">: </span><span class="hl-3">&#39;program { P() }&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-3">&#39;bar.gbs&#39;</span><span class="hl-1">: </span><span class="hl-3">&#39;procedure P() {}&#39;</span><span class="hl-1">,</span><br/><span class="hl-1"> }</span>
 </code><button>Copy</button></pre>
 </li>
-<li>The array of strings represents different sources with no identification, for example, as it
-may come from a command line with one or more arguments and optional configuration defaults,
-e.g.<pre><code><span class="hl-1">[ </span><span class="hl-3">&#39;procedure P() { }&#39;</span><span class="hl-1">,  </span><span class="hl-3">&#39;program { P() }&#39;</span><span class="hl-1"> ]</span>
+<li>The array of strings represents different source documents with no identification, for
+example, as it may come from a command line with one or more arguments and optional
+configuration defaults, e.g.<pre><code><span class="hl-1">[ </span><span class="hl-3">&#39;procedure P() { }&#39;</span><span class="hl-1">,  </span><span class="hl-3">&#39;program { P() }&#39;</span><span class="hl-1"> ]</span>
 </code><button>Copy</button></pre>
 </li>
 </ul>

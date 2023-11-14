@@ -18,11 +18,12 @@ export interface SourceReaderLocale {
     error: {
         NoInput: string;
         UnmatchingPositionsBy: string;
-        AtEOFBy: string;
+        AtEndOfInputBy: string;
+        AtEndOfDocumentBy: string;
     };
     string: {
         UnknownPosition: string;
         EndOfInput: string;
-        EndOfString: string;
+        EndOfDocument: string;
     };
 }

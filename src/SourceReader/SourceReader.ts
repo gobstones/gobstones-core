@@ -8,7 +8,7 @@
 // -----------------------------------------------
 import {
     ErrorAtEndOfInputBy,
-    ErrorAtEndOfStringBy,
+    ErrorAtEndOfDocumentBy,
     ErrorNoInput,
     ErrorUnmatchingPositionsBy
 } from './SourceReaderErrors';
@@ -24,15 +24,16 @@ import { SourceReaderIntl as intl } from './translations';
 // #region API: Main -- Source Input {
 // -----------------------------------------------
 /**
+ * A Source Input is composed of one or more 'documents', that may be obtained (and identified)
+ * in different ways: e.g. from files, web-services, or command line arguments, etc.
  * The type {@link SourceInput} establishes the different kinds of input a {@link SourceReader}
- * accepts to read, independently of how it was obtained (e.g. from files, web-services, or
- * command line arguments).
- *  * A single string represents a unique source, for example as that coming from a command line
- *    argument, e.g.
+ * accepts to read, independently of how it was obtained.
+ *  * A single string represents a unique unnamed source document, for example as that coming from
+ *    a command line argument, e.g.
  *      ```
  *      'program { }'
  *      ```
- *  * The Record represents different sources identified by a name, for example, different
+ *  * The Record represents different source documents identified by a name, for example, different
  *    filenames and their contents, e.g.
  *       ```
  *        {
@@ -40,9 +41,9 @@ import { SourceReaderIntl as intl } from './translations';
  *           'bar.gbs': 'procedure P() {}',
  *        }
  *       ```
- *  * The array of strings represents different sources with no identification, for example, as it
- *    may come from a command line with one or more arguments and optional configuration defaults,
- *    e.g.
+ *  * The array of strings represents different source documents with no identification, for
+ *    example, as it may come from a command line with one or more arguments and optional
+ *    configuration defaults, e.g.
  *      ```
  *      [ 'procedure P() { }',  'program { P() }' ]
  *      ```
@@ -65,10 +66,11 @@ export type SourceInput = string | Record<string, string> | string[];
 /**
  * Instances of {@link SourcePosition} point to particular positions in the source given by a
  * {@link SourceReader}.
- * They may be unknown or they may point to a particular {@link SourceReader}.
+ * They may be unknown or they may point to a particular position into a {@link SourceReader}.
  * All {@link SourcePosition} are created through {@link SourceReader}.
  *
- * Subclasses of {@link SourcePosition} determine if the position is known or unknown.
+ * Subclasses of {@link SourcePosition} determine if the position is known or unknown, and in
+ * the case of being known, which kind of position it is.
  * The operation {@link SourcePosition.isUnknown | isUnknown} indicates which is the case.
  * Additionally, all {@link SourcePosition} can be converted to a string, for showing
  * purposes, with the operation {@link SourcePosition.toString | toString}.
@@ -82,7 +84,7 @@ export type SourceInput = string | Record<string, string> | string[];
  *
  * A typical use of {@link SourcePosition} is relating nodes of an AST representation of code to
  * particular positions in the string version of the source code (that may come from several input
- * strings).
+ * documents).
  * @group API: Source Positions
  */
 export abstract class SourcePosition {
@@ -96,11 +98,11 @@ export abstract class SourcePosition {
      * {@link SourceReader.getPosition | getPosition } or by the static const
      * {@link SourceReader.UnknownPosition | UnknownPosition } of {@link SourceReader}.
      *
-     * The implementation of {@link SourcePosition} uses subclasses to distinguish between unknown
-     * positions and known ones.
+     * The implementation of the abstract class {@link SourcePosition} uses subclasses to
+     * distinguish between unknown positions and known ones.
      * The method {@link SourcePosition.isUnknown | isUnknown} is used to distinguish that.
-     * Additionally, the method {@link SourcePosition.toString | toString} provides a string version
-     * of the position (not suitable for persistance, as it looses information).
+     * Additionally, the method {@link SourcePosition.toString | toString} provides a string
+     * version of the position (not suitable for persistance, as it looses information).
      *
      * See the documentation of {@link UnknownSourcePosition} and {@link KnownSourcePosition} for
      * additional implementation details.
@@ -142,7 +144,7 @@ export abstract class SourcePosition {
  * a static member of it, the {@link SourceReader.UnknownPosition | UnknownPosition},
  * with an instance of this class.
  *
- * This positions responds with `true` to the operation
+ * These positions responds with `true` to the operation
  * {@link SourcePosition.isUnknown | isUnknown}.
  * @group API: Source Positions
  */
@@ -153,7 +155,7 @@ export class UnknownSourcePosition extends SourcePosition {
     /**
      * Instances of {@link UnknownSourcePosition} do not point to a particular {@link SourceReader}.
      * To preserve the property that only a {@link SourceReader} can produce source positions,
-     * there is a static const * {@link SourceReader.UnknownPosition | UnknownPosition } of
+     * there is a static const {@link SourceReader.UnknownPosition | UnknownPosition } of
      * {@link SourceReader} that keeps an instance of this class.
      *
      * The implementation just implements the abstract operation of the superclass, with the
@@ -212,7 +214,8 @@ export class UnknownSourcePosition extends SourcePosition {
  * It is created using the {@link SourceReader.getPosition | getPosition} operation of a
  * particular {@link SourceReader} instance.
  * The obtained object indicates a position in the source associated with that reader, that may be
- * EndOfInput or a defined position.
+ * EndOfInput (after all input documents has been processed) or a defined position (that is, one
+ * that corresponds to one of the documents of the input).
  * This difference is given by subclasses.
  *
  * Valid operations on a {@link KnownSourcePosition}, in addition to those of the superclasses,
@@ -227,8 +230,8 @@ export class UnknownSourcePosition extends SourcePosition {
  *    {@link KnownSourcePosition.regions | regions}, and
  *  * get the visible or full portion of the source between a known position and some other
  *    known position related with the same reader, with
- *    {@link KnownSourcePosition.contentsTo | contentsTo},
- *    {@link KnownSourcePosition.contentsFrom | contentsFrom},
+ *    {@link KnownSourcePosition.visibleContentsTo | visibleContentsTo},
+ *    {@link KnownSourcePosition.visibleContentsFrom | visibleContentsFrom},
  *    {@link KnownSourcePosition.fullContentsTo | fullContentsTo}, and
  *    {@link KnownSourcePosition.fullContentsFrom | fullContentsFrom}.
  * @group API: Source Positions
@@ -238,8 +241,8 @@ export abstract class KnownSourcePosition extends SourcePosition {
     // #region Implementation Details {
     // ------------------
     /**
-     * Instances of {@link KnownSourcePosition} point to a particular {@link SourceReader}, given
-     * as an argument during construction.
+     * Instances of the abstract class {@link KnownSourcePosition} point to a particular
+     * {@link SourceReader}, given as an argument during construction.
      * It is remembered in a protected property,
      * {@link KnownSourcePosition._sourceReader | _sourceReader}.
      *
@@ -260,16 +263,16 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * {@link KnownSourcePosition._regions | _regions}.
      *
      * There are also four new operations to determine sections of the source input:
-     * {@link KnownSourcePosition.contentsTo | contentsTo},
-     * {@link KnownSourcePosition.contentsFrom | contentsFrom},
+     * {@link KnownSourcePosition.visibleContentsTo | visibleContentsTo},
+     * {@link KnownSourcePosition.visibleContentsFrom | visibleContentsFrom},
      * {@link KnownSourcePosition.fullContentsTo | fullContentsTo}, and
      * {@link KnownSourcePosition.fullContentsFrom | fullContentsFrom}.
      * They use the Template Method Pattern to provide a common validation and different logics
      * depending on the subclass.
      * Protected methods
      * {@link KnownSourcePosition._validateSourceReaders | _validateSourceReaders},
-     * {@link KnownSourcePosition._contentsTo | contentsTo },
-     * {@link KnownSourcePosition._contentsFrom | contentsFrom },
+     * {@link KnownSourcePosition._visibleContentsTo | visibleContentsTo },
+     * {@link KnownSourcePosition._visibleContentsFrom | visibleContentsFrom },
      * {@link KnownSourcePosition._fullContentsTo | fullContentsTo }, and
      * {@link KnownSourcePosition._fullContentsFrom | fullContentsFrom },
      * are used to implement this Template Method Pattern.
@@ -412,7 +415,8 @@ export abstract class KnownSourcePosition extends SourcePosition {
     /**
      * Answers if this position correspond to the end of input of the
      * {@link SourceReader} it belongs, or not.
-     *  It must be implemented by concrete subclasses.
+     * The EndOfInput is reached when all documents in the source input has been processed.
+     * It must be implemented by concrete subclasses.
      * @group API: Access
      */
     public abstract isEndOfInput(): boolean;
@@ -439,9 +443,9 @@ export abstract class KnownSourcePosition extends SourcePosition {
      *         if the argument and `this` do not belong to the same reader.
      * @group API: Contents Access
      */
-    public contentsTo(to: KnownSourcePosition): string {
-        this._validateSourceReaders(to, 'contentsTo', 'KnownSourcePosition');
-        return this._contentsTo(to);
+    public visibleContentsTo(to: KnownSourcePosition): string {
+        this._validateSourceReaders(to, 'visibleContentsTo', 'KnownSourcePosition');
+        return this._visibleContentsTo(to);
     }
 
     /**
@@ -460,9 +464,9 @@ export abstract class KnownSourcePosition extends SourcePosition {
      *         if the argument and `this` do not belong to the same reader.
      * @group API: Contents Access
      */
-    public contentsFrom(from: KnownSourcePosition): string {
-        this._validateSourceReaders(from, 'contentsFrom', 'KnownSourcePosition');
-        return this._contentsFrom(from);
+    public visibleContentsFrom(from: KnownSourcePosition): string {
+        this._validateSourceReaders(from, 'visibleContentsFrom', 'KnownSourcePosition');
+        return this._visibleContentsFrom(from);
     }
 
     /**
@@ -538,7 +542,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * If `this` comes after `to`, the result is the empty string.
      *
      * It implements the specific logic of each subclass for the Template Method Pattern
-     * of {@link KnownSourcePosition.contentsTo | contentsTo}.
+     * of {@link KnownSourcePosition.visibleContentsTo | visibleContentsTo}.
      * It must be reimplemented by subclasses.
      *
      * **PRECONDITION:** both positions correspond to the same reader
@@ -550,7 +554,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected abstract _contentsTo(to: KnownSourcePosition): any;
+    protected abstract _visibleContentsTo(to: KnownSourcePosition): any;
 
     /**
      * The exact portion of the source that is enclosed between `from` position and `this`
@@ -558,7 +562,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * If `from` comes after `this`, the result is the empty string.
      *
      * It implements the specific logic of each subclass for the Template Method Pattern
-     * of {@link KnownSourcePosition.contentsFrom | contentsFrom}.
+     * of {@link KnownSourcePosition.visibleContentsFrom | visibleContentsFrom}.
      * It must be reimplemented by subclasses.
      *
      * **PRECONDITION:** both positions correspond to the same reader
@@ -570,7 +574,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected abstract _contentsFrom(from: KnownSourcePosition): any;
+    protected abstract _visibleContentsFrom(from: KnownSourcePosition): any;
 
     /**
      * The exact portion of the source that is enclosed between `this` position and `to`
@@ -619,9 +623,9 @@ export abstract class KnownSourcePosition extends SourcePosition {
 /**
  * An {@link EndOfInputSourcePosition} points to the EndOfInput position in a specific
  * {@link SourceReader}.
- * That position is reached when all input strings have been processed.
- * It is a special position, because it does not point to a particular position inside the
- * source input, but to the end of it.
+ * That position is reached when all input documents have been processed.
+ * It is a special position, because it does not point to a particular position inside a
+ * document in the source input, but to the end of it.
  * @group API: Source Positions
  */
 export class EndOfInputSourcePosition extends KnownSourcePosition {
@@ -696,7 +700,9 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
     // ------------------
     /**
      * The implementation required by the superclass for the Template Method Pattern that
-     * is used by {@link KnownSourcePosition.contentsTo | contentsTo}.
+     * is used by {@link KnownSourcePosition.visibleContentsTo | visibleContentsTo}.
+     * Reading from the EndOfInput always yields the empty string, as it is always the last
+     * position in a source input.
      *
      * **PRECONDITION:** both positions correspond to the same reader
      *                   (not validated, as it is a protected operation).
@@ -707,13 +713,13 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected _contentsTo(to: KnownSourcePosition): string {
+    protected _visibleContentsTo(to: KnownSourcePosition): string {
         return '';
     }
 
     /**
      * The implementation required by the superclass for the Template Method Pattern that
-     * is used by {@link KnownSourcePosition.contentsFrom | contentsFrom}.
+     * is used by {@link KnownSourcePosition.visibleContentsFrom | visibleContentsFrom}.
      *
      * **PRECONDITION:** both positions correspond to the same reader
      *                   (not validated, as it is a protected operation).
@@ -724,13 +730,15 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected _contentsFrom(from: KnownSourcePosition): string {
+    protected _visibleContentsFrom(from: KnownSourcePosition): string {
         return this._sourceReader._visibleInputFromTo(from, this);
     }
 
     /**
      * The implementation required by the superclass for the Template Method Pattern that
      * is used by {@link KnownSourcePosition.fullContentsTo | fullContentsTo}.
+     * Reading from the EndOfInput always yields the empty string, as it is always the last
+     * position in a source input.
      *
      * **PRECONDITION:** both positions correspond to the same reader
      *                   (not validated, as it is a protected operation).
@@ -759,7 +767,7 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
      * @private
      */
     protected _fullContentsFrom(from: KnownSourcePosition): string {
-        return this._sourceReader._inputFromTo(from, this);
+        return this._sourceReader._fullInputFromTo(from, this);
     }
     // ------------------
     // #endregion } Implementation: Auxiliaries
@@ -767,55 +775,58 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
 }
 
 /**
- * A {@link StringSourcePosition} points to a particular position, different from EndOfInput,
+ * A {@link DocumentSourcePosition} points to a particular position, different from EndOfInput,
  * in a source given by a {@link SourceReader}.
  *
  * It provides the right implementation for the operations given by its superclasses,
  * {@link KnownSourcePosition} and {@link SourcePosition}.
  * Additionally, it provides three new operations that only have sense for defined positions:
- *  * {@link StringSourcePosition.inputName | inputName}, the name of the particular string in the
- *    source input that has the char pointed to by this position,
- *  * {@link StringSourcePosition.inputContents | inputContents}, the visible contents of the
- *    particular string in the source input that has the char pointed to by this position, and
- *  * {@link StringSourcePosition.fullInputContents | fullInputContents}, the contents (both
- *    visible and non-visible) of the particular string in the source input that has the char
- *    pointed to by this position.
+ *  * {@link DocumentSourcePosition.documentName | documentName}, the name of the particular
+ *    document in the source input that has the char pointed to by this position,
+ *  * {@link DocumentSourcePosition.visibleDocumentContents | visibleDocumentContents}, the visible
+ *    contents of the particular document in the source input that this position points to,
+ *    and
+ *  * {@link DocumentSourcePosition.fullDocumentContents | fullDocumentContents}, the contents
+ *    (both visible and non-visible) of the particular document in the source input that this
+ *    position point to.
  * @group API: Source Positions
  */
-export abstract class StringSourcePosition extends KnownSourcePosition {
+export abstract class DocumentSourcePosition extends KnownSourcePosition {
     // ==================
     // #region Implementation Details {
     // ------------------
     /**
-     * The implementation of {@link StringSourcePosition} stores additional information to locate
+     * The implementation of {@link DocumentSourcePosition} stores additional information to locate
      * the precise position it points to in its {@link SourceReader}, to be able to implement all
      * the required operations.
      * The values stored are tightly coupled with the implementation in the {@link SourceReader};
      * they are:
-     * * {@link StringSourcePosition._inputIndex | _inputIndex}, with information about which
-     *   string in the {@link SourceReader} contains the char pointed to by this position, that is,
-     *   the _current source string_,
-     * * {@link StringSourcePosition._charIndex | _charIndex}, with information about which
-     *   character in the _current source string_ is the char pointed to, and
-     * * {@link StringSourcePosition._visibleCharIndex | _visibleCharIndex}, with information about
-     *   which character in the visible part of the _current source string_ is the one pointed to
-     *   (see the {@link SourceReader} documentation for explanation on visible parts of the input).
+     * * {@link DocumentSourcePosition._documentIndex | _documentIndex}, with information about
+     *   which document in the {@link SourceReader} contains the char pointed to by this position,
+     *   that is, the _current source document_,
+     * * {@link DocumentSourcePosition._charIndex | _charIndex}, with information about which
+     *   character in the _current source document_ is the char pointed to, and
+     * * {@link DocumentSourcePosition._visibleCharIndex | _visibleCharIndex}, with information
+     *   about which character in the visible part of the _current source document_ is the one
+     *   pointed to (see the {@link SourceReader} documentation for explanation on visible parts
+     *   of the input).
      * This information must be provided by the {@link SourceReader} during creation, and it will
      * be accessed by it when calculating sections of the source input in the implementation of
      * operations
-     * {@link StringSourcePosition._contentsTo | _contentsTo},
-     * {@link StringSourcePosition._contentsFrom | _contentsFrom},
-     * {@link StringSourcePosition._contentsTo | _contentsTo}, and
-     * {@link StringSourcePosition._fullContentsFrom | _fullContentsFrom}.
+     * {@link DocumentSourcePosition._visibleContentsTo | _visibleContentsTo},
+     * {@link DocumentSourcePosition._visibleContentsFrom | _visibleContentsFrom},
+     * {@link DocumentSourcePosition._fullContentsTo | _fullContentsTo}, and
+     * {@link DocumentSourcePosition._fullContentsFrom | _fullContentsFrom}.
      *
      * Additionally, it provides three new operations that only have sense for defined positions:
-     *  * {@link StringSourcePosition.inputName | inputName}, the name of the particular string in
-     *    the source input that has the char pointed to by this position,
-     *  * {@link StringSourcePosition.inputContents | inputContents}, the visible contents of the
-     *    particular string in the source input that has the char pointed to by this position, and
-     *  * {@link StringSourcePosition.fullInputContents | fullInputContents}, the contents (both
-     *    visible and non-visible) of the particular string in the source input that has the char
-     *    pointed to by this position.
+     *  * {@link DocumentSourcePosition.documentName | documentName}, the name of the particular
+     *    document in the source input that this position points to,
+     *  * {@link DocumentSourcePosition.visibleDocumentContents | visibleDocumentContents}, the
+     *    visible contents of the particular document in the source input that this position points
+     *    to, and
+     *  * {@link DocumentSourcePosition.fullDocumentContents | fullDocumentContents}, the contents
+     *    (both visible and non-visible) of the particular document in the source input that this
+     *    position points to.
      * @group Implementation Details
      * @private
      */
@@ -828,16 +839,16 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     // #region Implementation: Internal state {
     // ------------------
     /**
-     * The index with information about the input string in the `_sourceReader`.
+     * The index with information about the input document in the `_sourceReader`.
      *
-     * **INVARIANT**: `0 <= _inputIndex` and it is a valid index in that reader.
+     * **INVARIANT**: `0 <= _documentIndex` and it is a valid index in that reader.
      * @group Implementation: Internal state
      * @private
      */
-    private _inputIndex: number;
+    private _documentIndex: number;
     /**
      * The index with information about the exact char pointed to by this position in the input
-     * string.
+     * document.
      *
      * **INVARIANT:** `0 <= _charIndex` and it is a valid index in that reader.
      * @group Implementation: Internal state
@@ -846,7 +857,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     private _charIndex: number;
     /**
      * The index with information about the exact char pointed to by this position in the visible
-     * input string.
+     * input document.
      *
      * **INVARIANT:** `0 <= _visibleCharIndex` and it is a valid index in that reader.
      * @group Implementation: Internal state
@@ -861,7 +872,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     // #region Implementation: Protected for Source Reader {
     // ------------------
     /**
-     * Returns a source position belonging to some {@link SourceReader}.
+     * Returns a document source position belonging to some {@link SourceReader}.
      * It is intended to be used only by {@link SourceReader}.
      *
      * **PRECONDITIONS:** (not verified during execution)
@@ -875,12 +886,12 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
         line: number,
         column: number,
         regions: string[],
-        inputIndex: number,
+        documentIndex: number,
         charIndex: number,
         visibleCharIndex: number
     ) {
         super(sourceReader, line, column, regions);
-        this._inputIndex = inputIndex;
+        this._documentIndex = documentIndex;
         this._charIndex = charIndex;
         this._visibleCharIndex = visibleCharIndex;
     }
@@ -892,35 +903,35 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     // #region API: Access {
     // ------------------
     /**
-     * The name of the input string this position belongs to.
+     * The name of the input document this position belongs to.
      * @group API: Access
      */
-    public get inputName(): string {
-        let name: string = this._sourceReader._inputNameAt(this._theInputIndex);
+    public get documentName(): string {
+        let name: string = this._sourceReader._documentNameAt(this._theDocumentIndex);
         const allDigits: RegExp = /^[0-9]*$/;
 
         // Unnamed inputs contains only digits.
         if (allDigits.test(name) && name !== '') {
-            name = SourceReader._unnamedStr + '[' + name + ']';
+            name = SourceReader._unnamedDocument + '[' + name + ']';
         }
         return name;
     }
 
     /**
-     * The contents of the visible input string this position belongs to.
+     * The contents of the visible input document this position belongs to.
      * @group API: Access
      */
-    public get inputContents(): string {
-        return this._sourceReader._visibleInputContentsAt(this._theInputIndex);
+    public get visibleDocumentContents(): string {
+        return this._sourceReader._visibleDocumentContentsAt(this._theDocumentIndex);
     }
 
     /**
-     * The contents of the input string this position belongs to
+     * The contents of the input document this position belongs to
      *  (both visible and non visible).
      * @group API: Access
      */
-    public get fullInputContents(): string {
-        return this._sourceReader._inputContentsAt(this._theInputIndex);
+    public get fullDocumentContents(): string {
+        return this._sourceReader._fullDocumentContentsAt(this._theDocumentIndex);
     }
     // ------------------
     // #endregion } API: Access
@@ -930,18 +941,18 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     // #region Implementation: Protected for Source Reader {
     // ------------------
     /**
-     * The index indicating the input string in the source input.
+     * The index indicating the input document in the source input.
      *
      * It is supposed to be used only by {@link SourceReader}.
      * @group Implementation: Protected for Source Reader
      * @private
      */
-    public get _theInputIndex(): number {
-        return this._inputIndex;
+    public get _theDocumentIndex(): number {
+        return this._documentIndex;
     }
 
     /**
-     * The index indicating the exact char in the input string in the source input.
+     * The index indicating the exact char in the input document in the source input.
      *
      * It is supposed to be used only by {@link SourceReader}.
      * @group Implementation: Protected for Source Reader
@@ -952,7 +963,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     }
 
     /**
-     * The index indicating the exact char in the visible input string in the source input.
+     * The index indicating the exact char in the visible input document in the source input.
      *
      * It is supposed to be used only by {@link SourceReader}.
      * @group Implementation: Protected for Source Reader
@@ -972,6 +983,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
      * Answers if this position correspond to the end of input of the
      * {@link SourceReader} it belongs, or not.
      * It implements the abstract operation of its superclass.
+     * As this is a document source position, the answer is always false.
      * @group API: Access
      */
     public isEndOfInput(): boolean {
@@ -979,12 +991,12 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     }
 
     /**
-     * Answers if this position correspond to the end of string of the current
-     * string in the {@link SourceReader} it belongs, or not.
+     * Answers if this position correspond to the end of document of the current
+     * document in the {@link SourceReader} it belongs, or not.
      * It must be implemented by concrete subclasses.
      * @group API: Access
      */
-    public abstract isEndOfString(): boolean;
+    public abstract isEndOfDocument(): boolean;
     // ------------------
     // #endregion } API: Access
     // ==================
@@ -994,7 +1006,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
     // ------------------
     /**
      * The implementation required by the superclass for the Template Method Pattern that
-     * is used by {@link KnownSourcePosition.contentsTo | contentsTo}.
+     * is used by {@link KnownSourcePosition.visibleContentsTo | visibleContentsTo}.
      *
      * **PRECONDITION:** both positions correspond to the same reader (not verified).
      * @param to A {@link KnownSourcePosition} related with the same {@link SourceReader} that the
@@ -1004,13 +1016,13 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected _contentsTo(to: KnownSourcePosition): string {
+    protected _visibleContentsTo(to: KnownSourcePosition): string {
         return this._sourceReader._visibleInputFromTo(this, to);
     }
 
     /**
      * The implementation required by the superclass for the Template Method Pattern that
-     * is used by {@link KnownSourcePosition.contentsFrom | contentsFrom}.
+     * is used by {@link KnownSourcePosition.visibleContentsFrom | visibleContentsFrom}.
      *
      * **PRECONDITION:** both positions correspond to the same reader (not verified).
      * @param from A {@link KnownSourcePosition} related with the same {@link SourceReader} that the
@@ -1020,7 +1032,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected _contentsFrom(from: KnownSourcePosition): string {
+    protected _visibleContentsFrom(from: KnownSourcePosition): string {
         return this._sourceReader._visibleInputFromTo(from, this);
     }
 
@@ -1037,7 +1049,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
      * @private
      */
     protected _fullContentsTo(to: KnownSourcePosition): string {
-        return this._sourceReader._inputFromTo(this, to);
+        return this._sourceReader._fullInputFromTo(this, to);
     }
 
     /**
@@ -1053,7 +1065,7 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
      * @private
      */
     protected _fullContentsFrom(from: KnownSourcePosition): string {
-        return this._sourceReader._inputFromTo(from, this);
+        return this._sourceReader._fullInputFromTo(from, this);
     }
     // ------------------
     // #endregion } Implementation: Auxiliaries
@@ -1061,27 +1073,28 @@ export abstract class StringSourcePosition extends KnownSourcePosition {
 }
 
 /**
- * An {@link EndOfStringSourcePosition} points to the EndOfString position in a specific
- * {@link SourceReader}.
- * That position is reached when all characters in the current input string have been processed.
- * It is a special position, because it does not point to a particular position inside the
- * source input, but to the end of one of the strings in it.
+ * An {@link EndOfDocumentSourcePosition} points to a position that is right after the last
+ * character in a specific document of a {@link SourceReader}.
+ * That position is reached when all characters in the current input document have been processed,
+ * but the source reader has not yet been advanced to the next document.
+ * It is a special position, because it does not point to a particular position inside a document in
+ * the source input, but to the end of one of the documents in it.
  * @group API: Source Positions
  */
-export class EndOfStringSourcePosition extends StringSourcePosition {
+export class EndOfDocumentSourcePosition extends DocumentSourcePosition {
     // ==================
     // #region Implementation Details {
     // ------------------
     /**
-     * Instances of {@link EndOfStringSourcePosition} point at the EndOfString of
-     * the current string in a particular {@link SourceReader}.
+     * Instances of {@link EndOfDocumentSourcePosition} points to a position that is right after
+     * the last character in a specific document in a particular {@link SourceReader}.
      *
-     * The abstract operations of {@link StringSourcePosition} are implemented or reimplemented
+     * The abstract operations of {@link DocumentSourcePosition} are implemented or reimplemented
      * with the relevant information.
      * @group Implementation Details
      * @private
      */
-    private static _implementationDetailsForEndOfStringSourcePosition = 'Dummy for documentation';
+    private static _implementationDetailsForEndOfDocumentSourcePosition = 'Dummy for documentation';
     // ------------------
     // #endregion } Implementation Details
     // ==================
@@ -1090,7 +1103,7 @@ export class EndOfStringSourcePosition extends StringSourcePosition {
     // #region Implementation: Protected for Source Reader {
     // ------------------
     /**
-     * Constructs the EndOfString position in an input source.
+     * Constructs an end of document position in an input source.
      * It is intended to be used only by {@link SourceReader}.
      *
      * **PRECONDITIONS:** (not verified during execution)
@@ -1104,11 +1117,11 @@ export class EndOfStringSourcePosition extends StringSourcePosition {
         line: number,
         column: number,
         regions: string[],
-        inputIndex: number,
+        documentIndex: number,
         charIndex: number,
         visibleCharIndex: number
     ) {
-        super(sourceReader, line, column, regions, inputIndex, charIndex, visibleCharIndex);
+        super(sourceReader, line, column, regions, documentIndex, charIndex, visibleCharIndex);
     }
     // ------------------
     // #endregion } Implementation: Protected for Source Reader
@@ -1118,21 +1131,23 @@ export class EndOfStringSourcePosition extends StringSourcePosition {
     // #region API: Access {
     // ------------------
     /**
-     * Answers if this position is EndOfString.
+     * Answers if this position is the end of document for some document in a
+     * {@link SourceReader}.
      * It implements the abstract operation of its superclass.
+     * As this class points to the end of document, the answer is always true.
      * @group API: Access
      */
-    public isEndOfString(): boolean {
+    public isEndOfDocument(): boolean {
         return true;
     }
 
     /**
-     * Gives the string representation of EndOfString positions.
+     * Gives the string representation of end of document positions.
      * Implements the abstract operation of its superclass.
      * @group API: Access
      */
     public toString(): string {
-        return '<' + intl.translate('string.EndOfString') + '>';
+        return '<' + intl.translate('string.EndOfDocument') + '>';
     }
     // ------------------
     // #endregion } API: Access
@@ -1146,15 +1161,15 @@ export class EndOfStringSourcePosition extends StringSourcePosition {
  * It provides the right implementation for the operations given by its superclasses.
  * @group API: Source Positions
  */
-export class DefinedSourcePosition extends StringSourcePosition {
+export class DefinedSourcePosition extends DocumentSourcePosition {
     // ==================
     // #region Implementation Details {
     // ------------------
     /**
      * Instances of {@link DefinedSourcePosition} point at some character in an
-     * input string in a particular {@link SourceReader}.
+     * input document in a particular {@link SourceReader}.
      *
-     * The abstract operations of {@link StringSourcePosition} are implemented or reimplemented
+     * The abstract operations of {@link DocumentSourcePosition} are implemented or reimplemented
      * with the relevant information.
      * @group Implementation Details
      * @private
@@ -1168,7 +1183,7 @@ export class DefinedSourcePosition extends StringSourcePosition {
     // #region Implementation: Protected for Source Reader {
     // ------------------
     /**
-     * Constructs a specific position different from EndOfInput in an input source.
+     * Constructs a defined position different from the end of a document in an input source.
      * It is intended to be used only by {@link SourceReader}.
      *
      * **PRECONDITIONS:** (not verified during execution)
@@ -1182,11 +1197,11 @@ export class DefinedSourcePosition extends StringSourcePosition {
         line: number,
         column: number,
         regions: string[],
-        inputIndex: number,
+        documentIndex: number,
         charIndex: number,
         visibleCharIndex: number
     ) {
-        super(sourceReader, line, column, regions, inputIndex, charIndex, visibleCharIndex);
+        super(sourceReader, line, column, regions, documentIndex, charIndex, visibleCharIndex);
     }
     // ------------------
     // #endregion } Implementation: Protected for Source Reader
@@ -1196,12 +1211,13 @@ export class DefinedSourcePosition extends StringSourcePosition {
     // #region  API: Access {
     // ------------------
     /**
-     * Answers if this position correspond to the end of string for the
-     * current string of the {@link SourceReader} it belongs, or not.
+     * Answers if this position correspond to the end of document for the
+     * current document of the {@link SourceReader} it belongs, or not.
      * It implements the abstract operation of its superclass.
+     * As this class points to an inner char inside a document, the answer is always false.
      * @group API: Access
      */
-    public isEndOfString(): boolean {
+    public isEndOfDocument(): boolean {
         return false;
     }
 
@@ -1211,7 +1227,7 @@ export class DefinedSourcePosition extends StringSourcePosition {
      * @group API: Access
      */
     public toString(): string {
-        return `${this.inputName}@${this._line}:${this._column}`;
+        return `${this.documentName}@${this._line}:${this._column}`;
     }
     // ------------------
     // #endregion } API: Access
@@ -1225,36 +1241,42 @@ export class DefinedSourcePosition extends StringSourcePosition {
 // #region API: Main -- SourceReader {
 // -----------------------------------------------
 /**
- * A {@link SourceReader} allows you to read input from some source, either one single string of
- * content or several named or indexed source strings, in such a way that each character read
+ * A {@link SourceReader} allows you to read input from some source, either one single document of
+ * content or several named or indexed source documents, in such a way that each character read
  * registers its position in the source as a tuple index-line-column.
  * That is, the main problem it solves is that of calculating the position of each character read
  * by taking into account characters indicating the end-of-line.
- * It also solves the problem of input divided among several strings, as it is usually the case with
- * source code, and it provides a couple of additional features:
+ * It also solves the problem of input divided among several documents, as it is usually the case
+ * with source code, and it provides a couple of additional features:
  *  * to use some parts of the input as extra annotations by marking them as non visible, so the
  *    input can be read as if the annotations were not there, and
- *  * to allow the relationship of parts of the input with identifiers naming "regions", thus making
- *    it possible for external tools to identify those parts with ease.
+ *  * to allow the relationship of parts of the input with identifiers naming "regions", thus
+ *    making it possible for external tools to identify those parts with ease.
  *
- * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePosition}, in
- * particular {@link KnownSourcePosition}, can be read from it.
+ * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePosition}s,
+ * in particular {@link KnownSourcePosition}s, can be read from it.
  * Possible interactions with a {@link SourceReader} include:
  *  - peek a character, with {@link SourceReader.peek},
- *  - check if a given strings occurs at the beginning of the text in the current string, without
+ *  - check if a given strings occurs at the beginning of the text in the current document, without
  *    skipping it, with {@link SourceReader.startsWith},
  *  - get the current position as a {@link KnownSourcePosition}, with
  *    {@link SourceReader.getPosition},
- *  - get the current position as a {@link StringSourcePosition}, with
- *    {@link SourceReader.getStringPosition}, provided the end of input was not reached,
+ *  - get the current position as a {@link DocumentSourcePosition}, with
+ *    {@link SourceReader.getDocumentPosition}, provided the end of input was not reached,
  *  - detect if the end of input was reached, with {@link SourceReader.atEndOfInput},
- *  - detect if the end of the current string was reached, with {@link SourceReader.atEndOfString},
+ *  - detect if the end of the current document was reached, with
+ *    {@link SourceReader.atEndOfDocument},
  *  - skip one or more characters, with {@link skip},
- *  - read some characters from the current string based on a condition, with {@link takeWhile}, and
+ *  - read some characters from the current document based on a condition, with {@link takeWhile},
+ *    and
  *  - manipulate "regions", with {@link SourceReader.beginRegion}
  *    and {@link SourceReader.endRegion}.
- * When reading from sources with multiple string of input, skipping moves from one of them to the
- * next transparently for the user (with the exception that regions are reset).
+ * When reading from sources with multiple documents of input, skipping moves inside a document
+ * until there are no more characters, then an end of document position is reached (a special
+ * position just after the last character of that document), and then a new document is started.
+ * Regions are reset at the beginning of each document.
+ * When the last document has been processed, and the last end of document has been skipped, the
+ * end of input is reached (a special position just after all the documents).
  *
  * A {@link SourceReader} also has a special position,
  * {@link SourceReader.UnknownPosition | UnknownPosition}, as a static member of the class,
@@ -1266,10 +1288,10 @@ export class DefinedSourcePosition extends StringSourcePosition {
  * Characters are marked as visible by skipping over them normally;
  * characters are marked as non visible by silently skip over them.
  * Visibility of the input affect the information that positions may provide.
- * When skipping characters, at the end of each of the input strings there is a special position
+ * When skipping characters, at the end of each of the input document there is a special position
  * that must be skipped, but that has no character, and thus, cannot be peeked
- * -- the {@link EndOfStringSourcePosition}. This position cannot be skipped as non visible, as
- * every input string is apparent for the user.
+ * -- the {@link EndOfDocumentSourcePosition}.
+ * This position cannot be skipped as non visible, as every input document is known by the user.
  *
  * Regarding regions, a "region" is some part of the input that has an ID (as a string).
  * It is used in handling automatically generated code.
@@ -1277,8 +1299,8 @@ export class DefinedSourcePosition extends StringSourcePosition {
  * link that part with the element generating it through region IDs.
  * Regions are supposed to be nested, so a stack is used, but no check is made on their balance,
  * being the user responsible for the correct pushing and popping of regions.
- * When skipping moves from one source string to the next, regions are reset, as regions are not
- * supposed to cross different strings of the input.
+ * When skipping moves from one source document to the next, regions are reset, as regions are not
+ * supposed to cross different documents of the input.
  *
  *  **Example**
  *
@@ -1311,16 +1333,16 @@ export class DefinedSourcePosition extends StringSourcePosition {
  *    // ---------------------------------
  *    // Read block body (includes '{')
  *    // NOTE: CANNOT use !startsWith('}') instead because
- *    //       !atEndOfString() is REQUIRED to guarantee precondition of peek()
- *    while (!reader.atEndOfString()      // false
- *        && reader.peek() !== '}') {     // false 15 times
+ *    //       !atEndOfDocument() is REQUIRED to guarantee precondition of peek()
+ *    while (!reader.atEndOfDocument()    // false
+ *        && reader.peek() !== '}') {     document false 15 times
  *        str += reader.peek();           // '{', ' ', 'P', ... 'd', 'e', ')', ' '
  *        reader.skip();                  // Move 15 times ahead
  *    }
  *    // ---------------------------------
  *    // Detect block end
- *    if (reader.atEndOfString())         // ~~> false
- *      { fail('Unclosed block'); }
+ *    if (reader.atEndOfDocument())         // ~~> false
+ *      { fail('Unclosed document'); }
  *    // Add '}' to the body
  *    str += reader.peek();               // ~~> '}'
  *    pos = reader.getPosition();         // ~~> (1,24) as a SourcePosition,
@@ -1333,21 +1355,21 @@ export class DefinedSourcePosition extends StringSourcePosition {
  *      { reader.skip(); }                // NOT executed
  *    // ---------------------------------
  *    // Verify there are no more chars at input
- *    if (!reader.atEndOfString())        // ~~> false (function returns true)
- *      { fail('Unexpected additional chars after program'); }
- *    reader.skip();                      // Skips end of string,
- *                                        //  reaching next string or end of input
+ *    if (!reader.atEndOfDocument())      // ~~> false (function returns true)
+ *      { fail('Unexpected document chars after program'); }
+ *    reader.skip();                      // Skips end of document,
+ *                                        //  reaching next document or end of input
  *    // ---------------------------------
- *    // Verify there are no more input strings
+ *    // Verify there are no more input documents
  *    if (!reader.atEndOfInput())         // ~~> false (function returns true)
  *      { fail('Unexpected additional inputs'); }
  *  }
  * ```
  *
- * NOTE: as {@link SourceReader.peek} is partial, not working at the end of strings,
- *       each of its uses must be done after confirming that {@link SourceReader.atEndOfString}
+ * NOTE: as {@link SourceReader.peek} is partial, not working at the end of documents,
+ *       each of its uses must be done after confirming that {@link SourceReader.atEndOfDocument}
  *       is false.
- *       For that reason it is better to use {@link SourceReader.startsWith} to verify
+ *       For that reason document is better to use {@link SourceReader.startsWith} to verify
  *       if the input starts with some character (or string), when peeking for something
  *       specific.
  * @group API: Main
@@ -1369,12 +1391,12 @@ export class SourceReader {
     // #region Implementation: Protected for Source Positions {
     // ------------------
     /**
-     * The string to use as a name for unnamed input strings.
+     * The string to use as a name for unnamed input documents.
      * It is intended to be used only by instances and {@link SourcePosition}.
      * @group Implementation: Protected for Source Positions
      * @private
      */
-    public static _unnamedStr: string = 'doc';
+    public static _unnamedDocument: string = 'doc';
     // ------------------
     // #endregion } Implementation: Protected for Source Positions
     // ==================
@@ -1384,18 +1406,18 @@ export class SourceReader {
     // ------------------
     /**
      * The implementation of {@link SourceReader} keeps:
-     *  * an object associating input string names to input string contents,
-     *    {@link SourceReader._inputs | _inputs},
-     *  * an object associating input string names to visible input string contents,
-     *    {@link SourceReader._visibleInputs | _visibleInputs},
+     *  * an object associating input document names to input document contents,
+     *    {@link SourceReader._documents | _documents},
+     *  * an object associating input document names to visible input document contents,
+     *    {@link SourceReader._visibleDocumentContents | _visibleDocumentContents},
      *  * an array of the keys of that object for sequential access,
-     *    {@link SourceReader._inputsNames | _inputsNames},
-     *  * an index to the current input string in the array of inputs names,
-     *    {@link SourceReader._inputIndex | _inputIndex},
-     *  * an index to the current visible input string in the array of inputs names
-     *    (because it may be different from the input index),
+     *    {@link SourceReader._documentsNames | _documentsNames},
+     *  * an index to the current input document in the array of inputs names,
+     *    {@link SourceReader._documentIndex | _documentIndex},
+     *  * an index to the current visible input document in the array of inputs names
+     *    (because it may be different from the document index),
      *    {@link SourceReader._charIndex | _charIndex},
-     *  * the current line and column in the current input string,
+     *  * the current line and column in the current input document,
      *    {@link SourceReader._line | _line} and
      *    {@link SourceReader._column | _column},
      *  * a stack of strings representing the regions' IDs,
@@ -1403,18 +1425,18 @@ export class SourceReader {
      *  * the characters used to determine line ends,
      *    {@link SourceReader._lineEnders | _lineEnders}.
      *
-     * The object of {@link SourceReader._inputs | _inputs } cannot be empty (with no input string),
-     * and all the {@link SourceInput} forms are converted to `Record<string, string>` for ease of
-     * access.
+     * The object of {@link SourceReader._documents | _documents } cannot be empty (with no input
+     * document), and all the {@link SourceInput} forms are converted to `Record<string, string>`
+     * for ease of access.
      * The {@link SourceReader._charIndex | _charIndex } either points to a valid position in an
-     * input string, or at the end of an input string, or the end of input was reached (that is,
-     * when there are no more input strings to read).
+     * input document, or at the end of an input document, or the end of input was reached (that is,
+     * when there are no more input documents to read).
      *
      * Line and column numbers are adjusted depending on which characters are considered as ending a
      * line, as given by the property {@link SourceReader._lineEnders | _lineEnders}, and which
      * characters are considered visible, as indicating by the user through
      * {@link SourceReader.skip | skip}.
-     * When changing from one string to the next, line and column numbers are reset.
+     * When changing from one document to the next, line and column numbers are reset.
      *
      * The visible input is conformed by those characters of the input that has been skipped
      * normally.
@@ -1428,12 +1450,12 @@ export class SourceReader {
      * instances of that class represent different positions in the source inputs kept by a
      * {@link SourceReader}.
      * The operations
-     * {@link SourceReader._inputNameAt | _inputNameAt},
-     * {@link SourceReader._visibleInputContentsAt | _visibleInputContentsAt},
+     * {@link SourceReader._documentNameAt | _documentNameAt},
+     * {@link SourceReader._visibleDocumentContentsAt | _visibleDocumentContentsAt},
      * and {@link SourceReader._visibleInputFromTo | _visibleInputFromTo },
-     * {@link SourceReader._inputContentsAt | _inputContentsAt},
-     * and {@link SourceReader._inputFromTo | _inputFromTo}, and
-     * the static value {@link SourceReader._unnamedStr | _unnamedStr}
+     * {@link SourceReader._fullDocumentContentsAt | _fullDocumentContentsAt},
+     * and {@link SourceReader._fullInputFromTo | _fullInputFromTo}, and
+     * the static value {@link SourceReader._unnamedDocument | _unnamedDocument}
      * are meant to be used only by {@link SourcePosition}, to complete their operations, and so
      * they are grouped as Protected.
      *
@@ -1454,77 +1476,79 @@ export class SourceReader {
     // #region Implementation: Internal state {
     // ------------------
     /**
-     * The names with which input strings are identified.
+     * The names with which input documents are identified.
      *
      * **INVARIANT:** is always equal to `Object.keys(_input)`
      * @group Implementation: Internal state
      * @private
      */
-    private _inputsNames: string[];
+    private _documentsNames: string[];
     /**
-     * The actual input, converted to a Record of strings.
+     * The actual input, converted to a Record of document names to document contents.
      *
-     * **INVARIANT:** it is always and object or array (not a string).
+     * **INVARIANT:** it is always and object (not a string).
      * @group Implementation: Internal state
      * @private
      */
-    private _inputs: Record<string, string>;
+    private _documents: Record<string, string>;
     /**
      * The current input index.
      * The current input is that in
-     * `_inputs[_inputsNames[_inputIndex]]` when `_inputIndex < _inputsNames.length`.
+     * `_documents[_documentsNames[_documentIndex]]`
+     * when `_documentIndex < _documentsNames.length`.
      *
-     * **INVARIANT:** `0 <= _inputIndex <= _inputsNames.length`
+     * **INVARIANT:** `0 <= _documentIndex <= _documentsNames.length`
      * @group Implementation: Internal state
      * @private
      */
-    private _inputIndex: number;
+    private _documentIndex: number;
     /**
-     * The current char index in the current input.
+     * The current char index in the current input document.
      *
      * **INVARIANT:**
-     *  if `_inputIndex < _inputsNames.length`
-     *   then `0 <= _charIndex < _inputs[_inputsNames[_inputIndex]].length`
+     *  if `_documentIndex < _documentsNames.length`
+     *   then `0 <= _charIndex < _documents[_documentsNames[_documentIndex]].length`
      * @group Implementation: Internal state
      * @private
      */
     private _charIndex: number;
     /**
-     * A copy of the visible parts of the input.
+     * A copy of the visible parts of the input documents.
      * A part is visible if it has been skipped, and that skip was not silent
      * (see {@link SourceReader.skip | skip}).
      *
      * **INVARIANTS:**
-     *   * it has the same keys as `_inputs`
-     *   * the values of each key are contained in the values of the corresponding key at `_inputs`
+     *   * it has the same keys as `_documents`
+     *   * the values of each key are contained in the values of the corresponding key at
+     *     `_documents`
      * @group Implementation: Internal state
      * @private
      */
-    private _visibleInputs: Record<string, string>;
+    private _visibleDocumentContents: Record<string, string>;
     /**
-     * The current line number in the current input.
+     * The current line number in the current input document.
      *
      * **INVARIANTS:**
      *   * `0 <= _line`
-     *   * if `_inputIndex < _inputsNames.length`
-     *      then `_line < _inputs[_inputsNames[_inputIndex]].length`
+     *   * if `_documentIndex < _documentsNames.length`
+     *      then `_line < _documents[_documentsNames[_documentIndex]].length`
      * @group Implementation: Internal state
      * @private
      */
     private _line: number;
     /**
-     * The current column number in the current input.
+     * The current column number in the current input document.
      *
      * **INVARIANTS:**
      *   * `0 <= _column`<
-     *   * if `_inputIndex < _inputsNames.length`,
-     *      then `_column < _inputs[_inputsNames[_inputIndex]].length`
+     *   * if `_documentIndex < _documentsNames.length`,
+     *      then `_column < _documents[_documentsNames[_documentIndex]].length`
      * @group Implementation: Internal state
      * @private
      */
     private _column: number;
     /**
-     * The active regions in the current input.
+     * The active regions in the current input document.
      * @group Implementation: Internal state
      * @private
      */
@@ -1545,21 +1569,22 @@ export class SourceReader {
     // ------------------
     /**
      * A new {@link SourceReader} is created from the given `input`.
-     * It starts in the first position of the first input string
-     * (if it is empty, starts in an EndOfString position).
+     * It starts in the first position of the first input document
+     * (if it is empty, starts in the end of document position of that document).
      * Line enders must be provided, affecting the calculation of line and column for positions.
-     * If there are no line enders, all strings in the source are assumed as having only one line.
+     * If there are no line enders, all documents in the source input are assumed as having only
+     * one line.
      *
-     * **PRECONDITION:** there is at least one input string.
+     * **PRECONDITION:** there is at least one input document.
      * @param input The source input.
      *              See {@link SourceInput} for explanation and examples of how to understand
      *              this parameter.
      * @param lineEnders A string of which characters will be used to determine the end of a line.
-     * @throws {@link ErrorNoInput} if the arguments are undefined or has no strings.
+     * @throws {@link ErrorNoInput} if the arguments are undefined or has no documents.
      * @group API: Creation
      */
     public constructor(input: SourceInput, lineEnders: string) {
-        // No input string is not a valid option
+        // No input document is not a valid option
         if (typeof input === 'object' && Object.keys(input).length === 0) {
             throw new ErrorNoInput();
         }
@@ -1569,24 +1594,24 @@ export class SourceReader {
         //     expect(Object.keys(input).length).not.toBe(0)
         // ).orThrow(new ErrorNoInput());
 
-        // Fix input to object in case of a string to satisfy `_inputs` invariant.
+        // Fix input to object in case of a string to satisfy `_documents` invariant.
         if (typeof input === 'string') {
             input = [input];
         }
-        // Initialize _inputsNames
-        this._inputsNames = Object.keys(input);
-        this._inputsNames.sort();
-        // Initialize _inputs
+        // Initialize _documentsNames
+        this._documentsNames = Object.keys(input);
+        this._documentsNames.sort();
+        // Initialize _documents
         //   The cast is done to have uniform access.
         //   It is secure, as the only possible types are either a Record or an array of strings.
-        this._inputs = input as Record<string, string>;
-        // Initialize _visibleInputs
-        this._visibleInputs = {};
-        for (const inputName of this._inputsNames) {
-            this._visibleInputs[inputName] = '';
+        this._documents = input as Record<string, string>;
+        // Initialize _visibleDocumentContents
+        this._visibleDocumentContents = {};
+        for (const inputName of this._documentsNames) {
+            this._visibleDocumentContents[inputName] = '';
         }
         // Initialize attributes
-        this._inputIndex = 0;
+        this._documentIndex = 0;
         this._charIndex = 0;
         this._line = 1;
         this._column = 1;
@@ -1606,26 +1631,26 @@ export class SourceReader {
      * @group API: Access
      */
     public atEndOfInput(): boolean {
-        return !this._hasCurrentInput();
+        return !this._hasCurrentDocument();
     }
 
     /**
-     * Answers if there are no more characters to read from the current string.
+     * Answers if there are no more characters to read from the current document.
      * @group API: Access
      */
-    public atEndOfString(): boolean {
-        return this._hasCurrentInput() && !this._hasCurrentCharAtCurrentInput();
+    public atEndOfDocument(): boolean {
+        return this._hasCurrentDocument() && !this._hasCurrentCharAtCurrentDocument();
     }
 
     /**
-     * Gives the current char of the current input.
+     * Gives the current char of the current input document.
      * See {@link SourceReader} for an example.
      *
-     * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfString`
+     * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfDocument`
      * @throws {@link ErrorAtEndOfInputBy} if the source reader is at EndOfInput in the
      *         current position.
-     * @throws {@link ErrorAtEndOfStringBy} if the source reader is at EndOfString in the
-     *         current position.
+     * @throws {@link ErrorAtEndOfDocumentBy} if the source reader is at EndOfDocument in
+     *         the current position.
      * @group API: Access
      */
     public peek(): string {
@@ -1635,19 +1660,19 @@ export class SourceReader {
         // if (this.atEndOfInput()) {
         //     throw new ErrorAtEndOfInputBy('peek', 'SourceReader');
         // }
-        expect(this.atEndOfString())
+        expect(this.atEndOfDocument())
             .toBe(false)
-            .orThrow(new ErrorAtEndOfStringBy('peek', 'SourceReader'));
-        // if (this.atEndOfString()) {
-        //     throw new ErrorAtEndOfStringBy('peek', 'SourceReader');
+            .orThrow(new ErrorAtEndOfDocumentBy('peek', 'SourceReader'));
+        // if (this.atEndOfDocument()) {
+        //     document new ErrorAtEndOfDocumentBy('peekdocument 'SourceReader');
         // }
-        return this._inputContentsAt(this._inputIndex)[this._charIndex];
+        return this._fullDocumentContentsAt(this._documentIndex)[this._charIndex];
     }
 
     /**
-     * Answers if the current input string at the current char starts with the given string.
-     * It does not split the given string across different input strings -- that is, only the
-     * current input string is checked.
+     * Answers if the current input document at the current char starts with the given string.
+     * It does not split the given string across different input documents -- that is, only the
+     * current input document is checked.
      * See {@link SourceReader} documentation for an example.
      * @param str The string to verify the current input, starting at the current char.
      * @group API: Access
@@ -1662,10 +1687,10 @@ export class SourceReader {
             return false;
         }
         // Grab all the contents of the current string
-        const currentString: string = this._inputContentsAt(this._inputIndex);
+        const currentString: string = this._fullDocumentContentsAt(this._documentIndex);
         const i = this._charIndex;
         const j = this._charIndex + str.length;
-        // If atEndOfString is true, j will be greater that the current string length
+        // If atEndOfDocument is true, j will be greater that the current string length
         return j <= currentString.length && currentString.substring(i, j) === str;
     }
 
@@ -1673,7 +1698,7 @@ export class SourceReader {
      * Gives the current position as a {@link KnownSourcePosition}.
      * See {@link SourceReader} documentation for an example.
      *
-     * NOTE: the special positions at the end of each input string, and at the end of the input
+     * NOTE: the special positions at the end of each input document, and at the end of the input
      *       can be accessed by {@link SourceReader.getPosition}, but they cannot be peeked.
      * @group API: Access
      */
@@ -1686,30 +1711,30 @@ export class SourceReader {
                 this._cloneRegions()
             );
         } else {
-            return this.getStringPosition();
+            return this.getDocumentPosition();
         }
     }
 
     /**
-     * Gives the current position as a {@link StringSourcePosition}.
+     * Gives the current position as a {@link DocumentSourcePosition}.
      * See {@link SourceReader} documentation for an example.
      *
      * **PRECONDITION:** `!this.atEndOfInput()`
      * @group API: Access
      */
-    public getStringPosition(): StringSourcePosition {
+    public getDocumentPosition(): DocumentSourcePosition {
         expect(this.atEndOfInput())
             .toBe(false)
-            .orThrow(new ErrorAtEndOfInputBy('getStringPosition', 'SourceReader'));
-        if (this.atEndOfString()) {
-            return new EndOfStringSourcePosition(
+            .orThrow(new ErrorAtEndOfInputBy('getDocumentPosition', 'SourceReader'));
+        if (this.atEndOfDocument()) {
+            return new EndOfDocumentSourcePosition(
                 this,
                 this._line,
                 this._column,
                 this._cloneRegions(),
-                this._inputIndex,
+                this._documentIndex,
                 this._charIndex,
-                this._visibleInputs[this._inputsNames[this._inputIndex]].length
+                this._visibleDocumentContents[this._documentsNames[this._documentIndex]].length
             );
         } else {
             return new DefinedSourcePosition(
@@ -1717,9 +1742,9 @@ export class SourceReader {
                 this._line,
                 this._column,
                 this._cloneRegions(),
-                this._inputIndex,
+                this._documentIndex,
                 this._charIndex,
-                this._visibleInputs[this._inputsNames[this._inputIndex]].length
+                this._visibleDocumentContents[this._documentsNames[this._documentIndex]].length
             );
         }
     }
@@ -1731,17 +1756,21 @@ export class SourceReader {
     // #region API: Modification {
     // ------------------
     /**
-     * Skips the given number of chars at the input string.
+     * Skips the given number of chars in the input, moving forward.
+     * It may skip documents, considering the end of document as a 'virtual' char.
+     *
      * If the argument is a string, only its length is used (i.e. its contents are ignored).
      * Negative numbers do not skip (are equivalent to 0).
-     * At the end of each input string, an additional skip is needed to start the next input string.
-     * This behavior allows the user to be aware of the ending of strings.
-     * Regions are reset at the end of each string (the regions stack is emptied).
+     * At the end of each input document, an additional skip is needed to start the next input
+     * document.
+     * This behavior allows the user to be aware of the ending of documents.
+     * Regions are reset at the end of each documents (the regions stack is emptied).
      *
-     * If the skipping is `silent`, line and column do not change, usually because the input being
+     * If the skipping is _silent_, line and column do not change, usually because the input being
      * read was added automatically to the original input (the default is not silent).
      * If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
-     * The end of each input string cannot be skipped silently.
+     * The end of each input document cannot be skipped silently, and thus for that particular
+     * position, `silently` is ignored.
      *
      * See {@link SourceReader} for an example of visible `skip`s.
      * @param howMuch An indication of how many characters have to be skipped.
@@ -1772,7 +1801,7 @@ export class SourceReader {
      * All contiguous characters from the initial position satisfying the predicate are read.
      * It guarantees that the first character after skipping, if it exists, does not satisfy the
      * predicate.
-     * It does not go beyond the end of the current string, if starting inside one.
+     * It does not go beyond the end of the current document, if starting inside one.
      * @param contCondition A predicate on strings, indicating the chars to read.
      * @param silently A boolean indicating if the reading must be silent.
      *                 If it is not given, it is assumed `false`, that is, a visible read.
@@ -1783,16 +1812,16 @@ export class SourceReader {
      */
     public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
         let strRead = '';
-        if (!this.atEndOfInput() && !this.atEndOfString()) {
+        if (!this.atEndOfInput() && !this.atEndOfDocument()) {
             let ch = this.peek();
             while (contCondition(ch)) {
                 this._skipOne(silently);
                 strRead += ch;
-                if (this.atEndOfString()) {
+                if (this.atEndOfDocument()) {
                     // This check is NOT redundant with the one at the beginning (because of skips),
                     // and guarantees the precondition of the following peek.
-                    // Not necessary to check endOfInput, because skipping inside a string reach
-                    // first the endOfString.
+                    // Not necessary to check the EndOfInput, because skipping inside a document
+                    // reach first the EndOfDocument.
                     break;
                 }
                 ch = this.peek();
@@ -1803,11 +1832,11 @@ export class SourceReader {
 
     /**
      * Pushes a region in the stack of regions.
-     * It does not work at EndOfInput (it does nothing).
+     * It does not work at the EndOfInput or the EndOfDocument (it does nothing).
      * @group API: Modification
      */
     public beginRegion(regionId: string): void {
-        if (!this.atEndOfInput() && !this.atEndOfString()) {
+        if (!this.atEndOfInput() && !this.atEndOfDocument()) {
             this._regions.push(regionId);
         }
     }
@@ -1830,50 +1859,53 @@ export class SourceReader {
     // #region Implementation: Protected for Source Positions {
     // ------------------
     /**
-     * Gives the name of the input string at the given index.
+     * Gives the name of the input document at the given index.
      * It is intended to be used only by {@link SourcePosition}.
      *
-     * **PRECONDITION:** `index <= this._inputsNames.length` (not verified)
+     * **PRECONDITION:** `index <= this._documentsNames.length` (not verified)
      * As it is a protected operation, it is not expectable to receive invalid indexes.
      * It is not taken into account which are the results if that happens.
      * @group Implementation: Protected for Source Positions
      * @private
      */
-    public _inputNameAt(index: number): string {
-        if (this._inputsNames.length === 1 && this._inputsNames[index] === '0') {
+    public _documentNameAt(index: number): string {
+        if (this._documentsNames.length === 1 && this._documentsNames[index] === '0') {
+            // There is only one unnamed document
             return '';
         } else {
-            return this._inputsNames[index];
+            return this._documentsNames[index];
         }
     }
 
     /**
-     * Gives the contents of the input string at the given index.
+     * Gives the contents of the input document at the given index,
+     * both visible and non-visible.
      * It is intended to be used only by {@link SourcePosition}.
      *
-     * **PRECONDITION:** `index < this._inputsNames.length` (not verified)
+     * **PRECONDITION:** `index < this._documentsNames.length` (not verified)
+     *
      * As it is a protected operation, it is not expectable to receive invalid indexes.
      * It is not taken into account which are the results if that happens.
      * @group Implementation: Protected for Source Positions
      * @private
      */
-    public _inputContentsAt(index: number): string {
-        return this._inputs[this._inputsNames[index]];
+    public _fullDocumentContentsAt(index: number): string {
+        return this._documents[this._documentsNames[index]];
     }
 
     /**
-     * Gives the contents of the visible input string at the given index.
+     * Gives the contents of the visible input document at the given index.
      * It is intended to be used only by {@link SourcePosition}.
      *
-     * PRECONDITION: `index < this._inputsNames.length` (not verified).
+     * PRECONDITION: `index < this._documentsNames.length` (not verified).
      *
      * As it is a protected operation, it is not expectable to receive invalid indexes.
      * It is not taken into account which are the results if that happens.
      * @group Implementation: Protected for Source Positions
      * @private
      */
-    public _visibleInputContentsAt(index: number): string {
-        return this._visibleInputs[this._inputsNames[index]];
+    public _visibleDocumentContentsAt(index: number): string {
+        return this._visibleDocumentContents[this._documentsNames[index]];
     }
 
     /**
@@ -1885,8 +1917,8 @@ export class SourceReader {
      * @group Implementation: Protected for Source Positions
      * @private
      */
-    public _inputFromTo(from: KnownSourcePosition, to: KnownSourcePosition): string {
-        return this._inputFromToIn(from, to);
+    public _fullInputFromTo(from: KnownSourcePosition, to: KnownSourcePosition): string {
+        return this._inputFromToIn(from, to, false);
     }
 
     /**
@@ -1909,12 +1941,12 @@ export class SourceReader {
     // #region Implementation: Auxiliaries {
     // ------------------
     /**
-     * Skips one char at the input string.
+     * Skips one char at the input.
      *
      * If the skipping is `silent`, line and column do not change, usually because the input being
      * read was added automatically to the original input (the default is not silent).
      * If the skip is not silent, the input is visible, and thus it is added to the visible inputs.
-     * Skip cannot be silent on the EndOfString, so at EndOfString silent flag is ignored.
+     * Skip cannot be silent on the EndOfDocument, so at EndOfDocument silent flag is ignored.
      *
      * Its used by API operations to skip one or more characters.
      *
@@ -1924,20 +1956,23 @@ export class SourceReader {
      * @private
      */
     private _skipOne(silently: boolean): void {
-        if (this.atEndOfString()) {
-            // Starts a new line and column
+        if (this.atEndOfDocument()) {
+            // document a new line and column
             this._line = 1;
             this._column = 1;
-            // perform skip to new string
-            this._inputIndex++;
+            // perform skip to new document
+            this._documentIndex++;
             this._charIndex = 0;
+            // reset regions
             this._regions = [];
         } else {
-            // It has to be done before adjusting the input and char index, because that changes the
-            // current char and it may change the line and column.
+            // It has to be done before adjusting the input and char index, because doing that
+            // changes the current char and it may change the line and column, affecting the
+            // peeking.
             // Precondition satisfied: !atEndOfInput() && !atEndOfSting().
             if (!silently) {
-                this._visibleInputs[this._inputsNames[this._inputIndex]] += this.peek();
+                this._visibleDocumentContents[this._documentsNames[this._documentIndex]] +=
+                    this.peek();
                 if (this._isEndOfLine(this.peek())) {
                     this._line++;
                     this._column = 1;
@@ -1968,70 +2003,72 @@ export class SourceReader {
         let charFrom: number;
         // Distinguish between the two subclasses of KnownSourcePosition
         if (from.isEndOfInput()) {
-            inputFrom = this._inputsNames.length - 1;
+            inputFrom = this._documentsNames.length - 1;
             charFrom = visible
-                ? this._visibleInputContentsAt(inputFrom).length
-                : this._inputContentsAt(inputFrom).length;
+                ? this._visibleDocumentContentsAt(inputFrom).length
+                : this._fullDocumentContentsAt(inputFrom).length;
         } else {
             // As from is not EndOfInput, it is safe to cast it down.
-            inputFrom = (from as StringSourcePosition)._theInputIndex;
+            inputFrom = (from as DocumentSourcePosition)._theDocumentIndex;
             charFrom = visible
-                ? (from as StringSourcePosition)._theVisibleCharIndex
-                : (from as StringSourcePosition)._theCharIndex;
+                ? (from as DocumentSourcePosition)._theVisibleCharIndex
+                : (from as DocumentSourcePosition)._theCharIndex;
         }
         let inputTo: number;
         let charTo: number;
         // Distinguish between the two subclasses of KnownSourcePosition
         if (to.isEndOfInput()) {
-            inputTo = this._inputsNames.length - 1;
+            inputTo = this._documentsNames.length - 1;
             charTo = visible
-                ? this._visibleInputContentsAt(inputTo).length
-                : this._inputContentsAt(inputTo).length;
+                ? this._visibleDocumentContentsAt(inputTo).length
+                : this._fullDocumentContentsAt(inputTo).length;
         } else {
             // As to is not EndOfInput, it is safe to cast it down.
-            inputTo = (to as StringSourcePosition)._theInputIndex;
+            inputTo = (to as DocumentSourcePosition)._theDocumentIndex;
             charTo = visible
-                ? (to as StringSourcePosition)._theVisibleCharIndex
-                : (to as StringSourcePosition)._theCharIndex;
+                ? (to as DocumentSourcePosition)._theVisibleCharIndex
+                : (to as DocumentSourcePosition)._theCharIndex;
         }
         // The construction of the contents that are required.
         if (inputFrom === inputTo && charFrom <= charTo) {
             return visible
-                ? this._visibleInputContentsAt(inputFrom).slice(charFrom, charTo)
-                : this._inputContentsAt(inputFrom).slice(charFrom, charTo);
+                ? this._visibleDocumentContentsAt(inputFrom).slice(charFrom, charTo)
+                : this._fullDocumentContentsAt(inputFrom).slice(charFrom, charTo);
         } else if (inputFrom < inputTo) {
             let slice: string = visible
-                ? this._visibleInputContentsAt(inputFrom).slice(charFrom)
-                : this._inputContentsAt(inputFrom).slice(charFrom);
+                ? this._visibleDocumentContentsAt(inputFrom).slice(charFrom)
+                : this._fullDocumentContentsAt(inputFrom).slice(charFrom);
             for (let i = inputFrom + 1; i < inputTo; i++) {
-                slice += visible ? this._visibleInputContentsAt(i) : this._inputContentsAt(i);
+                slice += visible
+                    ? this._visibleDocumentContentsAt(i)
+                    : this._fullDocumentContentsAt(i);
             }
             slice += visible
-                ? this._visibleInputContentsAt(inputTo).slice(0, charTo)
-                : this._inputContentsAt(inputTo).slice(0, charTo);
+                ? this._visibleDocumentContentsAt(inputTo).slice(0, charTo)
+                : this._fullDocumentContentsAt(inputTo).slice(0, charTo);
             return slice;
         }
         return ''; // Positions inverted (to before from)
     }
 
     /**
-     * Answers if there are still input strings to be read.
+     * Answers if there are still input documents to be read.
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _hasCurrentInput(): boolean {
-        return this._inputIndex < this._inputsNames.length;
+    private _hasCurrentDocument(): boolean {
+        return this._documentIndex < this._documentsNames.length;
     }
 
     /**
-     * Answers that the current input has a current char.
+     * Answers if there are still chars in the current document.
      *
-     * **PRECONDITION:** `this._hasCurrentInput()`
+     * **PRECONDITION:** `this._hasCurrentDocument()`
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _hasCurrentCharAtCurrentInput(): boolean {
-        return this._charIndex < this._inputContentsAt(this._inputIndex).length;
+    private _hasCurrentCharAtCurrentDocument(): boolean {
+        return this._charIndex < this._fullDocumentContentsAt(this._documentIndex).length;
     }
 
     /**
