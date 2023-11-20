@@ -1,21 +1,22 @@
 {
   "name": "@gobstones/gobstones-core",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
   "author": "Alan Rodas Bonjour <alanrodas@gmail.com>",
   "license": "AGPL-3.0",
   "keywords": ["Gobstones", "Library", "Core", "Utilities"],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "typings": "./dist/typings/index.d.ts",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "typings": "./dist/esm/typings/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    "require": "./dist/cjs/index.cjs",
+    "import": "./dist/esm/index.mjs"
   },
   "packageManager": "npm@9.2.0",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "is-ci || husky install",
     "prepack": "gobstones-scripts run build",
     "start": "gobstones-scripts run",
     "dev": "gobstones-scripts run dev",
@@ -36,7 +37,7 @@
     "commander": "^11.1.0"
   },
   "devDependencies": {
-    "@gobstones/gobstones-scripts": "^0.5.0",
+    "@gobstones/gobstones-scripts": "^0.5.3",
     "husky": "^8.0.2"
   }
 }

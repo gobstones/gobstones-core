@@ -17,8 +17,6 @@ jobs:
                   node-version: '20'
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-            - name: Remove Husky on prepare
-              run: npm pkg delete scripts.prepare
             - name: Installing project dependencies
               run: npm install
             - name: Building the project

@@ -1,8 +1,22 @@
+## <small>0.4.6 (2023-11-21)</small>
+
+* build: update gobstones-core to latest version of scripts ([2949b1c](https://github.com/gobstones/gobstones-core/commit/2949b1c)), closes [#19](https://github.com/gobstones/gobstones-core/issues/19)
+
+
+
+## <small>0.4.6 (2023-11-21)</small>
+
+-   build: update gobstones-core to latest version of scripts ([0a29c20](https://github.com/gobstones/gobstones-core/commit/0a29c20)), closes [#19](https://github.com/gobstones/gobstones-core/issues/19)
+
+## <small>0.4.6 (2023-11-21)</small>
+
+-   build: update gobstones-core to latest version of scripts ([0a29c20](https://github.com/gobstones/gobstones-core/commit/0a29c20)), closes [#19](https://github.com/gobstones/gobstones-core/issues/19)
+
+## <small>0.4.6 (2023-11-20)</small>
+
 ## <small>0.4.5 (2023-11-11)</small>
 
-* chore: update scripts to version 5 ([4e2f67d](https://github.com/gobstones/gobstones-core/commit/4e2f67d))
-
-
+-   chore: update scripts to version 5 ([4e2f67d](https://github.com/gobstones/gobstones-core/commit/4e2f67d))
 
 ## <small>0.4.4 (2023-11-10)</small>
 
