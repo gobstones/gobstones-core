@@ -134,10 +134,10 @@ Just use this example to understand the behavior of operations
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Implementation: Auxiliaries</h3>
 <div class="tsd-index-list"><a href="SourceReader.SourceReader.html#_cloneRegions" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_clone<wbr/>Regions</span></a>
+<a href="SourceReader.SourceReader.html#_hasMoreCharsAtCurrentDocument" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span></a>
+<a href="SourceReader.SourceReader.html#_hasMoreDocuments" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>More<wbr/>Documents</span></a>
 <a href="SourceReader.SourceReader.html#_inputFromToIn" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>From<wbr/>To<wbr/>In</span></a>
 <a href="SourceReader.SourceReader.html#_isEndOfLine" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_is<wbr/>End<wbr/>Of<wbr/>Line</span></a>
-<a href="SourceReader.SourceReader.html#_noMoreCharsAtCurrentDocument" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_no<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span></a>
-<a href="SourceReader.SourceReader.html#_noMoreDocuments" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_no<wbr/>More<wbr/>Documents</span></a>
 <a href="SourceReader.SourceReader.html#_skipOne" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_skip<wbr/>One</span></a>
 </div></section>
 <section class="tsd-index-section">
@@ -471,6 +471,25 @@ position and do not change with changes in reader state.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_hasMoreCharsAtCurrentDocument" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_has<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span><a href="#_hasMoreCharsAtCurrentDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_hasMoreCharsAtCurrentDocument._hasMoreCharsAtCurrentDocument-1"><span class="tsd-kind-call-signature">_has<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_hasMoreCharsAtCurrentDocument._hasMoreCharsAtCurrentDocument-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>Answers if there are more chars in the current document.</p>
+<p><strong>PRECONDITION:</strong> <code>this._hasMoreDocuments()</code></p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_hasMoreDocuments" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_has<wbr/>More<wbr/>Documents</span><a href="#_hasMoreDocuments" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_hasMoreDocuments._hasMoreDocuments-1"><span class="tsd-kind-call-signature">_has<wbr/>More<wbr/>Documents</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_hasMoreDocuments._hasMoreDocuments-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
+<div class="tsd-comment tsd-typography"><p>Answers if there are more input documents to be read.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_inputFromToIn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_input<wbr/>From<wbr/>To<wbr/>In</span><a href="#_inputFromToIn" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -508,25 +527,6 @@ to the configuration of the reader.</p>
 <ul class="tsd-parameter-list">
 <li>
 <h5><span class="tsd-kind-parameter">ch</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_noMoreCharsAtCurrentDocument" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_no<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span><a href="#_noMoreCharsAtCurrentDocument" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_noMoreCharsAtCurrentDocument._noMoreCharsAtCurrentDocument-1"><span class="tsd-kind-call-signature">_no<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_noMoreCharsAtCurrentDocument._noMoreCharsAtCurrentDocument-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Answers if there are no more chars in the current document.</p>
-<p><strong>PRECONDITION:</strong> <code>!this._noCurrentDocuments()</code></p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-<div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="_noMoreDocuments" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_no<wbr/>More<wbr/>Documents</span><a href="#_noMoreDocuments" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_noMoreDocuments._noMoreDocuments-1"><span class="tsd-kind-call-signature">_no<wbr/>More<wbr/>Documents</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_noMoreDocuments._noMoreDocuments-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description"><code class="tsd-tag ts-flagPrivate">Private</code> 
-<div class="tsd-comment tsd-typography"><p>Answers if there are no more input documents to be read.</p>
-</div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_skipOne" class="tsd-anchor"></a>
@@ -772,10 +772,10 @@ It is intended to be used only by <a href="SourceReader.KnownSourcePosition.html
 <li><a href="#UnknownPosition" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>Unknown<wbr/>Position</span></a></li>
 <li><a href="#_implementationDetails" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_implementation<wbr/>Details</span></a></li>
 <li><a href="#_cloneRegions" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_clone<wbr/>Regions</span></a></li>
+<li><a href="#_hasMoreCharsAtCurrentDocument" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span></a></li>
+<li><a href="#_hasMoreDocuments" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_has<wbr/>More<wbr/>Documents</span></a></li>
 <li><a href="#_inputFromToIn" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_input<wbr/>From<wbr/>To<wbr/>In</span></a></li>
 <li><a href="#_isEndOfLine" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_is<wbr/>End<wbr/>Of<wbr/>Line</span></a></li>
-<li><a href="#_noMoreCharsAtCurrentDocument" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_no<wbr/>More<wbr/>Chars<wbr/>At<wbr/>Current<wbr/>Document</span></a></li>
-<li><a href="#_noMoreDocuments" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_no<wbr/>More<wbr/>Documents</span></a></li>
 <li><a href="#_skipOne" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_skip<wbr/>One</span></a></li>
 <li><a href="#_charIndex" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_char<wbr/>Index</span></a></li>
 <li><a href="#_column" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>_column</span></a></li>

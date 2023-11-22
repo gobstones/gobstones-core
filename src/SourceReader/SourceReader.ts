@@ -1631,7 +1631,7 @@ export class SourceReader {
      * @group API: Access
      */
     public atEndOfInput(): boolean {
-        return this._noMoreDocuments();
+        return !this._hasMoreDocuments();
     }
 
     /**
@@ -1639,8 +1639,9 @@ export class SourceReader {
      * @group API: Access
      */
     public atEndOfDocument(): boolean {
-        // Precondition of second condition guaranteed if the first is true
-        return !this._noMoreDocuments() && this._noMoreCharsAtCurrentDocument();
+        // Precondition of second condition is guaranteed when the first is true
+        // so, by shortcircuit, condition is total
+        return this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument();
     }
 
     /**
@@ -1656,17 +1657,17 @@ export class SourceReader {
      */
     public peek(): string {
         // Optimized by manually inlining:
-        // expect(this.atEndOfInput())
+        //    expect(this.atEndOfInput())
         // ===     (inlining)
-        expect(this._noMoreDocuments())
+        expect(!this._hasMoreDocuments())
             .toBe(false)
             .orThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
         // Optimized by manually inlining and simplifying:
-        // expect(this.atEndOfDocument())
+        //    expect(this.atEndOfDocument())
         // ===     (inlining)
-        // expect(!this._noMoreDocuments() && this._noMoreCharsAtCurrentDocument())
-        // ===     (because this._noMoreDocuments() is false)
-        expect(this._noMoreCharsAtCurrentDocument())
+        //    expect(this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument())
+        // ===     (because this._hasMoreDocuments() is true, by previous expect)
+        expect(!this._hasMoreCharsAtCurrentDocument())
             .toBe(false)
             .orThrow(new ErrorAtEndOfDocumentBy('peek', 'SourceReader'));
         return this._fullDocumentContentsAt(this._documentIndex)[this._charIndex];
@@ -1686,7 +1687,10 @@ export class SourceReader {
             return true;
         }
         // Needed as there is no current input if it is true
-        if (this.atEndOfInput()) {
+        // Optimized by manually inlining:
+        //    if (this.atEndOfInput()) {
+        // ===     (inlining)
+        if (!this._hasMoreDocuments()) {
             return false;
         }
         // Grab all the contents of the current string
@@ -1706,7 +1710,10 @@ export class SourceReader {
      * @group API: Access
      */
     public getPosition(): KnownSourcePosition {
-        if (this.atEndOfInput()) {
+        // Optimized by manually inlining:
+        //    if (this.atEndOfInput()) {
+        // ===     (inlining)
+        if (!this._hasMoreDocuments()) {
             return new EndOfInputSourcePosition(
                 this,
                 this._line,
@@ -1726,10 +1733,18 @@ export class SourceReader {
      * @group API: Access
      */
     public getDocumentPosition(): DocumentSourcePosition {
-        expect(this.atEndOfInput())
+        // Optimized by manually inlining:
+        //    expect(this.atEndOfInput())
+        // ===     (inlining)
+        expect(!this._hasMoreDocuments())
             .toBe(false)
             .orThrow(new ErrorAtEndOfInputBy('getDocumentPosition', 'SourceReader'));
-        if (this.atEndOfDocument()) {
+        // Optimized by manually inlining:
+        //    if (this.atEndOfDocument()) {
+        // ===     (inlining)
+        //    expect(this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument())
+        // ===     (because this._hasMoreDocuments() is true by previous expect)
+        if (!this._hasMoreCharsAtCurrentDocument()) {
             return new EndOfDocumentSourcePosition(
                 this,
                 this._line,
@@ -1793,7 +1808,12 @@ export class SourceReader {
         } else {
             cant = howMuch ?? 1;
         }
-        for (let i = 0; i < cant && !this.atEndOfInput(); i++) {
+        // Optimized by manually inlining:
+        //    for (let i = 0; i < cant && !this.atEndOfInput(); i++) {
+        // ===     (inlining)
+        //    for (let i = 0; i < cant && !(!this._hasMoreDocuments()); i++) {
+        // ===     (double negation)
+        for (let i = 0; i < cant && this._hasMoreDocuments(); i++) {
             this._skipOne(silently);
         }
     }
@@ -1815,12 +1835,34 @@ export class SourceReader {
      */
     public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
         let strRead = '';
-        if (!this.atEndOfInput() && !this.atEndOfDocument()) {
+        // Optimized by manually inlining:
+        //    if (!this.atEndOfInput() && !this.atEndOfDocument()) {
+        // ===     (inlining)
+        //    if (!(!this._hasMoreDocuments()) && !this.atEndOfDocument()) {
+        // ===     (double negation)
+        //    if (this._hasMoreDocuments() && !this.atEndOfDocument()) {
+        // ===     (inlining)
+        //    if (this._hasMoreDocuments() &&
+        //       !(this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument())) {
+        // ===     (de Morgan)
+        //    if (this._hasMoreDocuments() &&
+        //       (!this._hasMoreDocuments() || !(!this._hasMoreCharsAtCurrentDocument()))) {
+        // ===     (double negation)
+        //    if (this._hasMoreDocuments() &&
+        //       (!this._hasMoreDocuments() || this._hasMoreCharsAtCurrentDocument())) {
+        // ===     (first condition of || is false, so second is needed to be true)
+        if (this._hasMoreDocuments() && this._hasMoreCharsAtCurrentDocument()) {
             let ch = this.peek();
             while (contCondition(ch)) {
                 this._skipOne(silently);
                 strRead += ch;
-                if (this.atEndOfDocument()) {
+                // Optimized by manually inlining:
+                //    if (this.atEndOfDocument()) {
+                // ===     (inlining)
+                //    if (this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument()) {
+                // ===     (as !this.atEndOfDocument() before skipping 1,
+                //          there are still documents, and first condition is true)
+                if (!this._hasMoreCharsAtCurrentDocument()) {
                     // This check is NOT redundant with the one at the beginning (because of skips),
                     // and guarantees the precondition of the following peek.
                     // Not necessary to check the EndOfInput, because skipping inside a document
@@ -1839,7 +1881,23 @@ export class SourceReader {
      * @group API: Modification
      */
     public beginRegion(regionId: string): void {
-        if (!this.atEndOfInput() && !this.atEndOfDocument()) {
+        // Optimized by manually inlining:
+        //    if (!this.atEndOfInput() && !this.atEndOfDocument()) {
+        // ===     (inlining)
+        //    if (!(!this._hasMoreDocuments()) && !this.atEndOfDocument()) {
+        // ===     (double negation)
+        //    if (this._hasMoreDocuments() && !this.atEndOfDocument()) {
+        // ===     (inlining)
+        //    if (this._hasMoreDocuments() &&
+        //       !(this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument())) {
+        // ===     (de Morgan)
+        //    if (this._hasMoreDocuments() &&
+        //       (!this._hasMoreDocuments() || !(!this._hasMoreCharsAtCurrentDocument()))) {
+        // ===     (double negation)
+        //    if (this._hasMoreDocuments() &&
+        //       (!this._hasMoreDocuments() || this._hasMoreCharsAtCurrentDocument())) {
+        // ===     (first condition of || is false, so second is needed to be true)
+        if (this._hasMoreDocuments() && this._hasMoreCharsAtCurrentDocument()) {
             this._regions.push(regionId);
         }
     }
@@ -1959,7 +2017,12 @@ export class SourceReader {
      * @private
      */
     private _skipOne(silently: boolean): void {
-        if (this.atEndOfDocument()) {
+        // Optimized by manually inlining:
+        //    if (this.atEndOfDocument()) {
+        // ===     (inlining)
+        //    expect(this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument())
+        // ===     (because this._hasMoreDocuments() is implied by the precondition)
+        if (!this._hasMoreCharsAtCurrentDocument()) {
             // document a new line and column
             this._line = 1;
             this._column = 1;
@@ -2055,23 +2118,23 @@ export class SourceReader {
     }
 
     /**
-     * Answers if there are no more input documents to be read.
+     * Answers if there are more input documents to be read.
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _noMoreDocuments(): boolean {
-        return this._documentIndex >= this._documentsNames.length;
+    private _hasMoreDocuments(): boolean {
+        return this._documentIndex < this._documentsNames.length;
     }
 
     /**
-     * Answers if there are no more chars in the current document.
+     * Answers if there are more chars in the current document.
      *
-     * **PRECONDITION:** `!this._noCurrentDocuments()`
+     * **PRECONDITION:** `this._hasMoreDocuments()`
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _noMoreCharsAtCurrentDocument(): boolean {
-        return this._charIndex >= this._fullDocumentContentsAt(this._documentIndex).length;
+    private _hasMoreCharsAtCurrentDocument(): boolean {
+        return this._charIndex < this._fullDocumentContentsAt(this._documentIndex).length;
     }
 
     // /**
