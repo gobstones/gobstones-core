@@ -1631,7 +1631,7 @@ export class SourceReader {
      * @group API: Access
      */
     public atEndOfInput(): boolean {
-        return !this._hasCurrentDocument();
+        return this._noMoreDocuments();
     }
 
     /**
@@ -1639,7 +1639,8 @@ export class SourceReader {
      * @group API: Access
      */
     public atEndOfDocument(): boolean {
-        return this._hasCurrentDocument() && !this._hasCurrentCharAtCurrentDocument();
+        // Precondition of second condition guaranteed if the first is true
+        return !this._noMoreDocuments() && this._noMoreCharsAtCurrentDocument();
     }
 
     /**
@@ -1654,18 +1655,20 @@ export class SourceReader {
      * @group API: Access
      */
     public peek(): string {
-        expect(this.atEndOfInput())
+        // Optimized by manually inlining:
+        // expect(this.atEndOfInput())
+        // ===     (inlining)
+        expect(this._noMoreDocuments())
             .toBe(false)
             .orThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
-        // if (this.atEndOfInput()) {
-        //     throw new ErrorAtEndOfInputBy('peek', 'SourceReader');
-        // }
-        expect(this.atEndOfDocument())
+        // Optimized by manually inlining and simplifying:
+        // expect(this.atEndOfDocument())
+        // ===     (inlining)
+        // expect(!this._noMoreDocuments() && this._noMoreCharsAtCurrentDocument())
+        // ===     (because this._noMoreDocuments() is false)
+        expect(this._noMoreCharsAtCurrentDocument())
             .toBe(false)
             .orThrow(new ErrorAtEndOfDocumentBy('peek', 'SourceReader'));
-        // if (this.atEndOfDocument()) {
-        //     document new ErrorAtEndOfDocumentBy('peekdocument 'SourceReader');
-        // }
         return this._fullDocumentContentsAt(this._documentIndex)[this._charIndex];
     }
 
@@ -2052,24 +2055,44 @@ export class SourceReader {
     }
 
     /**
-     * Answers if there are still input documents to be read.
+     * Answers if there are no more input documents to be read.
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _hasCurrentDocument(): boolean {
-        return this._documentIndex < this._documentsNames.length;
+    private _noMoreDocuments(): boolean {
+        return this._documentIndex >= this._documentsNames.length;
     }
 
     /**
-     * Answers if there are still chars in the current document.
+     * Answers if there are no more chars in the current document.
      *
-     * **PRECONDITION:** `this._hasCurrentDocument()`
+     * **PRECONDITION:** `!this._noCurrentDocuments()`
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _hasCurrentCharAtCurrentDocument(): boolean {
-        return this._charIndex < this._fullDocumentContentsAt(this._documentIndex).length;
+    private _noMoreCharsAtCurrentDocument(): boolean {
+        return this._charIndex >= this._fullDocumentContentsAt(this._documentIndex).length;
     }
+
+    // /**
+    //  * Answers if there are still input documents to be read.
+    //  * @group Implementation: Auxiliaries
+    //  * @private
+    //  */
+    // private _hasCurrentDocument(): boolean {
+    //     return this._documentIndex < this._documentsNames.length;
+    // }
+
+    // /**
+    //  * Answers if there are still chars in the current document.
+    //  *
+    //  * **PRECONDITION:** `this._hasCurrentDocument()`
+    //  * @group Implementation: Auxiliaries
+    //  * @private
+    //  */
+    // private _hasCurrentCharAtCurrentDocument(): boolean {
+    //     return this._charIndex < this._fullDocumentContentsAt(this._documentIndex).length;
+    // }
 
     /**
      * Answers if the given char is recognized as an end of line indicator, according
