@@ -12,7 +12,35 @@
 import commander, { program } from 'commander';
 
 import { Translator } from './Translations';
+import { WithRequired } from './Types';
 import fs from 'fs';
+
+/**
+ * The general texts that a CLI app uses.
+ * This include the description texts (Or a description key if a {@link Translator} is provided)
+ * that are used a the description of the different parts of the CLI.
+ * The `name` and the `versionNumber` are expected to be the app name (No translation
+ * is used, as the name should be the same through all the app), and the `versionNumber`
+ * should be the version is the major.minor.patch.
+ *
+ * @group API: Options
+ */
+export interface CLIGeneralTexts {
+    /** The application name */
+    name: string;
+    /** The application version number in semVer */
+    versionNumber: string;
+    /** A text displayed when showing the application's help */
+    help: string;
+    /** The language used by the application */
+    language?: string;
+    /** The error message displayed when using a wrong language */
+    languageError?: string;
+    /** Text used by the tool */
+    tool: string;
+    /** The text displayed when showing the version of the application */
+    version: string;
+}
 
 /**
  * The general flags that a CLI app accepts, when configured to used them.
@@ -47,22 +75,14 @@ export interface CLIAppOptions {
      * is used, as the name should be the same through all the app), and the `versionNumber`
      * should be the version is the major.minor.patch.
      */
-    texts: {
-        name: string;
-        versionNumber: string;
-        help: string;
-        language?: string;
-        languageError?: string;
-        tool: string;
-        version: string;
-    };
+    texts: CLIGeneralTexts;
 
     /**
      * A {@link Translator} used to translate the tool to different locales, both when
      * called with a language flag, and automatically at startup by auto-detecting
      * the user language by checking OS Environment variables.
      */
-    translator?: Translator<any>;
+    translator?: Translator<Record<string, any>>;
 
     /**
      * The flag names to use in this application, if the flags differ in any way from
@@ -75,7 +95,7 @@ export interface CLIAppOptions {
      * * input file for a command: -i, --in
      * * output file for a command: -o, --out
      */
-    flags: CLIGeneralFlags;
+    flags?: CLIGeneralFlags;
 }
 
 /**
@@ -101,7 +121,7 @@ export class CLICommandBuilder {
     protected currentArgs: any[];
     protected currentOptions: any;
     protected onReadErrorMsg: string;
-    protected options: CLIAppOptions;
+    protected options: WithRequired<CLIAppOptions, 'flags'>;
     protected isSubcommand: boolean;
 
     public constructor(
@@ -109,12 +129,8 @@ export class CLICommandBuilder {
         options: CLIAppOptions,
         isSubcommand: boolean = false
     ) {
-        this.program = cmdrProgram;
-        this.options = Object.assign({}, options);
-        this.isSubcommand = isSubcommand;
-
         // Set default flags, or use custom ones
-        this.options.flags = options.flags ?? {
+        const defaultFlags = {
             help: {
                 short: CLICommandBuilder.SHORT_HELP_FLAG,
                 long: CLICommandBuilder.LONG_HELP_FLAG
@@ -136,6 +152,13 @@ export class CLICommandBuilder {
                 long: CLICommandBuilder.LONG_OUTPUT_FLAG
             }
         };
+
+        this.program = cmdrProgram;
+        this.options = Object.assign({ ...defaultFlags }, options) as WithRequired<
+            CLIAppOptions,
+            'flags'
+        >;
+        this.isSubcommand = isSubcommand;
     }
 
     /**
@@ -508,3 +531,20 @@ export type cli = CLIApp;
  * @group API: Main
  */
 export const cli = (options: CLIAppOptions): CLIApp => new CLIApp(options);
+
+/**
+ * Retrieves an object with the data from a JSON file
+ * after reading the same from the command line.
+ * This function is useful here as most times you will
+ * want to retrieve data from the package.json file.
+ *
+ * @param fileLocation The location of the file to read.
+ */
+export function readJSON(fileLocation: string): any {
+    try {
+        const fileContents = fs.readFileSync(fileLocation);
+        return JSON.parse(fileContents.toString());
+    } catch {
+        return {};
+    }
+}

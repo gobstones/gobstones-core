@@ -1,6 +1,6 @@
 {
   "name": "@gobstones/gobstones-core",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
@@ -11,8 +11,32 @@
   "module": "./dist/esm/index.mjs",
   "typings": "./dist/esm/typings/index.d.ts",
   "exports": {
-    "require": "./dist/cjs/index.cjs",
-    "import": "./dist/esm/index.mjs"
+    ".": {
+      "import": {
+        "types": "./dist/esm/typings/index.d.ts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/typings/index.d.ts",
+        "default": "./dist/cjs/index.cjs"
+      }
+    },
+    "./cli": {
+      "import": {
+        "types": "./dist/esm/cli/typings/cli.d.ts",
+        "default": "./dist/esm/cli/cli.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/cli/typings/cli.d.ts",
+        "default": "./dist/cjs/cli/cli.cjs"
+      }
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "cli": ["./dist/esm/typings/cli.d.ts"],
+      ".": ["./dist/esm/typings/index.d.ts"]
+    }
   },
   "packageManager": "npm@9.2.0",
   "scripts": {
@@ -37,7 +61,7 @@
     "commander": "^11.1.0"
   },
   "devDependencies": {
-    "@gobstones/gobstones-scripts": "^0.5.3",
+    "@gobstones/gobstones-scripts": "^0.5.4",
     "husky": "^8.0.2"
   }
 }

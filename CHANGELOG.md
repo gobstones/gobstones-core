@@ -1,8 +1,11 @@
+## <small>0.4.7 (2023-11-23)</small>
+
+
+
+
 ## <small>0.4.6 (2023-11-21)</small>
 
-* build: update gobstones-core to latest version of scripts ([2949b1c](https://github.com/gobstones/gobstones-core/commit/2949b1c)), closes [#19](https://github.com/gobstones/gobstones-core/issues/19)
-
-
+-   build: update gobstones-core to latest version of scripts ([2949b1c](https://github.com/gobstones/gobstones-core/commit/2949b1c)), closes [#19](https://github.com/gobstones/gobstones-core/issues/19)
 
 ## <small>0.4.6 (2023-11-21)</small>
 

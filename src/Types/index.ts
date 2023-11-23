@@ -13,4 +13,4 @@
 
 export * from './BiMap';
 export * from './Subset';
-export * from '../Functions/deepStringAssign';
+export * from './WithRequired';

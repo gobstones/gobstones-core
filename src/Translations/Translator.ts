@@ -5,11 +5,11 @@
 import { flatten } from '../Functions/flatten';
 
 /**
- * A Translation consist of an object that hold the state of the current
+ * A Translator consist of an object that hold the state of the current
  * locale being used, and allows for switching between different locales
  * and obtain translated strings.
  *
- * The translation expects a locale to be given as the language definition,
+ * The translator expects a locale to be given as the language definition,
  * and, if constructed with the flatten options, flattens it to allow
  * dot notation access to the different strings in the locale object.
  *
