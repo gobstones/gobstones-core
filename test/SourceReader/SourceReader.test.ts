@@ -2,7 +2,7 @@
 import * as SR from '../../src/SourceReader';
 
 import {
-    ErrorAtEndOfStringBy,
+    ErrorAtEndOfDocumentBy,
     ErrorAtEndOfInputBy,
     ErrorNoInput
 } from '../../src/SourceReader/SourceReaderErrors';
@@ -12,8 +12,9 @@ import { fail } from 'assert';
 import { SourceReaderIntl as intl } from '../../src/SourceReader/translations';
 
 // TO BE DONE:
-//  - add tests to verify that skipping over end of string forces regions to []
-//  - add tests to verify that (!atEndOfString() && peek() === CHR) is equivalent to startsWith(CHR)
+//  - add tests to verify that skipping over end of document forces regions to []
+//  - add tests to verify that (!atEndOfDocument() && peek() === CHR)
+//    is equivalent to startsWith(CHR)
 //  - check "Comments about the test", at the end (VARIATIONS and OTHER THINGS)
 
 // ===============================================
@@ -25,7 +26,7 @@ const defaultLineEnders: string = '\n';
 
 let pos: SR.KnownSourcePosition;
 let pos2: SR.KnownSourcePosition;
-let spos2: SR.StringSourcePosition;
+let spos2: SR.DocumentSourcePosition;
 let lin: number;
 let col: number;
 let regs: string[];
@@ -37,7 +38,7 @@ let reader: SR.SourceReader;
 let reader2: SR.SourceReader;
 
 let endOfInput: boolean;
-let endOfString: boolean;
+let endOfDocument: boolean;
 let peeked: string;
 let read: string;
 let expected: string;
@@ -168,10 +169,10 @@ function verifyPositionKnown(
     expect(posArg.isUnknown()).toBe(false); // It is a known position
     // isEndOfInput is related to the subclass
     expect(posArg.isEndOfInput()).toBe(posArg instanceof SR.EndOfInputSourcePosition);
-    expect(posArg.isEndOfInput()).toBe(!(posArg instanceof SR.StringSourcePosition));
-    if (posArg instanceof SR.StringSourcePosition) {
-        expect(posArg.isEndOfString()).toBe(posArg instanceof SR.EndOfStringSourcePosition);
-        expect(posArg.isEndOfString()).toBe(!(posArg instanceof SR.DefinedSourcePosition));
+    expect(posArg.isEndOfInput()).toBe(!(posArg instanceof SR.DocumentSourcePosition));
+    if (posArg instanceof SR.DocumentSourcePosition) {
+        expect(posArg.isEndOfDocument()).toBe(posArg instanceof SR.EndOfDocumentSourcePosition);
+        expect(posArg.isEndOfDocument()).toBe(!(posArg instanceof SR.DefinedSourcePosition));
     }
     expect(posArg.sourceReader).toBe(readerArg);
     expect(posArg.line).toBe(linArg);
@@ -179,33 +180,33 @@ function verifyPositionKnown(
     expect(posArg.regions).toStrictEqual(regsArg);
     if (posArg instanceof SR.DefinedSourcePosition) {
         // Defined source positions have inputName and contents
-        expect(posArg.inputName).toBe(inputNameArg);
-        expect(posArg.inputContents).toBe(vInpContsArg);
-        expect(posArg.fullInputContents).toBe(inpContsArg);
+        expect(posArg.documentName).toBe(inputNameArg);
+        expect(posArg.visibleDocumentContents).toBe(vInpContsArg);
+        expect(posArg.fullDocumentContents).toBe(inpContsArg);
         expect(posArg.toString()).toBe(inputNameArg + '@' + linArg + ':' + colArg);
     }
 }
 
 function verifyEmptyFileInSourceReader(readerArg: SR.SourceReader): void {
     expect(readerArg.atEndOfInput()).toBe(false);
-    expect(readerArg.atEndOfString()).toBe(true);
-    expect(() => readerArg.peek()).toThrow(new ErrorAtEndOfStringBy('peek', 'SourceReader'));
+    expect(readerArg.atEndOfDocument()).toBe(true);
+    expect(() => readerArg.peek()).toThrow(new ErrorAtEndOfDocumentBy('peek', 'SourceReader'));
     expect(readerArg.startsWith('')).toBe(true);
     expect(readerArg.startsWith('any other')).toBe(false);
     pos = readerArg.getPosition();
     expect(pos.isEndOfInput()).toBe(false);
-    expect((pos as SR.StringSourcePosition).isEndOfString()).toBe(true);
-    expect(pos.toString()).toBe('<' + intl.translate('string.EndOfString') + '>');
+    expect((pos as SR.DocumentSourcePosition).isEndOfDocument()).toBe(true);
+    expect(pos.toString()).toBe('<' + intl.translate('string.EndOfDocument') + '>');
     verifyPositionKnown(pos, readerArg, 1, 1, []); // Satisfy all the position methods
 }
 
 function verifySourceReaderBasicOperations(): void {
     expect(reader.atEndOfInput()).toBe(endOfInput);
-    expect(reader.atEndOfString()).toBe(endOfString);
+    expect(reader.atEndOfDocument()).toBe(endOfDocument);
     if (reader.atEndOfInput()) {
         expect(() => reader.peek()).toThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
-    } else if (reader.atEndOfString()) {
-        expect(() => reader.peek()).toThrow(new ErrorAtEndOfStringBy('peek', 'SourceReader'));
+    } else if (reader.atEndOfDocument()) {
+        expect(() => reader.peek()).toThrow(new ErrorAtEndOfDocumentBy('peek', 'SourceReader'));
     } else {
         expect(reader.peek()).toBe(peeked);
     }
@@ -224,12 +225,12 @@ function verifySourceReaderBasicOperations(): void {
 }
 
 function verifyContents(): void {
-    expect(pos.contentsTo(pos2)).toBe(vConts);
-    expect(pos.contentsFrom(pos2)).toBe('');
+    expect(pos.visibleContentsTo(pos2)).toBe(vConts);
+    expect(pos.visibleContentsFrom(pos2)).toBe('');
     expect(pos.fullContentsTo(pos2)).toBe(fConts);
     expect(pos.fullContentsFrom(pos2)).toBe('');
-    expect(pos2.contentsTo(pos)).toBe('');
-    expect(pos2.contentsFrom(pos)).toBe(vConts);
+    expect(pos2.visibleContentsTo(pos)).toBe('');
+    expect(pos2.visibleContentsFrom(pos)).toBe(vConts);
     expect(pos2.fullContentsTo(pos)).toBe('');
     expect(pos2.fullContentsFrom(pos)).toBe(fConts);
 }
@@ -312,7 +313,7 @@ describe('SourceReader empty inputs', () => {
 //     ===============================================
 
 //     ===============================================
-//     #region One input string {
+//     #region One input document {
 describe('SourceReader array 1, single line', () => {
     beforeEach(() => {
         input = 'program { Poner(Verde) }';
@@ -423,7 +424,7 @@ describe('SourceReader array 1, single line', () => {
     describe('No skip', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'p';
             goodStartShortL0 = 'program';
             goodStartShortL1 = 'program {'; // There are no lines to include 1
@@ -500,7 +501,7 @@ describe('SourceReader array 1, single line', () => {
     describe('Skip.1.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'r';
             goodStartShortL0 = 'rogram ';
             goodStartShortL1 = 'rogram { ';
@@ -577,7 +578,7 @@ describe('SourceReader array 1, single line', () => {
     describe('TakeWhile.notSpace.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = ' ';
             goodStartShortL0 = ' { ';
             goodStartShortL1 = ' { Poner';
@@ -656,7 +657,7 @@ describe('SourceReader array 1, single line', () => {
     describe('TakeWhile.allChars.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = true;
+            endOfDocument = true;
             peeked = 'not used, but undefined not accepted';
             goodStartShortL0 = '';
             goodStartShortL1 = '';
@@ -732,7 +733,7 @@ describe('SourceReader array 1, single line', () => {
     describe('GoToEndOfInput', () => {
         beforeEach(() => {
             endOfInput = true;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'not used, but undefined not accepted';
             goodStartShortL0 = '';
             goodStartShortL1 = '';
@@ -800,8 +801,8 @@ describe('Contents from SourceReader array 1, single line', () => {
             reader.skip(24);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = input as string;
             fConts = input as string;
             verifyContents();
@@ -810,8 +811,8 @@ describe('Contents from SourceReader array 1, single line', () => {
             reader.skip(24, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = input as string;
             verifyContents();
@@ -856,8 +857,8 @@ describe('Contents from SourceReader array 1, single line', () => {
             reader.skip(14);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = 'Poner(Verde) }';
             fConts = 'Poner(Verde) }';
             verifyContents();
@@ -866,8 +867,8 @@ describe('Contents from SourceReader array 1, single line', () => {
             reader.skip(14, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = 'Poner(Verde) }';
             verifyContents();
@@ -910,8 +911,8 @@ describe('Contents from SourceReader array 1, several lines', () => {
             reader.skip(69);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = input as string;
             fConts = input as string;
             verifyContents();
@@ -920,8 +921,8 @@ describe('Contents from SourceReader array 1, several lines', () => {
             reader.skip(69, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = input as string;
             verifyContents();
@@ -956,8 +957,8 @@ describe('Contents from SourceReader array 1, several lines', () => {
             reader.skip(59);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             fConts = '  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             verifyContents();
@@ -966,19 +967,19 @@ describe('Contents from SourceReader array 1, several lines', () => {
             reader.skip(59, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = '  PonerVerde()\n}\n\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             verifyContents();
         });
     });
 });
-//     #endregion } One input string
+//     #endregion } One input document
 //     ===============================================
 
 //     ===============================================
-//     #region Several input strings {
+//     #region Several input documents {
 describe('SourceReader array 2, several lines', () => {
     beforeEach(() => {
         input = ['program {\n  PonerVerde()\n}\n', 'procedure PonerVerde() {\n  Poner(Verde)\n}'];
@@ -1089,7 +1090,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('No skip', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'p';
             goodStartShortL0 = 'program';
             goodStartShortL1 = 'program {'; // There are no lines to include 1
@@ -1113,7 +1114,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = SR.SourceReader._unnamedDocument + '[0]';
             vInpConts = (input[0] as string).slice(vStart, vLength);
             inpConts = input[0] as string;
             pos = reader.getPosition();
@@ -1166,7 +1167,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('Skip.1.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'r';
             goodStartShortL0 = 'rogram ';
             goodStartShortL1 = 'rogram {\n  ';
@@ -1190,7 +1191,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = SR.SourceReader._unnamedDocument + '[0]';
             vInpConts = (input[0] as string).slice(vStart, vLength);
             inpConts = input[0] as string;
             pos = reader.getPosition();
@@ -1243,7 +1244,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('TakeWhile.notSpace.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = ' ';
             goodStartShortL0 = ' {\n  ';
             goodStartShortL1 = ' {\n  Poner';
@@ -1268,7 +1269,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = SR.SourceReader._unnamedDocument + '[0]';
             vInpConts = (input[0] as string).slice(vStart, vLength);
             inpConts = input[0] as string;
             pos = reader.getPosition();
@@ -1322,7 +1323,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('TakeWhile.allChars.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = true;
+            endOfDocument = true;
             peeked = 'not used, but undefined not accepted';
             goodStartShortL0 = '';
             goodStartShortL1 = '';
@@ -1347,7 +1348,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[0]';
+            inputName = SR.SourceReader._unnamedDocument + '[0]';
             vInpConts = (input[0] as string).slice(vStart, vLength);
             inpConts = input[0] as string;
             pos = reader.getPosition();
@@ -1398,7 +1399,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('GoTo2ndFile.Then.NoSkip', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'p';
             goodStartShortL0 = 'procedure';
             goodStartShortL1 = 'procedure PonerVerde';
@@ -1423,7 +1424,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[1]';
+            inputName = SR.SourceReader._unnamedDocument + '[1]';
             vInpConts = (input[1] as string).slice(vStart, vLength);
             inpConts = input[1] as string;
             pos = reader.getPosition();
@@ -1436,7 +1437,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('GoTo2ndFile.Then.Skip.1.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'r';
             goodStartShortL0 = 'rocedure';
             goodStartShortL1 = 'rocedure PonerVerde';
@@ -1462,7 +1463,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[1]';
+            inputName = SR.SourceReader._unnamedDocument + '[1]';
             vInpConts = (input[1] as string).slice(vStart, vLength);
             inpConts = input[1] as string;
             pos = reader.getPosition();
@@ -1475,7 +1476,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('GoTo2ndFile.Then.TakeWhile.notSpace.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = false;
+            endOfDocument = false;
             peeked = ' ';
             goodStartShortL0 = ' Poner';
             goodStartShortL1 = ' PonerVerde';
@@ -1502,7 +1503,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[1]';
+            inputName = SR.SourceReader._unnamedDocument + '[1]';
             vInpConts = (input[1] as string).slice(vStart, vLength);
             inpConts = input[1] as string;
             pos = reader.getPosition();
@@ -1515,7 +1516,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('GoTo2ndFile.Then.TakeWhile.allChars.v', () => {
         beforeEach(() => {
             endOfInput = false;
-            endOfString = true;
+            endOfDocument = true;
             peeked = ' ';
             goodStartShortL0 = '';
             goodStartShortL1 = '';
@@ -1542,7 +1543,7 @@ describe('SourceReader array 2, several lines', () => {
             verifySourceReaderBasicOperations();
         });
         it('getPosition, and SP basic operations', () => {
-            inputName = SR.SourceReader._unnamedStr + '[1]';
+            inputName = SR.SourceReader._unnamedDocument + '[1]';
             vInpConts = (input[1] as string).slice(vStart, vLength);
             inpConts = input[1] as string;
             pos = reader.getPosition();
@@ -1555,7 +1556,7 @@ describe('SourceReader array 2, several lines', () => {
     describe('GoToEndOfInput', () => {
         beforeEach(() => {
             endOfInput = true;
-            endOfString = false;
+            endOfDocument = false;
             peeked = 'not used, but undefined not accepted';
             goodStartShortL0 = '';
             goodStartShortL1 = '';
@@ -1627,8 +1628,8 @@ describe('Contents from SourceReader array 2, several lines', () => {
             reader.skip(69);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = input[0] + input[1];
             fConts = input[0] + input[1];
             verifyContents();
@@ -1637,8 +1638,8 @@ describe('Contents from SourceReader array 2, several lines', () => {
             reader.skip(69, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = input[0] + input[1];
             verifyContents();
@@ -1674,8 +1675,8 @@ describe('Contents from SourceReader array 2, several lines', () => {
             reader.skip(59);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             verifyContents();
@@ -1684,8 +1685,8 @@ describe('Contents from SourceReader array 2, several lines', () => {
             reader.skip(59, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             verifyContents();
@@ -1736,8 +1737,8 @@ describe('Contents from SourceReader array 3, several lines', () => {
             reader.skip(70);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = input[0] + input[1] + input[2];
             fConts = input[0] + input[1] + input[2];
             verifyContents();
@@ -1746,8 +1747,8 @@ describe('Contents from SourceReader array 3, several lines', () => {
             reader.skip(70, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = input[0] + input[1] + input[2];
             verifyContents();
@@ -1772,7 +1773,7 @@ describe('Contents from SourceReader array 3, several lines', () => {
             reader.skip('PonerVerde()');
             reader.skip(1, true);
             reader.skip();
-            reader.skip(2, true); // now 2 for counting endOfString
+            reader.skip(2, true); // now 2 for counting endOfDocument
             reader.skip('procedure');
             pos2 = reader.getPosition();
             vConts = 'PonerVerde()}procedure';
@@ -1783,8 +1784,8 @@ describe('Contents from SourceReader array 3, several lines', () => {
             reader.skip(60);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             verifyContents();
@@ -1793,15 +1794,15 @@ describe('Contents from SourceReader array 3, several lines', () => {
             reader.skip(60, true);
             pos2 = reader.getPosition();
             expect(pos2.isEndOfInput()).toBe(false);
-            spos2 = reader.getStringPosition();
-            expect(spos2.isEndOfString()).toBe(true);
+            spos2 = reader.getDocumentPosition();
+            expect(spos2.isEndOfDocument()).toBe(true);
             vConts = '';
             fConts = '  PonerVerde()\n}\nprocedure PonerVerde() {\n  Poner(Verde)\n}';
             verifyContents();
         });
     });
 });
-//     #endregion } Several input strings
+//     #endregion } Several input documents
 //     ===============================================
 
 //     ===============================================
@@ -1841,16 +1842,16 @@ describe('Usage example from documentation', () => {
             // ---------------------------------
             // Read block body (includes '{')
             // NOTE: CANNOT use !startsWith('}') instead because
-            //       !atEndOfString() is REQUIRED to guarantee precondition of peek()
-            while (!readerEx.atEndOfString() && readerEx.peek() !== '}') {
+            //       !atEndOfDocument() is REQUIRED to guarantee precondition of peek()
+            while (!readerEx.atEndOfDocument() && readerEx.peek() !== '}') {
                 str += readerEx.peek();
                 readerEx.skip();
             }
             expect(str).toBe('{ Poner(Verde) ');
             // ---------------------------------
             // Detect block end
-            expect(readerEx.atEndOfString()).toBe(false);
-            if (readerEx.atEndOfString()) {
+            expect(readerEx.atEndOfDocument()).toBe(false);
+            if (readerEx.atEndOfDocument()) {
                 fail('Unclosed block');
             }
             // Add '}' to the body
@@ -1871,13 +1872,13 @@ describe('Usage example from documentation', () => {
             }
             // ---------------------------------
             // Verify there are no more chars at input
-            expect(readerEx.atEndOfString()).toBe(true);
-            if (!readerEx.atEndOfString()) {
+            expect(readerEx.atEndOfDocument()).toBe(true);
+            if (!readerEx.atEndOfDocument()) {
                 fail('Unexpected additional chars after program');
             }
             readerEx.skip();
             // ---------------------------------
-            // Verify there are no more input strings
+            // Verify there are no more input documents
             expect(readerEx.atEndOfInput()).toBe(true);
             if (!readerEx.atEndOfInput()) {
                 fail('Unexpected additional inputs');

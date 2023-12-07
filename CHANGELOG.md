@@ -1,7 +1,22 @@
+## <small>0.4.7 (2023-12-07)</small>
+
+* [PARTIAL] Docs completed for the change. ([1e0864c](https://github.com/gobstones/gobstones-core/commit/1e0864c))
+* [PARTIAL] Docs regenerated ([132eb3c](https://github.com/gobstones/gobstones-core/commit/132eb3c))
+* [PARTIAL] Input name changed, tests updated ([947a16c](https://github.com/gobstones/gobstones-core/commit/947a16c))
+* Changed all names from "string" to "document". Documentation improved a little ([5cdeda9](https://github.com/gobstones/gobstones-core/commit/5cdeda9))
+* Fixed, although the casting is now on the constructor... ([fd8eece](https://github.com/gobstones/gobstones-core/commit/fd8eece))
+
+
+
+## <small>0.4.7 (2023-12-07)</small>
+
+-   [PARTIAL] Docs completed for the change. ([1e0864c](https://github.com/gobstones/gobstones-core/commit/1e0864c))
+-   [PARTIAL] Docs regenerated ([132eb3c](https://github.com/gobstones/gobstones-core/commit/132eb3c))
+-   [PARTIAL] Input name changed, tests updated ([947a16c](https://github.com/gobstones/gobstones-core/commit/947a16c))
+-   Changed all names from "string" to "document". Documentation improved a little ([5cdeda9](https://github.com/gobstones/gobstones-core/commit/5cdeda9))
+-   Fixed, although the casting is now on the constructor... ([fd8eece](https://github.com/gobstones/gobstones-core/commit/fd8eece))
+
 ## <small>0.4.7 (2023-11-23)</small>
-
-
-
 
 ## <small>0.4.6 (2023-11-21)</small>
 

@@ -16,12 +16,16 @@ export const es: SourceReaderLocale = {
         UnmatchingPositionsBy:
             // eslint-disable-next-line max-len
             'Las posiciones determinan fuentes de entrada diferentes en ${operation} de ${context}.',
-        AtEOFBy:
-            'La operación ${operation} de ${context}  no funciona al final de la fuente de entrada.'
+        AtEndOfInputBy:
+            'La operación ${operation} de ${context}  no funciona al final de la fuente de ' +
+            'entrada.',
+        AtEndOfDocumentBy:
+            'La operación ${operation} de ${context}  no funciona al final de un documento ' +
+            'de la fuente de entrada.'
     },
     string: {
         UnknownPosition: 'Posición desconocida',
         EndOfInput: 'Final de la entrada de datos',
-        EndOfString: 'Final del string de entrada'
+        EndOfDocument: 'Final de documento de entrada'
     }
 };
