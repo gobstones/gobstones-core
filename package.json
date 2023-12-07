@@ -1,25 +1,46 @@
 {
-  "name": "gobstones-core",
-  "version": "0.4.3",
+  "name": "@gobstones/gobstones-core",
+  "version": "0.4.7",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
   "author": "Alan Rodas Bonjour <alanrodas@gmail.com>",
   "license": "AGPL-3.0",
-  "keywords": ["Gobstones", "Library", "Keywords"],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "typings": "./dist/typings/index.d.ts",
+  "keywords": ["Gobstones", "Library", "Core", "Utilities"],
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "typings": "./dist/esm/typings/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "import": {
+        "types": "./dist/esm/typings/index.d.ts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/typings/index.d.ts",
+        "default": "./dist/cjs/index.cjs"
+      }
+    },
+    "./cli": {
+      "import": {
+        "types": "./dist/esm/cli/typings/cli.d.ts",
+        "default": "./dist/esm/cli/cli.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/cli/typings/cli.d.ts",
+        "default": "./dist/cjs/cli/cli.cjs"
+      }
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "cli": ["./dist/esm/typings/cli.d.ts"],
+      ".": ["./dist/esm/typings/index.d.ts"]
+    }
   },
   "packageManager": "npm@9.2.0",
-  "gobstones-scripts": {
-    "type": "library",
-    "manager": "npm"
-  },
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "is-ci || husky install",
     "prepack": "gobstones-scripts run build",
     "start": "gobstones-scripts run",
     "dev": "gobstones-scripts run dev",
@@ -30,11 +51,17 @@
     "prettify": "gobstones-scripts run prettify",
     "gbs": "gobstones-scripts"
   },
+  "config": {
+    "gobstones-scripts": {
+      "type": "library",
+      "manager": "npm"
+    }
+  },
   "dependencies": {
     "commander": "^11.1.0"
   },
   "devDependencies": {
-    "@gobstones/gobstones-scripts": "^0.4.3",
+    "@gobstones/gobstones-scripts": "^0.5.4",
     "husky": "^8.0.2"
   }
 }

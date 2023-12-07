@@ -420,7 +420,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
     /**
      * Obtain the cells of the board as an array of `width` elements, each
      * of which is an array of `height` elements, each of which is a {@link Cell},
-     * or in another sense, a {@link helpers!Matrix} of {@link Cell | Cells}.
+     * or in another sense, a {@link Functions!matrix} of {@link Cell | Cells}.
      *
      * This is retain only for compatibility reasons.
      *

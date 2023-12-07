@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 // Imports
 import * as SR from '../../src/SourceReader';
 
