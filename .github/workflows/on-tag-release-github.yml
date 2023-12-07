@@ -2,33 +2,30 @@ name: on-tag-release-github
 
 on:
     push:
-        # Sequence of patterns matched against refs/tags
         tags:
-            - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+            - 'v*'
 
 jobs:
     publish-into-github:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
             - name: Setup node version
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: '20'
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-            - name: Remove Husky on prepare
-              run: npm pkg delete scripts.prepare
             - name: Installing project dependencies
               run: npm install
+            - name: Building the project
+              run: npm run build
             - name: Create Release on GitHub
-              uses: actions/create-release@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              uses: ncipollo/release-action@v1
               with:
-                  tag_name: ${{ github.ref }}
-                  release_name: Release ${{ github.ref }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  tag: ${{ github.ref_name }}
+                  name: Release ${{ github.ref_name }}
+                  allowUpdates: true
                   body: ${{ github.event.head_commit.message }}
-                  draft: false
-                  prerelease: false

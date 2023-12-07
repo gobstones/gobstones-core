@@ -5,8 +5,7 @@
  * packages should be added here for better accessibility in all packages.
  *
  * This module includes the class {@link BiMap} as a bi-directional map,
- * {@link Matrix} as a bi-dimentional array, and {@link Subset} as a recursive
- * partial type definition.
+ * and {@link Subset} as a recursive partial type definition.
  *
  * @module Types
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -14,4 +13,4 @@
 
 export * from './BiMap';
 export * from './Subset';
-export * from '../Functions/deepStringAssign';
+export * from './WithRequired';
