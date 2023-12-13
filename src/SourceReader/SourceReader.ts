@@ -1978,7 +1978,7 @@ export class SourceReader {
      * @private
      */
     public _fullInputFromTo(from: KnownSourcePosition, to: KnownSourcePosition): string {
-        return this._inputFromToIn(from, to, false);
+        return this._inputFromToIn(from, to);
     }
 
     /**
