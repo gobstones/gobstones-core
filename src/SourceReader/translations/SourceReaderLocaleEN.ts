@@ -12,14 +12,13 @@ import { SourceReaderLocale } from './SourceReaderLocale';
  */
 export const en: SourceReaderLocale = {
     error: {
-        NoInput: 'Cannot create a source reader with no input strings.',
+        NoInput: 'Cannot create a source reader with no input documents.',
         UnmatchingPositionsBy:
             'Positions determine different source inputs at `${operation}` of `${context}`.',
         AtEndOfInputBy:
             'Operation `${operation}` of `${context}` cannot work at the end of the source input.',
         AtEndOfDocumentBy:
-            'Operation `${operation}` of `${context}` cannot work at the end of a document ' +
-            'in the source input.'
+            'Operation `${operation}` of `${context}` cannot work at the end of a document.'
     },
     string: {
         UnknownPosition: 'Unknown position',

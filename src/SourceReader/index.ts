@@ -27,3 +27,4 @@
  * @module SourceReader
  */
 export * from './SourceReader';
+export * from './SourceReaderErrors';
