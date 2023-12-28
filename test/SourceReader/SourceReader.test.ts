@@ -183,7 +183,9 @@ function verifyPositionKnown(
         expect(posArg.documentName).toBe(inputNameArg);
         expect(posArg.visibleDocumentContents).toBe(vInpContsArg);
         expect(posArg.fullDocumentContents).toBe(inpContsArg);
-        expect(posArg.toString()).toBe(inputNameArg + '@' + linArg + ':' + colArg);
+        expect(posArg.toString()).toBe(
+            '@<' + inputNameArg + (inputNameArg === '' ? '' : ':') + linArg + ',' + colArg + '>'
+        );
     }
 }
 
@@ -196,7 +198,7 @@ function verifyEmptyFileInSourceReader(readerArg: SR.SourceReader): void {
     pos = readerArg.getPosition();
     expect(pos.isEndOfInput()).toBe(false);
     expect((pos as SR.DocumentSourcePosition).isEndOfDocument()).toBe(true);
-    expect(pos.toString()).toBe('<' + intl.translate('string.EndOfDocument') + '>');
+    expect(pos.toString()).toBe('@<' + intl.translate('string.EndOfDocument') + '>');
     verifyPositionKnown(pos, readerArg, 1, 1, []); // Satisfy all the position methods
 }
 
@@ -246,7 +248,7 @@ describe('SourceReader static members', () => {
     it('SR.static - Unknown position', () => {
         const posU: SR.UnknownSourcePosition = SR.SourceReader.UnknownPosition;
         expect(posU.isUnknown()).toBe(true);
-        expect(posU.toString()).toBe('<' + intl.translate('string.UnknownPosition') + '>');
+        expect(posU.toString()).toBe('@<' + intl.translate('string.UnknownPosition') + '>');
     });
 });
 
@@ -823,7 +825,7 @@ describe('Contents from SourceReader array 1, single line', () => {
             expect(pos2.isEndOfInput()).toBe(true);
             expect(reader.startsWith('')).toBe(true);
             expect(reader.startsWith('any')).toBe(false);
-            expect(pos2.toString()).toBe('<' + intl.translate('string.EndOfInput') + '>');
+            expect(pos2.toString()).toBe('@<' + intl.translate('string.EndOfInput') + '>');
             vConts = input as string;
             fConts = input as string;
             verifyContents();

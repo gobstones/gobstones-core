@@ -201,7 +201,7 @@ export class UnknownSourcePosition extends SourcePosition {
      * @group API: Access
      */
     public toString(): string {
-        return '<' + intl.translate('string.UnknownPosition') + '>';
+        return '@<' + intl.translate('string.UnknownPosition') + '>';
     }
     // ------------------
     // #endregion } API: Access
@@ -688,7 +688,7 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
      * @group API: Access
      */
     public toString(): string {
-        return '<' + intl.translate('string.EndOfInput') + '>';
+        return '@<' + intl.translate('string.EndOfInput') + '>';
     }
     // ------------------
     // #endregion } API: Access
@@ -1146,7 +1146,7 @@ export class EndOfDocumentSourcePosition extends DocumentSourcePosition {
      * @group API: Access
      */
     public toString(): string {
-        return '<' + intl.translate('string.EndOfDocument') + '>';
+        return '@<' + intl.translate('string.EndOfDocument') + '>';
     }
     // ------------------
     // #endregion } API: Access
@@ -1226,7 +1226,15 @@ export class DefinedSourcePosition extends DocumentSourcePosition {
      * @group API: Access
      */
     public toString(): string {
-        return `${this.documentName}@${this._line}:${this._column}`;
+        return (
+            '@<' +
+            this.documentName +
+            (this.documentName === '' ? '' : ':') +
+            this._line +
+            ',' +
+            this._column +
+            '>'
+        );
     }
     // ------------------
     // #endregion } API: Access
