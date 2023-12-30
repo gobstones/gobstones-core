@@ -1,23 +1,31 @@
-# Node files #
-node_modules/
-npm-debug.log
-yarn-error.log
-.rollup.cache
-
-# OS generated files #
+# OS generated files
 .DS_Store
 Thumbs.db
 .tmp/
 
-# Dist #
-dist/
-coverage/
-tsconfig.build.json
-
-# IDE #
+# IDE generated file
 .idea/
 
-# PackageManager specific #
+# PackageManager specific lock files
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Node generated files
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build process generated files
+.rollup.cache
+tsconfig.build.json
+
+# Test coverage generated folder
+coverage/
+
+# Dist generated folder
+dist/
+
+# Docs generated folder
+docs/
+
