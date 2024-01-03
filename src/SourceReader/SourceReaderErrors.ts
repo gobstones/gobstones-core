@@ -1,19 +1,13 @@
-/* eslint max-len: ["error", { "ignoreComments": true }] */
 /**
- * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  * @module SourceReader
+ * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  */
-import { SourceReaderIntl as intl } from './translations';
 
-// ===============================================
-// #region Error superclasses {
-// ===============================================
 /**
  * The superclass for all {@link SourceReader} errors.
  * It provides internationalization of error messages through a {@link Translator}.
- * It also restores the prototype chain, as described in the
- *  {@link https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#support-for-newtarget
- *   | Typescript Handbook}.
+ * It also restores the prototype chain.
+ *
  * @group API: Errors
  */
 export class SourceReaderError extends Error {
@@ -26,40 +20,19 @@ export class SourceReaderError extends Error {
      *                       given. It may be undefined if there are none.
      */
     public constructor(key: string, interpolations?: Record<string, any>) {
-        super(intl.translate('error.' + key, interpolations));
+        super(key);
         Object.setPrototypeOf(this, new.target.prototype); // It restores the prototype chain
     }
 }
 
 /**
- * The superclass for all {@link SourceReader} errors with `operation` and `context` as
- * interpolations.
- * It constructs the corresponding interpolation.
- * @group API: Errors
- */
-export class SourceReaderErrorBy extends SourceReaderError {
-    /**
-     * The constructor for {@link SourceReaderErrorBy} errors.
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
-     */
-    public constructor(key: string, operation: string, context: string) {
-        super(key, { operation, context });
-    }
-}
-// #endregion } Error superclasses
-// ===============================================
-
-// ===============================================
-// #region Error classes {
-// ===============================================
-/**
  * The error to produce when a SourceReader is called with no input (an empty object or array).
+ *
  * @group API: Errors
  */
-export class ErrorNoInput extends SourceReaderError {
+export class NoInputError extends SourceReaderError {
     /**
-     * The constructor for {@link ErrorNoInput} errors.
+     * The constructor for {@link NoInputError} errors.
      */
     public constructor() {
         super('NoInput');
@@ -67,50 +40,88 @@ export class ErrorNoInput extends SourceReaderError {
 }
 
 /**
- * The error to produce when two positions related with different readers are used to determine
- * a portion of the contents.
+ * The error to produce when two positions related with different readers are
+ * used to determine a portion of the contents.
+ *
  * @group API: Errors
  */
-export class ErrorUnmatchingPositionsBy extends SourceReaderErrorBy {
+export class UnmatchedInputsError extends SourceReaderError {
     /**
      * The constructor for
      * {@link SourceReader.ErrorUnmatchingPositionsBy | ErrorUnmatchingPositionsBy} errors.
+     *
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
-    public constructor(operation: string, context: string) {
-        super('UnmatchingPositionsBy', operation, context);
+    public constructor(
+        public readonly operation: string,
+        public readonly context: string
+    ) {
+        super(`Positions determine different source inputs at ${operation} of ${context}`);
     }
 }
 
 /**
- * The error to produce when a function that is not supposed to be used at EndOfInput is called.
+ * The error to produce when a function that is not supposed to be used at
+ * an unknown position, but was called.
+ *
  * @group API: Errors
  */
-export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
+export class InvalidOperationAtUnknownPositionError extends SourceReaderError {
     /**
-     * The constructor for {@link SourceReader.ErrorAtEndOfInputBy | ErrorAtEndOfInputBy} errors.
+     * The constructor for
+     * {@link InvalidOperationAtUnknownPositionError | InvalidOperationAtUnknownPositionError}
+     * errors.
+     *
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
-    public constructor(operation: string, context: string) {
-        super('AtEndOfInputBy', operation, context);
+    public constructor(
+        public readonly operation: string,
+        public readonly context: string
+    ) {
+        super(`Operation ${operation} of ${context} cannot work at an unknown position.`);
+    }
+}
+
+/**
+ * The error to produce when a function that is not supposed to be used at
+ * EndOfInput is called.
+ *
+ * @group API: Errors
+ */
+export class InvalidOperationAtEOIError extends SourceReaderError {
+    /**
+     * The constructor for {@link SourceReader.ErrorAtEndOfInputBy | ErrorAtEndOfInputBy} errors.
+     *
+     * @param operation A string indicating which function inform as the producer of the error.
+     * @param context A string indicating the context in which the function produce the error.
+     */
+    public constructor(
+        public readonly operation: string,
+        public readonly context: string
+    ) {
+        super(`Operation ${operation} of ${context} cannot work at the end of the source input.`);
     }
 }
 
 /**
  * The error to produce when a function that is not supposed to be used at EndOfDocument is called.
+ *
  * @group API: Errors
  */
-export class ErrorAtEndOfDocumentBy extends SourceReaderErrorBy {
+export class InvalidOperationAtEODError extends SourceReaderError {
     /**
-     * The constructor for {@link SourceReader.ErrorAtEndOfDocumentBy | ErrorAtEndOfDocumentBy} errors.
+     * The constructor for
+     * {@link SourceReader.ErrorAtEndOfDocumentBy | ErrorAtEndOfDocumentBy} errors.
+     *
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
      */
-    public constructor(operation: string, context: string) {
-        super('AtEndOfDocumentBy', operation, context);
+    public constructor(
+        public readonly operation: string,
+        public readonly context: string
+    ) {
+        super(`Operation ${operation} of ${context} cannot work at the end of a document`);
     }
 }
-// #endregion } Error classes
-// ===============================================

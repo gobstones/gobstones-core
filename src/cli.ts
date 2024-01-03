@@ -7,7 +7,7 @@
  *
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  *
- * @module cli
+ * @module CLI
  */
 import commander, { program } from 'commander';
 

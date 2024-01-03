@@ -6,6 +6,7 @@
         "dbaeumer.vscode-eslint",
         "amatiasq.sort-imports",
         "orta.vscode-jest",
-        "christian-kohler.path-intellisense"
+        "christian-kohler.path-intellisense",
+        "SantaCodes.santacodes-region-viewer"
     ]
 }

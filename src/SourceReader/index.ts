@@ -27,4 +27,5 @@
  * @module SourceReader
  */
 export * from './SourceReader';
+export { SourcePosition } from './SourcePositions';
 export * from './SourceReaderErrors';

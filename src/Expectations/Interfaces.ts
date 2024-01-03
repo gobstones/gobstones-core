@@ -3,6 +3,9 @@
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
+// ===============================================
+// #region IGenericExpectation
+// ===============================================
 /**
  * This type represents an expectation for any type of element.
  * The matchers that can be called contain general things, such as
@@ -59,8 +62,56 @@ export interface IGenericExpectation<T> {
      * @example `toHaveType([1,2,3], 'array')` returns `true` as expected.
      */
     toHaveType(value: string): this & IFinishedExpectation;
+    /**
+     * Answer the given expectation as an instance of INumberExpectation.
+     * No check is performed on the input to see if it can actually be casted.
+     */
+    asNumber(): INumberExpectation;
+    /**
+     * Answer the given expectation as an instance of IStringExpectation.
+     * No check is performed on the input to see if it can actually be casted.
+     */
+    asString(): IStringExpectation;
+    /**
+     * Answer the given expectation as an instance of IObjectExpectation.
+     * No check is performed on the input to see if it can actually be casted.
+     */
+    asObject<E>(): IObjectExpectation<E>;
+    /**
+     * Answer the given expectation as an instance of IArrayExpectation.
+     * No check is performed on the input to see if it can actually be casted.
+     */
+    asArray<E>(): IArrayExpectation<E>;
 }
+// ===============================================
+// #endregion IGenericExpectation
+// ===============================================
 
+// ===============================================
+// #region IBooleanExpectation
+// ===============================================
+/**
+ * This interface represents an expectation that is performed over a number.
+ *
+ * @group API: Types
+ */
+export interface IBooleanExpectation extends IGenericExpectation<number> {
+    /**
+     * Answers if the actual value is true
+     */
+    toBeTrue(): this & IFinishedExpectation;
+    /**
+     * Answers if the actual value is false
+     */
+    toBeFalse(): this & IFinishedExpectation;
+}
+// ===============================================
+// #endregion IBooleanExpectation
+// ===============================================
+
+// ===============================================
+// #region INumberExpectation
+// ===============================================
 /**
  * This interface represents an expectation that is performed over a number.
  *
@@ -104,7 +155,13 @@ export interface INumberExpectation extends IGenericExpectation<number> {
      */
     toBeCloseTo(value: number, precision?: number): this & IFinishedExpectation;
 }
+// ===============================================
+// #endregion INumberExpectation
+// ===============================================
 
+// ===============================================
+// #region IStringExpectation
+// ===============================================
 /**
  * This interface represents an expectation that is performed over a string.
  *
@@ -128,7 +185,13 @@ export interface IStringExpectation extends IGenericExpectation<string> {
      */
     toMatch(regexp: RegExp): this & IFinishedExpectation;
 }
+// ===============================================
+// #endregion IStringExpectation
+// ===============================================
 
+// ===============================================
+// #region IArrayExpectation
+// ===============================================
 /**
  * This interface represents an expectation that is performed over an array.
  *
@@ -165,7 +228,13 @@ export interface IArrayExpectation<T> extends IGenericExpectation<T[]> {
      */
     amountToSatisfy(count: number, criteria: (item: T) => boolean): this & IFinishedExpectation;
 }
+// ===============================================
+// #endregion IArrayExpectation
+// ===============================================
 
+// ===============================================
+// #region IObjectExpectation
+// ===============================================
 /**
  * This interface represents an expectation that is performed over an object.
  *
@@ -200,7 +269,13 @@ export interface IObjectExpectation<T> extends IGenericExpectation<T> {
     // eslint-disable-next-line @typescript-eslint/ban-types
     toBeInstanceOf(classConstructor: Function): this & IFinishedExpectation;
 }
+// ===============================================
+// #endregion IObjectExpectation
+// ===============================================
 
+// ===============================================
+// #region IFinishedExpectation
+// ===============================================
 /**
  * This interface represents an expectation after a matcher has been executed
  * and the result can be accessed.
@@ -236,3 +311,6 @@ export interface IFinishedExpectation {
      */
     andDoOr(actionIfTrue: () => void, actionIfFalse: () => void): void;
 }
+// ===============================================
+// #endregion IFinishedExpectation
+// ===============================================

@@ -4,6 +4,7 @@
  */
 import {
     IArrayExpectation,
+    IBooleanExpectation,
     IFinishedExpectation,
     INumberExpectation,
     IObjectExpectation,
@@ -67,6 +68,7 @@ import { JoinedExpectation } from './JoinedExpectation';
  *
  * @group API: Main
  */
+export function expect(element?: boolean): IBooleanExpectation;
 export function expect(element?: number): INumberExpectation;
 export function expect(element?: string): IStringExpectation;
 export function expect<T>(element?: T[]): IArrayExpectation<T>;

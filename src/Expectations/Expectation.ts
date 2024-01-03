@@ -1,3 +1,10 @@
+import {
+    IArrayExpectation,
+    IFinishedExpectation,
+    INumberExpectation,
+    IObjectExpectation,
+    IStringExpectation
+} from './Interfaces';
 /**
  * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -5,7 +12,6 @@
 import { MatcherCall, Matchers } from './Matchers';
 
 import { FinishedExpectation } from './FinishedExpectation';
-import { IFinishedExpectation } from './Interfaces';
 
 /**
  * The expectation class is the class that is actually instantiated for
@@ -15,6 +21,9 @@ import { IFinishedExpectation } from './Interfaces';
  * @group Internal: Types
  */
 export class Expectation<T> extends FinishedExpectation {
+    // -----------------------------------------------
+    // #region Internal: Properties
+    // -----------------------------------------------
     /**
      * The querying element of this expectation.
      */
@@ -33,7 +42,13 @@ export class Expectation<T> extends FinishedExpectation {
      * An array of the matchers run in this expectation.
      */
     protected states: MatcherCall[];
+    // -----------------------------------------------
+    // #endregion Internal: Properties
+    // -----------------------------------------------
 
+    // -----------------------------------------------
+    // #region Internal: Constructors
+    // -----------------------------------------------
     /**
      * Create a new expectation for the given element.
      *
@@ -46,7 +61,13 @@ export class Expectation<T> extends FinishedExpectation {
         this.isNot = false;
         this.result = undefined;
     }
+    // -----------------------------------------------
+    // #endregion Internal: Constructors
+    // -----------------------------------------------
 
+    // -----------------------------------------------
+    // #region IGenericExpectation implementors
+    // -----------------------------------------------
     /** @inheritDoc {@link IGenericExpectation.not} */
     public get not(): Expectation<T> {
         this.isNot = !this.isNot;
@@ -93,8 +114,48 @@ export class Expectation<T> extends FinishedExpectation {
         return this.runMatcher('toHaveType', [typeName]);
     }
 
-    // INumberExpectation
+    /** @inheritDoc {@link IGenericExpectation.asNumber} */
+    public asNumber(): INumberExpectation {
+        return this as INumberExpectation;
+    }
 
+    /** @inheritDoc {@link IGenericExpectation.asString} */
+    public asString(): IStringExpectation {
+        return this as IStringExpectation;
+    }
+
+    /** @inheritDoc {@link IGenericExpectation.asObject} */
+    public asObject<E>(): IObjectExpectation<E> {
+        return this as unknown as IObjectExpectation<E>;
+    }
+
+    /** @inheritDoc {@link IGenericExpectation.asArray} */
+    public asArray<E>(): IArrayExpectation<E> {
+        return this as unknown as IArrayExpectation<E>;
+    }
+    // -----------------------------------------------
+    // #endregion IGenericExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region IBooleanExpectation implementors
+    // -----------------------------------------------
+    /** @inheritDoc {@link IGenericExpectation.toBeTruthy} */
+    public toBeTrue(): this & IFinishedExpectation {
+        return this.runMatcher('toBeTrue', []);
+    }
+
+    /** @inheritDoc {@link IGenericExpectation.toBeFalsy} */
+    public toBeFalse(): this & IFinishedExpectation {
+        return this.runMatcher('toBeFalse', []);
+    }
+    // -----------------------------------------------
+    // #endregion IBooleanExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region INumberExpectation implementors
+    // -----------------------------------------------
     /** @inheritDoc {@link INumberExpectation.toBeGreaterThan} */
     public toBeGreaterThan(value: number): this & IFinishedExpectation {
         return this.runMatcher('toBeGreaterThan', [value]);
@@ -134,9 +195,13 @@ export class Expectation<T> extends FinishedExpectation {
     public toBeCloseTo(value: number, digits: number = 5): this & IFinishedExpectation {
         return this.runMatcher('toBeCloseTo', [value, digits]);
     }
+    // -----------------------------------------------
+    // #endregion INumberExpectation implementors
+    // -----------------------------------------------
 
-    // IStringExpectation
-
+    // -----------------------------------------------
+    // #region IStringExpectation implementors
+    // -----------------------------------------------
     /** @inheritDoc {@link IStringExpectation.toHaveSubstring} */
     public toHaveSubstring(substring: string): this & IFinishedExpectation {
         return this.runMatcher('toHaveSubstring', [substring]);
@@ -156,9 +221,13 @@ export class Expectation<T> extends FinishedExpectation {
     public toMatch(regexp: RegExp): this & IFinishedExpectation {
         return this.runMatcher('toMatch', [regexp]);
     }
+    // -----------------------------------------------
+    // #endregion IStringExpectation implementors
+    // -----------------------------------------------
 
-    // IArrayExpectation
-
+    // -----------------------------------------------
+    // #region IArrayExpectation implementors
+    // -----------------------------------------------
     /** @inheritDoc {@link IArrayExpectation.toBeEmptyArray} */
     public toBeEmptyArray(count: number): this & IFinishedExpectation {
         return this.runMatcher('toBeEmptyArray', [count]);
@@ -190,9 +259,13 @@ export class Expectation<T> extends FinishedExpectation {
     ): this & IFinishedExpectation {
         return this.runMatcher('amountToSatisfy', [count, criteria]);
     }
+    // -----------------------------------------------
+    // #endregion IArrayExpectation implementors
+    // -----------------------------------------------
 
-    // IObjectExpectation
-
+    // -----------------------------------------------
+    // #region IObjectExpectation implementors
+    // -----------------------------------------------
     /** @inheritDoc {@link IObjectExpectation.toBeEmptyObject} */
     public toBeEmptyObject(count: number): this & IFinishedExpectation {
         return this.runMatcher('toBeEmptyObject', [count]);
@@ -218,14 +291,24 @@ export class Expectation<T> extends FinishedExpectation {
     public toBeInstanceOf(classConstructor: Function): this & IFinishedExpectation {
         return this.runMatcher('toBeInstanceOf', [classConstructor]);
     }
+    // -----------------------------------------------
+    // #endregion IObjectExpectation implementors
+    // -----------------------------------------------
 
-    // IFinishedExpectation
-
+    // -----------------------------------------------
+    // #region IFinishedExpectation implementors
+    // -----------------------------------------------
     /** @inheritDoc {@link IFinishedExpectation.getResult} */
     public getResult(): boolean {
         return this.result || false;
     }
+    // -----------------------------------------------
+    // #endregion IFinishedExpectation implementors
+    // -----------------------------------------------
 
+    // -----------------------------------------------
+    // #region Internal: Helpers
+    // -----------------------------------------------
     /**
      * Set the given value as the result of this
      * expectation. The result is directly set, when
@@ -265,4 +348,7 @@ export class Expectation<T> extends FinishedExpectation {
         this.setResult(result);
         return this;
     }
+    // -----------------------------------------------
+    // #endregion Internal: Helpers
+    // -----------------------------------------------
 }

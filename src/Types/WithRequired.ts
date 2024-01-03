@@ -1,4 +1,8 @@
 /**
+ * @module Types
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
+/**
  * A type modifier that allows to construct a generic type that
  * requires only one property of a given type.
  *

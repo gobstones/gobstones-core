@@ -4,6 +4,9 @@
  */
 import { deepEquals } from '../Functions/deepEquals';
 
+// ===============================================
+// #region MatcherCall
+// ===============================================
 /**
  * A matcher call represents a call to a matcher with it's corresponding
  * arguments and the actual result.
@@ -15,7 +18,13 @@ export interface MatcherCall {
     args: any[];
     result: boolean;
 }
+// ===============================================
+// #endregion MatcherCall
+// ===============================================
 
+// ===============================================
+// #region Matchers
+// ===============================================
 /**
  * This object contains a series of matchers, that is, a series of functions
  * that can be called with the actual value (and in cases a series of arguments)
@@ -28,7 +37,9 @@ export interface MatcherCall {
  * @group Internal: Types
  */
 export class Matchers {
-    // Generic
+    // -----------------------------------------------
+    // #region IGenericExpectation implementors
+    // -----------------------------------------------
     /** Answers if the actual value is the same as expected, using strict compare */
     public static toBe(actual: any, expected: any): boolean {
         return actual === expected;
@@ -76,7 +87,29 @@ export class Matchers {
             (expectedType === 'object' && !Array.isArray(actual) && typeof actual === expectedType)
         );
     }
-    // Numbers
+
+    // -----------------------------------------------
+    // #endregion IGenericExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region IBooleanExpectation implementors
+    // -----------------------------------------------
+    /** Answers if the actual value is true */
+    public static toBeTrue(actual: any): boolean {
+        return actual === true;
+    }
+    /** Answers if the actual value is false */
+    public static toBeFalse(actual: any): boolean {
+        return actual === false;
+    }
+    // -----------------------------------------------
+    // #endregion IBooleanExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region INumberExpectation implementors
+    // -----------------------------------------------
     /** Answer if the actual value is greater than the expected value. */
     public static toBeGreaterThan(actual: number, expected: number): boolean {
         return typeof actual === 'number' && actual > expected;
@@ -118,7 +151,13 @@ export class Matchers {
             Math.abs(expected - actual) < Math.pow(10, -numDigits) / 10
         );
     }
-    // String
+    // -----------------------------------------------
+    // #endregion INumberExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region IStringExpectation implementors
+    // -----------------------------------------------
     /** Answer if the actual value has expected as a substring. */
     public static toHaveSubstring(actual: string, expected: any): boolean {
         return typeof actual === 'string' && actual.indexOf(expected) >= 0;
@@ -135,7 +174,13 @@ export class Matchers {
     public static toMatch(actual: string, expected: RegExp): boolean {
         return typeof actual === 'string' && expected.test(actual);
     }
-    // Arrays
+    // -----------------------------------------------
+    // #endregion IStringExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region IArrayExpectation implementors
+    // -----------------------------------------------
     public static toBeEmptyArray(actual: any): boolean {
         return typeof actual === 'object' && actual instanceof Array && actual.length === 0;
     }
@@ -188,11 +233,19 @@ export class Matchers {
             actual.reduce<number>((r, a) => (criteria(a) ? r + 1 : r), 0) === amount
         );
     }
-    // Objects
+    // -----------------------------------------------
+    // #endregion IArrayExpectation implementors
+    // -----------------------------------------------
+
+    // -----------------------------------------------
+    // #region IObjectExpectation implementors
+    // -----------------------------------------------
     /** Answer if the actual value is empty. */
     public static toBeEmptyObject(actual: any): boolean {
         return (
             typeof actual === 'object' &&
+            // eslint-disable-next-line no-null/no-null
+            actual !== null &&
             Object.keys(actual).filter((e) => Object.hasOwnProperty.call(actual, e)).length === 0
         );
     }
@@ -236,3 +289,6 @@ export class Matchers {
         return typeof actual === 'object' && actual instanceof classConstructor;
     }
 }
+// ===============================================
+// #endregion Matchers
+// ===============================================
