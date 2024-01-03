@@ -8,7 +8,7 @@ import { SourceReaderLocale } from './SourceReaderLocale';
  * The locale for Spanish language, for {@link SourceReader}.
  * It implements interface {@link SourceReaderLocale}.
  *
- * @group Internal: Translations
+ * @group Translations
  */
 export const es: SourceReaderLocale = {
     error: {

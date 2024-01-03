@@ -12,7 +12,7 @@
  * of this interface and place it with the current ones (those for
  * English, {@link SourceReader.en | en}, and Spanish, {@link SourceReader.es | es}).
  *
- * @group Internal: Translations
+ * @group Translations
  */
 export interface SourceReaderLocale {
     error: {
