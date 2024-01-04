@@ -20,7 +20,7 @@ import { SourceReaderIntl as intl } from './translations';
 // ===============================================
 
 // ===============================================
-// #region API: Main -- Source Input {
+// #region Main definitions -- Source Input {
 // -----------------------------------------------
 /**
  * A Source Input is composed of one or more 'documents', that may be obtained (and identified)
@@ -52,39 +52,35 @@ import { SourceReaderIntl as intl } from './translations';
  *    ```
  *    new SourceReader(input, '\n');
  *    ```
- * @group API: Main
+ * @group Main definitions
  */
 export type SourceInput = string | Record<string, string> | string[];
 // -----------------------------------------------
-// #endregion } API: Main -- Source Input
+// #endregion } Main defintions -- Source Input
 // ===============================================
 
 // ===============================================
-// #region API: Main -- SourcePositions {
+// #region SourcePositions {
 // -----------------------------------------------
 /**
- * Instances of {@link SourcePosition} point to particular positions in the source given by a
- * {@link SourceReader}.
- * They may be unknown or they may point to a particular position into a {@link SourceReader}.
- * All {@link SourcePosition} are created through {@link SourceReader}.
+ * {@link SourcePosition}s conform a hierarchy of subclasses, as positions may be unknown or
+ * they may point to a particular position into a {@link SourceReader}.
+ * All {@link SourcePosition}s are created only through {@link SourceReader}.
  *
+ * The general class is precisely {@link SourcePosition}, an abstract class to represent all
+ * possible positions.
  * Subclasses of {@link SourcePosition} determine if the position is known or unknown, and in
  * the case of being known, which kind of position it is.
- * The operation {@link SourcePosition.isUnknown | isUnknown} indicates which is the case.
- * Additionally, all {@link SourcePosition} can be converted to a string, for showing
- * purposes, with the operation {@link SourcePosition.toString | toString}.
+ * All positions know the following operations:
+ *  * {@link SourcePosition.isUnknown | isUnknown} indicating if the position is known or not.
+ *  * {@link SourcePosition.toString | toString}, converting the position to a string, for
+ *    showing purposes (**not** for persistence).
  * Subclasses may have other operations, depending on its nature.
- *
- * Valid operations on a {@link SourcePosition} include:
- *  * indicate if the position is known or unknown, with
- *    {@link SourcePosition.isUnknown | isUnknown}, and
- *  * produce a string representation of the position for display (**not** for persistence),
- *    with {@link SourcePosition.toString | toString}.
  *
  * A typical use of {@link SourcePosition} is relating nodes of an AST representation of code to
  * particular positions in the string version of the source code (that may come from several input
  * documents).
- * @group API: Source Positions
+ * @group Main definitions
  */
 export abstract class SourcePosition {
     // ==================
@@ -145,7 +141,7 @@ export abstract class SourcePosition {
  *
  * These positions responds with `true` to the operation
  * {@link SourcePosition.isUnknown | isUnknown}.
- * @group API: Source Positions
+ * @group Source Positions
  */
 export class UnknownSourcePosition extends SourcePosition {
     // ==================
@@ -209,31 +205,33 @@ export class UnknownSourcePosition extends SourcePosition {
 }
 
 /**
- * A {@link KnownSourcePosition} points to a position in a specific {@link SourceReader}.
- * It is created using the {@link SourceReader.getPosition | getPosition} operation of a
- * particular {@link SourceReader} instance.
- * The obtained object indicates a position in the source associated with that reader, that may be
- * EndOfInput (after all input documents has been processed) or a defined position (that is, one
- * that corresponds to one of the documents of the input).
- * This difference is given by subclasses.
+ * A {@link KnownSourcePosition} points to a specific position in a particular
+ * {@link SourceReader}.
+ * It is created using the {@link SourceReader.getPosition} operation of a {@link SourceReader}
+ * instance.
+ * The obtained object indicates a position in the source associated with that reader, that may
+ * be one of two possible subclasses:
+ *  * {@link EndOfInputSourcePosition}, the position occurring after all input documents has been
+ *    processed, or
+ *  * {@link DocumentSourcePosition}, one that points to one of the documents of the input.
  *
  * Valid operations on a {@link KnownSourcePosition}, in addition to those of the superclasses,
  * include:
- *  * indicate if the position is EndOfInput or not, with
- *    {@link KnownSourcePosition.isEndOfInput | isEndOfInput},
- *  * get the {@link SourceReader} this positions refers to, with
- *    {@link KnownSourcePosition.sourceReader | sourceReader},
- *  * get the line, column, and regions in the source input, with
- *    {@link KnownSourcePosition.line | line},
- *    {@link KnownSourcePosition.column | column}, and
- *    {@link KnownSourcePosition.regions | regions}, and
- *  * get the visible or full portion of the source between a known position and some other
- *    known position related with the same reader, with
- *    {@link KnownSourcePosition.visibleContentsTo | visibleContentsTo},
- *    {@link KnownSourcePosition.visibleContentsFrom | visibleContentsFrom},
- *    {@link KnownSourcePosition.fullContentsTo | fullContentsTo}, and
- *    {@link KnownSourcePosition.fullContentsFrom | fullContentsFrom}.
- * @group API: Source Positions
+ *  * {@link KnownSourcePosition.isEndOfInput}, indicating if the position is EndOfInput or not,
+ *  * {@link KnownSourcePosition.sourceReader}, getting the {@link SourceReader} the receiver
+ *    refers to,
+ *  * {@link KnownSourcePosition.line},
+ *    {@link KnownSourcePosition.column}, and
+ *    {@link KnownSourcePosition.regions}, getting the line, column, and regions in the source
+ *    input,
+ *  * {@link KnownSourcePosition.visibleContentsTo},
+ *    {@link KnownSourcePosition.visibleContentsFrom},
+ *    {@link KnownSourcePosition.fullContentsTo}, and
+ *    {@link KnownSourcePosition.fullContentsFrom}, getting the visible or full portion of the
+ *    source between a known position and some other known position related with the same reader.
+ * Subclasses may provide additional operations.
+ *
+ * @group Source Positions
  */
 export abstract class KnownSourcePosition extends SourcePosition {
     // ==================
@@ -625,7 +623,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
  * That position is reached when all input documents have been processed.
  * It is a special position, because it does not point to a particular position inside a
  * document in the source input, but to the end of it.
- * @group API: Source Positions
+ * @group Source Positions
  */
 export class EndOfInputSourcePosition extends KnownSourcePosition {
     // ==================
@@ -774,21 +772,23 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
 }
 
 /**
- * A {@link DocumentSourcePosition} points to a particular position, different from EndOfInput,
- * in a source given by a {@link SourceReader}.
+ * A {@link DocumentSourcePosition} points to a particular position inside a document of
+ * the source given by a {@link SourceReader}.
  *
  * It provides the right implementation for the operations given by its superclasses,
  * {@link KnownSourcePosition} and {@link SourcePosition}.
- * Additionally, it provides three new operations that only have sense for defined positions:
- *  * {@link DocumentSourcePosition.documentName | documentName}, the name of the particular
+ * Additionally, it provides new operations that only have sense for defined positions:
+ *  * {@link DocumentSourcePosition.documentName}, the name of the particular
  *    document in the source input that has the char pointed to by this position,
- *  * {@link DocumentSourcePosition.visibleDocumentContents | visibleDocumentContents}, the visible
- *    contents of the particular document in the source input that this position points to,
- *    and
- *  * {@link DocumentSourcePosition.fullDocumentContents | fullDocumentContents}, the contents
- *    (both visible and non-visible) of the particular document in the source input that this
- *    position point to.
- * @group API: Source Positions
+ *  * {@link DocumentSourcePosition.visibleDocumentContents} and
+ *  * {@link DocumentSourcePosition.fullDocumentContents}, the visible and full
+ *    (both visible and non-visible) contents of the particular document in the source input
+ *    that this position points to, and
+ *  * {@link DocumentSourcePosition.contextBefore} and
+ *    {@link DocumentSourcePosition.contextAfter}, a given number of lines before or after the
+ *    this position in the current document (allowing for a more localized contextual reference
+ *    for the position that may be used for showing purposes).
+ * @group Source Positions
  */
 export abstract class DocumentSourcePosition extends KnownSourcePosition {
     // ==================
@@ -903,7 +903,7 @@ export abstract class DocumentSourcePosition extends KnownSourcePosition {
     // ------------------
     /**
      * The name of the input document this position belongs to.
-     * @group API: Access
+     * @group Access
      */
     public get documentName(): string {
         let name: string = this._sourceReader._documentNameAt(this._theDocumentIndex);
@@ -918,7 +918,7 @@ export abstract class DocumentSourcePosition extends KnownSourcePosition {
 
     /**
      * The contents of the visible input document this position belongs to.
-     * @group API: Access
+     * @group Access
      */
     public get visibleDocumentContents(): string {
         return this._sourceReader._visibleDocumentContentsAt(this._theDocumentIndex);
@@ -978,6 +978,31 @@ export abstract class DocumentSourcePosition extends KnownSourcePosition {
     // ==================
     // #region API: Access - 2 {
     // ------------------
+    /**
+     * Returns the full context of the source document before the position, up to the
+     * beginning of the given number of lines, or the beginning of the document, whichever
+     * comes first.
+     *
+     * The char at the given position is NOT included in the solution.
+     *
+     * @group Access
+     */
+    public contextBefore(lines: number): string {
+        return this._sourceReader._contextBeforeOf(this, lines);
+    }
+
+    /**
+     * Returns the full context of the source document after the position, up to the beginning
+     * of the given number of lines or the end of the document, whichever comes first.
+     *
+     * The char at the given position is the first one in the solution.
+     *
+     * @group Access
+     */
+    public contextAfter(lines: number): string {
+        return this._sourceReader._contextAfterOf(this, lines);
+    }
+
     /**
      * Answers if this position correspond to the end of input of the
      * {@link SourceReader} it belongs, or not.
@@ -1078,7 +1103,7 @@ export abstract class DocumentSourcePosition extends KnownSourcePosition {
  * but the source reader has not yet been advanced to the next document.
  * It is a special position, because it does not point to a particular position inside a document in
  * the source input, but to the end of one of the documents in it.
- * @group API: Source Positions
+ * @group Source Positions
  */
 export class EndOfDocumentSourcePosition extends DocumentSourcePosition {
     // ==================
@@ -1154,11 +1179,11 @@ export class EndOfDocumentSourcePosition extends DocumentSourcePosition {
 }
 
 /**
- * A {@link DefinedSourcePosition} points to a particular position, different from EndOfString,
+ * A {@link DefinedSourcePosition} points to a particular position, different from EndOfDocument,
  * in a source given by a {@link SourceReader}.
  *
  * It provides the right implementation for the operations given by its superclasses.
- * @group API: Source Positions
+ * @group Source Positions
  */
 export class DefinedSourcePosition extends DocumentSourcePosition {
     // ==================
@@ -1241,11 +1266,11 @@ export class DefinedSourcePosition extends DocumentSourcePosition {
     // ==================
 }
 // -----------------------------------------------
-// #endregion } API: Main -- SourcePositions
+// #endregion } SourcePositions
 // ===============================================
 
 // ===============================================
-// #region API: Main -- SourceReader {
+// #region Main definitions -- SourceReader {
 // -----------------------------------------------
 /**
  * A {@link SourceReader} allows you to read input from some source, either one single document of
@@ -1262,22 +1287,22 @@ export class DefinedSourcePosition extends DocumentSourcePosition {
  *
  * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePosition}s,
  * in particular {@link KnownSourcePosition}s, can be read from it.
- * Possible interactions with a {@link SourceReader} include:
- *  - peek a character, with {@link SourceReader.peek},
- *  - check if a given strings occurs at the beginning of the text in the current document, without
- *    skipping it, with {@link SourceReader.startsWith},
- *  - get the current position as a {@link KnownSourcePosition}, with
- *    {@link SourceReader.getPosition},
- *  - get the current position as a {@link DocumentSourcePosition}, with
- *    {@link SourceReader.getDocumentPosition}, provided the end of input was not reached,
- *  - detect if the end of input was reached, with {@link SourceReader.atEndOfInput},
- *  - detect if the end of the current document was reached, with
- *    {@link SourceReader.atEndOfDocument},
- *  - skip one or more characters, with {@link skip},
- *  - read some characters from the current document based on a condition, with {@link takeWhile},
- *    and
- *  - manipulate "regions", with {@link SourceReader.beginRegion}
- *    and {@link SourceReader.endRegion}.
+ * Possible interactions with a {@link SourceReader} includes:
+ *  - {@link SourceReader.peek | peek}, peeking a character,
+ *  - {@link SourceReader.startsWith | startsWith}, checking if a given strings occurs at the
+ *    beginning of the text in the current document, without skipping it,
+ *  - {@link SourceReader.getPosition | getPosition}
+ *  - {@link SourceReader.getDocumentPosition | getDocumentPosition}, getting the current position
+ *    as a {@link KnownSourcePosition} or (provided the end of input was not reached)
+ *    {@link DocumentSourcePosition}, respectively,
+ *  - {@link SourceReader.atEndOfInput | atEndOfInput}, detecting if the end of input was reached,
+ *  - {@link SourceReader.atEndOfDocument | atEndOfDocument}, detecting if the end of the current
+ *    document was reached,
+ *  - {@link SourceReader.skip | skip}, skipping one or more characters,
+ *  - {@link SourceReader.takeWhile | takeWhile}, reading some characters from the current document
+ *    based on a condition, and
+ *  - {@link SourceReader.beginRegion | beginRegion} and
+ *    {@link SourceReader.endRegion | endRegion}, manipulating "regions".
  * When reading from sources with multiple documents of input, skipping moves inside a document
  * until there are no more characters, then an end of document position is reached (a special
  * position just after the last character of that document), and then a new document is started.
@@ -1379,7 +1404,7 @@ export class DefinedSourcePosition extends DocumentSourcePosition {
  *       For that reason document is better to use {@link SourceReader.startsWith} to verify
  *       if the input starts with some character (or string), when peeking for something
  *       specific.
- * @group API: Main
+ * @group Main definitions
  */
 export class SourceReader {
     // ==================
@@ -2001,6 +2026,56 @@ export class SourceReader {
     public _visibleInputFromTo(from: KnownSourcePosition, to: KnownSourcePosition): string {
         return this._inputFromToIn(from, to, true);
     }
+
+    /**
+     * Returns the full context of the corresponding source document before the position,
+     * up to the beginning of the given number of lines, or the beginning of the document,
+     * whichever comes first.
+     *
+     * The char at the given position is NOT included in the solution.
+     *
+     * @group Implementation: Protected for Source Positions
+     * @private
+     */
+    public _contextBeforeOf(pos: DocumentSourcePosition, lines: number): string {
+        const baseIndex: number = pos._theCharIndex;
+        const docContents: string = this._fullDocumentContentsAt(pos._theDocumentIndex);
+
+        let currentIndex: number = baseIndex;
+        let linesSeen: number = 0;
+        while (
+            currentIndex > 0 &&
+            (this._isEndOfLine(docContents[currentIndex - 1]) ? ++linesSeen : linesSeen) <= lines
+        ) {
+            currentIndex--;
+        }
+        return docContents.slice(currentIndex, baseIndex);
+    }
+
+    /**
+     * Returns the full context of the corresponding source document after the position,
+     * up to the beginning of the given number of lines, or the beginning of the document,
+     * whichever comes first.
+     *
+     * The char at the given position is the first one in the solution.
+     *
+     * @group Implementation: Protected for Source Positions
+     * @private
+     */
+    public _contextAfterOf(pos: DocumentSourcePosition, lines: number): string {
+        const baseIndex: number = pos._theCharIndex;
+        const docContents: string = this._fullDocumentContentsAt(pos._theDocumentIndex);
+
+        let currentIndex: number = baseIndex;
+        let linesSeen: number = 0;
+        while (
+            currentIndex < docContents.length &&
+            (this._isEndOfLine(docContents[currentIndex + 1]) ? ++linesSeen : linesSeen) <= lines
+        ) {
+            currentIndex++;
+        }
+        return docContents.slice(baseIndex, currentIndex + 1);
+    }
     // ------------------
     // #endregion } Implementation: Protected for Source Positions
     // ==================
@@ -2196,5 +2271,5 @@ export class SourceReader {
     // ==================
 }
 // -----------------------------------------------
-// #endregion } API: Main -- SourceReader
+// #endregion } Main definitions -- SourceReader
 // ===============================================

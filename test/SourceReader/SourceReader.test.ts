@@ -34,6 +34,8 @@ let region: string;
 let region1: string;
 
 let input: SR.SourceInput;
+let inputStr: string;
+let inputLines: string[][];
 let reader: SR.SourceReader;
 let reader2: SR.SourceReader;
 
@@ -164,7 +166,9 @@ function verifyPositionKnown(
     regsArg: string[],
     inputNameArg?: string,
     vInpContsArg?: string,
-    inpContsArg?: string
+    inpContsArg?: string,
+    linesBefore: string[] = [],
+    linesAfter: string[] = []
 ): void {
     expect(posArg.isUnknown()).toBe(false); // It is a known position
     // isEndOfInput is related to the subclass
@@ -183,9 +187,25 @@ function verifyPositionKnown(
         expect(posArg.documentName).toBe(inputNameArg);
         expect(posArg.visibleDocumentContents).toBe(vInpContsArg);
         expect(posArg.fullDocumentContents).toBe(inpContsArg);
+        verifyContextBefore(posArg, linesBefore);
+        verifyContextAfter(posArg, linesAfter);
         expect(posArg.toString()).toBe(
             '@<' + inputNameArg + (inputNameArg === '' ? '' : ':') + linArg + ',' + colArg + '>'
         );
+    }
+}
+
+function verifyContextBefore(posArg: SR.DocumentSourcePosition, contextLines: string[]): void {
+    const n: number = contextLines.length;
+    for (let i = 0; i < n; i++) {
+        expect(posArg.contextBefore(i)).toBe(contextLines.slice(n - i - 1, n).join('\n'));
+    }
+}
+
+function verifyContextAfter(posArg: SR.DocumentSourcePosition, contextLines: string[]): void {
+    const n: number = contextLines.length;
+    for (let i = 0; i < n; i++) {
+        expect(posArg.contextAfter(i)).toBe(contextLines.slice(0, i + 1).join('\n'));
     }
 }
 
@@ -321,6 +341,7 @@ describe('SourceReader array 1, single line', () => {
         input = 'program { Poner(Verde) }';
         //                 11111111112222
         //       012345678901234567890123
+        inputStr = input as string;
         reader = new SR.SourceReader([input], defaultLineEnders);
     });
 
@@ -451,11 +472,22 @@ describe('SourceReader array 1, single line', () => {
         });
         it('getPosition, and SP basic operations', () => {
             inputName = ''; // When only one unnamed input, the name is empty
-            vInpConts = (input as string).slice(vStart, vLength);
-            inpConts = input as string;
+            vInpConts = inputStr.slice(vStart, vLength);
+            inpConts = inputStr;
             pos = reader.getPosition();
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputStr.slice(0, col - 1)],
+                [inputStr.slice(col - 1)]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -528,11 +560,22 @@ describe('SourceReader array 1, single line', () => {
         });
         it('getPosition, and SP basic operations', () => {
             inputName = ''; // When only one unnamed input, the name is empty
-            vInpConts = (input as string).slice(vStart, vLength);
-            inpConts = input as string;
+            vInpConts = inputStr.slice(vStart, vLength);
+            inpConts = inputStr;
             pos = reader.getPosition();
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputStr.slice(0, col - 1)],
+                [inputStr.slice(col - 1)]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -606,12 +649,23 @@ describe('SourceReader array 1, single line', () => {
         });
         it('getPosition, and SP basic operations', () => {
             inputName = ''; // When only one unnamed input, the name is empty
-            vInpConts = (input as string).slice(vStart, vLength);
-            inpConts = input as string;
+            vInpConts = inputStr.slice(vStart, vLength);
+            inpConts = inputStr;
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputStr.slice(0, col - 1)],
+                [inputStr.slice(col - 1)]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -685,12 +739,23 @@ describe('SourceReader array 1, single line', () => {
         });
         it('getPosition, and SP basic operations', () => {
             inputName = ''; // When only one unnamed input, the name is empty
-            vInpConts = (input as string).slice(vStart, vLength);
-            inpConts = input as string;
+            vInpConts = inputStr.slice(vStart, vLength);
+            inpConts = inputStr;
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputStr.slice(0, col - 1)],
+                [inputStr.slice(col - 1)]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -984,9 +1049,15 @@ describe('Contents from SourceReader array 1, several lines', () => {
 //     #region Several input documents {
 describe('SourceReader array 2, several lines', () => {
     beforeEach(() => {
-        input = ['program {\n  PonerVerde()\n}\n', 'procedure PonerVerde() {\n  Poner(Verde)\n}'];
-        //                   11111111112222 22 2              11111111112222 222222333333333 34
-        //        012345678 901234567890123 45 6    012345678901234567890123 456789012345678 90
+        inputLines = [
+            ['program {', '  PonerVerde()', '}', ''],
+            //             11111111112222 2  2 2
+            // 12345678 9  01234567890123 4  5 6
+            ['procedure PonerVerde() {', '  Poner(Verde)', '}']
+            //          11111111112222 2  22222333333333 3  4
+            // 12345678901234567890123 4  56789012345678 9  0
+        ];
+        input = [inputLines[0].join('\n'), inputLines[1].join('\n')];
         reader = new SR.SourceReader(input, defaultLineEnders);
     });
 
@@ -1117,11 +1188,27 @@ describe('SourceReader array 2, several lines', () => {
         });
         it('getPosition, and SP basic operations', () => {
             inputName = SR.SourceReader._unnamedDocument + '[0]';
-            vInpConts = (input[0] as string).slice(vStart, vLength);
-            inpConts = input[0] as string;
+            vInpConts = input[0].slice(vStart, vLength);
+            inpConts = input[0];
             pos = reader.getPosition();
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[0][0].slice(0, col - 1)],
+                [
+                    inputLines[0][0].slice(col - 1),
+                    inputLines[0][1],
+                    inputLines[0][2],
+                    inputLines[0][3]
+                ]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -1198,7 +1285,23 @@ describe('SourceReader array 2, several lines', () => {
             inpConts = input[0] as string;
             pos = reader.getPosition();
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[0][0].slice(0, col - 1)],
+                [
+                    inputLines[0][0].slice(col - 1),
+                    inputLines[0][1],
+                    inputLines[0][2],
+                    inputLines[0][3]
+                ]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -1277,7 +1380,115 @@ describe('SourceReader array 2, several lines', () => {
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[0][0].slice(0, col - 1)],
+                [
+                    inputLines[0][0].slice(col - 1),
+                    inputLines[0][1],
+                    inputLines[0][2],
+                    inputLines[0][3]
+                ]
+            );
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = ' { ';
+                reader.beginRegion(region2);
+                regs.push(region2); // Begin pushes, |rs|=1
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region);
+                regs.push(region); // Begin pushes, |rs|=2
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested');
+                reader.endRegion(); // End is opposite of begin
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                reader.endRegion(); // Do nothing
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPosition();
+                reader.beginRegion('New region, not visible');
+                // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
+        });
+    });
+
+    describe('GoTo2ndLine.ReadId.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfDocument = false;
+            peeked = '(';
+            goodStartShortL0 = '(';
+            goodStartShortL1 = '()';
+            goodStartShortLm = '()\n}';
+            goodStartExact = '()\n}\n';
+            badStartShortSimilarL0 = '{';
+            badStartShortSimilarL1 = '{)';
+            badStartShortSimilarLm = '{)\n}';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = '{)\n}\n';
+            badStartExactDisimil = '23456';
+            badStartLong = '234567890123456';
+            lin = 2;
+            col = 13;
+            regs = [];
+            vStart = 0;
+            vLength = 22;
+            reader.takeWhile((ch) => ch !== '\n'); // Skip first line
+            reader.skip(3); // Skip line end + indent
+            read = reader.takeWhile((ch) => ch !== '(');
+            expected = 'PonerVerde';
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedDocument + '[0]';
+            vInpConts = input[0].slice(vStart, vLength);
+            inpConts = input[0];
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[0][0], inputLines[0][1].slice(0, col - 1)],
+                [inputLines[0][1].slice(col - 1), inputLines[0][2], inputLines[0][3]]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -1356,7 +1567,23 @@ describe('SourceReader array 2, several lines', () => {
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [
+                    inputLines[0][0],
+                    inputLines[0][1],
+                    inputLines[0][2],
+                    inputLines[0][3].slice(col - 1)
+                ],
+                [inputLines[0][3].slice(0, col - 1)]
+            );
         });
         describe('Regions', () => {
             beforeEach(() => {
@@ -1432,7 +1659,18 @@ describe('SourceReader array 2, several lines', () => {
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[1][0].slice(0, col - 1)],
+                [inputLines[1][0].slice(col - 1), inputLines[1][1], inputLines[1][2]]
+            );
         });
     });
 
@@ -1471,7 +1709,18 @@ describe('SourceReader array 2, several lines', () => {
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[1][0].slice(0, col - 1)],
+                [inputLines[1][0].slice(col - 1), inputLines[1][1], inputLines[1][2]]
+            );
         });
     });
 
@@ -1511,7 +1760,112 @@ describe('SourceReader array 2, several lines', () => {
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[1][0].slice(0, col - 1)],
+                [inputLines[1][0].slice(col - 1), inputLines[1][1], inputLines[1][2]]
+            );
+        });
+    });
+
+    describe('GoTo2ndFile-2ndLine.ReadId.v', () => {
+        beforeEach(() => {
+            endOfInput = false;
+            endOfDocument = false;
+            peeked = '(';
+            goodStartShortL0 = '(';
+            goodStartShortL1 = '(Verde';
+            goodStartShortLm = '(Verde)';
+            goodStartExact = '(Verde)\n}';
+            badStartShortSimilarL0 = '{';
+            badStartShortSimilarL1 = '{Verde)';
+            badStartShortSimilarLm = '{Verde)\n';
+            badStartShortDisimil = 'any other';
+            badStartExactSimilar = '{Verde)\n}';
+            badStartExactDisimil = '234567890';
+            badStartLong = '234567890123456';
+            lin = 2;
+            col = 8;
+            regs = [];
+            vStart = 0;
+            vLength = 32;
+            reader.takeWhile((ch) => ch !== '&'); // Move to next document
+            reader.skip(); // Skip EOF
+            reader.takeWhile((ch) => ch !== '\n'); // Skip first line
+            reader.skip(3); // Skip line end + indent
+            read = reader.takeWhile((ch) => ch !== '(');
+            expected = 'Poner';
+        });
+        it('SR basic operations', () => {
+            verifySourceReaderBasicOperations();
+        });
+        it('getPosition, and SP basic operations', () => {
+            inputName = SR.SourceReader._unnamedDocument + '[1]';
+            vInpConts = input[1].slice(vStart, vLength);
+            inpConts = input[1];
+            pos = reader.getPosition();
+            expect(read).toBe(expected);
+            expect(pos.isEndOfInput()).toBe(endOfInput);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[1][0], inputLines[1][1].slice(0, col - 1)],
+                [inputLines[1][1].slice(col - 1), inputLines[1][2]]
+            );
+        });
+        describe('Regions', () => {
+            beforeEach(() => {
+                const region2: string = ' { ';
+                reader.beginRegion(region2);
+                regs.push(region2); // Begin pushes, |rs|=1
+            });
+            it('Non interference', () => {
+                verifySourceReaderBasicOperations();
+            });
+            it('Regions returned.1', () => {
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.2', () => {
+                region = 'nested';
+                reader.beginRegion(region);
+                regs.push(region); // Begin pushes, |rs|=2
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('End opposite of begin', () => {
+                reader.beginRegion('nested');
+                reader.endRegion(); // End is opposite of begin
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Regions returned.0', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('Extra endRegion', () => {
+                reader.endRegion(); // region2
+                regs.pop(); // End pops, |rs|=0
+                reader.endRegion(); // Do nothing
+                expect(reader.getPosition().regions).toStrictEqual(regs);
+            });
+            it('New begins neutral', () => {
+                pos = reader.getPosition();
+                reader.beginRegion('New region, not visible');
+                // Regions of both positions are the same after 2nd begin
+                expect(pos.regions).toStrictEqual(regs);
+            });
         });
     });
 
@@ -1551,7 +1905,18 @@ describe('SourceReader array 2, several lines', () => {
             pos = reader.getPosition();
             expect(read).toBe(expected);
             expect(pos.isEndOfInput()).toBe(endOfInput);
-            verifyPositionKnown(pos, reader, lin, col, regs, inputName, vInpConts, inpConts);
+            verifyPositionKnown(
+                pos,
+                reader,
+                lin,
+                col,
+                regs,
+                inputName,
+                vInpConts,
+                inpConts,
+                [inputLines[1][0], inputLines[1][1], inputLines[1][2].slice(col - 1)],
+                [inputLines[1][2].slice(0, col - 1)]
+            );
         });
     });
 
