@@ -16,34 +16,34 @@ import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions
 
 describe('EndOfInputSourcePosition', () => {
     // ===============================================
-    // #region Single line & Single document
-    // ===============================================
+    // #region Single line & Single document {
+    // -----------------------------------------------
     given('an instance with single line and single document input', () => {
-        // -----------------------------------------------
-        // #region Setup
+        // ===============================================
+        // #region Setup {
         // -----------------------------------------------
         const input = 'program { Poner(Verde) }';
         const sr = new SourceReader(input);
         // position source reader at the end of the input, to match
         // the status, skip as silently all the spaces
         const numberOfInvisibles = 3;
-        sr.skip('program'.length);
-        sr.skip(' '.length, true);
-        sr.skip('{'.length);
-        sr.skip(' '.length, true);
-        sr.skip('Poner(Verde)'.length);
-        sr.skip(' '.length, true);
-        sr.skip('}'.length);
+        sr.skip('program');
+        sr.skip(' ', true);
+        sr.skip('{');
+        sr.skip(' ', true);
+        sr.skip('Poner(Verde)');
+        sr.skip(' ', true);
+        sr.skip('}');
         // skip to end of input
         sr.skip(2);
         // create the position
         const pos = new EndOfInputSourcePosition(sr, 1, 1, []);
         // -----------------------------------------------
-        // #endregion Setup
-        // -----------------------------------------------
+        // #endregion } Setup
+        // ===============================================
 
-        // -----------------------------------------------
-        // #region toString
+        // ===============================================
+        // #region toString {
         // -----------------------------------------------
         describe('toString', () => {
             it('returns @<EOI>', () => {
@@ -51,11 +51,11 @@ describe('EndOfInputSourcePosition', () => {
             });
         });
         // -----------------------------------------------
-        // #endregion toString
-        // -----------------------------------------------
+        // #endregion } toString
+        // ===============================================
 
-        // -----------------------------------------------
-        // #region Basic properties
+        // ===============================================
+        // #region Basic properties {
         // -----------------------------------------------
         describe('isUnknown', () => {
             it('returns false', () => {
@@ -83,8 +83,8 @@ describe('EndOfInputSourcePosition', () => {
             });
         });
         // -----------------------------------------------
-        // #endregion Basic properties
-        // -----------------------------------------------
+        // #endregion } Basic properties
+        // ===============================================
 
         // -----------------------------------------------
         // #region Basic properties that fail
@@ -393,13 +393,13 @@ describe('EndOfInputSourcePosition', () => {
         // #endregion documentContextAfter
         // -----------------------------------------------
     });
-    // ===============================================
-    // #endregion Single line & Single document
+    // -----------------------------------------------
+    // #endregion } Single line & Single document
     // ===============================================
 
     // ===============================================
-    // #region Multiple lines & Single document
-    // ===============================================
+    // #region Multiple lines & Single document {
+    // -----------------------------------------------
     given('an instance with multiple lines and single document input', () => {
         // -----------------------------------------------
         // #region Setup
@@ -822,13 +822,13 @@ describe('EndOfInputSourcePosition', () => {
         // #endregion documentContextAfter
         // -----------------------------------------------
     });
-    // ===============================================
-    // #endregion Multiple lines & Single document
+    // -----------------------------------------------
+    // #endregion } Multiple lines & Single document
     // ===============================================
 
     // ===============================================
-    // #region Multiple lines & Multiple documents
-    // ===============================================
+    // #region Multiple lines & Multiple documents {
+    // -----------------------------------------------
     given('an instance with multiple lines and multiple documents input', () => {
         // -----------------------------------------------
         // #region Setup
@@ -1353,7 +1353,7 @@ describe('EndOfInputSourcePosition', () => {
         // #endregion documentContextAfter
         // -----------------------------------------------
     });
-    // ===============================================
-    // #endregion Multiple lines & Multiple documents
+    // -----------------------------------------------
+    // #endregion } Multiple lines & Multiple documents
     // ===============================================
 });

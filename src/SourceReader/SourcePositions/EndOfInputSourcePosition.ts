@@ -9,10 +9,10 @@ import { SourceReader } from '../SourceReader';
 
 /**
  * An {@link EndOfInputSourcePosition} points to the EndOfInput position in a
- * specific {@link SourceReader}. That position is reached when all input
- * documents have been processed. It is a special position, because it does not
- * point to a particular position inside a document in the source input, but to
- * the end of it.
+ * specific {@link SourceReader}.
+ * That position is reached when all input documents have been processed.
+ * It is a special position, because it does not point to a particular position
+ * inside a document in the source input, but to the end of it.
  *
  * @group API: Source Positions
  */
@@ -20,35 +20,35 @@ export class EndOfInputSourcePosition
     extends AbstractKnownSourcePosition
     implements SourcePosition
 {
-    // -----------------------------------------------
-    // #region API: Properties
+    // ===============================================
+    // #region API: Properties - Part 1 {
     // -----------------------------------------------
     /** @inheritdoc */
     public readonly isEndOfInput = true;
     // -----------------------------------------------
-    // #endregion API: Properties
-    // -----------------------------------------------
+    // #endregion } API: Properties - Part 1
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region Internal: Constructors
+    // ===============================================
+    // #region Internal: Constructors {
     // -----------------------------------------------
     /**
-     * Constructs the EndOfInput position in an input source. It is intended to
-     * be used only by {@link SourceReader}.
+     * Constructs the EndOfInput position in an input source.
+     * It is intended to be used only by {@link SourceReader}.
      *
      * **PRECONDITIONS:** (not verified during execution)
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader state
      *
      * @param sourceReader The {@link SourceReader} of the input this position belongs to.
-     * @param line The line number of this position in the current input. It will be
-     *      modified only by the constructor.
+     * @param line The line number of this position in the current input.
+     *      It will be modified only by the constructor.
      *      **INVARIANT:** `line >=1`, and it is a valid line in that reader.
-     * @param column The column number of this position in the current input. It will be
-     *      modified only by the constructor.
+     * @param column The column number of this position in the current input.
+     *      It will be modified only by the constructor.
      *      **INVARIANT:** `column >= 1` and it is a valid column in that reader.
-     * @param regions The regions the position in the current input belongs to. It will be
-     *      modified only by the constructor.
+     * @param regions The regions the position in the current input belongs to.
+     *      It will be modified only by the constructor.
      *      **INVARIANT:** the regions are valid in the position's reader.
      *
      * @group Internal: Constructors
@@ -62,22 +62,34 @@ export class EndOfInputSourcePosition
         super(sourceReader, line, column, regions);
     }
     // -----------------------------------------------
-    // #endregion Internal: Constructors
-    // -----------------------------------------------
+    // #endregion } Internal: Constructors
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region API: Interface errors
+    // ===============================================
+    // #region API: Properties - Part 2 {
     // -----------------------------------------------
     /** @inheritdoc */
     public get isEndOfDocument(): boolean {
         throw new InvalidOperationAtEOIError('isEndOfDocument', 'EndOfInputSourcePosition');
     }
+    // -----------------------------------------------
+    // #endregion } API: Properties - Part 2
+    // ===============================================
 
+    // ===============================================
+    // #region API: Access {
+    // -----------------------------------------------
     /** @inheritdoc */
     public get documentName(): string {
         throw new InvalidOperationAtEOIError('documentName', 'EndOfInputSourcePosition');
     }
+    // -----------------------------------------------
+    // #endregion } API: Access
+    // ===============================================
 
+    // ===============================================
+    // #region API: Contents access {
+    // -----------------------------------------------
     /** @inheritdoc */
     public get fullDocumentContents(): string {
         throw new InvalidOperationAtEOIError('fullDocumentContents', 'EndOfInputSourcePosition');
@@ -98,29 +110,39 @@ export class EndOfInputSourcePosition
         throw new InvalidOperationAtEOIError('documentContextAfter', 'EndOfInputSourcePosition');
     }
     // -----------------------------------------------
-    // #endregion API: Interface errors
-    // -----------------------------------------------
+    // #endregion } API: Contents access
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region API: Printing
+    // ===============================================
+    // #region API: Printing {
     // -----------------------------------------------
     /** @inheritdoc */
     public toString(): string {
         return '@<EOI>';
     }
     // -----------------------------------------------
-    // #endregion API: Printing
-    // -----------------------------------------------
+    // #endregion } API: Printing
+    // ===============================================
 
+    // ===============================================
+    // #region Internal: Helpers {
     // -----------------------------------------------
-    // #region Internal: Helpers
-    // -----------------------------------------------
+    /**
+     * Implements the calculation of the corresponding index for this class.
+     *
+     * @group Internal: Helpers
+     */
     public _internalDocumentIndex(): number {
-        return this._sourceReader.documentsNames.length - 1;
+        return this.sourceReader.documentsNames.length - 1;
     }
 
+    /**
+     * Implements the calculation of the corresponding index for this class.
+     *
+     * @group Internal: Helpers
+     */
     public _internalCharacterIndex(visible: boolean): number {
-        return this._sourceReader._fullDocumentContentsAt(this._internalDocumentIndex()).length;
+        return this.sourceReader._fullDocumentContentsAt(this._internalDocumentIndex()).length;
     }
 
     /** @inheritdoc */
@@ -132,8 +154,7 @@ export class EndOfInputSourcePosition
     protected _visibleContentsTo(to: AbstractKnownSourcePosition): string {
         return '';
     }
-
     // -----------------------------------------------
-    // #endregion Internal: Helpers
-    // -----------------------------------------------
+    // #endregion } Internal: Helpers
+    // ===============================================
 }

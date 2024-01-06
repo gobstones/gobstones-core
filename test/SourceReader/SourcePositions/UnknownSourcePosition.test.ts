@@ -7,28 +7,28 @@ import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositi
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 
 describe('An UnknownSourcePosition', () => {
-    // -----------------------------------------------
-    // #region toString
+    // ===============================================
+    // #region toString {
     // -----------------------------------------------
     it('responds to toString with @<?>', () => {
         expect(UnknownSourcePosition.instance.toString()).toBe('@<?>');
     });
     // -----------------------------------------------
-    // #endregion toString
-    // -----------------------------------------------
+    // #endregion } toString
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region Basic properties
+    // ===============================================
+    // #region Basic properties {
     // -----------------------------------------------
     it('responds to isUnknown with true', () => {
         expect(UnknownSourcePosition.instance.isUnknown).toBe(true);
     });
     // -----------------------------------------------
-    // #endregion Basic properties
-    // -----------------------------------------------
+    // #endregion } Basic properties
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region Basic properties that fail
+    // ===============================================
+    // #region Basic operations that fail {
     // -----------------------------------------------
     it('throws InvalidOperationAtUnknownPositionError when asked if isEndOfInput', () => {
         expect(() => UnknownSourcePosition.instance.isEndOfInput).toThrow(
@@ -85,11 +85,11 @@ describe('An UnknownSourcePosition', () => {
         }
     );
     // -----------------------------------------------
-    // #endregion Basic properties that fail
-    // -----------------------------------------------
+    // #endregion } Basic operations that fail
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region fullContentsFrom
+    // ===============================================
+    // #region fullContentsFrom {
     // -----------------------------------------------
     it(
         'throws InvalidOperationAtUnknownPositionError when asked for the full contents ' +
@@ -170,11 +170,11 @@ describe('An UnknownSourcePosition', () => {
         }
     );
     // -----------------------------------------------
-    // #endregion fullContentsFrom
-    // -----------------------------------------------
+    // #endregion } fullContentsFrom
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region fullContentsTo
+    // ===============================================
+    // #region fullContentsTo {
     // -----------------------------------------------
     it(
         'throws InvalidOperationAtUnknownPositionError when asked for the full contents ' +
@@ -255,11 +255,11 @@ describe('An UnknownSourcePosition', () => {
         }
     );
     // -----------------------------------------------
-    // #endregion fullContentsTo
-    // -----------------------------------------------
+    // #endregion } fullContentsTo
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region visibleContentsFrom
+    // ===============================================
+    // #region visibleContentsFrom {
     // -----------------------------------------------
     it(
         'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
@@ -340,11 +340,11 @@ describe('An UnknownSourcePosition', () => {
         }
     );
     // -----------------------------------------------
-    // #endregion visibleContentsFrom
-    // -----------------------------------------------
+    // #endregion } visibleContentsFrom
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region visibleContentsTo
+    // ===============================================
+    // #region visibleContentsTo {
     // -----------------------------------------------
     it(
         'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
@@ -425,11 +425,11 @@ describe('An UnknownSourcePosition', () => {
         }
     );
     // -----------------------------------------------
-    // #endregion visibleContentsTo
-    // -----------------------------------------------
+    // #endregion } visibleContentsTo
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region documentContextBefore & documentContextAfter
+    // ===============================================
+    // #region documentContextBefore & documentContextAfter {
     // -----------------------------------------------
     it(
         'throws InvalidOperationAtUnknownPositionError when asked for the context ' +
@@ -504,6 +504,6 @@ describe('An UnknownSourcePosition', () => {
         }
     );
     // -----------------------------------------------
-    // #endregion documentContextBefore & documentContextAfter
-    // -----------------------------------------------
+    // #endregion } documentContextBefore & documentContextAfter
+    // ===============================================
 });

@@ -6,6 +6,9 @@ import { AbstractDocumentSourcePosition } from './AbstractDocumentSourcePosition
 import { SourcePosition } from './SourcePosition';
 import { SourceReader } from '../SourceReader';
 
+// ===============================================
+// #region DocumentSourcePosition {
+// -----------------------------------------------
 /**
  * A {@link DocumentSourcePosition} points to a particular position, different
  * from EndOfDocument, inside a particular document.
@@ -16,8 +19,8 @@ export class DocumentSourcePosition
     extends AbstractDocumentSourcePosition
     implements SourcePosition
 {
-    // -----------------------------------------------
-    // #region API: Properties
+    // ===============================================
+    // #region API: Properties {
     // -----------------------------------------------
     /**
      * Answers if this position correspond to the end of document for the
@@ -29,15 +32,16 @@ export class DocumentSourcePosition
      */
     public readonly isEndOfDocument: boolean = false;
     // -----------------------------------------------
-    // #endregion API: Properties
-    // -----------------------------------------------
+    // #endregion } API: Properties
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region Internal: Constructors
+    // ===============================================
+    // #region Internal: Constructors {
     // -----------------------------------------------
     /**
      * Constructs a defined position different from the end of a document in an
-     * input source. It is intended to be used only by {@link SourceReader}.
+     * input source.
+     * It is intended to be used only by {@link SourceReader}.
      *
      * **PRECONDITIONS:** (not verified during execution)
      *  * all numbers are >= 0
@@ -57,11 +61,11 @@ export class DocumentSourcePosition
         super(sourceReader, line, column, regions, documentIndex, charIndex, visibleCharIndex);
     }
     // -----------------------------------------------
-    // #endregion Internal: Constructors
-    // -----------------------------------------------
+    // #endregion } Internal: Constructors
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region Internal: Printing
+    // ===============================================
+    // #region Internal: Printing {
     // -----------------------------------------------
     /**
      * Gives a string version of the position. It is not useful for persistence,
@@ -73,28 +77,33 @@ export class DocumentSourcePosition
         return `@<${this.documentName}:${this.line},${this.column}>`;
     }
     // -----------------------------------------------
-    // #endregion API: Printing
+    // #endregion } API: Printing
+    // ===============================================
+
+    // ===============================================
+    // #region Internal: helpers {
     // -----------------------------------------------
-
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     protected _documentContextBefore(lines: number): string[] {
-        return this._sourceReader._documentContextBeforeOf(
+        return this.sourceReader._documentContextBeforeOf(
             this._internalDocumentIndex(),
             this._internalCharacterIndex(false),
             lines
         );
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     protected _documentContextAfter(lines: number): string[] {
-        return this._sourceReader._documentContextAfterOf(
+        return this.sourceReader._documentContextAfterOf(
             this._internalDocumentIndex(),
             this._internalCharacterIndex(false),
             lines
         );
     }
+    // -----------------------------------------------
+    // #endregion } Internal: helpers
+    // ===============================================
 }
+// -----------------------------------------------
+// #endregion } EndOfDocumentSourcePosition
+// ===============================================

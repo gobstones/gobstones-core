@@ -1,17 +1,20 @@
+/**
+ * @module SourceReader
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ */
 import {
     InvalidOperationAtUnknownPositionError,
     UnmatchedInputsError
 } from '../SourceReaderErrors';
 
 import { AbstractSourcePosition } from './AbstractSourcePosition';
-/**
- * @module SourceReader
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- */
 import { SourcePosition } from './SourcePosition';
 import { SourceReader } from '../SourceReader';
 import { expect } from '../../Expectations';
 
+// ===============================================
+// #region AbstractKnownSourcePosition {
+// -----------------------------------------------
 /**
  * A {@link AbstractKnownSourcePosition} points to a position in a specific
  * {@link SourceReader}. It should only be created using the
@@ -34,8 +37,8 @@ import { expect } from '../../Expectations';
  * @group API: Source Positions
  */
 export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition {
-    // -----------------------------------------------
-    // #region Implementation Details
+    // ===============================================
+    // #region Implementation Details {
     // -----------------------------------------------
     /**
      * Among the different operations provided in this class there are a few
@@ -61,11 +64,11 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * @private
      */
     // -----------------------------------------------
-    // #endregion Implementation Details
-    // -----------------------------------------------
+    // #endregion } Implementation Details
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region API: Properties
+    // ===============================================
+    // #region API: Properties {
     // -----------------------------------------------
     /** @inheritdoc */
     public readonly isUnknown = false;
@@ -73,11 +76,11 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
     /** @inheritdoc */
     public abstract readonly isEndOfInput: boolean;
     // -----------------------------------------------
-    // #endregion API: Properties
-    // -----------------------------------------------
+    // #endregion } API: Properties
+    // ===============================================
 
-    // -----------------------------------------------
-    // #region Internal: Constructors
+    // ===============================================
+    // #region Internal: Constructors {
     // -----------------------------------------------
     /**
      * Returns a source position belonging to some {@link SourceReader}. It is
@@ -102,22 +105,20 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * @private
      */
     public constructor(
-        public readonly _sourceReader: SourceReader,
+        public readonly sourceReader: SourceReader,
         public readonly line: number,
         public readonly column: number,
         public readonly regions: string[]
     ) {
         super();
     }
+    // -----------------------------------------------
+    // #endregion } Internal: Constructors
+    // ===============================================
 
+    // ===============================================
+    // #region API: Content access {
     // -----------------------------------------------
-    // #endregion Internal: Constructors
-    // -----------------------------------------------
-
-    // -----------------------------------------------
-    // #region API: Content Access
-    // -----------------------------------------------
-
     /** @inheritdoc */
     public fullContentsFrom(from: SourcePosition): string {
         this._validateSourceReaders(from, 'fullContentsFrom', 'AbstractKnownSourcePosition');
@@ -141,21 +142,24 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
         this._validateSourceReaders(from, 'visibleContentsFrom', 'AbstractKnownSourcePosition');
         return this._visibleContentsFrom(from as unknown as AbstractKnownSourcePosition);
     }
+    // -----------------------------------------------
+    // #endregion } API: Content access
+    // ===============================================
 
-    // -----------------------------------------------
-    // #endregion API: Content Access
-    // -----------------------------------------------
-
-    // -----------------------------------------------
-    // #region Internal: Helpers
+    // ===============================================
+    // #region Internal: Helpers {
     // -----------------------------------------------
     /**
-     * Validates that both positions correspond to the same reader.
+     * Validates that:
+     * * argument position is not unknown
+     * * both positions correspond to the same reader.
      *
      * Implements a common validation for the Template Method Pattern.
      *
-     * @throws {@link ErrorUnmatchingPositionsBy} if `this` and `that` positions
-     *         do not belong to the same reader.
+     * @throws {@link InvalidOperationAtUnknownPositionError}
+     *         if the receiver or the argument positions are unknown.
+     * @throws {@link UnmatchedInputsError}
+     *         if the receiver and the argument positions do not belong to the same reader.
      *
      * @group Internal: Helpers
      */
@@ -167,33 +171,34 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
         expect(that.isUnknown)
             .toBeFalse()
             .orThrow(new InvalidOperationAtUnknownPositionError(operation, context));
-        expect(this._sourceReader)
-            .toBe((that as unknown as AbstractKnownSourcePosition)._sourceReader)
+        expect(this.sourceReader)
+            .toBe((that as unknown as AbstractKnownSourcePosition).sourceReader)
             .orThrow(new UnmatchedInputsError(operation, context));
     }
 
     /**
      * The exact portion of the source that is enclosed between `from` position
-     * and `this` position (not included), both visible and non-visible. If
-     * `from` comes after `this`, the result is the empty string.
+     * and `this` position (not included), both visible and non-visible.
+     * If `from` comes after `this`, the result is the empty string.
      *
      * It implements the specific logic of each subclass for the Template Method
      * Pattern of
      * {@link AbstractKnownSourcePosition.fullContentsFrom | fullContentsFrom}.
      * It must be reimplemented by subclasses.
      *
-     * **PRECONDITION:** both positions correspond to the same reader (not
-     *                   validated, as it is a protected operation).
+     * **PRECONDITION:**
+     *  * both positions correspond to the same reader
+     *    (not validated, as it is a protected operation).
      *
-     * @param from A {@link AbstractKnownSourcePosition} related with the same
-     *           {@link SourceReader} that the receiver. It indicates the
-     *           starting position to consult, where the receiver is the last
-     *           (not included).
+     * @param from An {@link AbstractKnownSourcePosition} related with the same
+     *           {@link SourceReader} that the receiver.
+     *           It indicates the starting position to consult,
+     *           where the receiver is the last (not included).
      *
      * @group Internal: Helpers
      */
     protected _fullContentsFrom(from: AbstractKnownSourcePosition): string {
-        return this._sourceReader._inputFromToIn(
+        return this.sourceReader._inputFromToIn(
             from._internalDocumentIndex(),
             from._internalCharacterIndex(false),
             this._internalDocumentIndex(),
@@ -204,8 +209,8 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
 
     /**
      * The exact portion of the source that is enclosed between `this` position
-     * and `to` position (not included), both visible and non-visible. If `this`
-     * comes after `to`, the result is the empty string.
+     * and `to` position (not included), both visible and non-visible.
+     * If `this` comes after `to`, the result is the empty string.
      *
      * It implements the specific logic of each subclass for the Template Method
      * Pattern of
@@ -216,9 +221,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *                   validated, as it is a protected operation).
      *
      * @param to A {@link AbstractKnownSourcePosition} related with the same
-     *           {@link SourceReader} that the receiver. It indicates a final
-     *           position to consult (not included), where the receiver is the
-     *           first.
+     *           {@link SourceReader} that the receiver.
+     *           It indicates a final position to consult (not included),
+     *           where the receiver is the first.
      *
      * @group Internal: Helpers
      */
@@ -226,8 +231,8 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
 
     /**
      * The exact portion of the source that is enclosed between `from` position
-     * and `this` position (not included) and is visible. If `from` comes after
-     * `this`, the result is the empty string.
+     * and `this` position (not included) and is visible.
+     * If `from` comes after `this`, the result is the empty string.
      *
      * It implements the specific logic of each subclass for the Template Method
      * Pattern of
@@ -238,14 +243,14 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *                   validated, as it is a protected operation).
      *
      * @param from A {@link AbstractKnownSourcePosition} related with the same
-     *           {@link SourceReader} that the receiver. It indicates the
-     *           starting position to consult, where the receiver is the last
-     *           (not included).
+     *           {@link SourceReader} that the receiver.
+     *           It indicates the starting position to consult,
+     *           where the receiver is the last (not included).
      *
      * @group Internal: Helpers
      */
     protected _visibleContentsFrom(from: AbstractKnownSourcePosition): string {
-        return this._sourceReader._inputFromToIn(
+        return this.sourceReader._inputFromToIn(
             from._internalDocumentIndex(),
             from._internalCharacterIndex(true),
             this._internalDocumentIndex(),
@@ -256,8 +261,8 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
 
     /**
      * The exact portion of the source that is enclosed between `this` position
-     * and `to` position (not included) and is visible. If `this` comes after
-     * `to`, the result is the empty string.
+     * and `to` position (not included) and is visible.
+     * If `this` comes after `to`, the result is the empty string.
      *
      * It implements the specific logic of each subclass for the Template Method
      * Pattern of
@@ -268,9 +273,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *                   validated, as it is a protected operation).
      *
      * @param to A {@link AbstractKnownSourcePosition} related with the same
-     *           {@link SourceReader} that the receiver. It indicates the final
-     *           position to consult (not included), where the receiver is the
-     *           first.
+     *           {@link SourceReader} that the receiver.
+     *           It indicates the final position to consult (not included),
+     *           where the receiver is the first.
      *
      * @group Internal: Helpers
      */
@@ -279,6 +284,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
     public abstract _internalDocumentIndex(): number;
     public abstract _internalCharacterIndex(visible: boolean): number;
     // -----------------------------------------------
-    // #endregion Internal: Helpers
-    // -----------------------------------------------
+    // #endregion } Internal: Helpers
+    // ===============================================
 }
+// -----------------------------------------------
+// #endregion } AbstractKnownSourcePosition
+// ===============================================

@@ -5,28 +5,10 @@
 import { SourcePosition } from './SourcePosition';
 
 /**
- * Instances of {@link AbstractSourcePosition} point to particular positions in
- * the source given by a {@link SourceReader}. All instance creation of
- * {@link AbstractSourcePosition} and it's subclasses should be done by
- * {@link SourceReader} only.
- *
- * A source position may be known (pointing to a particular position into a
- * {@link SourceReader}) or unknown (if a position cannot be determined). The
- * boolean property {@link AbstractSourcePosition.isUnknown | isUnknown}
- * indicates which is the case, and it's redefined appropriately by the
- * subclasses of {@link AbstractSourcePosition}, {@link UnknownSourcePosition}
- * (when position is unknown) and {@link AbstractKnownSourcePosition} (if it's
- * known). Subclasses of the latter also determine different types of known
- * positions.
- *
- * Additionally, a string representation of any {@link AbstractSourcePosition}
- * can be obtained through {@link AbstractSourcePosition.toString | toString}
- * for internal use purposes. Different subclasses may have other
- * operations, depending on its nature.
- *
- * A typical use of {@link AbstractSourcePosition} is relating nodes of an AST
- * representation of code to particular positions in the string version of the
- * source code (that may come from several input documents).
+ * This is the abstract implementation of the interface {@link SourcePosition}, and
+ * its purpose is to be the top of the hierarchy of different kinds of positions.
+ * Subclasses determine if the position is unknown or known, and in this last case,
+ * its different types.
  *
  * @group API: Source Positions
  */

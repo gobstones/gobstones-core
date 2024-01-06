@@ -24,6 +24,26 @@
  * the next transparently for the user (with the exception that regions are reset).
  *
  * See {@link SourceReader} documentation for more details.
+ *
+ * ## Source positions
+ *
+ * {@link SourcePosition}s point to particular positions in the source given by a
+ * {@link SourceReader}.
+ * All {@link SourcePosition}s are created only through {@link SourceReader}.
+ *
+ * A source position may be known (pointing to a particular position into a
+ * {@link SourceReader}) or unknown (if a position cannot be determined).
+ * The boolean property {@link SourcePosition.isUnknown | isUnknown}
+ * indicates which is the case.
+ *
+ * Additionally, a string representation of any {@link SourcePosition}
+ * can be obtained through {@link SourcePosition.toString | toString}
+ * for internal use purposes.
+ *
+ * A typical use of {@link SourcePosition}s is relating nodes of an AST
+ * representation of code to particular positions in the string version of the
+ * source code (that may come from several input documents).
+ *
  * @module SourceReader
  */
 export * from './SourceReader';

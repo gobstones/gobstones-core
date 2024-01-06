@@ -8,25 +8,27 @@
  * It provides internationalization of error messages through a {@link Translator}.
  * It also restores the prototype chain.
  *
- * @group API: Errors
+ * @group API: Main
  */
 export class SourceReaderError extends Error {
     /**
-     * The constructor for generic SourceReader errors.
-     * @param key A string indicating which of the `error` entries of the
-     *            {@link SourceReaderLocale} to use.
-     * @param interpolations A record indicating values for interpolations
-     *                       used in the value associated with the `key`
-     *                       given. It may be undefined if there are none.
+     * The constructor for generic {@link SourceReader} errors.
+     *
+     * The messages are not supposed to be shown in an UI, as all errors
+     * from this level are supposed to be catched and rethrown or handled
+     * properly.
+     *
+     * @param message A string message to show.
      */
-    public constructor(key: string, interpolations?: Record<string, any>) {
-        super(key);
+    public constructor(message: string) {
+        super(message);
         Object.setPrototypeOf(this, new.target.prototype); // It restores the prototype chain
     }
 }
 
 /**
- * The error to produce when a SourceReader is called with no input (an empty object or array).
+ * The error to produce when a {@link SourceReader} is called with no input
+ * (an empty object or array).
  *
  * @group API: Errors
  */
@@ -35,7 +37,7 @@ export class NoInputError extends SourceReaderError {
      * The constructor for {@link NoInputError} errors.
      */
     public constructor() {
-        super('NoInput');
+        super('The input provided to the source reader has no documents.');
     }
 }
 
@@ -48,7 +50,7 @@ export class NoInputError extends SourceReaderError {
 export class UnmatchedInputsError extends SourceReaderError {
     /**
      * The constructor for
-     * {@link SourceReader.ErrorUnmatchingPositionsBy | ErrorUnmatchingPositionsBy} errors.
+     * {@link UnmatchedInputsError | UnmatchedInputsError} errors.
      *
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.
@@ -69,12 +71,10 @@ export class UnmatchedInputsError extends SourceReaderError {
  */
 export class InvalidOperationAtUnknownPositionError extends SourceReaderError {
     /**
-     * The constructor for
-     * {@link InvalidOperationAtUnknownPositionError | InvalidOperationAtUnknownPositionError}
-     * errors.
+     * The constructor for {@link InvalidOperationAtUnknownPositionError} errors.
      *
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
+     * @param operation A string indicating which function produced the error.
+     * @param context A string indicating the context in which the function produced the error.
      */
     public constructor(
         public readonly operation: string,
@@ -85,17 +85,16 @@ export class InvalidOperationAtUnknownPositionError extends SourceReaderError {
 }
 
 /**
- * The error to produce when a function that is not supposed to be used at
- * EndOfInput is called.
+ * The error to produce when a function that is not supposed to be used at EndOfInput is called.
  *
  * @group API: Errors
  */
 export class InvalidOperationAtEOIError extends SourceReaderError {
     /**
-     * The constructor for {@link SourceReader.ErrorAtEndOfInputBy | ErrorAtEndOfInputBy} errors.
+     * The constructor for {@link InvalidOperationAtEOIError} errors.
      *
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
+     * @param operation A string indicating which function produced the error.
+     * @param context A string indicating the context in which the function produced the error.
      */
     public constructor(
         public readonly operation: string,
@@ -112,16 +111,15 @@ export class InvalidOperationAtEOIError extends SourceReaderError {
  */
 export class InvalidOperationAtEODError extends SourceReaderError {
     /**
-     * The constructor for
-     * {@link SourceReader.ErrorAtEndOfDocumentBy | ErrorAtEndOfDocumentBy} errors.
+     * The constructor for {@link InvalidOperationAtEODError} errors.
      *
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
+     * @param operation A string indicating which function produced the error.
+     * @param context A string indicating the context in which the function produced the error.
      */
     public constructor(
         public readonly operation: string,
         public readonly context: string
     ) {
-        super(`Operation ${operation} of ${context} cannot work at the end of a document`);
+        super(`Operation ${operation} of ${context} cannot work at the end of a source document`);
     }
 }
