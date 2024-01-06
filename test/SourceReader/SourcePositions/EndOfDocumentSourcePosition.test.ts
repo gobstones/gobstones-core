@@ -13,7 +13,7 @@ import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePos
 import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 
-describe('DocumentSourcePosition', () => {
+describe('EndOfDocumentSourcePosition', () => {
     // ===============================================
     // #region Single line & Single document
     // ===============================================
@@ -34,16 +34,16 @@ describe('DocumentSourcePosition', () => {
         sr.skip(' '.length, true);
         sr.skip('}'.length);
         // skip to end of input
-        sr.skip(1);
+        sr.skip(2);
         // create the position
-        const pos = new DocumentSourcePosition(
+        const pos = new EndOfDocumentSourcePosition(
             sr,
             1,
-            'program {'.length,
+            input.length,
             [],
             0,
-            'program {'.length,
-            'program{'.length
+            input.length,
+            input.length - numberOfInvisibles
         );
         // -----------------------------------------------
         // #endregion isUnknown and toString
@@ -53,8 +53,8 @@ describe('DocumentSourcePosition', () => {
         // #region toString
         // -----------------------------------------------
         describe('toString', () => {
-            it('returns with @<<document name>:<line>,<column>>', () => {
-                expect(pos.toString()).toBe(`@<${pos.documentName}:${pos.line},${pos.column}>`);
+            it('returns @<EOD>', () => {
+                expect(pos.toString()).toBe('@<EOD>');
             });
         });
         // -----------------------------------------------
@@ -75,8 +75,8 @@ describe('DocumentSourcePosition', () => {
             });
         });
         describe('isEndOfDocument', () => {
-            it('returns false', () => {
-                expect(pos.isEndOfDocument).toBe(false);
+            it('returns true', () => {
+                expect(pos.isEndOfDocument).toBe(true);
             });
         });
         describe('line', () => {
@@ -85,8 +85,8 @@ describe('DocumentSourcePosition', () => {
             });
         });
         describe('column', () => {
-            it('returns 1', () => {
-                expect(pos.column).toBe('program {'.length);
+            it('returns the length of the text input', () => {
+                expect(pos.column).toBe(input.length);
             });
         });
         describe('regions', () => {
@@ -121,7 +121,7 @@ describe('DocumentSourcePosition', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
-                    1,
+                    5,
                     input.length,
                     [],
                     0,
@@ -157,36 +157,19 @@ describe('DocumentSourcePosition', () => {
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns an empty string if argument is a defined document position' +
-                    'and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'program { Poner('.length,
-                        [],
-                        0,
-                        'program { Poner('.length,
-                        'program{Poner('.length
-                    );
-                    expect(pos.fullContentsFrom(posTest)).toBe('');
-                }
-            );
-            it(
                 'returns all the characters from the arguments starting position ' +
-                    'to the end of the document if argument is a defined document position' +
-                    'and the arguments position is before the receiver',
+                    'to the end of the document if argument is a defined document position',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
                         1,
-                        'prog'.length,
+                        'program {'.length,
                         [],
                         0,
-                        'prog'.length,
-                        'prog'.length
+                        'program {'.length,
+                        'program{'.length
                     );
-                    expect(pos.fullContentsFrom(posTest)).toBe('ram {');
+                    expect(pos.fullContentsFrom(posTest)).toBe(' Poner(Verde) }');
                 }
             );
         });
@@ -221,63 +204,34 @@ describe('DocumentSourcePosition', () => {
                     )
                 );
             });
-            it(
-                'returns all characters in input starting from receivers position to end ' +
-                    ' if argument is an end of input',
-                () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
-                    expect(pos.fullContentsTo(posTest)).toBe(' Poner(Verde) }');
-                }
-            );
-            it(
-                'returns all characters in input starting from receivers position to end ' +
-                    ' if argument is an end of document',
-                () => {
-                    const posTest = new EndOfDocumentSourcePosition(
-                        sr,
-                        1,
-                        input.length,
-                        [],
-                        0,
-                        input.length,
-                        input.length - numberOfInvisibles
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe(' Poner(Verde) }');
-                }
-            );
-            it(
-                'returns an empty string if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'prog'.length,
-                        [],
-                        0,
-                        'prog'.length,
-                        'prog'.length
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the characters from the receivers starting ' +
-                    'position to the arguments position if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'program { Poner(Ver'.length,
-                        [],
-                        0,
-                        'program { Poner(Ver'.length,
-                        'program{Poner(Ver'.length
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe(' Poner(Ver');
-                }
-            );
+            it('returns an empty string if argument is an end of input', () => {
+                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                expect(pos.fullContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is en end of document', () => {
+                const posTest = new EndOfDocumentSourcePosition(
+                    sr,
+                    1,
+                    input.length,
+                    [],
+                    0,
+                    input.length,
+                    input.length - numberOfInvisibles
+                );
+                expect(pos.fullContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is any defined document position', () => {
+                const posTest = new DocumentSourcePosition(
+                    sr,
+                    1,
+                    'program {'.length,
+                    [],
+                    0,
+                    'program {'.length,
+                    'program{'.length
+                );
+                expect(pos.fullContentsTo(posTest)).toBe('');
+            });
         });
         // -----------------------------------------------
         // #endregion fullContentsTo
@@ -327,36 +281,19 @@ describe('DocumentSourcePosition', () => {
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns an empty string if argument is a defined document position' +
-                    'and the arguments position is after the receiver',
+                'returns the visible (non space) characters from the arguments starting position ' +
+                    'to the end of the document if argument is a defined document position',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
                         1,
-                        'program { Poner('.length,
+                        'program {'.length,
                         [],
                         0,
-                        'program { Poner('.length,
-                        'program{Poner('.length
+                        'program {'.length,
+                        'program{'.length
                     );
-                    expect(pos.visibleContentsFrom(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the visible characters (non spaces) from the arguments starting ' +
-                    'position to the end of the document if argument is a defined document ' +
-                    'position and the arguments position is before the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'prog'.length,
-                        [],
-                        0,
-                        'prog'.length,
-                        'prog'.length
-                    );
-                    expect(pos.visibleContentsFrom(posTest)).toBe('ram{');
+                    expect(pos.visibleContentsFrom(posTest)).toBe('Poner(Verde)}');
                 }
             );
         });
@@ -391,63 +328,34 @@ describe('DocumentSourcePosition', () => {
                     )
                 );
             });
-            it(
-                'returns all visible characters (non spaces) in input starting from receivers ' +
-                    ' position to end if argument is an end of input',
-                () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
-                    expect(pos.visibleContentsTo(posTest)).toBe('Poner(Verde)}');
-                }
-            );
-            it(
-                'returns all visible characters (non spaces) in input starting from receivers ' +
-                    ' position to end if argument is an end of document',
-                () => {
-                    const posTest = new EndOfDocumentSourcePosition(
-                        sr,
-                        1,
-                        input.length,
-                        [],
-                        0,
-                        input.length,
-                        input.length - numberOfInvisibles
-                    );
-                    expect(pos.visibleContentsTo(posTest)).toBe('Poner(Verde)}');
-                }
-            );
-            it(
-                'returns an empty string if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'prog'.length,
-                        [],
-                        0,
-                        'prog'.length,
-                        'prog'.length
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the visible characters (non spaces) from the receivers starting ' +
-                    'position to the arguments position if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'program { Poner(Ver'.length,
-                        [],
-                        0,
-                        'program { Poner(Ver'.length,
-                        'program{Poner(Ver'.length
-                    );
-                    expect(pos.visibleContentsTo(posTest)).toBe('Poner(Ver');
-                }
-            );
+            it('returns an empty string if argument is an end of input', () => {
+                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                expect(pos.visibleContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is an end of document', () => {
+                const posTest = new EndOfDocumentSourcePosition(
+                    sr,
+                    1,
+                    input.length,
+                    [],
+                    0,
+                    input.length,
+                    input.length - numberOfInvisibles
+                );
+                expect(pos.visibleContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is any defined document position', () => {
+                const posTest = new DocumentSourcePosition(
+                    sr,
+                    1,
+                    'program {'.length,
+                    [],
+                    0,
+                    'program {'.length,
+                    'program{'.length
+                );
+                expect(pos.visibleContentsTo(posTest)).toBe('');
+            });
         });
         // -----------------------------------------------
         // #endregion visibleContentsTo
@@ -456,29 +364,18 @@ describe('DocumentSourcePosition', () => {
         // -----------------------------------------------
         // #region documentContextBefore
         // -----------------------------------------------
-        describe('contextBefore', () => {
+        describe('documentContextBefore', () => {
+            it('returns array with the full input as sole element if requested lines is 0', () => {
+                expect(pos.documentContextBefore(0)).toStrictEqual([input]);
+            });
+            it('returns array with the full input as sole element if requested lines is 1', () => {
+                expect(pos.documentContextBefore(1)).toStrictEqual([input]);
+            });
             it(
-                'returns an array with all characters in current line, ending at receivers ' +
-                    'position in line and omitting further characters' +
-                    'if the requested lines 0',
+                'returns array with the full input as sole element ' +
+                    'if requested lines is more than 1',
                 () => {
-                    expect(pos.documentContextBefore(0)).toStrictEqual(['program {']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line, ending at receivers ' +
-                    'position in line and omitting further characters' +
-                    'if the requested lines 1',
-                () => {
-                    expect(pos.documentContextBefore(1)).toStrictEqual(['program {']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line, ending at receivers ' +
-                    'position in line and omitting further characters' +
-                    'if the requested lines is more than 1',
-                () => {
-                    expect(pos.documentContextBefore(4)).toStrictEqual(['program {']);
+                    expect(pos.documentContextBefore(4)).toStrictEqual([input]);
                 }
             );
         });
@@ -490,33 +387,18 @@ describe('DocumentSourcePosition', () => {
         // #region documentContextAfter
         // -----------------------------------------------
         describe('documentContextAfter', () => {
-            it(
-                'returns an array with all characters in current line, starting from receivers ' +
-                    'position in line and omitting previous characters' +
-                    'if the requested lines 1',
-                () => {
-                    expect(pos.documentContextAfter(0)).toStrictEqual([' Poner(Verde) }']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line, starting from receivers ' +
-                    'position in line and omitting previous characters' +
-                    'if the requested lines 1',
-                () => {
-                    expect(pos.documentContextAfter(1)).toStrictEqual([' Poner(Verde) }']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line, starting from receivers ' +
-                    'position in line and omitting previous characters' +
-                    'if the requested lines is more than 1',
-                () => {
-                    expect(pos.documentContextAfter(2)).toStrictEqual([' Poner(Verde) }']);
-                }
-            );
+            it('returns an array with empty string if requested lines is 0', () => {
+                expect(pos.documentContextAfter(1)).toStrictEqual(['']);
+            });
+            it('returns an array with empty string if requested lines is 1', () => {
+                expect(pos.documentContextAfter(1)).toStrictEqual(['']);
+            });
+            it('returns an array with empty string if requested lines more than 1', () => {
+                expect(pos.documentContextAfter(4)).toStrictEqual(['']);
+            });
         });
         // -----------------------------------------------
-        // #endregion contextAfter
+        // #endregion documentContextAfter
         // -----------------------------------------------
     });
     // ===============================================
@@ -537,7 +419,6 @@ describe('DocumentSourcePosition', () => {
             '  Poner(Rojo)\n' +
             '  Mover(Sur)\n' +
             '}\n';
-
         const sr = new SourceReader(input);
         // position source reader at the end of the input, to match
         // the status, skip as silently all the spaces
@@ -555,16 +436,16 @@ describe('DocumentSourcePosition', () => {
         sr.skip('Mover(Sur)\n'.length);
         sr.skip('}\n'.length);
         // skip to end of input
-        sr.skip(1);
+        sr.skip(2);
         // create the position
-        const pos = new DocumentSourcePosition(
+        const pos = new EndOfDocumentSourcePosition(
             sr,
-            4,
-            1,
+            6,
+            2,
             ['region2', 'region1', 'region3'],
             0,
-            'program {\n  Poner(Verde)\n  Mover(Norte)\n'.length,
-            'program{\nPoner(Verde)\nMover(Norte)\n'.length
+            input.length,
+            input.length - numberOfInvisibles
         );
         // -----------------------------------------------
         // #endregion isUnknown and toString
@@ -574,8 +455,8 @@ describe('DocumentSourcePosition', () => {
         // #region toString
         // -----------------------------------------------
         describe('toString', () => {
-            it('returns with @<<document name>:<line>,<column>>', () => {
-                expect(pos.toString()).toBe(`@<${pos.documentName}:${pos.line},${pos.column}>`);
+            it('returns @<EOD>', () => {
+                expect(pos.toString()).toBe('@<EOD>');
             });
         });
         // -----------------------------------------------
@@ -596,22 +477,22 @@ describe('DocumentSourcePosition', () => {
             });
         });
         describe('isEndOfDocument', () => {
-            it('returns false', () => {
-                expect(pos.isEndOfDocument).toBe(false);
+            it('returns true', () => {
+                expect(pos.isEndOfDocument).toBe(true);
             });
         });
         describe('line', () => {
-            it('returns the line used to create the position', () => {
-                expect(pos.line).toBe(4);
+            it('returns the number of lines in input', () => {
+                expect(pos.line).toBe(6);
             });
         });
-        describe('column', () => {
-            it('returns the column used to create the position', () => {
-                expect(pos.column).toBe(1);
+        describe('columns', () => {
+            it('returns the number of characters at last line', () => {
+                expect(pos.column).toBe(2);
             });
         });
         describe('regions', () => {
-            it('returns the regions it was created with', () => {
+            it('returns regions with the regions it was created with', () => {
                 expect(pos.regions).toStrictEqual(['region2', 'region1', 'region3']);
             });
         });
@@ -642,8 +523,8 @@ describe('DocumentSourcePosition', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
-                    1,
-                    1,
+                    6,
+                    2,
                     ['region2', 'region1', 'region3'],
                     0,
                     input.length,
@@ -682,36 +563,21 @@ describe('DocumentSourcePosition', () => {
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns an empty string if argument is a defined document position' +
-                    'and the arguments position is after the receiver',
+                'returns all the characters from the arguments starting position ' +
+                    'to the end of the document if argument is a defined document position',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
-                        1,
-                        '  Poner(R'.length,
-                        [],
-                        0,
-                        'program {\n  Poner(Verde)\n  Mover(Norte)\n  Poner(R'.length,
-                        'program{\nPoner(Verde)\nMover(Norte)\nPoner(R'.length
-                    );
-                    expect(pos.fullContentsFrom(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the characters from the arguments starting ' +
-                    'position to the end of the document if argument is a defined document ' +
-                    'position and the arguments position is before the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        2,
-                        '  Poner(Ve'.length,
+                        3,
+                        3,
                         ['region2', 'region1', 'region3'],
                         0,
-                        'program {\n  Poner(Ve'.length,
-                        'program{\nPoner(Ve'.length
+                        'program {\n  Poner(Verde)\n  '.length,
+                        'program{\nPoner(Verde)\n'.length
                     );
-                    expect(pos.fullContentsFrom(posTest)).toBe('rde)\n  Mover(Norte)\n');
+                    expect(pos.fullContentsFrom(posTest)).toBe(
+                        'Mover(Norte)\n  Poner(Rojo)\n  Mover(Sur)\n}\n'
+                    );
                 }
             );
         });
@@ -727,8 +593,8 @@ describe('DocumentSourcePosition', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
-                    1,
-                    1,
+                    6,
+                    2,
                     ['region2', 'region1', 'region3'],
                     0,
                     input.length,
@@ -746,67 +612,38 @@ describe('DocumentSourcePosition', () => {
                     )
                 );
             });
-            it(
-                'returns all characters in input starting from receivers ' +
-                    ' position to end if argument is an end of input',
-                () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                        'region2',
-                        'region1',
-                        'region3'
-                    ]);
-                    expect(pos.fullContentsTo(posTest)).toBe('  Poner(Rojo)\n  Mover(Sur)\n}\n');
-                }
-            );
-            it(
-                'returns all characters in input starting from receivers ' +
-                    ' position to end if argument is an end of document',
-                () => {
-                    const posTest = new EndOfDocumentSourcePosition(
-                        sr,
-                        5,
-                        7,
-                        ['region2', 'region1', 'region3'],
-                        0,
-                        input.length,
-                        input.length - numberOfInvisibles
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe('  Poner(Rojo)\n  Mover(Sur)\n}\n');
-                }
-            );
-            it(
-                'returns an empty string if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        2,
-                        '  Poner(Ve'.length,
-                        ['region2', 'region1', 'region3'],
-                        0,
-                        'program {\n  Poner(Ve'.length,
-                        'program{\nPoner(Ve'.length
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the characters from the receivers starting ' +
-                    'position to the arguments position if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        4,
-                        '  Poner(Rojo)\n  Move'.length,
-                        ['region2', 'region1', 'region3'],
-                        0,
-                        'program {\n  Poner(Verde)\n  Mover(Norte)\n  Poner(Rojo)\n  Move'.length,
-                        'program{\nPoner(Verde)\nMover(Norte)\nPoner(Rojo)\nMove'.length
-                    );
-                    expect(pos.fullContentsTo(posTest)).toBe('  Poner(Rojo)\n  Move');
-                }
-            );
+            it('returns an empty string if argument is an end of input', () => {
+                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
+                    'region2',
+                    'region1',
+                    'region3'
+                ]);
+                expect(pos.fullContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is an end of document', () => {
+                const posTest = new EndOfDocumentSourcePosition(
+                    sr,
+                    6,
+                    2,
+                    ['region2', 'region1', 'region3'],
+                    0,
+                    input.length,
+                    input.length - numberOfInvisibles
+                );
+                expect(pos.fullContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is any defined document position', () => {
+                const posTest = new DocumentSourcePosition(
+                    sr,
+                    3,
+                    3,
+                    ['region2', 'region1', 'region3'],
+                    0,
+                    'program {\n  Poner(Verde)\n  '.length,
+                    'program{\nPoner(Verde)\n'.length
+                );
+                expect(pos.fullContentsTo(posTest)).toBe('');
+            });
         });
         // -----------------------------------------------
         // #endregion fullContentsTo
@@ -820,8 +657,8 @@ describe('DocumentSourcePosition', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
-                    1,
-                    1,
+                    6,
+                    2,
                     ['region2', 'region1', 'region3'],
                     0,
                     input.length,
@@ -860,36 +697,21 @@ describe('DocumentSourcePosition', () => {
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns an empty string if argument is a defined document position' +
-                    'and the arguments position is after the receiver',
+                'returns the visible (non space) characters from the arguments starting position ' +
+                    'to the end of the document if argument is a defined document position',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
-                        1,
-                        '  Poner(R'.length,
-                        [],
-                        0,
-                        'program {\n  Poner(Verde)\n  Mover(Norte)\n  Poner(R'.length,
-                        'program{\nPoner(Verde)\nMover(Norte)\nPoner(R'.length
-                    );
-                    expect(pos.visibleContentsFrom(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the visible characters (non spaces) from the arguments starting ' +
-                    'position to the end of the document if argument is a defined document ' +
-                    'position and the arguments position is before the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        2,
-                        '  Poner(Ve'.length,
+                        3,
+                        3,
                         ['region2', 'region1', 'region3'],
                         0,
-                        'program {\n  Poner(Ve'.length,
-                        'program{\nPoner(Ve'.length
+                        'program {\n  Poner(Verde)\n  '.length,
+                        'program{\nPoner(Verde)\n'.length
                     );
-                    expect(pos.visibleContentsFrom(posTest)).toBe('rde)\nMover(Norte)\n');
+                    expect(pos.visibleContentsFrom(posTest)).toBe(
+                        'Mover(Norte)\nPoner(Rojo)\nMover(Sur)\n}\n'
+                    );
                 }
             );
         });
@@ -905,8 +727,8 @@ describe('DocumentSourcePosition', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
-                    1,
-                    1,
+                    6,
+                    2,
                     ['region2', 'region1', 'region3'],
                     0,
                     input.length,
@@ -924,67 +746,38 @@ describe('DocumentSourcePosition', () => {
                     )
                 );
             });
-            it(
-                'returns all visible characters (non spaces) in input starting from receivers ' +
-                    ' position to end if argument is an end of input',
-                () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                        'region2',
-                        'region1',
-                        'region3'
-                    ]);
-                    expect(pos.visibleContentsTo(posTest)).toBe('Poner(Rojo)\nMover(Sur)\n}\n');
-                }
-            );
-            it(
-                'returns all visible characters (non spaces) in input starting from receivers ' +
-                    ' position to end if argument is an end of document',
-                () => {
-                    const posTest = new EndOfDocumentSourcePosition(
-                        sr,
-                        6,
-                        2,
-                        ['region2', 'region1', 'region3'],
-                        0,
-                        input.length,
-                        input.length - numberOfInvisibles
-                    );
-                    expect(pos.visibleContentsTo(posTest)).toBe('Poner(Rojo)\nMover(Sur)\n}\n');
-                }
-            );
-            it(
-                'returns an empty string if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        2,
-                        '  Poner(Ve'.length,
-                        ['region2', 'region1', 'region3'],
-                        0,
-                        'program {\n  Poner(Ve'.length,
-                        'program{\nPoner(Ve'.length
-                    );
-                    expect(pos.visibleContentsTo(posTest)).toBe('');
-                }
-            );
-            it(
-                'returns all the visible characters (non spaces) from the receivers starting ' +
-                    'position to the arguments position if argument is a defined document ' +
-                    'position and the arguments position is after the receiver',
-                () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        4,
-                        '  Poner(Rojo)\n  Move'.length,
-                        ['region2', 'region1', 'region3'],
-                        0,
-                        'program {\n  Poner(Verde)\n  Mover(Norte)\n  Poner(Rojo)\n  Move'.length,
-                        'program{\nPoner(Verde)\nMover(Norte)\nPoner(Rojo)\nMove'.length
-                    );
-                    expect(pos.visibleContentsTo(posTest)).toBe('Poner(Rojo)\nMove');
-                }
-            );
+            it('returns an empty string if argument is an end of input', () => {
+                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
+                    'region2',
+                    'region1',
+                    'region3'
+                ]);
+                expect(pos.visibleContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is an end of document', () => {
+                const posTest = new EndOfDocumentSourcePosition(
+                    sr,
+                    6,
+                    2,
+                    ['region2', 'region1', 'region3'],
+                    0,
+                    input.length,
+                    input.length - numberOfInvisibles
+                );
+                expect(pos.visibleContentsTo(posTest)).toBe('');
+            });
+            it('returns an empty string if argument is any defined document position', () => {
+                const posTest = new DocumentSourcePosition(
+                    sr,
+                    3,
+                    3,
+                    ['region2', 'region1', 'region3'],
+                    0,
+                    'program {\n  Poner(Verde)\n  '.length,
+                    'program{\nPoner(Verde)\n'.length
+                );
+                expect(pos.visibleContentsTo(posTest)).toBe('');
+            });
         });
         // -----------------------------------------------
         // #endregion visibleContentsTo
@@ -993,58 +786,56 @@ describe('DocumentSourcePosition', () => {
         // -----------------------------------------------
         // #region documentContextBefore
         // -----------------------------------------------
-        describe('contextBefore', () => {
+        describe('documentContextBefore', () => {
+            it('returns array with the current line as element if requested lines is 0', () => {
+                expect(pos.documentContextBefore(0)).toStrictEqual(['']);
+            });
             it(
-                'returns an array with all characters in current line and previous line, ' +
-                    'ending at receivers position in line and omitting further characters' +
-                    'if the requested lines is 0',
+                'returns array with 2 elements containing the previous line and then ' +
+                    'the current line if requested lines is 1',
                 () => {
-                    expect(pos.documentContextBefore(0)).toStrictEqual(['']);
+                    expect(pos.documentContextBefore(1)).toStrictEqual(['}\n', '']);
                 }
             );
             it(
-                'returns an array with all characters in current line and previous line, ' +
-                    'ending at receivers position in line and omitting further characters' +
-                    'if the requested lines is 1',
+                'returns array with 4 elements containing the n previous lines and then ' +
+                    'the current line if requested lines is more than 1',
                 () => {
-                    expect(pos.documentContextBefore(1)).toBe(['  Mover(Norte)\n', '']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and previous line, ' +
-                    ' ending at receivers position in line and omitting further characters' +
-                    'if the requested lines is the number of lines from start of document',
-                () => {
-                    expect(pos.documentContextBefore(4)).toBe([
-                        'program {\n',
-                        '  Poner(Verde)\n',
+                    expect(pos.documentContextBefore(4)).toStrictEqual([
                         '  Mover(Norte)\n',
+                        '  Poner(Rojo)\n',
+                        '  Mover(Sur)\n',
+                        '}\n',
                         ''
                     ]);
                 }
             );
             it(
-                'returns an array with all characters in current line and previous line, ' +
-                    ' ending at receivers position in line and omitting further characters' +
-                    'if the requested lines is the number lines from start of document',
+                'returns array with elements containing the all previous lines and then ' +
+                    'the current line if requested lines is the number of lines in document',
                 () => {
-                    expect(pos.documentContextBefore(5)).toBe([
+                    expect(pos.documentContextBefore(6)).toStrictEqual([
                         'program {\n',
                         '  Poner(Verde)\n',
                         '  Mover(Norte)\n',
+                        '  Poner(Rojo)\n',
+                        '  Mover(Sur)\n',
+                        '}\n',
                         ''
                     ]);
                 }
             );
             it(
-                'returns an array with all characters in current line and previous line, ' +
-                    'ending at receivers position in line and omitting further characters if the' +
-                    'requested lines is more than the number lines from start of document',
+                'returns array with elements containing the all previous lines and then ' +
+                    'the current line if requested lines is more than lines in document',
                 () => {
-                    expect(pos.documentContextBefore(42)).toBe([
+                    expect(pos.documentContextBefore(42)).toStrictEqual([
                         'program {\n',
                         '  Poner(Verde)\n',
                         '  Mover(Norte)\n',
+                        '  Poner(Rojo)\n',
+                        '  Mover(Sur)\n',
+                        '}\n',
                         ''
                     ]);
                 }
@@ -1058,41 +849,18 @@ describe('DocumentSourcePosition', () => {
         // #region documentContextAfter
         // -----------------------------------------------
         describe('documentContextAfter', () => {
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters' +
-                    'if the requested lines 0',
-                () => {
-                    expect(pos.documentContextAfter(0)).toBe(['  Mover(Sur)\n']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters' +
-                    'if the requested lines 1',
-                () => {
-                    expect(pos.documentContextAfter(1)).toBe(['  Mover(Sur)\n']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters' +
-                    'if the requested lines is the number of remaining lines',
-                () => {
-                    expect(pos.documentContextAfter(2)).toBe(['  Mover(Sur)\n', '}\n']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters' +
-                    ' more than the number of remaining lines',
-                () => {
-                    expect(pos.documentContextAfter(5)).toBe(['  Mover(Sur)\n', '}\n']);
-                }
-            );
+            it('returns an array with empty string if requested lines is 0', () => {
+                expect(pos.documentContextAfter(1)).toStrictEqual(['']);
+            });
+            it('returns an array with empty string if requested lines is 1', () => {
+                expect(pos.documentContextAfter(1)).toStrictEqual(['']);
+            });
+            it('returns an array with empty string if requested lines more than 1', () => {
+                expect(pos.documentContextAfter(4)).toStrictEqual(['']);
+            });
         });
         // -----------------------------------------------
-        // #endregion contextAfter
+        // #endregion documentContextAfter
         // -----------------------------------------------
     });
     // ===============================================
@@ -1122,7 +890,7 @@ describe('DocumentSourcePosition', () => {
         const sr = new SourceReader(input);
         // position source reader at the end of the input, to match
         // the status, skip as silently all the spaces
-        const numberOfInvisibles = [7, 8];
+        const numberOfInvisibles = [7, 8, 6];
         // first document
         sr.skip('program'.length);
         sr.skip(' '.length, true);
@@ -1166,14 +934,14 @@ describe('DocumentSourcePosition', () => {
         // skip to end of input
         sr.skip(2);
         // create the position
-        const pos = new DocumentSourcePosition(
+        const pos = new EndOfDocumentSourcePosition(
             sr,
-            3,
-            '  Mover'.length,
+            5,
+            2,
             ['a region'],
             1,
-            'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'.length,
-            'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'.length
+            input[1].length,
+            input[1].length - numberOfInvisibles[1]
         );
         // -----------------------------------------------
         // #endregion isUnknown and toString
@@ -1183,8 +951,8 @@ describe('DocumentSourcePosition', () => {
         // #region toString
         // -----------------------------------------------
         describe('toString', () => {
-            it('returns with @<<document name>:<line>,<column>>', () => {
-                expect(pos.toString()).toBe(`@<${pos.documentName}:${pos.line},${pos.column}>`);
+            it('returns  @<EOD>', () => {
+                expect(pos.toString()).toBe('@<EOD>');
             });
         });
         // -----------------------------------------------
@@ -1205,18 +973,18 @@ describe('DocumentSourcePosition', () => {
             });
         });
         describe('isEndOfDocument', () => {
-            it('returns false', () => {
-                expect(pos.isEndOfDocument).toBe(false);
+            it('returns true', () => {
+                expect(pos.isEndOfDocument).toBe(true);
             });
         });
         describe('line', () => {
-            it('returns the line used to create the position', () => {
-                expect(pos.line).toBe(3);
+            it('returns the number of lines in the document', () => {
+                expect(pos.line).toBe(5);
             });
         });
         describe('column', () => {
-            it('returns the column used to create the position', () => {
-                expect(pos.column).toBe(7);
+            it('returns the number ofcharacters in the las line of the document', () => {
+                expect(pos.column).toBe(2);
             });
         });
         describe('regions', () => {
@@ -1225,7 +993,7 @@ describe('DocumentSourcePosition', () => {
             });
         });
         describe('documentName', () => {
-            it('returns the default source reader name', () => {
+            it('returns the name of the document according to index', () => {
                 expect(pos.documentName).toBe(`${SourceReader.defaultDocumentNamePrefix}2`);
             });
         });
@@ -1255,8 +1023,8 @@ describe('DocumentSourcePosition', () => {
                     input.length,
                     ['a region'],
                     1,
-                    input.length,
-                    input.length - numberOfInvisibles[1]
+                    input[1].length,
+                    input[1].length - numberOfInvisibles[1]
                 );
 
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
@@ -1275,18 +1043,30 @@ describe('DocumentSourcePosition', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
+            it('returns an empty string if argument is an end of last document', () => {
+                const posTest = new EndOfDocumentSourcePosition(
+                    sr,
+                    3,
+                    2,
+                    ['a region'],
+                    2,
+                    input[2].length,
+                    input[2].length - numberOfInvisibles[2]
+                );
+                expect(pos.fullContentsFrom(posTest)).toBe('');
+            });
             it(
-                'returns an empty string if argument is an end of document' +
-                    'and such end of document comes after the receivers position',
+                'returns all document contents after the arguments index one ' +
+                    'if argument is an of a document that is not the last',
                 () => {
-                    const secondEOD = new EndOfDocumentSourcePosition(
+                    const firstEOD = new EndOfDocumentSourcePosition(
                         sr,
                         5,
                         2,
                         ['a region'],
-                        1,
-                        input[1].length,
-                        input[1].length - numberOfInvisibles[1]
+                        0,
+                        input[0].length,
+                        input[0].length - numberOfInvisibles[0]
                     );
                     const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
@@ -1297,88 +1077,45 @@ describe('DocumentSourcePosition', () => {
                         input[2].length,
                         input[2].length - numberOfInvisibles[2]
                     );
-                    expect(pos.fullContentsFrom(secondEOD)).toBe('');
-                    expect(pos.fullContentsFrom(lastEOD)).toBe('');
+                    expect(pos.fullContentsFrom(firstEOD)).toBe(input[1]);
+                    expect(lastEOD.fullContentsFrom(firstEOD)).toBe(input[1] + input[2]);
                 }
             );
             it(
-                'returns all the characters in the documents starting from the next one ' +
-                    'from the arguments position to the receivers position ' +
-                    'if the argument is an end of document and comes before the receiver',
-                () => {
-                    const posTest = new EndOfDocumentSourcePosition(
-                        sr,
-                        5,
-                        2,
-                        ['a region'],
-                        0,
-                        input[0].length,
-                        input[0].length - numberOfInvisibles[0]
-                    );
-                    expect(pos.fullContentsFrom(posTest)).toBe(
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'
-                    );
-                }
-            );
-            it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position same as receiver',
+                'returns an empty string if argument is a ' +
+                    'defined document position after the receiver',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
-                        3,
-                        '  Mover'.length,
-                        ['a region'],
                         1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'.length
+                        'function suma(a, '.length,
+                        ['a region'],
+                        2,
+                        'function suma(a, '.length,
+                        'functionsuma(a,'.length
                     );
-
                     expect(pos.fullContentsFrom(posTest)).toBe('');
                 }
             );
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position and comes after the receiver',
+                'returns all the characters from the arguments starting position ' +
+                    'to the receiver if argument is a ' +
+                    'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
                         sr,
-                        3,
-                        '  Mover(Verd'.length,
-                        ['a region'],
+                        5,
                         1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover(Verd'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover(Verd'.length
-                    );
-
-                    const posTestB = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'function '.length,
-                        ['a region'],
-                        2,
-                        'function '.length,
-                        'function'.length
-                    );
-
-                    expect(pos.fullContentsFrom(posTestA)).toBe('');
-                    expect(pos.fullContentsFrom(posTestB)).toBe('');
-                }
-            );
-            it(
-                'returns all the characters in the documents contents starting from' +
-                    'the arguments position to the receivers position if the argument ' +
-                    'is a defined document document and comes before the receiver',
-                () => {
-                    const posTestA = new DocumentSourcePosition(
-                        sr,
-                        4,
-                        2,
                         ['a region'],
                         0,
-                        ' ApretarBoton()\n}'.length,
-                        'ApretarBoton()\n}'.length
+                        (
+                            'program {\n  MoverAlienAlEste()\n  ' +
+                            'MoverAlienAlEste()\n  ApretarBoton()\n'
+                        ).length,
+                        'program{\nMoverAlienAlEste()\nMoverAlienAlEste()\nApretarBoton()\n'.length
                     );
+
+                    expect(pos.fullContentsFrom(posTestA)).toBe('}' + input[1]);
 
                     const posTestB = new DocumentSourcePosition(
                         sr,
@@ -1389,12 +1126,7 @@ describe('DocumentSourcePosition', () => {
                         'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  '.length,
                         'procedureMoverAlienAlEste(){\nSacar(Verde)\n'.length
                     );
-
-                    expect(pos.fullContentsFrom(posTestA)).toBe(
-                        'AlienAlEste()\n  MoverAlienAlEste()\n  ApretarBoton()\n}' +
-                            'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'
-                    );
-                    expect(pos.fullContentsFrom(posTestB)).toBe('Mover');
+                    expect(pos.fullContentsFrom(posTestB)).toBe('Mover(Este)\n  Poner(Verde)\n}\n');
                 }
             );
         });
@@ -1430,62 +1162,104 @@ describe('DocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string when asked for full contents to an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
-                expect(pos.fullContentsTo(posTest)).toBe('(Este)\n  Poner(Verde)\n}\n' + input[2]);
-            });
-            it('returns an empty string when asked for full contents to end of document', () => {
-                const posTest1 = new EndOfDocumentSourcePosition(
-                    sr,
-                    5,
-                    2,
-                    ['a region'],
-                    0,
-                    input[0].length,
-                    input[0].length - numberOfInvisibles[0]
-                );
-                expect(pos.fullContentsTo(posTest1)).toBe('');
-
-                const posTest2 = new EndOfDocumentSourcePosition(
-                    sr,
-                    5,
-                    3,
-                    ['a region'],
-                    1,
-                    input[0].length,
-                    input[0].length - numberOfInvisibles[0]
-                );
-                expect(pos.fullContentsTo(posTest2)).toBe('(Este)\n  Poner(Ve');
-            });
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position same as receiver',
+                'returns all documents after currents if argument is end of input ' +
+                    ' and receiver is not last end document',
                 () => {
-                    const posTest = new DocumentSourcePosition(
+                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                    const firstEOD = new EndOfDocumentSourcePosition(
+                        sr,
+                        5,
+                        2,
+                        ['a region'],
+                        0,
+                        input[0].length,
+                        input[0].length - numberOfInvisibles[0]
+                    );
+                    expect(firstEOD.fullContentsTo(posTest)).toBe(input[1] + input[2]);
+                    expect(pos.fullContentsTo(posTest)).toBe(input[2]);
+                }
+            );
+            it(
+                'returns an empty string if argument is an end of input ' +
+                    ' and receiver is last end document',
+                () => {
+                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                    const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
                         3,
-                        '  Mover'.length,
+                        2,
+                        ['a region'],
+                        2,
+                        input[2].length,
+                        input[2].length - numberOfInvisibles[2]
+                    );
+                    expect(lastEOD.fullContentsTo(posTest)).toBe('');
+                }
+            );
+            it(
+                'returns an empty string if argument is end of ' +
+                    'document that is before the receiver',
+                () => {
+                    const firstEOD = new EndOfDocumentSourcePosition(
+                        sr,
+                        5,
+                        2,
+                        ['a region'],
+                        0,
+                        input[0].length,
+                        input[0].length - numberOfInvisibles[0]
+                    );
+                    expect(pos.fullContentsTo(firstEOD)).toBe('');
+                }
+            );
+            it(
+                'returns an empty string if argument is end of ' +
+                    'document that is same as the receiver',
+                () => {
+                    const posTest = new EndOfDocumentSourcePosition(
+                        sr,
+                        5,
+                        2,
                         ['a region'],
                         1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'.length
+                        input[1].length,
+                        input[1].length - numberOfInvisibles[1]
                     );
-
                     expect(pos.fullContentsTo(posTest)).toBe('');
                 }
             );
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position and comes before the receiver',
+                'returns the documents after receivers position if argument is ' +
+                    'end of document and is after the receiver',
+                () => {
+                    const lastEOD = new EndOfDocumentSourcePosition(
+                        sr,
+                        3,
+                        2,
+                        ['a region'],
+                        2,
+                        input[2].length,
+                        input[2].length - numberOfInvisibles[2]
+                    );
+                    expect(pos.fullContentsTo(lastEOD)).toBe(input[2]);
+                }
+            );
+            it(
+                'returns an empty string if argument is a ' +
+                    'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
                         sr,
-                        4,
-                        2,
+                        5,
+                        1,
                         ['a region'],
                         0,
-                        ' ApretarBoton()\n}'.length,
-                        'ApretarBoton()\n}'.length
+                        (
+                            'program {\n  MoverAlienAlEste()\n  ' +
+                            'MoverAlienAlEste()\n  ApretarBoton()\n'
+                        ).length,
+                        'program{\nMoverAlienAlEste()\nMoverAlienAlEste()\nApretarBoton()\n'.length
                     );
 
                     const posTestB = new DocumentSourcePosition(
@@ -1497,41 +1271,25 @@ describe('DocumentSourcePosition', () => {
                         'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  '.length,
                         'procedureMoverAlienAlEste(){\nSacar(Verde)\n'.length
                     );
-
                     expect(pos.fullContentsTo(posTestA)).toBe('');
                     expect(pos.fullContentsTo(posTestB)).toBe('');
                 }
             );
             it(
-                'returns all the characters in the documents contents starting from' +
-                    'the arguments position to the receivers position if the argument ' +
-                    'is a defined document document and comes after the receiver',
+                'returns all the characters from the arguments starting position ' +
+                    'to the end of the document of receiver if argument is a ' +
+                    'defined document position after the receiver',
                 () => {
-                    const posTestA = new DocumentSourcePosition(
-                        sr,
-                        3,
-                        '  Mover(Verd'.length,
-                        ['a region'],
-                        1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover(Verd'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover(Verd'.length
-                    );
-
-                    const posTestB = new DocumentSourcePosition(
+                    const posTest = new DocumentSourcePosition(
                         sr,
                         1,
-                        'function '.length,
+                        'function suma(a, '.length,
                         ['a region'],
                         2,
-                        'function '.length,
-                        'function'.length
+                        'function suma(a, '.length,
+                        'functionsuma(a,'.length
                     );
-
-                    expect(pos.fullContentsTo(posTestA)).toBe(
-                        'AlienAlEste()\n  MoverAlienAlEste()\n  ApretarBoton()\n}' +
-                            'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'
-                    );
-                    expect(pos.fullContentsTo(posTestB)).toBe('Mover');
+                    expect(pos.fullContentsTo(posTest)).toBe('function suma(a, ');
                 }
             );
         });
@@ -1551,8 +1309,8 @@ describe('DocumentSourcePosition', () => {
                     input.length,
                     ['a region'],
                     1,
-                    input.length,
-                    input.length - numberOfInvisibles[1]
+                    input[1].length,
+                    input[1].length - numberOfInvisibles[1]
                 );
 
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
@@ -1571,18 +1329,30 @@ describe('DocumentSourcePosition', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
+            it('returns an empty string if argument is an end of last document', () => {
+                const posTest = new EndOfDocumentSourcePosition(
+                    sr,
+                    3,
+                    2,
+                    ['a region'],
+                    2,
+                    input[2].length,
+                    input[2].length - numberOfInvisibles[2]
+                );
+                expect(pos.visibleContentsFrom(posTest)).toBe('');
+            });
             it(
-                'returns an empty string if argument is an end of document' +
-                    'and such end of document comes after the receivers position',
+                'returns all document visible characters (non spaces) after the arguments ' +
+                    ' index one if argument is an of a document that is not the last',
                 () => {
-                    const secondEOD = new EndOfDocumentSourcePosition(
+                    const firstEOD = new EndOfDocumentSourcePosition(
                         sr,
                         5,
                         2,
                         ['a region'],
-                        1,
-                        input[1].length,
-                        input[1].length - numberOfInvisibles[1]
+                        0,
+                        input[0].length,
+                        input[0].length - numberOfInvisibles[0]
                     );
                     const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
@@ -1593,87 +1363,48 @@ describe('DocumentSourcePosition', () => {
                         input[2].length,
                         input[2].length - numberOfInvisibles[2]
                     );
-                    expect(pos.visibleContentsFrom(secondEOD)).toBe('');
-                    expect(pos.visibleContentsFrom(lastEOD)).toBe('');
-                }
-            );
-            it(
-                'returns all the visible characters (non spaces) in the documents starting ' +
-                    'from the next one from the arguments position to the receivers position ' +
-                    'if the argument is an end of document and comes before the receiver',
-                () => {
-                    const posTest = new EndOfDocumentSourcePosition(
-                        sr,
-                        5,
-                        2,
-                        ['a region'],
-                        0,
-                        input[0].length,
-                        input[0].length - numberOfInvisibles[0]
-                    );
-                    expect(pos.visibleContentsFrom(posTest)).toBe(
-                        'procedureMoverAlienAlEste(){\nSacar(Verd'
+                    expect(pos.visibleContentsFrom(firstEOD)).toBe(input[1].replace(/ /g, ''));
+                    expect(lastEOD.visibleContentsFrom(firstEOD)).toBe(
+                        input[1].replace(/ /g, '') + input[2].replace(/ /g, '')
                     );
                 }
             );
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position same as receiver',
+                'returns an empty string if argument is a ' +
+                    'defined document position after the receiver',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
-                        3,
-                        '  Mover'.length,
-                        ['a region'],
                         1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'.length
+                        'function suma(a, '.length,
+                        ['a region'],
+                        2,
+                        'function suma(a, '.length,
+                        'functionsuma(a,'.length
                     );
-
                     expect(pos.visibleContentsFrom(posTest)).toBe('');
                 }
             );
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position and comes after the receiver',
+                'returns all the visible characters (non spaces) from the arguments starting ' +
+                    'position to the receiver if argument is a ' +
+                    'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
                         sr,
-                        3,
-                        '  Mover(Verd'.length,
-                        ['a region'],
+                        5,
                         1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover(Verd'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover(Verd'.length
-                    );
-
-                    const posTestB = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'function '.length,
-                        ['a region'],
-                        2,
-                        'function '.length,
-                        'function'.length
-                    );
-
-                    expect(pos.visibleContentsFrom(posTestA)).toBe('');
-                    expect(pos.visibleContentsFrom(posTestB)).toBe('');
-                }
-            );
-            it(
-                'returns all the visible characters (non spaces) in the documents contents ' +
-                    'starting from the arguments position to the receivers position if the ' +
-                    'argument is a defined document document and comes before the receiver',
-                () => {
-                    const posTestA = new DocumentSourcePosition(
-                        sr,
-                        4,
-                        2,
                         ['a region'],
                         0,
-                        ' ApretarBoton()\n}'.length,
-                        'ApretarBoton()\n}'.length
+                        (
+                            'program {\n  MoverAlienAlEste()\n  ' +
+                            'MoverAlienAlEste()\n  ApretarBoton()\n'
+                        ).length,
+                        'program{\nMoverAlienAlEste()\nMoverAlienAlEste()\nApretarBoton()\n'.length
+                    );
+
+                    expect(pos.visibleContentsFrom(posTestA)).toBe(
+                        '}' + input[1].replace(/ /g, '')
                     );
 
                     const posTestB = new DocumentSourcePosition(
@@ -1685,12 +1416,9 @@ describe('DocumentSourcePosition', () => {
                         'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  '.length,
                         'procedureMoverAlienAlEste(){\nSacar(Verde)\n'.length
                     );
-
-                    expect(pos.visibleContentsFrom(posTestA)).toBe(
-                        'AlienAlEste()\nMoverAlienAlEste()\nApretarBoton()\n}' +
-                            'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'
+                    expect(pos.visibleContentsFrom(posTestB)).toBe(
+                        'Mover(Este)\nPoner(Verde)\n}\n'
                     );
-                    expect(pos.visibleContentsFrom(posTestB)).toBe('Mover');
                 }
             );
         });
@@ -1726,53 +1454,106 @@ describe('DocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string when asked for visible contents to an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
-                expect(pos.visibleContentsTo(posTest)).toBe(
-                    'e)\nMover(Este)\nPoner(Verde)\n}\n' + input[2].replace(/ /g, '')
-                );
-            });
-            it('returns an empty string when asked for visible contents to end of document', () => {
-                const posTest = new EndOfDocumentSourcePosition(
-                    sr,
-                    5,
-                    2,
-                    ['a region'],
-                    0,
-                    input[0].length,
-                    input[0].length - numberOfInvisibles[0]
-                );
-                expect(pos.visibleContentsTo(posTest)).toBe('');
-            });
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position same as receiver',
+                'returns all documents visible characters (non spaces) after currents if ' +
+                    'argument is end of input and receiver is not last end document',
                 () => {
-                    const posTest = new DocumentSourcePosition(
+                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                    const firstEOD = new EndOfDocumentSourcePosition(
+                        sr,
+                        5,
+                        2,
+                        ['a region'],
+                        0,
+                        input[0].length,
+                        input[0].length - numberOfInvisibles[0]
+                    );
+                    expect(firstEOD.visibleContentsTo(posTest)).toBe(
+                        input[1].replace(/ /g, '') + input[2].replace(/ /g, '')
+                    );
+                    expect(pos.visibleContentsTo(posTest)).toBe(input[2].replace(/ /g, ''));
+                }
+            );
+            it(
+                'returns an empty string if argument is an end of input ' +
+                    ' and receiver is last end document',
+                () => {
+                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                    const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
                         3,
-                        '  Mover'.length,
+                        2,
+                        ['a region'],
+                        2,
+                        input[2].length,
+                        input[2].length - numberOfInvisibles[2]
+                    );
+                    expect(lastEOD.visibleContentsTo(posTest)).toBe('');
+                }
+            );
+            it(
+                'returns an empty string if argument is end of ' +
+                    'document that is before the receiver',
+                () => {
+                    const firstEOD = new EndOfDocumentSourcePosition(
+                        sr,
+                        5,
+                        2,
+                        ['a region'],
+                        0,
+                        input[0].length,
+                        input[0].length - numberOfInvisibles[0]
+                    );
+                    expect(pos.visibleContentsTo(firstEOD)).toBe('');
+                }
+            );
+            it(
+                'returns an empty string if argument is end of ' +
+                    'document that is same as the receiver',
+                () => {
+                    const posTest = new EndOfDocumentSourcePosition(
+                        sr,
+                        5,
+                        2,
                         ['a region'],
                         1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'.length
+                        input[1].length,
+                        input[1].length - numberOfInvisibles[1]
                     );
-
                     expect(pos.visibleContentsTo(posTest)).toBe('');
                 }
             );
             it(
-                'returns an empty string if the argument ' +
-                    'is a defined document position and comes before the receiver',
+                'returns the documents visible characters (non spaces) after receivers position ' +
+                    'if argument is end of document and is after the receiver',
+                () => {
+                    const lastEOD = new EndOfDocumentSourcePosition(
+                        sr,
+                        3,
+                        2,
+                        ['a region'],
+                        2,
+                        input[2].length,
+                        input[2].length - numberOfInvisibles[2]
+                    );
+                    expect(pos.visibleContentsTo(lastEOD)).toBe(input[2].replace(/ /g, ''));
+                }
+            );
+            it(
+                'returns an empty string if argument is a ' +
+                    'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
                         sr,
-                        4,
-                        2,
+                        5,
+                        1,
                         ['a region'],
                         0,
-                        ' ApretarBoton()\n}'.length,
-                        'ApretarBoton()\n}'.length
+                        (
+                            'program {\n  MoverAlienAlEste()\n  ' +
+                            'MoverAlienAlEste()\n  ApretarBoton()\n'
+                        ).length,
+                        'program{\nMoverAlienAlEste()\nMoverAlienAlEste()\nApretarBoton()\n'.length
                     );
 
                     const posTestB = new DocumentSourcePosition(
@@ -1784,41 +1565,25 @@ describe('DocumentSourcePosition', () => {
                         'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  '.length,
                         'procedureMoverAlienAlEste(){\nSacar(Verde)\n'.length
                     );
-
                     expect(pos.visibleContentsTo(posTestA)).toBe('');
                     expect(pos.visibleContentsTo(posTestB)).toBe('');
                 }
             );
             it(
-                'returns all the visible characters (non spaces) in the documents contents ' +
-                    'starting from the arguments position to the receivers position if the ' +
-                    'argument is a defined document document and comes after the receiver',
+                'returns all the visible characters (non spaces) from the arguments starting ' +
+                    'position to the end of the document of receiver if argument is a ' +
+                    'defined document position after the receiver',
                 () => {
-                    const posTestA = new DocumentSourcePosition(
-                        sr,
-                        3,
-                        '  Mover(Verd'.length,
-                        ['a region'],
-                        1,
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover(Verd'.length,
-                        'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover(Verd'.length
-                    );
-
-                    const posTestB = new DocumentSourcePosition(
+                    const posTest = new DocumentSourcePosition(
                         sr,
                         1,
-                        'function '.length,
+                        'function suma(a, '.length,
                         ['a region'],
                         2,
-                        'function '.length,
-                        'function'.length
+                        'function suma(a, '.length,
+                        'functionsuma(a,'.length
                     );
-
-                    expect(pos.visibleContentsTo(posTestA)).toBe(
-                        'AlienAlEste()\nMoverAlienAlEste()\nApretarBoton()\n}' +
-                            'procedureMoverAlienAlEste(){\nSacar(Verde)\nMover'
-                    );
-                    expect(pos.visibleContentsTo(posTestB)).toBe('Mover');
+                    expect(pos.visibleContentsTo(posTest)).toBe('functionsuma(a,');
                 }
             );
         });
@@ -1829,44 +1594,56 @@ describe('DocumentSourcePosition', () => {
         // -----------------------------------------------
         // #region documentContextBefore
         // -----------------------------------------------
-        describe('contextBefore', () => {
+        describe('documentContextBefore', () => {
+            it('returns array with the current line as element if requested lines is 0', () => {
+                expect(pos.documentContextBefore(0)).toStrictEqual(['']);
+            });
             it(
-                'returns all characters in current line and previous line, ending at receivers ' +
-                    'position in line and omitting further characters' +
-                    'if the requested lines 1',
+                'returns array with 2 elements containing the previous line and then ' +
+                    'the current line if requested lines is 1',
                 () => {
-                    expect(pos.documentContextBefore(1)).toBe('  Sacar(Verde)\n  Mover');
+                    expect(pos.documentContextBefore(1)).toStrictEqual(['}\n', '']);
                 }
             );
             it(
-                'returns all characters in current line and previous line, ending at receivers ' +
-                    'position in line and omitting further characters' +
-                    'if the requested lines is the number of lines from start of document',
+                'returns array with 4 elements containing the n previous lines and then ' +
+                    'the current line if requested lines is more than 1',
                 () => {
-                    expect(pos.documentContextBefore(4)).toBe(
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'
-                    );
+                    expect(pos.documentContextBefore(4)).toStrictEqual([
+                        '  Sacar(Verde)\n',
+                        '  Mover(Este)\n',
+                        '  Poner(Verde)\n',
+                        '}\n',
+                        ''
+                    ]);
                 }
             );
             it(
-                'returns all characters in current line and previous line, ending at receivers ' +
-                    'position in line and omitting further characters' +
-                    'if the requested lines is the number lines from start of document',
+                'returns array with elements containing the all previous lines and then ' +
+                    'the current line if requested lines is the number of lines in document',
                 () => {
-                    expect(pos.documentContextBefore(5)).toBe(
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'
-                    );
+                    expect(pos.documentContextBefore(5)).toStrictEqual([
+                        'procedure MoverAlienAlEste() {\n',
+                        '  Sacar(Verde)\n',
+                        '  Mover(Este)\n',
+                        '  Poner(Verde)\n',
+                        '}\n',
+                        ''
+                    ]);
                 }
             );
             it(
-                'returns all characters in current line and previous line, ending at receivers ' +
-                    'position in line and omitting further characters if the requested lines is' +
-                    'more than the number lines from start of document, does not go to previous ' +
-                    'documents',
+                'returns array with elements containing the all previous lines and then ' +
+                    'the current line if requested lines is more than lines in document',
                 () => {
-                    expect(pos.documentContextBefore(42)).toBe(
-                        'procedure MoverAlienAlEste() {\n  Sacar(Verde)\n  Mover'
-                    );
+                    expect(pos.documentContextBefore(42)).toStrictEqual([
+                        'procedure MoverAlienAlEste() {\n',
+                        '  Sacar(Verde)\n',
+                        '  Mover(Este)\n',
+                        '  Poner(Verde)\n',
+                        '}\n',
+                        ''
+                    ]);
                 }
             );
         });
@@ -1878,50 +1655,18 @@ describe('DocumentSourcePosition', () => {
         // #region documentContextAfter
         // -----------------------------------------------
         describe('documentContextAfter', () => {
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters ' +
-                    'if the requested lines 0',
-                () => {
-                    expect(pos.documentContextAfter(0)).toBe(['(Este)\n']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters ' +
-                    'if the requested lines 1',
-                () => {
-                    expect(pos.documentContextAfter(1)).toBe(['(Este)\n', '  Poner(Verde)\n']);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters ' +
-                    'if the requested lines is the number of remaining lines',
-                () => {
-                    expect(pos.documentContextAfter(2)).toStrictEqual([
-                        '(Este)\n',
-                        '  Poner(Verde)\n',
-                        '}\n'
-                    ]);
-                }
-            );
-            it(
-                'returns an array with all characters in current line and next line, ' +
-                    'starting from receivers position in line and omitting previous characters ' +
-                    'if the requested lines is more than the number of remaining lines, ' +
-                    ' does not go to further documents',
-                () => {
-                    expect(pos.documentContextAfter(5)).toStrictEqual([
-                        '(Este)\n',
-                        '  Poner(Verde)\n',
-                        '}\n'
-                    ]);
-                }
-            );
+            it('returns an array with empty string if requested lines is 0', () => {
+                expect(pos.documentContextAfter(1)).toStrictEqual(['']);
+            });
+            it('returns an array with empty string if requested lines is 1', () => {
+                expect(pos.documentContextAfter(1)).toStrictEqual(['']);
+            });
+            it('returns an array with empty string if requested lines more than 1', () => {
+                expect(pos.documentContextAfter(4)).toStrictEqual(['']);
+            });
         });
         // -----------------------------------------------
-        // #endregion contextAfter
+        // #endregion documentContextAfter
         // -----------------------------------------------
     });
     // ===============================================

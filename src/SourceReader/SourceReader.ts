@@ -990,6 +990,9 @@ export class SourceReader implements SourceReaderInterface {
             }
             currentIndex--;
         }
+        if (currentIndex === 0) {
+            linesToReturn.push(docContents.substring(currentIndex, lastLineBreakIndex));
+        }
         return linesToReturn.reverse();
     }
 
@@ -1008,7 +1011,7 @@ export class SourceReader implements SourceReaderInterface {
 
         const linesToReturn: string[] = [];
         let lastLineBreakIndex = charIndex;
-        let currentIndex = charIndex;
+        let currentIndex = charIndex + 1;
         let linesSeen = 0;
 
         while (currentIndex < docContents.length && linesSeen <= lines) {
@@ -1019,6 +1022,9 @@ export class SourceReader implements SourceReaderInterface {
                 linesSeen++;
             }
             currentIndex++;
+        }
+        if (currentIndex === docContents.length) {
+            linesToReturn.push(docContents.substring(currentIndex, lastLineBreakIndex));
         }
         return linesToReturn;
     }

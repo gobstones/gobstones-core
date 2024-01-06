@@ -188,39 +188,69 @@ function verifyContents(): void {
 
 describe('SourceReader', () => {
     // ===============================================
-    // #region Static values
+    // #region Static values and constructor
     // ===============================================
-    given('A SourceReader class', () => {
-        it('answers with "doc" as default document prefix', () => {
-            expect(SourceReader.defaultDocumentNamePrefix).toBe('doc');
+    given('the SourceReader class', () => {
+        describe('defaultDocumentNamePrefix', () => {
+            it('returns "doc"', () => {
+                expect(SourceReader.defaultDocumentNamePrefix).toBe('doc');
+            });
+        });
+        describe('defaultDocumentNamePrefix', () => {
+            it('returns an unknown position', () => {
+                expect(SourceReader.UnknownPosition.isUnknown).toBe(true);
+            });
         });
     });
-    // ===============================================
-    // #endregion Static values
-    // ===============================================
 
-    // ===============================================
-    // #region Constructor and initial state
-    // ===============================================
-    given('A freshly created SourceReader', () => {
+    describe('constructor', () => {
         // -----------------------------------------------
-        // #region Document names
+        // #region Invalid input
         // -----------------------------------------------
-        it('has correct name for documents when created with single anonymous input', () => {
+        it('throws NoInputException if null at source input', () => {
+            // eslint-disable-next-line no-null/no-null
+            expect(() => new SourceReader(null as unknown as SourceInput)).toThrow(NoInputError);
+        });
+
+        it('throws NoInputException if undefined at source input', () => {
+            expect(() => new SourceReader(undefined as unknown as SourceInput)).toThrow(
+                NoInputError
+            );
+        });
+
+        it('throws NoInputException if empty object at source input', () => {
+            expect(() => new SourceReader({})).toThrow(NoInputError);
+        });
+
+        it('throws NoInputException if empty array at source input', () => {
+            expect(() => new SourceReader([])).toThrow(NoInputError);
+        });
+        // -----------------------------------------------
+        // #endregion Invalid Input
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Initial state: Document names
+        // -----------------------------------------------
+        it('documentNames returns <defaultDocumentNamePrefix>1 if constructed with string', () => {
             const sr = new SourceReader('some input');
             expect(sr.documentsNames).toHaveLength(1);
             expect(sr.documentsNames[0]).toBe(`${SourceReader.defaultDocumentNamePrefix}1`);
         });
 
-        it('has correct name for document when created with multiple anonymous input', () => {
-            const sr = new SourceReader(['some input', 'some other input', 'one last input']);
-            expect(sr.documentsNames).toHaveLength(3);
-            expect(sr.documentsNames[0]).toBe(`${SourceReader.defaultDocumentNamePrefix}1`);
-            expect(sr.documentsNames[1]).toBe(`${SourceReader.defaultDocumentNamePrefix}2`);
-            expect(sr.documentsNames[2]).toBe(`${SourceReader.defaultDocumentNamePrefix}3`);
-        });
+        it(
+            'documentNames returns <defaultDocumentNamePrefix> and numbers in order if ' +
+                'constructed with array',
+            () => {
+                const sr = new SourceReader(['some input', 'some other input', 'one last input']);
+                expect(sr.documentsNames).toHaveLength(3);
+                expect(sr.documentsNames[0]).toBe(`${SourceReader.defaultDocumentNamePrefix}1`);
+                expect(sr.documentsNames[1]).toBe(`${SourceReader.defaultDocumentNamePrefix}2`);
+                expect(sr.documentsNames[2]).toBe(`${SourceReader.defaultDocumentNamePrefix}3`);
+            }
+        );
 
-        it('has correct name for documents when created with named input', () => {
+        it('documentNames returns object keys as names if constructed with object', () => {
             const sr = new SourceReader({
                 file1: 'some input',
                 file0: 'some other input',
@@ -232,43 +262,18 @@ describe('SourceReader', () => {
             expect(sr.documentsNames[2]).toBe('file2');
         });
         // -----------------------------------------------
-        // #endregion Document names
-        // -----------------------------------------------
-
-        // -----------------------------------------------
-        // #region Invalid input
-        // -----------------------------------------------
-        it('throws NoInputException if null is given', () => {
-            // eslint-disable-next-line no-null/no-null
-            expect(() => new SourceReader(null as unknown as SourceInput)).toThrow(NoInputError);
-        });
-
-        it('throws NoInputException if undefined is given', () => {
-            expect(() => new SourceReader(undefined as unknown as SourceInput)).toThrow(
-                NoInputError
-            );
-        });
-
-        it('throws NoInputException if empty object is given', () => {
-            expect(() => new SourceReader({})).toThrow(NoInputError);
-        });
-
-        it('throws NoInputException if empty array is given', () => {
-            expect(() => new SourceReader([])).toThrow(NoInputError);
-        });
-        // -----------------------------------------------
-        // #endregion Invalid Input
+        // #endregion Initial state: Document names
         // -----------------------------------------------
 
         // -----------------------------------------------
         // #region Line enders
         // -----------------------------------------------
-        it('has default line enders when none is given', () => {
+        it('lineEnders is "\n" if none is given', () => {
             const sr = new SourceReader('no line enders');
             expect(sr.lineEnders).toBe('\n');
         });
 
-        it('has given line enders when one is given', () => {
+        it('lineEnders is given string if any is given', () => {
             const sr = new SourceReader('no line enders', 'ab');
             expect(sr.lineEnders).toBe('ab');
         });
@@ -279,7 +284,7 @@ describe('SourceReader', () => {
         // -----------------------------------------------
         // #region Construction equivalences
         // -----------------------------------------------
-        it('has equivalences to others created with same input', () => {
+        it('creates equivalent instances if same single document input is used', () => {
             const input1 = '';
             const sr1 = new SourceReader(input1);
             const sr2 = new SourceReader(input1);
@@ -305,90 +310,453 @@ describe('SourceReader', () => {
             expect(sr8).toStrictEqual(sr7);
         });
 
-        it('has equivalences to others created with same single input regardless of type', () => {
-            const input1 = '';
-            const sr1 = new SourceReader(input1);
-            const sr2 = new SourceReader([input1]);
-            const sr3 = new SourceReader({ [SourceReader.defaultDocumentNamePrefix + 1]: input1 });
-            expect(sr1).toStrictEqual(sr2);
-            expect(sr2).toStrictEqual(sr1);
-            expect(sr1).toStrictEqual(sr3);
-            expect(sr3).toStrictEqual(sr1);
-            expect(sr2).toStrictEqual(sr3);
-            expect(sr3).toStrictEqual(sr2);
+        it(
+            'creates equivalent instances if same single document input is used' +
+                'but the input is passed using different types',
+            () => {
+                const input1 = '';
+                const sr1 = new SourceReader(input1);
+                const sr2 = new SourceReader([input1]);
+                const sr3 = new SourceReader({
+                    [SourceReader.defaultDocumentNamePrefix + 1]: input1
+                });
+                expect(sr1).toStrictEqual(sr2);
+                expect(sr2).toStrictEqual(sr1);
+                expect(sr1).toStrictEqual(sr3);
+                expect(sr3).toStrictEqual(sr1);
+                expect(sr2).toStrictEqual(sr3);
+                expect(sr3).toStrictEqual(sr2);
 
-            const input2 = 'p';
-            const sr4 = new SourceReader(input2);
-            const sr5 = new SourceReader([input2]);
-            const sr6 = new SourceReader({ [SourceReader.defaultDocumentNamePrefix + 1]: input2 });
-            expect(sr4).toStrictEqual(sr5);
-            expect(sr5).toStrictEqual(sr4);
-            expect(sr4).toStrictEqual(sr6);
-            expect(sr6).toStrictEqual(sr4);
-            expect(sr5).toStrictEqual(sr6);
-            expect(sr6).toStrictEqual(sr5);
+                const input2 = 'p';
+                const sr4 = new SourceReader(input2);
+                const sr5 = new SourceReader([input2]);
+                const sr6 = new SourceReader({
+                    [SourceReader.defaultDocumentNamePrefix + 1]: input2
+                });
+                expect(sr4).toStrictEqual(sr5);
+                expect(sr5).toStrictEqual(sr4);
+                expect(sr4).toStrictEqual(sr6);
+                expect(sr6).toStrictEqual(sr4);
+                expect(sr5).toStrictEqual(sr6);
+                expect(sr6).toStrictEqual(sr5);
 
-            const input3 = 'program';
-            const sr7 = new SourceReader(input3);
-            const sr8 = new SourceReader([input3]);
-            const sr9 = new SourceReader({ [SourceReader.defaultDocumentNamePrefix + 1]: input3 });
-            expect(sr7).toStrictEqual(sr8);
-            expect(sr8).toStrictEqual(sr7);
-            expect(sr7).toStrictEqual(sr9);
-            expect(sr9).toStrictEqual(sr7);
-            expect(sr8).toStrictEqual(sr9);
-            expect(sr9).toStrictEqual(sr8);
+                const input3 = 'program';
+                const sr7 = new SourceReader(input3);
+                const sr8 = new SourceReader([input3]);
+                const sr9 = new SourceReader({
+                    [SourceReader.defaultDocumentNamePrefix + 1]: input3
+                });
+                expect(sr7).toStrictEqual(sr8);
+                expect(sr8).toStrictEqual(sr7);
+                expect(sr7).toStrictEqual(sr9);
+                expect(sr9).toStrictEqual(sr7);
+                expect(sr8).toStrictEqual(sr9);
+                expect(sr9).toStrictEqual(sr8);
 
-            const input4 = 'program {\n   Poner(Verde)\n}';
-            const sr10 = new SourceReader(input4);
-            const sr11 = new SourceReader([input4]);
-            const sr12 = new SourceReader({ [SourceReader.defaultDocumentNamePrefix + 1]: input4 });
-            expect(sr10).toStrictEqual(sr11);
-            expect(sr11).toStrictEqual(sr10);
-            expect(sr10).toStrictEqual(sr12);
-            expect(sr12).toStrictEqual(sr10);
-            expect(sr11).toStrictEqual(sr12);
-            expect(sr12).toStrictEqual(sr11);
-        });
+                const input4 = 'program {\n   Poner(Verde)\n}';
+                const sr10 = new SourceReader(input4);
+                const sr11 = new SourceReader([input4]);
+                const sr12 = new SourceReader({
+                    [SourceReader.defaultDocumentNamePrefix + 1]: input4
+                });
+                expect(sr10).toStrictEqual(sr11);
+                expect(sr11).toStrictEqual(sr10);
+                expect(sr10).toStrictEqual(sr12);
+                expect(sr12).toStrictEqual(sr10);
+                expect(sr11).toStrictEqual(sr12);
+                expect(sr12).toStrictEqual(sr11);
+            }
+        );
 
-        it('has equivalences to others created with same multiple input regardless of type', () => {
-            const input1 = '';
-            const input2 = 'p';
-            const sr1 = new SourceReader([input1, input2]);
-            const sr2 = new SourceReader({
-                [SourceReader.defaultDocumentNamePrefix + 1]: input1,
-                [SourceReader.defaultDocumentNamePrefix + 2]: input2
-            });
-            expect(sr1).toStrictEqual(sr2);
-            expect(sr2).toStrictEqual(sr1);
+        it(
+            'creates equivalent instances if same multiple documents input is used' +
+                'but the input is passed using different types',
+            () => {
+                const input1 = '';
+                const input2 = 'p';
+                const sr1 = new SourceReader([input1, input2]);
+                const sr2 = new SourceReader({
+                    [SourceReader.defaultDocumentNamePrefix + 1]: input1,
+                    [SourceReader.defaultDocumentNamePrefix + 2]: input2
+                });
+                expect(sr1).toStrictEqual(sr2);
+                expect(sr2).toStrictEqual(sr1);
 
-            const input3 = 'program';
-            const input4 = 'program {\n   Poner(Verde)\n}';
-            const sr3 = new SourceReader([input3, input2, input4]);
-            const sr4 = new SourceReader({
-                [SourceReader.defaultDocumentNamePrefix + 1]: input3,
-                [SourceReader.defaultDocumentNamePrefix + 2]: input2,
-                [SourceReader.defaultDocumentNamePrefix + 3]: input4
-            });
-            expect(sr3).toStrictEqual(sr4);
-            expect(sr4).toStrictEqual(sr3);
-        });
+                const input3 = 'program';
+                const input4 = 'program {\n   Poner(Verde)\n}';
+                const sr3 = new SourceReader([input3, input2, input4]);
+                const sr4 = new SourceReader({
+                    [SourceReader.defaultDocumentNamePrefix + 1]: input3,
+                    [SourceReader.defaultDocumentNamePrefix + 2]: input2,
+                    [SourceReader.defaultDocumentNamePrefix + 3]: input4
+                });
+                expect(sr3).toStrictEqual(sr4);
+                expect(sr4).toStrictEqual(sr3);
+            }
+        );
         // -----------------------------------------------
         // #endregion Construction equivalences
         // -----------------------------------------------
     });
     // ===============================================
-    // #endregion Constructor and initial state
+    // #endregion Static values and constructor
     // ===============================================
 
     // ===============================================
-    // #region Empty document source reader
+    // #region Empty single document
     // ===============================================
-    given('A SourceReader created with empty documents', () => {
+    given('an instance with empty single document', () => {
+        let sr: SourceReader;
+        beforeEach(() => {
+            sr = new SourceReader('');
+        });
+        // -----------------------------------------------
+        // #region Position in content
+        // -----------------------------------------------
+        it('starts on default document', () => {
+            expect(sr.getPosition().documentName).toBe(
+                `${SourceReader.defaultDocumentNamePrefix}1`
+            );
+        });
+
+        it('atEndOfInput returns false', () => {
+            expect(sr.atEndOfInput()).toBe(false);
+        });
+
+        it('atEndOfDocument returns true', () => {
+            expect(sr.atEndOfDocument()).toBe(true);
+        });
+        // -----------------------------------------------
+        // #endregion Position in content
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Starting characters
+        // -----------------------------------------------
+        it('startsWith given an empty string is true', () => {
+            expect(sr.startsWith('')).toBe(true);
+        });
+
+        it('startsWith given any other string is false', () => {
+            expect(sr.startsWith('a')).toBe(false);
+            expect(sr.startsWith('foo')).toBe(false);
+        });
+        // -----------------------------------------------
+        // #endregion Starting characters
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Skipping
+        // -----------------------------------------------
+        it('skip does NOT change position', () => {
+            const oldPos = sr.getPosition();
+            sr.skip();
+            expect(sr.getPosition()).toStrictEqual(oldPos);
+        });
+        it('skip 1 does NOT change position', () => {
+            const oldPos = sr.getPosition();
+            sr.skip(1);
+            expect(sr.getPosition()).toStrictEqual(oldPos);
+        });
+        it('skip 1 silently does NOT change position', () => {
+            const oldPos = sr.getPosition();
+            sr.skip(1, true);
+            expect(sr.getPosition()).toStrictEqual(oldPos);
+        });
+        it('skip many does NOT change position', () => {
+            const oldPos = sr.getPosition();
+            sr.skip(10);
+            expect(sr.getPosition()).toStrictEqual(oldPos);
+        });
+        it('skip many silently does NOT change position', () => {
+            const oldPos = sr.getPosition();
+            sr.skip(10, true);
+            expect(sr.getPosition()).toStrictEqual(oldPos);
+        });
+        // -----------------------------------------------
+        // #endregion Skipping
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Peeking
+        // -----------------------------------------------
+        it('peek throws an InvalidOperationAtEODError', () => {
+            expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        });
+        // -----------------------------------------------
+        // #endregion Peeking
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Taking
+        // -----------------------------------------------
+        it('takeWhile returns empty string checking for nothing', () => {
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        });
+
+        it('takeWhile returns empty string checking for nothing silently', () => {
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        });
+        // -----------------------------------------------
+        // #endregion Taking
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Getting position
+        // -----------------------------------------------
+        it('getPosition returns a position that is NOT unknown', () => {
+            expect(sr.getPosition().isUnknown).toBe(false);
+        });
+
+        it('getPosition returns a position that is NOT at the end of input', () => {
+            expect(sr.getPosition().isEndOfInput).toBe(false);
+        });
+
+        it('getPosition returns a position that is at the end of input', () => {
+            expect(sr.getPosition().isEndOfDocument).toBe(true);
+        });
+
+        it('getPosition returns a position at line 1', () => {
+            expect(sr.getPosition().line).toBe(1);
+        });
+
+        it('getPosition returns a position at column 1', () => {
+            expect(sr.getPosition().column).toBe(1);
+        });
+        // -----------------------------------------------
+        // #endregion Getting position
+        // -----------------------------------------------
+    });
+    // ===============================================
+    // #endregion Empty single document
+    // ===============================================
+
+    // ===============================================
+    // #region Array with empty documents
+    // ===============================================
+    given('an instance with array of multiple empty documents', () => {
+        let sr: SourceReader;
+        beforeEach(() => {
+            sr = new SourceReader(['', '']);
+        });
+        // -----------------------------------------------
+        // #region Position in content
+        // -----------------------------------------------
+        it('starts on first document', () => {
+            expect(sr.getPosition().documentName).toBe(
+                `${SourceReader.defaultDocumentNamePrefix}1`
+            );
+        });
+
+        it('does NOT start at end of input', () => {
+            expect(sr.atEndOfInput()).toBe(false);
+        });
+
+        it('atEndOfDocument returns true', () => {
+            expect(sr.atEndOfDocument()).toBe(true);
+        });
+        // -----------------------------------------------
+        // #endregion Position in content
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Starting characters
+        // -----------------------------------------------
+        it('startsWith given an empty string is true', () => {
+            expect(sr.startsWith('')).toBe(true);
+        });
+
+        it('startsWith given any other string is false', () => {
+            expect(sr.startsWith('a')).toBe(false);
+            expect(sr.startsWith('foo')).toBe(false);
+        });
+        // -----------------------------------------------
+        // #endregion Starting characters
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Skipping
+        // -----------------------------------------------
+        it('skip changes position to next document', () => {
+            sr.skip();
+            expect(sr.getPosition().documentName).toStrictEqual(
+                `${SourceReader.defaultDocumentNamePrefix}2`
+            );
+        });
+        it('skip 1 changes position to next document', () => {
+            sr.skip(1);
+            expect(sr.getPosition().documentName).toStrictEqual(
+                `${SourceReader.defaultDocumentNamePrefix}2`
+            );
+        });
+        it('skip 1 silently changes position to next document', () => {
+            const oldPos = sr.getPosition();
+            sr.skip(1, true);
+            expect(sr.getPosition()).toStrictEqual(oldPos);
+        });
+        it('skip many changes position to next document', () => {
+            sr.skip(10);
+            expect(sr.getPosition().documentName).toStrictEqual(
+                `${SourceReader.defaultDocumentNamePrefix}2`
+            );
+        });
+        it('skip many silently changes position to next document', () => {
+            const oldPos = sr.getPosition();
+            sr.skip(10, true);
+            expect(sr.getPosition().documentName).toStrictEqual(
+                `${SourceReader.defaultDocumentNamePrefix}2`
+            );
+        });
+        // -----------------------------------------------
+        // #endregion Skipping
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Peeking
+        // -----------------------------------------------
+        it('throws an InvalidOperationAtEODError when peeking when on single input', () => {
+            const sr = new SourceReader('');
+            expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        });
+
+        it('throws an InvalidOperationAtEODError when peeking when on array input', () => {
+            const sr = new SourceReader(['', '']);
+            expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        });
+
+        it('throws an InvalidOperationAtEODError when peeking when on object input', () => {
+            const sr = new SourceReader({
+                empty1: '',
+                empty2: '',
+                empty3: '',
+                empty4: ''
+            });
+            expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        });
+        // -----------------------------------------------
+        // #endregion Peeking
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Taking
+        // -----------------------------------------------
+        it('returns empty string when taking when on single input', () => {
+            const sr = new SourceReader('');
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        });
+
+        it('returns empty string when taking when on array input at any document', () => {
+            const sr = new SourceReader(['', '']);
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        });
+
+        it('returns empty string when taking when on object input at any document', () => {
+            const sr = new SourceReader({
+                empty1: '',
+                empty2: '',
+                empty3: '',
+                empty4: ''
+            });
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        });
+
+        it('returns empty string when taking silently when on single input', () => {
+            const sr = new SourceReader('');
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        });
+
+        it('returns empty string when taking silently when on array input at any document', () => {
+            const sr = new SourceReader(['', '']);
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        });
+
+        it('returns empty string when taking silently when on object input at any document', () => {
+            const sr = new SourceReader({
+                empty1: '',
+                empty2: '',
+                empty3: '',
+                empty4: ''
+            });
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+            sr.skip();
+            expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        });
+        // -----------------------------------------------
+        // #endregion Taking
+        // -----------------------------------------------
+
+        // -----------------------------------------------
+        // #region Getting position
+        // -----------------------------------------------
+        it('returns a position that is NOT at the end of input when single input', () => {
+            const sr = new SourceReader('');
+            expect(sr.getPosition().isEndOfInput).toBe(false);
+        });
+
+        it('returns a position that is NOT at the end of input when array input', () => {
+            const sr = new SourceReader(['', '']);
+            expect(sr.getPosition().isEndOfInput).toBe(false);
+        });
+
+        it('returns a position that is NOT at the end of input when object input', () => {
+            const sr = new SourceReader({
+                empty1: '',
+                empty2: '',
+                empty3: '',
+                empty4: ''
+            });
+            expect(sr.getPosition().isEndOfInput).toBe(false);
+        });
+
+        it('returns a position that is at the end of document when single input', () => {
+            const sr = new SourceReader('');
+            expect(sr.getPosition().isEndOfDocument).toBe(true);
+        });
+
+        it('returns a position that is at the end of document when array input', () => {
+            const sr = new SourceReader(['', '']);
+            expect(sr.getPosition().isEndOfDocument).toBe(true);
+        });
+
+        it('returns a position that is at the end of document when object input', () => {
+            const sr = new SourceReader({
+                empty1: '',
+                empty2: '',
+                empty3: '',
+                empty4: ''
+            });
+            expect(sr.getPosition().isEndOfDocument).toBe(true);
+        });
+        // -----------------------------------------------
+        // #endregion Getting position
+        // -----------------------------------------------
+    });
+    // ===============================================
+    // #endregion Array with empty documents
+    // ===============================================
+
+    // ===============================================
+    // #region Object with empty documents
+    // ===============================================
+    given('an instance with object of multiple empty documents', () => {
         // -----------------------------------------------
         // #region Starting document
         // -----------------------------------------------
-        it('starts on document index 0 when on single input', () => {
+        it('starts on default document', () => {
             const sr = new SourceReader('');
             expect(sr.getPosition().documentName).toBe(
                 `${SourceReader.defaultDocumentNamePrefix}1`
@@ -843,7 +1211,7 @@ describe('SourceReader', () => {
         // -----------------------------------------------
     });
     // ===============================================
-    // #endregion Empty document source reader
+    // #endregion Object with empty documents
     // ===============================================
 
     // ===============================================
