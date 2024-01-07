@@ -3,7 +3,9 @@ import {
     IFinishedExpectation,
     INumberExpectation,
     IObjectExpectation,
-    IStringExpectation
+    IStringExpectation,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    IGenericExpectation
 } from './Interfaces';
 /**
  * @module Expectations

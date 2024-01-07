@@ -9,7 +9,10 @@ import { EndOfDocumentSourcePosition } from './EndOfDocumentSourcePosition';
 import { EndOfInputSourcePosition } from './EndOfInputSourcePosition';
 import { UnknownSourcePosition } from './UnknownSourcePosition';
 
-/** TO DO: Complete
+/**
+ * The constant implementing the
+ * [Abstract Factory Pattern](https://en.wikipedia.org/wiki/Abstract_factory_pattern)
+ * for {@link SourcePosition}s.
  *
  * @group Internal: Main
  * @private

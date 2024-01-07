@@ -34,7 +34,8 @@ import { expect } from '../../Expectations';
  * position, they may be queried to obtain the line, column, regions and
  * surrounding contents.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition {
     // ===============================================
@@ -70,10 +71,16 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
     // ===============================================
     // #region API: Properties {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public readonly isUnknown = false;
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public abstract readonly isEndOfInput: boolean;
     // -----------------------------------------------
     // #endregion } API: Properties
@@ -105,9 +112,13 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * @private
      */
     public constructor(
+        /** @group API: Access */
         public readonly sourceReader: SourceReader,
+        /** @group API: Access */
         public readonly line: number,
+        /** @group API: Access */
         public readonly column: number,
+        /** @group API: Access */
         public readonly regions: string[]
     ) {
         super();
@@ -117,33 +128,45 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
     // ===============================================
 
     // ===============================================
-    // #region API: Content access {
+    // #region API: Contents access {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public fullContentsFrom(from: SourcePosition): string {
         this._validateSourceReaders(from, 'fullContentsFrom', 'AbstractKnownSourcePosition');
         return this._fullContentsFrom(from as unknown as AbstractKnownSourcePosition);
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public fullContentsTo(to: SourcePosition): string {
         this._validateSourceReaders(to, 'fullContentsTo', 'AbstractKnownSourcePosition');
         return this._fullContentsTo(to as unknown as AbstractKnownSourcePosition);
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public visibleContentsTo(to: SourcePosition): string {
         this._validateSourceReaders(to, 'visibleContentsTo', 'AbstractKnownSourcePosition');
         return this._visibleContentsTo(to as unknown as AbstractKnownSourcePosition);
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public visibleContentsFrom(from: SourcePosition): string {
         this._validateSourceReaders(from, 'visibleContentsFrom', 'AbstractKnownSourcePosition');
         return this._visibleContentsFrom(from as unknown as AbstractKnownSourcePosition);
     }
     // -----------------------------------------------
-    // #endregion } API: Content access
+    // #endregion } API: Contents access
     // ===============================================
 
     // ===============================================
@@ -181,9 +204,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * and `this` position (not included), both visible and non-visible.
      * If `from` comes after `this`, the result is the empty string.
      *
-     * It implements the specific logic of each subclass for the Template Method
-     * Pattern of
-     * {@link AbstractKnownSourcePosition.fullContentsFrom | fullContentsFrom}.
+     * It implements the specific logic of each subclass for the
+     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+     * of {@link AbstractKnownSourcePosition.fullContentsFrom | fullContentsFrom}.
      * It must be reimplemented by subclasses.
      *
      * **PRECONDITION:**
@@ -212,9 +235,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * and `to` position (not included), both visible and non-visible.
      * If `this` comes after `to`, the result is the empty string.
      *
-     * It implements the specific logic of each subclass for the Template Method
-     * Pattern of
-     * {@link AbstractKnownSourcePosition.fullContentsTo | fullContentsTo}. It
+     * It implements the specific logic of each subclass for the
+     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+     * of {@link AbstractKnownSourcePosition.fullContentsTo | fullContentsTo}. It
      * must be reimplemented by subclasses.
      *
      * **PRECONDITION:** both positions correspond to the same reader (not
@@ -234,9 +257,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * and `this` position (not included) and is visible.
      * If `from` comes after `this`, the result is the empty string.
      *
-     * It implements the specific logic of each subclass for the Template Method
-     * Pattern of
-     * {@link AbstractKnownSourcePosition.visibleContentsFrom | visibleContentsFrom}.
+     * It implements the specific logic of each subclass for the
+     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+     * of {@link AbstractKnownSourcePosition.visibleContentsFrom | visibleContentsFrom}.
      * It must be reimplemented by subclasses.
      *
      * **PRECONDITION:** both positions correspond to the same reader (not
@@ -264,9 +287,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * and `to` position (not included) and is visible.
      * If `this` comes after `to`, the result is the empty string.
      *
-     * It implements the specific logic of each subclass for the Template Method
-     * Pattern of
-     * {@link AbstractKnownSourcePosition.visibleContentsTo | visibleContentsTo}.
+     * It implements the specific logic of each subclass for the
+     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+     * of {@link AbstractKnownSourcePosition.visibleContentsTo | visibleContentsTo}.
      * It must be reimplemented by subclasses.
      *
      * **PRECONDITION:** both positions correspond to the same reader (not
@@ -281,7 +304,24 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      */
     protected abstract _visibleContentsTo(to: AbstractKnownSourcePosition): string;
 
+    /**
+     * The index in the {@link SourceReader}'s document list where the document which this position
+     * corresponds is stored.
+     * It may be one longer that the lenght, in case the position is EOI.
+     *
+     * @group Internal: Helpers
+     * @private
+     */
     public abstract _internalDocumentIndex(): number;
+
+    /**
+     * The index in the {@link SourceReader}'s document indicated by the document index where the
+     * character which this positions corresponds to is stored.
+     * It may be one longer thant the lenght, in case the position is EOD.
+     *
+     * @group Internal: Helpers
+     * @private
+     */
     public abstract _internalCharacterIndex(visible: boolean): number;
     // -----------------------------------------------
     // #endregion } Internal: Helpers

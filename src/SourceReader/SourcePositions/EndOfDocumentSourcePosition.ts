@@ -18,7 +18,8 @@ import { SourceReader } from '../SourceReader';
  * It is a special position, because it does not point to a particular position
  * inside a document in the source input, but to the end of one of the documents in it.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export class EndOfDocumentSourcePosition
     extends AbstractDocumentSourcePosition
@@ -27,7 +28,10 @@ export class EndOfDocumentSourcePosition
     // ===============================================
     // #region API: Properties {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public readonly isEndOfDocument: boolean = true;
     // -----------------------------------------------
     // #endregion } API: Properties
@@ -66,6 +70,7 @@ export class EndOfDocumentSourcePosition
      *      that reader.
      *
      * @group Internal: Contructors
+     * @private
      */
     public constructor(
         sourceReader: SourceReader,
@@ -86,9 +91,7 @@ export class EndOfDocumentSourcePosition
     // #region API: Printing {
     // -----------------------------------------------
     /**
-     * Gives the string representation of end of document positions.
-     * Implements the abstract operation of its superclass.
-     *
+     * @inheritdoc
      * @group API: Printing
      */
     public toString(): string {
@@ -99,9 +102,12 @@ export class EndOfDocumentSourcePosition
     // ===============================================
 
     // ===============================================
-    // #region Internal: helpers {
+    // #region Internal: Helpers {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _documentContextBefore(lines: number): string[] {
         return this.sourceReader._documentContextBeforeOf(
             this._internalDocumentIndex(),
@@ -110,12 +116,15 @@ export class EndOfDocumentSourcePosition
         );
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _documentContextAfter(lines: number): string[] {
         return [''];
     }
     // -----------------------------------------------
-    // #endregion } Internal: helpers
+    // #endregion } Internal: Helpers
     // ===============================================
 }
 // -----------------------------------------------

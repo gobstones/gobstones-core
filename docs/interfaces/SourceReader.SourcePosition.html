@@ -28,61 +28,91 @@ source code (that may come from several input documents).</p>
 </div></section><section class="tsd-index-section"><h3 class="tsd-index-heading">API: Properties</h3><div class="tsd-index-list"><a href="SourceReader.SourcePosition.html#isEndOfDocument" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Document</span></a>
 <a href="SourceReader.SourcePosition.html#isEndOfInput" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>End<wbr/>Of<wbr/>Input</span></a>
 <a href="SourceReader.SourcePosition.html#isUnknown" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>is<wbr/>Unknown</span></a>
-</div></section></div></details></section></section><section class="tsd-panel-group tsd-member-group"><h2>API: Access</h2><section class="tsd-panel tsd-member"><a id="column" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>column</span><a href="#column" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">column</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><div class="tsd-comment tsd-typography"><p>The column number of this position in the current input, if the input is not
-an unknown position, and this position is not at the end of the input.</p>
+</div></section></div></details></section></section><section class="tsd-panel-group tsd-member-group"><h2>API: Access</h2><section class="tsd-panel tsd-member"><a id="column" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>column</span><a href="#column" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">column</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><div class="tsd-comment tsd-typography"><p>The column number of this position in the current input.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 <p><strong>INVARIANT:</strong> <code>column &gt;= 1</code> and it is a valid column in that reader.</p>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
-</div></section><section class="tsd-panel tsd-member"><a id="documentName" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>document<wbr/>Name</span><a href="#documentName" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">document<wbr/>Name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>The name of the input document this position belongs to, if the input is not
-an unknown position, and this position is not at the end of the input.</p>
+</div></section><section class="tsd-panel tsd-member"><a id="documentName" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>document<wbr/>Name</span><a href="#documentName" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">document<wbr/>Name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>The name of the input document this position belongs to.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
-</div></section><section class="tsd-panel tsd-member"><a id="line" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>line</span><a href="#line" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">line</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><div class="tsd-comment tsd-typography"><p>The line number of this position in the current input, if the input is not
-an unknown position, and this position is not at the end of the input.</p>
+</div></section><section class="tsd-panel tsd-member"><a id="line" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>line</span><a href="#line" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">line</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><div class="tsd-comment tsd-typography"><p>The line number of this position in the current input.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 <p><strong>INVARIANT:</strong> <code>line &gt;=1</code>, and it is a valid line in that reader.</p>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
-</div></section><section class="tsd-panel tsd-member"><a id="regions" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>regions</span><a href="#regions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">regions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div><div class="tsd-comment tsd-typography"><p>The regions the position in the current input belongs to, if the input is not
-an unknown position, and this position is not at the end of the input.</p>
+</div></section><section class="tsd-panel tsd-member"><a id="regions" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>regions</span><a href="#regions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">regions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div><div class="tsd-comment tsd-typography"><p>The regions the position in the current input belongs to.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 <p><strong>INVARIANT:</strong> the regions are valid in the position&#39;s reader.</p>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
 </div></section></section><section class="tsd-panel-group tsd-member-group"><h2>API: Contents access</h2><section class="tsd-panel tsd-member"><a id="fullDocumentContents" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>full<wbr/>Document<wbr/>Contents</span><a href="#fullDocumentContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">full<wbr/>Document<wbr/>Contents</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>The contents of the input document this position belongs to (both visible
-and non visible), if the input is not an unknown position, and this position
-is not at the end of the input.</p>
+and non visible).</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a>
         if the receiver is the end of input.</p>
-</div></section><section class="tsd-panel tsd-member"><a id="visibleDocumentContents" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>visible<wbr/>Document<wbr/>Contents</span><a href="#visibleDocumentContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">visible<wbr/>Document<wbr/>Contents</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>The contents of the visible input document this position belongs to, if the
-input is not an unknown position, and this position is not at the end of the input.</p>
+</div></section><section class="tsd-panel tsd-member"><a id="visibleDocumentContents" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>visible<wbr/>Document<wbr/>Contents</span><a href="#visibleDocumentContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">visible<wbr/>Document<wbr/>Contents</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>The contents of the visible input document this position belongs to.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a>
         if the receiver is the end of input.</p>
 </div></section><section class="tsd-panel tsd-member"><a id="documentContextAfter" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span>document<wbr/>Context<wbr/>After</span><a href="#documentContextAfter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link"><a id="documentContextAfter.documentContextAfter-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">document<wbr/>Context<wbr/>After</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lines</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#documentContextAfter.documentContextAfter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>Returns the full context of the source document after the position, up to the beginning
-of the given number of lines or the end of the document, whichever comes first,
-if the position is not unknown and not at the end of input.</p>
+of the given number of lines or the end of the document.</p>
 <p>The char at the given position is the first one in the solution.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">lines</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
 </div></li></ul></section><section class="tsd-panel tsd-member"><a id="documentContextBefore" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span>document<wbr/>Context<wbr/>Before</span><a href="#documentContextBefore" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link"><a id="documentContextBefore.documentContextBefore-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">document<wbr/>Context<wbr/>Before</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lines</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#documentContextBefore.documentContextBefore-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>Returns the full context of the source document before the position, up to the beginning
-of the given number of lines, or the beginning of the document, whichever comes first,
-if the position is not unknown and not at the end of input.</p>
+of the given number of lines, or the beginning of the document, whichever comes first.</p>
 <p>The char at the given position is NOT included in the solution.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">lines</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
 </div></li></ul></section><section class="tsd-panel tsd-member"><a id="fullContentsFrom" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span>full<wbr/>Contents<wbr/>From</span><a href="#fullContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link"><a id="fullContentsFrom.fullContentsFrom-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">full<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#fullContentsFrom.fullContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the argument
 position and the receiver position (not included), both visible and non
 visible.
 If the receiver does not come after the argument, the result is the empty string.</p>
-<p>The implementations may use the Template Method Pattern, to have a common
-validation and specific logic given by subclasses.</p>
 <p><strong>PRECONDITIONS:</strong></p>
 <ul>
-<li>both positions are known,</li>
-<li>both positions correspond to the same reader, and</li>
-<li>the receiver is not at the end of input.</li>
+<li>both positions are known</li>
+<li>both positions correspond to the same reader</li>
+<li>the receiver is not at the end of input</li>
 </ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.SourcePosition.html" class="tsd-signature-type tsd-kind-interface">SourcePosition</a></h5><div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.SourcePosition.html" class="tsd-kind-interface">SourcePosition</a> related with the same <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>
         that the receiver.
@@ -96,13 +126,11 @@ validation and specific logic given by subclasses.</p>
 </div></li></ul></section><section class="tsd-panel tsd-member"><a id="fullContentsTo" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span>full<wbr/>Contents<wbr/>To</span><a href="#fullContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link"><a id="fullContentsTo.fullContentsTo-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">full<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#fullContentsTo.fullContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source, both visible and non visible, that is enclosed between
 the receiver position and the argument position (not included).
 If the argument does not come after the receiver, the result is the empty string.</p>
-<p>The implementations may use the Template Method Pattern, to have a common
-validation and specific logic given by subclasses.</p>
 <p><strong>PRECONDITIONS:</strong></p>
 <ul>
-<li>both positions are known,</li>
-<li>both positions correspond to the same reader, and</li>
-<li>the receiver is not at the end of input.</li>
+<li>both positions are known</li>
+<li>both positions correspond to the same reader</li>
+<li>the receiver is not at the end of input</li>
 </ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">to</span>: <a href="SourceReader.SourcePosition.html" class="tsd-signature-type tsd-kind-interface">SourcePosition</a></h5><div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.SourcePosition.html" class="tsd-kind-interface">SourcePosition</a> related with the same <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that
         the receiver.
@@ -116,13 +144,11 @@ validation and specific logic given by subclasses.</p>
 </div></li></ul></section><section class="tsd-panel tsd-member"><a id="visibleContentsFrom" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span>visible<wbr/>Contents<wbr/>From</span><a href="#visibleContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link"><a id="visibleContentsFrom.visibleContentsFrom-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">visible<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#visibleContentsFrom.visibleContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>from</code>
 position and <code>this</code> position (not included) and is visible. If <code>this</code>
 does not come after <code>from</code>, the result is the empty string.</p>
-<p>The implementations may use the Template Method Pattern, to have a common
-validation and specific logic given by subclasses.</p>
 <p><strong>PRECONDITIONS:</strong></p>
 <ul>
-<li>both positions are known,</li>
-<li>both positions correspond to the same reader, and</li>
-<li>the receiver is not at the end of input.</li>
+<li>both positions are known</li>
+<li>both positions correspond to the same reader</li>
+<li>the receiver is not at the end of input</li>
 </ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.SourcePosition.html" class="tsd-signature-type tsd-kind-interface">SourcePosition</a></h5><div class="tsd-comment tsd-typography"><p>A <a href="SourceReader.SourcePosition.html" class="tsd-kind-interface">SourcePosition</a> related with the same <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> that
           the receiver.
@@ -136,13 +162,11 @@ validation and specific logic given by subclasses.</p>
 </div></li></ul></section><section class="tsd-panel tsd-member"><a id="visibleContentsTo" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span>visible<wbr/>Contents<wbr/>To</span><a href="#visibleContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class="tsd-signature tsd-anchor-link"><a id="visibleContentsTo.visibleContentsTo-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">visible<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#visibleContentsTo.visibleContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between the <code>this</code>
 position and <code>to</code> position (not included) and is visible. If <code>to</code> does
 not come after <code>this</code>, the result is the empty string.</p>
-<p>The implementations may use the Template Method Pattern, to have a common
-validation and specific logic given by subclasses.</p>
 <p><strong>PRECONDITIONS:</strong></p>
 <ul>
-<li>both positions are known,</li>
-<li>both positions correspond to the same reader, and</li>
-<li>the receiver is not at the end of input.</li>
+<li>both positions are known</li>
+<li>both positions correspond to the same reader</li>
+<li>the receiver is not at the end of input</li>
 </ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">from</span>: <a href="SourceReader.SourcePosition.html" class="tsd-signature-type tsd-kind-interface">SourcePosition</a></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver or the argument positions are unknown.</p>
@@ -157,11 +181,20 @@ It is NOT useful for persistence, as it may loose information.</p>
 The EndOfDocument is reached when all the characters in a document
 in the source input has been processed, but before the processing of the
 next document started.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is not unknown</li>
+<li>the position is not at the end of input</li>
+</ul>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the position is at the end of input.</p>
 </div></section><section class="tsd-panel tsd-member"><a id="isEndOfInput" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>is<wbr/>End<wbr/>Of<wbr/>Input</span><a href="#isEndOfInput" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">is<wbr/>End<wbr/>Of<wbr/>Input</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><div class="tsd-comment tsd-typography"><p>Answers if this position corresponds to the end of input of the
 <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a> it belongs, or not.
 The EndOfInput is reached when all documents in the source input has been processed.</p>
+<p><strong>PRECONDITIONS:</strong></p>
+<ul>
+<li>the position is known</li>
+</ul>
 </div><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="../classes/SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 </div></section><section class="tsd-panel tsd-member"><a id="isUnknown" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>is<wbr/>Unknown</span><a href="#isUnknown" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">is<wbr/>Unknown</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><div class="tsd-comment tsd-typography"><p>Answers if this position correspond to one in some <a href="../classes/SourceReader.SourceReader.html" class="tsd-kind-class">SourceReader</a>,
 or if it is unknown.</p>

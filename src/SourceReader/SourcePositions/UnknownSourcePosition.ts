@@ -25,27 +25,29 @@ import { SourcePosition } from './SourcePosition';
  * {@link UnknownSourcePosition.instance | instance} static field,
  * and cannot be further instantiated.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export class UnknownSourcePosition extends AbstractSourcePosition implements SourcePosition {
     // ===============================================
-    // #region API: Creation {
+    // #region Internal: Constructors - Part 1 {
     // -----------------------------------------------
     /**
      * Returns the single instance of this class.
-     * @group API: Creation
+     * @group Internal: Constructors
+     * @private
      */
     public static readonly instance = new UnknownSourcePosition();
     // -----------------------------------------------
-    // #endregion } API: Creation
+    // #endregion } Internal: Constructors - Part 1
     // ===============================================
 
     // ===============================================
     // #region API: Properties - Part 1 {
     // -----------------------------------------------
     /**
-     * @group API: Properties
      * @inheritdoc
+     * @group API: Properties
      */
     public readonly isUnknown: boolean = true;
     // -----------------------------------------------
@@ -53,11 +55,11 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // ===============================================
 
     // ===============================================
-    // #region Internal: Constructors {
+    // #region Internal: Constructors - Part 2 {
     // -----------------------------------------------
     /**
-     * Returns an instance of this class. Made private to
-     * follow the singleton pattern.
+     * Returns an instance of this class.
+     * Made private to follow the singleton pattern.
      *
      * @group Internal: Constructors
      * @private
@@ -66,23 +68,23 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
         super();
     }
     // -----------------------------------------------
-    // #endregion } Internal: Constructors
+    // #endregion } Internal: Constructors - Part 2
     // ===============================================
 
     // ===============================================
     // #region API: Properties - Part 2 {
     // -----------------------------------------------
     /**
-     * @group API: Properties
      * @inheritdoc
+     * @group API: Properties
      */
     public get isEndOfInput(): boolean {
         throw new InvalidOperationAtUnknownPositionError('isEndOfInput', 'UnknownSourcePosition');
     }
 
     /**
-     * @group API: Properties
      * @inheritdoc
+     * @group API: Properties
      */
     public get isEndOfDocument(): boolean {
         throw new InvalidOperationAtUnknownPositionError(
@@ -98,32 +100,32 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // #region API: Access {
     // -----------------------------------------------
     /**
-     * @group API: Access
      * @inheritdoc
+     * @group API: Access
      */
     public get line(): number {
         throw new InvalidOperationAtUnknownPositionError('line', 'UnknownSourcePosition');
     }
 
     /**
-     * @group API: Access
      * @inheritdoc
+     * @group API: Access
      */
     public get column(): number {
         throw new InvalidOperationAtUnknownPositionError('column', 'UnknownSourcePosition');
     }
 
     /**
-     * @group API: Access
      * @inheritdoc
+     * @group API: Access
      */
     public get regions(): string[] {
         throw new InvalidOperationAtUnknownPositionError('regions', 'UnknownSourcePosition');
     }
 
     /**
-     * @group API: Access
      * @inheritdoc
+     * @group API: Access
      */
     public get documentName(): string {
         throw new InvalidOperationAtUnknownPositionError('documentName', 'UnknownSourcePosition');
@@ -136,8 +138,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // #region API: Contents access {
     // -----------------------------------------------
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public get fullDocumentContents(): string {
         throw new InvalidOperationAtUnknownPositionError(
@@ -147,8 +149,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public get visibleDocumentContents(): string {
         throw new InvalidOperationAtUnknownPositionError(
@@ -158,8 +160,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public fullContentsFrom(from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError(
@@ -169,16 +171,16 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public fullContentsTo(from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError('fullContentsTo', 'UnknownSourcePosition');
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public visibleContentsFrom(from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError(
@@ -188,8 +190,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public visibleContentsTo(from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError(
@@ -199,8 +201,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public documentContextBefore(lines: number): string[] {
         throw new InvalidOperationAtUnknownPositionError(
@@ -210,8 +212,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     }
 
     /**
-     * @group API: Content access
      * @inheritdoc
+     * @group API: Content access
      */
     public documentContextAfter(lines: number): string[] {
         throw new InvalidOperationAtUnknownPositionError(
@@ -227,8 +229,8 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // #region API: Printing {
     // -----------------------------------------------
     /**
-     * @group API: Printing
      * @inheritdoc
+     * @group API: Printing
      */
     public toString(): string {
         return '@<?>';

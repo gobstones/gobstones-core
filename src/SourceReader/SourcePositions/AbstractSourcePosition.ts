@@ -10,23 +10,97 @@ import { SourcePosition } from './SourcePosition';
  * Subclasses determine if the position is unknown or known, and in this last case,
  * its different types.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export abstract class AbstractSourcePosition implements SourcePosition {
+    /**
+     * @group Internal: Constructors
+     * @private
+     */
+    // This empty declaration is needed for its documentation.
+    // If the documentation does not appear, it takes the default (public, Constructor)
+    // instead of the same as all the others in the hierarchy.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    public constructor() {}
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public abstract get isUnknown(): boolean;
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public abstract get isEndOfInput(): boolean;
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public abstract get isEndOfDocument(): boolean;
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
     public abstract get line(): number;
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
     public abstract get column(): number;
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
     public abstract get regions(): string[];
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
     public abstract get documentName(): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract get fullDocumentContents(): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract get visibleDocumentContents(): string;
+    /**
+     * @inheritdoc
+     * @group API: Printing
+     */
     public abstract toString(): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract fullContentsFrom(from: SourcePosition): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract fullContentsTo(from: SourcePosition): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract visibleContentsFrom(from: SourcePosition): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract visibleContentsTo(from: SourcePosition): string;
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract documentContextBefore(lines: number): string[];
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public abstract documentContextAfter(lines: number): string[];
 }

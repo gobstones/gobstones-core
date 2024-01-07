@@ -2,6 +2,7 @@
  * @module SourceReader
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+// These imports are needed for typedoc to find the references
 import {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     InvalidOperationAtUnknownPositionError,
@@ -50,7 +51,11 @@ export interface SourcePosition {
      * {@link SourceReader} it belongs, or not.
      * The EndOfInput is reached when all documents in the source input has been processed.
      *
+     * **PRECONDITIONS:**
+     *  * the position is known
+     *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
+     *
      * @group API: Properties
      */
     readonly isEndOfInput: boolean;
@@ -62,8 +67,13 @@ export interface SourcePosition {
      * in the source input has been processed, but before the processing of the
      * next document started.
      *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
+     *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
+     *
      * @group API: Properties
      */
     readonly isEndOfDocument: boolean;
@@ -75,45 +85,61 @@ export interface SourcePosition {
     // #region API: Access {
     // -----------------------------------------------
     /**
-     * The line number of this position in the current input, if the input is not
-     * an unknown position, and this position is not at the end of the input.
+     * The line number of this position in the current input.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * **INVARIANT:** `line >=1`, and it is a valid line in that reader.
      *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
+     *
      * @group API: Access
      */
     readonly line: number;
 
     /**
-     * The column number of this position in the current input, if the input is not
-     * an unknown position, and this position is not at the end of the input.
+     * The column number of this position in the current input.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * **INVARIANT:** `column >= 1` and it is a valid column in that reader.
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
+     *
      * @group API: Access
      */
     readonly column: number;
 
     /**
-     * The regions the position in the current input belongs to, if the input is not
-     * an unknown position, and this position is not at the end of the input.
+     * The regions the position in the current input belongs to.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * **INVARIANT:** the regions are valid in the position's reader.
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
+     *
      * @group API: Access
      */
     readonly regions: string[];
 
     /**
-     * The name of the input document this position belongs to, if the input is not
-     * an unknown position, and this position is not at the end of the input.
+     * The name of the input document this position belongs to.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
+     *
      * @group API: Access
      */
     readonly documentName: string;
@@ -126,8 +152,11 @@ export interface SourcePosition {
     // -----------------------------------------------
     /**
      * The contents of the input document this position belongs to (both visible
-     * and non visible), if the input is not an unknown position, and this position
-     * is not at the end of the input.
+     * and non visible).
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver is unknown.
@@ -139,8 +168,11 @@ export interface SourcePosition {
     readonly fullDocumentContents: string;
 
     /**
-     * The contents of the visible input document this position belongs to, if the
-     * input is not an unknown position, and this position is not at the end of the input.
+     * The contents of the visible input document this position belongs to.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver is unknown.
@@ -157,13 +189,10 @@ export interface SourcePosition {
      * visible.
      * If the receiver does not come after the argument, the result is the empty string.
      *
-     * The implementations may use the Template Method Pattern, to have a common
-     * validation and specific logic given by subclasses.
-     *
      * **PRECONDITIONS:**
-     *  * both positions are known,
-     *  * both positions correspond to the same reader, and
-     *  * the receiver is not at the end of input.
+     *  * both positions are known
+     *  * both positions correspond to the same reader
+     *  * the receiver is not at the end of input
      *
      * @param from
      *         A {@link SourcePosition} related with the same {@link SourceReader}
@@ -186,13 +215,10 @@ export interface SourcePosition {
      * the receiver position and the argument position (not included).
      * If the argument does not come after the receiver, the result is the empty string.
      *
-     * The implementations may use the Template Method Pattern, to have a common
-     * validation and specific logic given by subclasses.
-     *
      * **PRECONDITIONS:**
-     *  * both positions are known,
-     *  * both positions correspond to the same reader, and
-     *  * the receiver is not at the end of input.
+     *  * both positions are known
+     *  * both positions correspond to the same reader
+     *  * the receiver is not at the end of input
      *
      * @param to
      *         A {@link SourcePosition} related with the same {@link SourceReader} that
@@ -215,13 +241,10 @@ export interface SourcePosition {
      * position and `this` position (not included) and is visible. If `this`
      * does not come after `from`, the result is the empty string.
      *
-     * The implementations may use the Template Method Pattern, to have a common
-     * validation and specific logic given by subclasses.
-     *
      * **PRECONDITIONS:**
-     *  * both positions are known,
-     *  * both positions correspond to the same reader, and
-     *  * the receiver is not at the end of input.
+     *  * both positions are known
+     *  * both positions correspond to the same reader
+     *  * the receiver is not at the end of input
      *
      * @param from
      *        A {@link SourcePosition} related with the same {@link SourceReader} that
@@ -244,13 +267,10 @@ export interface SourcePosition {
      * position and `to` position (not included) and is visible. If `to` does
      * not come after `this`, the result is the empty string.
      *
-     * The implementations may use the Template Method Pattern, to have a common
-     * validation and specific logic given by subclasses.
-     *
      * **PRECONDITIONS:**
-     *  * both positions are known,
-     *  * both positions correspond to the same reader, and
-     *  * the receiver is not at the end of input.
+     *  * both positions are known
+     *  * both positions correspond to the same reader
+     *  * the receiver is not at the end of input
      *
      * @param to
      *         A {@link SourcePosition} related with the same {@link SourceReader} that
@@ -270,10 +290,13 @@ export interface SourcePosition {
 
     /**
      * Returns the full context of the source document before the position, up to the beginning
-     * of the given number of lines, or the beginning of the document, whichever comes first,
-     * if the position is not unknown and not at the end of input.
+     * of the given number of lines, or the beginning of the document, whichever comes first.
      *
      * The char at the given position is NOT included in the solution.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
@@ -284,10 +307,13 @@ export interface SourcePosition {
 
     /**
      * Returns the full context of the source document after the position, up to the beginning
-     * of the given number of lines or the end of the document, whichever comes first,
-     * if the position is not unknown and not at the end of input.
+     * of the given number of lines or the end of the document.
      *
      * The char at the given position is the first one in the solution.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
      *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.

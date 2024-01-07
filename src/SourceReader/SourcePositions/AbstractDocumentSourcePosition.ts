@@ -29,7 +29,8 @@ import { SourceReader } from '../SourceReader';
  * can answer, such as inquiring for the document name, and the contents
  * of the document.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export abstract class AbstractDocumentSourcePosition extends AbstractKnownSourcePosition {
     // ===============================================
@@ -60,7 +61,10 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
     // ===============================================
     // #region API: Properties {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @group API: Properties
+     * @inheritdoc
+     */
     public readonly isEndOfInput = false;
     // -----------------------------------------------
     // #endregion } API: Properties
@@ -99,7 +103,7 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      *      **INVARIANT:** `visibleCharIndex >= 0` and it is a valid index in
      *      that reader.
      *
-     * @group Implementation: Protected for Source Reader
+     * @group Internal: Constructors
      * @private
      */
     public constructor(
@@ -107,8 +111,11 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
         line: number,
         column: number,
         regions: string[],
+        /** @group Internal: Properties @private */
         public readonly _documentIndex: number,
+        /** @group Internal: Properties @private */
         public readonly _charIndex: number,
+        /** @group Internal: Properties @private */
         public readonly _visibleCharIndex: number
     ) {
         super(sourceReader, line, column, regions);
@@ -120,7 +127,10 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
     // ===============================================
     // #region API: Acess {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
     public get documentName(): string {
         return this.sourceReader._documentNameAt(this._documentIndex);
     }
@@ -131,22 +141,34 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
     // ===============================================
     // #region API: Contents acess {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public get visibleDocumentContents(): string {
         return this.sourceReader._visibleDocumentContentsAt(this._documentIndex);
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public get fullDocumentContents(): string {
         return this.sourceReader._fullDocumentContentsAt(this._documentIndex);
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public documentContextBefore(lines: number): string[] {
         return this._documentContextBefore(lines);
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public documentContextAfter(lines: number): string[] {
         return this._documentContextAfter(lines);
     }
@@ -158,24 +180,27 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
     // #region Internal: Helpers {
     // -----------------------------------------------
     /**
-     * Implements the calculation of the corresponding index for this class.
-     *
+     * @inheritdoc
      * @group Internal: Helpers
+     * @private
      */
     public _internalDocumentIndex(): number {
         return this._documentIndex;
     }
 
     /**
-     * Implements the calculation of the corresponding index for this class.
-     *
+     * @inheritdoc
      * @group Internal: Helpers
+     * @private
      */
     public _internalCharacterIndex(visible: boolean): number {
         return visible ? this._visibleCharIndex : this._charIndex;
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _fullContentsTo(to: AbstractKnownSourcePosition): string {
         return this.sourceReader._inputFromToIn(
             this._internalDocumentIndex(),
@@ -186,7 +211,10 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
         );
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _visibleContentsTo(to: AbstractKnownSourcePosition): string {
         return this.sourceReader._inputFromToIn(
             this._internalDocumentIndex(),
@@ -204,15 +232,15 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      *
      * The char at the given position is NOT included in the solution.
      *
-     * It implements the specific logic of each subclass for the Template Method
-     * Pattern of
-     * {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}.
+     * It implements the specific logic of each subclass for the
+     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+     * of {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}.
      * It must be reimplemented by subclasses.
      *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the at the end of input.
      *
-     * @group Access
+     * @group Internal: Helpers
      */
     protected abstract _documentContextBefore(lines: number): string[];
 
@@ -222,15 +250,15 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      *
      * The char at the given position is the first one in the solution.
      *
-     * It implements the specific logic of each subclass for the Template Method
-     * Pattern of
-     * {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}.
+     * It implements the specific logic of each subclass for the
+     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+     * of {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}.
      * It must be reimplemented by subclasses.
      *
      * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
      * @throws {@link InvalidOperationAtEOIError} if the at the end of input.
      *
-     * @group Access
+     * @group Internal: Helpers
      */
     protected abstract _documentContextAfter(lines: number): string[];
     // -----------------------------------------------

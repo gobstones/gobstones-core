@@ -13,7 +13,8 @@ import { SourceReader } from '../SourceReader';
  * A {@link DocumentSourcePosition} points to a particular position, different
  * from EndOfDocument, inside a particular document.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export class DocumentSourcePosition
     extends AbstractDocumentSourcePosition
@@ -23,11 +24,7 @@ export class DocumentSourcePosition
     // #region API: Properties {
     // -----------------------------------------------
     /**
-     * Answers if this position correspond to the end of document for the
-     * current document of the {@link SourceReader} it belongs, or not. It
-     * implements the abstract operation of its superclass. As this class points
-     * to an inner char inside a document, the answer is always false.
-     *
+     * @inheritdoc
      * @group API: Properties
      */
     public readonly isEndOfDocument: boolean = false;
@@ -46,7 +43,7 @@ export class DocumentSourcePosition
      * **PRECONDITIONS:** (not verified during execution)
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader state
-     * @group Implementation: Protected for Source Reader
+     * @group Internal: Constructors
      * @private
      */
     public constructor(
@@ -65,12 +62,10 @@ export class DocumentSourcePosition
     // ===============================================
 
     // ===============================================
-    // #region Internal: Printing {
+    // #region API: Printing {
     // -----------------------------------------------
     /**
-     * Gives a string version of the position. It is not useful for persistence,
-     * as it looses information.
-     *
+     * @inheritdoc
      * @group API: Printing
      */
     public toString(): string {
@@ -81,9 +76,12 @@ export class DocumentSourcePosition
     // ===============================================
 
     // ===============================================
-    // #region Internal: helpers {
+    // #region Internal: Helpers {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _documentContextBefore(lines: number): string[] {
         return this.sourceReader._documentContextBeforeOf(
             this._internalDocumentIndex(),
@@ -92,7 +90,10 @@ export class DocumentSourcePosition
         );
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _documentContextAfter(lines: number): string[] {
         return this.sourceReader._documentContextAfterOf(
             this._internalDocumentIndex(),
@@ -101,7 +102,7 @@ export class DocumentSourcePosition
         );
     }
     // -----------------------------------------------
-    // #endregion } Internal: helpers
+    // #endregion } Internal: Helpers
     // ===============================================
 }
 // -----------------------------------------------

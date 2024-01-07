@@ -14,7 +14,8 @@ import { SourceReader } from '../SourceReader';
  * It is a special position, because it does not point to a particular position
  * inside a document in the source input, but to the end of it.
  *
- * @group API: Source Positions
+ * @group Internals: Source Positions
+ * @private
  */
 export class EndOfInputSourcePosition
     extends AbstractKnownSourcePosition
@@ -23,7 +24,10 @@ export class EndOfInputSourcePosition
     // ===============================================
     // #region API: Properties - Part 1 {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public readonly isEndOfInput = true;
     // -----------------------------------------------
     // #endregion } API: Properties - Part 1
@@ -52,6 +56,7 @@ export class EndOfInputSourcePosition
      *      **INVARIANT:** the regions are valid in the position's reader.
      *
      * @group Internal: Constructors
+     * @private
      */
     public constructor(
         sourceReader: SourceReader,
@@ -68,7 +73,10 @@ export class EndOfInputSourcePosition
     // ===============================================
     // #region API: Properties - Part 2 {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Properties
+     */
     public get isEndOfDocument(): boolean {
         throw new InvalidOperationAtEOIError('isEndOfDocument', 'EndOfInputSourcePosition');
     }
@@ -79,7 +87,10 @@ export class EndOfInputSourcePosition
     // ===============================================
     // #region API: Access {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
     public get documentName(): string {
         throw new InvalidOperationAtEOIError('documentName', 'EndOfInputSourcePosition');
     }
@@ -90,22 +101,34 @@ export class EndOfInputSourcePosition
     // ===============================================
     // #region API: Contents access {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public get fullDocumentContents(): string {
         throw new InvalidOperationAtEOIError('fullDocumentContents', 'EndOfInputSourcePosition');
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public get visibleDocumentContents(): string {
         throw new InvalidOperationAtEOIError('visibleDocumentContents', 'EndOfInputSourcePosition');
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public documentContextBefore(lines: number): string[] {
         throw new InvalidOperationAtEOIError('documentContextBefore', 'EndOfInputSourcePosition');
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Contents access
+     */
     public documentContextAfter(lines: number): string[] {
         throw new InvalidOperationAtEOIError('documentContextAfter', 'EndOfInputSourcePosition');
     }
@@ -116,7 +139,10 @@ export class EndOfInputSourcePosition
     // ===============================================
     // #region API: Printing {
     // -----------------------------------------------
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group API: Printing
+     */
     public toString(): string {
         return '@<EOI>';
     }
@@ -128,29 +154,35 @@ export class EndOfInputSourcePosition
     // #region Internal: Helpers {
     // -----------------------------------------------
     /**
-     * Implements the calculation of the corresponding index for this class.
-     *
+     * @inheritdoc
      * @group Internal: Helpers
+     * @private
      */
     public _internalDocumentIndex(): number {
         return this.sourceReader.documentsNames.length - 1;
     }
 
     /**
-     * Implements the calculation of the corresponding index for this class.
-     *
+     * @inheritdoc
      * @group Internal: Helpers
+     * @private
      */
     public _internalCharacterIndex(visible: boolean): number {
         return this.sourceReader._fullDocumentContentsAt(this._internalDocumentIndex()).length;
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _fullContentsTo(to: AbstractKnownSourcePosition): string {
         return '';
     }
 
-    /** @inheritdoc */
+    /**
+     * @inheritdoc
+     * @group Internal: Helpers
+     */
     protected _visibleContentsTo(to: AbstractKnownSourcePosition): string {
         return '';
     }
