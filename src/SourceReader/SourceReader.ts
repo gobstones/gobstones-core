@@ -489,6 +489,15 @@ export class SourceReader {
     // #region API: Access {
     // -----------------------------------------------
     /**
+     * Answers the current document name.
+     *
+     * @group API: Access
+     */
+    public currentDocument(): string {
+        return this.documentsNames[this._documentIndex];
+    }
+
+    /**
      * Answers if there are no more characters to read from the input.
      *
      * @group API: Access
