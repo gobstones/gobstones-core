@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     InvalidOperationAtEODError,
@@ -659,6 +660,7 @@ describe('SourceReader', () => {
         // #endregion Skipping
         // -----------------------------------------------
 
+<<<<<<< Updated upstream:test/SourceReader/SourceReader.test.ts
         // -----------------------------------------------
         // #region Peeking
         // -----------------------------------------------
@@ -747,6 +749,141 @@ describe('SourceReader', () => {
         // -----------------------------------------------
         // #endregion Getting position
         // -----------------------------------------------
+=======
+        // // -----------------------------------------------
+        // // #region Peeking
+        // // -----------------------------------------------
+        // it('throws an InvalidOperationAtEODError when peeking when on single input', () => {
+        //     const sr = new SourceReader('');
+        //     expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        // });
+
+        // it('throws an InvalidOperationAtEODError when peeking when on array input', () => {
+        //     const sr = new SourceReader(['', '']);
+        //     expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        // });
+
+        // it('throws an InvalidOperationAtEODError when peeking when on object input', () => {
+        //     const sr = new SourceReader({
+        //         empty1: '',
+        //         empty2: '',
+        //         empty3: '',
+        //         empty4: ''
+        //     });
+        //     expect(() => sr.peek()).toThrow(new InvalidOperationAtEODError('peek', 'SourceReader'));
+        // });
+        // // -----------------------------------------------
+        // // #endregion Peeking
+        // // -----------------------------------------------
+
+        // // -----------------------------------------------
+        // // #region Taking
+        // // -----------------------------------------------
+        // it('returns empty string when taking when on single input', () => {
+        //     const sr = new SourceReader('');
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        // });
+
+        // it('returns empty string when taking when on array input at any document', () => {
+        //     const sr = new SourceReader(['', '']);
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        // });
+
+        // it('returns empty string when taking when on object input at any document', () => {
+        //     const sr = new SourceReader({
+        //         empty1: '',
+        //         empty2: '',
+        //         empty3: '',
+        //         empty4: ''
+        //     });
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '')).toBe('');
+        // });
+
+        // it('returns empty string when taking silently when on single input', () => {
+        //     const sr = new SourceReader('');
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        // });
+
+        // it('returns empty string when taking silently when on array input at any document', () => {
+        //     const sr = new SourceReader(['', '']);
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        // });
+
+        // it('returns empty string when taking silently when on object input at any document', () => {
+        //     const sr = new SourceReader({
+        //         empty1: '',
+        //         empty2: '',
+        //         empty3: '',
+        //         empty4: ''
+        //     });
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        //     sr.skip();
+        //     expect(sr.takeWhile((ch) => ch === '', true)).toBe('');
+        // });
+        // // -----------------------------------------------
+        // // #endregion Taking
+        // // -----------------------------------------------
+
+        // // -----------------------------------------------
+        // // #region Getting position
+        // // -----------------------------------------------
+        // it('returns a position that is NOT at the end of input when single input', () => {
+        //     const sr = new SourceReader('');
+        //     expect(sr.getPosition().isEndOfInput).toBe(false);
+        // });
+
+        // it('returns a position that is NOT at the end of input when array input', () => {
+        //     const sr = new SourceReader(['', '']);
+        //     expect(sr.getPosition().isEndOfInput).toBe(false);
+        // });
+
+        // it('returns a position that is NOT at the end of input when object input', () => {
+        //     const sr = new SourceReader({
+        //         empty1: '',
+        //         empty2: '',
+        //         empty3: '',
+        //         empty4: ''
+        //     });
+        //     expect(sr.getPosition().isEndOfInput).toBe(false);
+        // });
+
+        // it('returns a position that is at the end of document when single input', () => {
+        //     const sr = new SourceReader('');
+        //     expect(sr.getPosition().isEndOfDocument).toBe(true);
+        // });
+
+        // it('returns a position that is at the end of document when array input', () => {
+        //     const sr = new SourceReader(['', '']);
+        //     expect(sr.getPosition().isEndOfDocument).toBe(true);
+        // });
+
+        // it('returns a position that is at the end of document when object input', () => {
+        //     const sr = new SourceReader({
+        //         empty1: '',
+        //         empty2: '',
+        //         empty3: '',
+        //         empty4: ''
+        //     });
+        //     expect(sr.getPosition().isEndOfDocument).toBe(true);
+        // });
+        // // -----------------------------------------------
+        // // #endregion Getting position
+        // // -----------------------------------------------
+>>>>>>> Stashed changes:test/SourceReader/SourceReader.test.skipped.ts
     });
     // ===============================================
     // #endregion Array with empty documents

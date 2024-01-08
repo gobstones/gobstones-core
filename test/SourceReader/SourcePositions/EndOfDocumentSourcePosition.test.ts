@@ -13,13 +13,13 @@ import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePos
 import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 
-describe('EndOfDocumentSourcePosition', () => {
+describe('An EndOfDocumentSourcePosition', () => {
     // ===============================================
-    // #region Single line & Single document
-    // ===============================================
+    // #region Single line & Single document {
+    // -----------------------------------------------
     given('an instance with single line and single document input', () => {
-        // -----------------------------------------------
-        // #region Setup
+        // ===============================================
+        // #region Setup {
         // -----------------------------------------------
         const input = 'program { Poner(Verde) }';
         const sr = new SourceReader(input);
@@ -46,78 +46,87 @@ describe('EndOfDocumentSourcePosition', () => {
             input.length - numberOfInvisibles
         );
         // -----------------------------------------------
-        // #endregion isUnknown and toString
-        // -----------------------------------------------
+        // #endregion } Setup
+        // ===============================================
 
+        // ===============================================
+        // #region Printing {
         // -----------------------------------------------
-        // #region toString
-        // -----------------------------------------------
-        describe('toString', () => {
-            it('returns @<EOD>', () => {
+        describe('responds to toString', () => {
+            it('returning @<EOD>', () => {
                 expect(pos.toString()).toBe('@<EOD>');
             });
         });
         // -----------------------------------------------
-        // #endregion toString
-        // -----------------------------------------------
+        // #endregion } Printing
+        // ===============================================
 
+        // ===============================================
+        // #region Properties {
         // -----------------------------------------------
-        // #region Basic properties
-        // -----------------------------------------------
-        describe('isUnknown', () => {
-            it('returns false', () => {
+        describe('responds to isUnknown', () => {
+            it('returning false', () => {
                 expect(pos.isUnknown).toBe(false);
             });
         });
-        describe('isEndOfInput', () => {
-            it('returns false', () => {
+        describe('responds to isEndOfInput', () => {
+            it('returning false', () => {
                 expect(pos.isEndOfInput).toBe(false);
             });
         });
-        describe('isEndOfDocument', () => {
-            it('returns true', () => {
+        describe('responds to isEndOfDocument', () => {
+            it('returning true', () => {
                 expect(pos.isEndOfDocument).toBe(true);
             });
         });
-        describe('line', () => {
-            it('returns 1', () => {
+        // -----------------------------------------------
+        // #endregion } Properties
+        // ===============================================
+
+        // ===============================================
+        // #region Access {
+        // -----------------------------------------------
+        describe('responds to line', () => {
+            it('returning 1', () => {
                 expect(pos.line).toBe(1);
             });
         });
-        describe('column', () => {
-            it('returns the length of the text input', () => {
+        describe('responds to column', () => {
+            it('returning the length of the text input', () => {
                 expect(pos.column).toBe(input.length);
             });
         });
-        describe('regions', () => {
-            it('returns the regions it was created with', () => {
+        describe('responds to regions', () => {
+            it('returning the regions it was created with', () => {
                 expect(pos.regions).toStrictEqual([]);
             });
         });
-        describe('documentName', () => {
-            it('returns the default source reader name', () => {
+        describe('responds to documentName', () => {
+            it('returning the default source reader name', () => {
                 expect(pos.documentName).toBe(`${SourceReader.defaultDocumentNamePrefix}1`);
             });
         });
-        describe('fullDocumentContents', () => {
-            it('returns full contents of the input in source reader', () => {
+        // -----------------------------------------------
+        // #endregion } Access
+        // ===============================================
+
+        // ===============================================
+        // #region Contents access {
+        // -----------------------------------------------
+        describe('responds to fullDocumentContents', () => {
+            it('returning full contents of the input in source reader', () => {
                 expect(pos.fullDocumentContents).toBe(input);
             });
         });
-        describe('visibleDocumentContents', () => {
-            it('returns all visible (non spaces) contents in the input', () => {
+
+        describe('responds to visibleDocumentContents', () => {
+            it('returning all visible (non spaces) contents in the input', () => {
                 expect(pos.visibleDocumentContents).toBe(input.replace(/ /g, ''));
             });
         });
-        // -----------------------------------------------
-        // #endregion Basic properties
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region fullContentsFrom
-        // -----------------------------------------------
-        describe('fullContentsFrom', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to fullContentsFrom', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -132,7 +141,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.fullContentsFrom(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsFrom',
@@ -140,11 +149,11 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
+            it('returning an empty string if the argument is an end of document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     1,
@@ -157,46 +166,36 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns all the characters from the arguments starting position ' +
-                    'to the end of the document if argument is a defined document position',
+                "returning all the characters from the argument's starting position " +
+                    'to the end of the document if the argument is a defined document position',
                 () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'program {'.length,
-                        [],
-                        0,
-                        'program {'.length,
-                        'program{'.length
-                    );
+                    const n = 'program {'.length;
+                    const visibleN = 'program{'.length;
+                    const posTest = new DocumentSourcePosition(sr, 1, n, [], 0, n, visibleN);
                     expect(pos.fullContentsFrom(posTest)).toBe(' Poner(Verde) }');
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion fullContentsFrom
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region fullContentsTo
-        // -----------------------------------------------
-        describe('fullContentsTo', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
-                const anotherSr = new SourceReader(input);
+        describe('responds to fullContentsTo', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+                const n = input.length;
+                const visibleN = n - numberOfInvisibles;
+                const anotherSR = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
-                    anotherSr,
+                    anotherSR,
                     1,
-                    input.length,
+                    n,
                     [],
                     0,
-                    input.length,
-                    input.length - numberOfInvisibles
+                    n,
+                    visibleN
                 );
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
                     new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.fullContentsTo(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsTo',
@@ -204,59 +203,43 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is en end of document', () => {
-                const posTest = new EndOfDocumentSourcePosition(
-                    sr,
-                    1,
-                    input.length,
-                    [],
-                    0,
-                    input.length,
-                    input.length - numberOfInvisibles
-                );
+            it('returning an empty string if the argument is en end of document', () => {
+                const n = input.length;
+                const visibleN = n - numberOfInvisibles;
+                const posTest = new EndOfDocumentSourcePosition(sr, 1, n, [], 0, n, visibleN);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is any defined document position', () => {
-                const posTest = new DocumentSourcePosition(
-                    sr,
-                    1,
-                    'program {'.length,
-                    [],
-                    0,
-                    'program {'.length,
-                    'program{'.length
-                );
+            it('returning an empty string if the argument is any defined document position', () => {
+                const n = 'program {'.length;
+                const visibleN = 'program{'.length;
+                const posTest = new DocumentSourcePosition(sr, 1, n, [], 0, n, visibleN);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
         });
-        // -----------------------------------------------
-        // #endregion fullContentsTo
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region visibleContentsFrom
-        // -----------------------------------------------
-        describe('visibleContentsFrom', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to visibleContentsFrom', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+                const n = input.length;
+                const visibleN = n - numberOfInvisibles;
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
                     1,
-                    input.length,
+                    n,
                     [],
                     0,
-                    input.length,
-                    input.length - numberOfInvisibles
+                    n,
+                    visibleN
                 );
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
                     new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.visibleContentsFrom(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsFrom',
@@ -264,63 +247,48 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
-                const posTest = new EndOfDocumentSourcePosition(
-                    sr,
-                    1,
-                    input.length,
-                    [],
-                    0,
-                    input.length,
-                    input.length - numberOfInvisibles
-                );
+            it('returning an empty string if the argument is an end of document', () => {
+                const n = input.length;
+                const visibleN = n - numberOfInvisibles;
+                const posTest = new EndOfDocumentSourcePosition(sr, 1, n, [], 0, n, visibleN);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns the visible (non space) characters from the arguments starting position ' +
-                    'to the end of the document if argument is a defined document position',
+                "returning the visible (non space) characters from the argument's starting " +
+                    'position to the end of document if the argument is a defined document ' +
+                    'position',
                 () => {
-                    const posTest = new DocumentSourcePosition(
-                        sr,
-                        1,
-                        'program {'.length,
-                        [],
-                        0,
-                        'program {'.length,
-                        'program{'.length
-                    );
+                    const n = 'program {'.length;
+                    const visibleN = 'program{'.length;
+                    const posTest = new DocumentSourcePosition(sr, 1, n, [], 0, n, visibleN);
                     expect(pos.visibleContentsFrom(posTest)).toBe('Poner(Verde)}');
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion visibleContentsFrom
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region visibleContentsTo
-        // -----------------------------------------------
-        describe('visibleContentsTo', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to visibleContentsTo', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+                const n = input.length;
+                const visibleN = n - numberOfInvisibles;
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
                     1,
-                    input.length,
+                    n,
                     [],
                     0,
-                    input.length,
-                    input.length - numberOfInvisibles
+                    n,
+                    visibleN
                 );
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
                     new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.visibleContentsTo(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsTo',
@@ -328,11 +296,11 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
+            it('returning an empty string if the argument is an end of document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     1,
@@ -344,73 +312,59 @@ describe('EndOfDocumentSourcePosition', () => {
                 );
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is any defined document position', () => {
-                const posTest = new DocumentSourcePosition(
-                    sr,
-                    1,
-                    'program {'.length,
-                    [],
-                    0,
-                    'program {'.length,
-                    'program{'.length
-                );
+            it('returning an empty string if the argument is any defined document position', () => {
+                const n = 'program {'.length;
+                const visibleN = 'program{'.length;
+                const posTest = new DocumentSourcePosition(sr, 1, n, [], 0, n, visibleN);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
         });
-        // -----------------------------------------------
-        // #endregion visibleContentsTo
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region documentContextBefore
-        // -----------------------------------------------
-        describe('documentContextBefore', () => {
-            it('returns array with the full input as sole element if requested lines is 0', () => {
+        describe('responds to documentContextBefore', () => {
+            it('returning a singleton array with the full input if requested 0 lines', () => {
                 expect(pos.documentContextBefore(0)).toStrictEqual([input]);
             });
-            it('returns array with the full input as sole element if requested lines is 1', () => {
+            it('returning a singleton array with the full input if requested 1 lines', () => {
                 expect(pos.documentContextBefore(1)).toStrictEqual([input]);
             });
             it(
-                'returns array with the full input as sole element ' +
-                    'if requested lines is more than 1',
+                'returning a singleton array with the full input ' +
+                    'if requested more than 1 lines',
                 () => {
                     expect(pos.documentContextBefore(4)).toStrictEqual([input]);
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion contextBefore
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region documentContextAfter
-        // -----------------------------------------------
-        describe('documentContextAfter', () => {
-            it('returns an array with empty string if requested lines is 0', () => {
+        describe('responds to documentContextAfter', () => {
+            it('returning a singleton array with the empty string if requested 0 lines', () => {
                 expect(pos.documentContextAfter(1)).toStrictEqual(['']);
             });
-            it('returns an array with empty string if requested lines is 1', () => {
+            it('returning a singleton array with the empty string if requested 1 lines', () => {
                 expect(pos.documentContextAfter(1)).toStrictEqual(['']);
             });
-            it('returns an array with empty string if requested lines more than 1', () => {
-                expect(pos.documentContextAfter(4)).toStrictEqual(['']);
-            });
+            it(
+                'returning a singleton array with the empty string ' +
+                    'if requested more than 1 lines',
+                () => {
+                    expect(pos.documentContextAfter(4)).toStrictEqual(['']);
+                }
+            );
         });
         // -----------------------------------------------
-        // #endregion documentContextAfter
-        // -----------------------------------------------
+        // #endregion } Contents access
+        // ===============================================
     });
-    // ===============================================
-    // #endregion Single line & Single document
+    // -----------------------------------------------
+    // #endregion } Single line & Single document
     // ===============================================
 
     // ===============================================
-    // #region Multiple lines & Single document
-    // ===============================================
+    // #region Multiple lines & Single document {
+    // -----------------------------------------------
     given('an instance with multiple lines and single document input', () => {
-        // -----------------------------------------------
-        // #region Setup
+        // ===============================================
+        // #region Setup {
         // -----------------------------------------------
         const input =
             'program {\n' +
@@ -448,78 +402,87 @@ describe('EndOfDocumentSourcePosition', () => {
             input.length - numberOfInvisibles
         );
         // -----------------------------------------------
-        // #endregion isUnknown and toString
-        // -----------------------------------------------
+        // #endregion } Setup
+        // ===============================================
 
+        // ===============================================
+        // #region Printing {
         // -----------------------------------------------
-        // #region toString
-        // -----------------------------------------------
-        describe('toString', () => {
-            it('returns @<EOD>', () => {
+        describe('responds to toString', () => {
+            it('returning @<EOD>', () => {
                 expect(pos.toString()).toBe('@<EOD>');
             });
         });
         // -----------------------------------------------
-        // #endregion toString
-        // -----------------------------------------------
+        // #endregion } Printing
+        // ===============================================
 
+        // ===============================================
+        // #region Properties {
         // -----------------------------------------------
-        // #region Basic properties
-        // -----------------------------------------------
-        describe('isUnknown', () => {
-            it('returns false', () => {
+        describe('responds to isUnknown', () => {
+            it('returning false', () => {
                 expect(pos.isUnknown).toBe(false);
             });
         });
-        describe('isEndOfInput', () => {
-            it('returns false', () => {
+        describe('responds to isEndOfInput', () => {
+            it('returning false', () => {
                 expect(pos.isEndOfInput).toBe(false);
             });
         });
-        describe('isEndOfDocument', () => {
-            it('returns true', () => {
+        describe('responds to isEndOfDocument', () => {
+            it('returning true', () => {
                 expect(pos.isEndOfDocument).toBe(true);
             });
         });
-        describe('line', () => {
-            it('returns the number of lines in input', () => {
+        // -----------------------------------------------
+        // #endregion } Properties
+        // ===============================================
+
+        // ===============================================
+        // #region Access {
+        // -----------------------------------------------
+        describe('responds to line', () => {
+            it('returning the number of lines in input', () => {
                 expect(pos.line).toBe(6);
             });
         });
-        describe('columns', () => {
-            it('returns the number of characters at last line', () => {
+        describe('responds to columns', () => {
+            it('returning the number of characters at last line', () => {
                 expect(pos.column).toBe(2);
             });
         });
-        describe('regions', () => {
-            it('returns regions with the regions it was created with', () => {
+        describe('responds to regions', () => {
+            it('returning the regions it was created with', () => {
                 expect(pos.regions).toStrictEqual(['region2', 'region1', 'region3']);
             });
         });
-        describe('documentName', () => {
-            it('returns the default source reader name', () => {
+        describe('responds to documentName', () => {
+            it('returning the default source reader name', () => {
                 expect(pos.documentName).toBe(`${SourceReader.defaultDocumentNamePrefix}1`);
             });
         });
-        describe('fullDocumentContents', () => {
-            it('returns full contents of the input in source reader', () => {
+        // -----------------------------------------------
+        // #endregion } Access
+        // ===============================================
+
+        // ===============================================
+        // #region Contents access {
+        // -----------------------------------------------
+        describe('responds to fullDocumentContents', () => {
+            it('returning the full contents of the input in source reader', () => {
                 expect(pos.fullDocumentContents).toBe(input);
             });
         });
-        describe('visibleDocumentContents', () => {
-            it('returns all visible (non spaces) contents in the input', () => {
+
+        describe('responds to visibleDocumentContents', () => {
+            it('returning all visible (non spaces) contents in the input', () => {
                 expect(pos.visibleDocumentContents).toBe(input.replace(/ /g, ''));
             });
         });
-        // -----------------------------------------------
-        // #endregion Basic properties
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region fullContentsFrom
-        // -----------------------------------------------
-        describe('fullContentsFrom', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to fullContentsFrom', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -534,7 +497,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.fullContentsFrom(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsFrom',
@@ -542,7 +505,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
                     'region2',
                     'region1',
@@ -550,7 +513,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 ]);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
+            it('returning an empty string if the argument is an end of document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     6,
@@ -563,8 +526,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns all the characters from the arguments starting position ' +
-                    'to the end of the document if argument is a defined document position',
+                "returning all the characters from the argument's starting position " +
+                    'to the end of the document if the argument is a defined document position',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
@@ -581,15 +544,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion fullContentsFrom
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region fullContentsTo
-        // -----------------------------------------------
-        describe('fullContentsTo', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to fullContentsTo', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -604,7 +561,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.fullContentsTo(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsTo',
@@ -612,7 +569,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
                     'region2',
                     'region1',
@@ -620,7 +577,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 ]);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
+            it('returning an empty string if the argument is an end of document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     6,
@@ -632,7 +589,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 );
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is any defined document position', () => {
+            it('returning an empty string if the argument is any defined document position', () => {
                 const posTest = new DocumentSourcePosition(
                     sr,
                     3,
@@ -645,15 +602,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
         });
-        // -----------------------------------------------
-        // #endregion fullContentsTo
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region visibleContentsFrom
-        // -----------------------------------------------
-        describe('visibleContentsFrom', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to visibleContentsFrom', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -668,7 +619,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.visibleContentsFrom(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsFrom',
@@ -676,7 +627,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
                     'region2',
                     'region1',
@@ -684,7 +635,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 ]);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
+            it('returning an empty string if the argument is an end of document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     6,
@@ -697,8 +648,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns the visible (non space) characters from the arguments starting position ' +
-                    'to the end of the document if argument is a defined document position',
+                "returning the visible (non space) characters from the argument's starting " +
+                    'position to the end of document if the argument is a defined document ' +
+                    'position',
                 () => {
                     const posTest = new DocumentSourcePosition(
                         sr,
@@ -715,15 +667,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion visibleContentsFrom
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region visibleContentsTo
-        // -----------------------------------------------
-        describe('visibleContentsTo', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to visibleContentsTo', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -738,7 +684,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.visibleContentsTo(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsTo',
@@ -746,7 +692,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
                     'region2',
                     'region1',
@@ -754,7 +700,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 ]);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of document', () => {
+            it('returning an empty string if the argument is an end of document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     6,
@@ -766,7 +712,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 );
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
-            it('returns an empty string if argument is any defined document position', () => {
+            it('returning an empty string if the argument is any defined document position', () => {
                 const posTest = new DocumentSourcePosition(
                     sr,
                     3,
@@ -779,26 +725,24 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
         });
-        // -----------------------------------------------
-        // #endregion visibleContentsTo
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region documentContextBefore
-        // -----------------------------------------------
-        describe('documentContextBefore', () => {
-            it('returns array with the current line as element if requested lines is 0', () => {
-                expect(pos.documentContextBefore(0)).toStrictEqual(['']);
-            });
+        describe('responds to documentContextBefore', () => {
             it(
-                'returns array with 2 elements containing the previous line and then ' +
+                'returning an array with the current (empty) line as element ' +
+                    'if requested lines is 0',
+                () => {
+                    expect(pos.documentContextBefore(0)).toStrictEqual(['']);
+                }
+            );
+            it(
+                'returning an array with 2 elements containing the previous line and then ' +
                     'the current line if requested lines is 1',
                 () => {
                     expect(pos.documentContextBefore(1)).toStrictEqual(['}\n', '']);
                 }
             );
             it(
-                'returns array with 4 elements containing the n previous lines and then ' +
+                'returning an array with elements containing the n previous lines and then ' +
                     'the current line if requested lines is more than 1',
                 () => {
                     expect(pos.documentContextBefore(4)).toStrictEqual([
@@ -811,7 +755,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns array with elements containing the all previous lines and then ' +
+                'returning an array with elements containing the all previous lines and then ' +
                     'the current line if requested lines is the number of lines in document',
                 () => {
                     expect(pos.documentContextBefore(6)).toStrictEqual([
@@ -826,7 +770,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns array with elements containing the all previous lines and then ' +
+                'returning an array with elements containing the all previous lines and then ' +
                     'the current line if requested lines is more than lines in document',
                 () => {
                     expect(pos.documentContextBefore(42)).toStrictEqual([
@@ -841,38 +785,32 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion contextBefore
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region documentContextAfter
-        // -----------------------------------------------
-        describe('documentContextAfter', () => {
-            it('returns an array with empty string if requested lines is 0', () => {
+        describe('responds to documentContextAfter', () => {
+            it('returning an array with the empty string if requested lines is 0', () => {
                 expect(pos.documentContextAfter(1)).toStrictEqual(['']);
             });
-            it('returns an array with empty string if requested lines is 1', () => {
+            it('returning an array with the empty string if requested lines is 1', () => {
                 expect(pos.documentContextAfter(1)).toStrictEqual(['']);
             });
-            it('returns an array with empty string if requested lines more than 1', () => {
+            it('returning an array with the empty string if requested lines more than 1', () => {
                 expect(pos.documentContextAfter(4)).toStrictEqual(['']);
             });
         });
         // -----------------------------------------------
-        // #endregion documentContextAfter
-        // -----------------------------------------------
+        // #endregion } Contents access
+        // ===============================================
     });
-    // ===============================================
-    // #endregion Multiple lines & Single document
+    // -----------------------------------------------
+    // #endregion } Multiple lines & Single document
     // ===============================================
 
     // ===============================================
-    // #region Multiple lines & Multiple documents
-    // ===============================================
+    // #region Multiple lines & Multiple documents {
+    // -----------------------------------------------
     given('an instance with multiple lines and multiple documents input', () => {
-        // -----------------------------------------------
-        // #region Setup
+        // ===============================================
+        // #region Setup {
         // -----------------------------------------------
         const input = [
             'program {\n' +
@@ -944,78 +882,87 @@ describe('EndOfDocumentSourcePosition', () => {
             input[1].length - numberOfInvisibles[1]
         );
         // -----------------------------------------------
-        // #endregion isUnknown and toString
-        // -----------------------------------------------
+        // #endregion } Setup
+        // ===============================================
 
+        // ===============================================
+        // #region Printing {
         // -----------------------------------------------
-        // #region toString
-        // -----------------------------------------------
-        describe('toString', () => {
-            it('returns  @<EOD>', () => {
+        describe('responds to toString', () => {
+            it('returning  @<EOD>', () => {
                 expect(pos.toString()).toBe('@<EOD>');
             });
         });
         // -----------------------------------------------
-        // #endregion toString
-        // -----------------------------------------------
+        // #endregion } Printing
+        // ===============================================
 
+        // ===============================================
+        // #region Properties {
         // -----------------------------------------------
-        // #region Basic properties
-        // -----------------------------------------------
-        describe('isUnknown', () => {
-            it('returns false', () => {
+        describe('responds to isUnknown', () => {
+            it('returning false', () => {
                 expect(pos.isUnknown).toBe(false);
             });
         });
-        describe('isEndOfInput', () => {
-            it('returns false', () => {
+        describe('responds to isEndOfInput', () => {
+            it('returning false', () => {
                 expect(pos.isEndOfInput).toBe(false);
             });
         });
-        describe('isEndOfDocument', () => {
-            it('returns true', () => {
+        describe('responds to isEndOfDocument', () => {
+            it('returning true', () => {
                 expect(pos.isEndOfDocument).toBe(true);
             });
         });
-        describe('line', () => {
-            it('returns the number of lines in the document', () => {
+        // -----------------------------------------------
+        // #endregion } Properties
+        // ===============================================
+
+        // ===============================================
+        // #region Access {
+        // -----------------------------------------------
+        describe('responds to line', () => {
+            it('returning the number of lines in the document', () => {
                 expect(pos.line).toBe(5);
             });
         });
-        describe('column', () => {
-            it('returns the number ofcharacters in the las line of the document', () => {
+        describe('responds to column', () => {
+            it('returning the number ofcharacters in the las line of the document', () => {
                 expect(pos.column).toBe(2);
             });
         });
-        describe('regions', () => {
-            it('returns the regions it was created with', () => {
+        describe('responds to regions', () => {
+            it('returning the regions it was created with', () => {
                 expect(pos.regions).toStrictEqual(['a region']);
             });
         });
-        describe('documentName', () => {
-            it('returns the name of the document according to index', () => {
+        describe('responds to documentName', () => {
+            it('returning the name of the document according to index', () => {
                 expect(pos.documentName).toBe(`${SourceReader.defaultDocumentNamePrefix}2`);
             });
         });
-        describe('fullDocumentContents', () => {
-            it('returns full contents of the input in source reader', () => {
+        // -----------------------------------------------
+        // #endregion } Access
+        // ===============================================
+
+        // ===============================================
+        // #region Contents access {
+        // -----------------------------------------------
+        describe('responds to fullDocumentContents', () => {
+            it('returning the full contents of the input in source reader', () => {
                 expect(pos.fullDocumentContents).toBe(input[1]);
             });
         });
-        describe('visibleDocumentContents', () => {
-            it('returns all visible (non spaces) contents in the input', () => {
+
+        describe('responds to visibleDocumentContents', () => {
+            it('returning all visible (non spaces) contents in the input', () => {
                 expect(pos.visibleDocumentContents).toBe(input[1].replace(/ /g, ''));
             });
         });
-        // -----------------------------------------------
-        // #endregion Basic properties
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region fullContentsFrom
-        // -----------------------------------------------
-        describe('fullContentsFrom', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to fullContentsFrom', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1031,7 +978,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.fullContentsFrom(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsFrom',
@@ -1039,11 +986,11 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of last document', () => {
+            it('returning an empty string if the argument is the end of last document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     3,
@@ -1056,8 +1003,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns all document contents after the arguments index one ' +
-                    'if argument is an of a document that is not the last',
+                "returning all document contents after the argument's index " +
+                    'if the argument is a defined position of a document that is not the last',
                 () => {
                     const firstEOD = new EndOfDocumentSourcePosition(
                         sr,
@@ -1082,7 +1029,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is a ' +
+                'returning an empty string if the argument is a ' +
                     'defined document position after the receiver',
                 () => {
                     const posTest = new DocumentSourcePosition(
@@ -1098,8 +1045,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns all the characters from the arguments starting position ' +
-                    'to the receiver if argument is a ' +
+                "returning all the characters from the argument's starting position " +
+                    'to the receiver if the argument is a ' +
                     'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
@@ -1130,15 +1077,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion fullContentsFrom
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region fullContentsTo
-        // -----------------------------------------------
-        describe('fullContentsTo', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to fullContentsTo', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1154,7 +1095,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.fullContentsTo(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsTo',
@@ -1163,8 +1104,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 );
             });
             it(
-                'returns all documents after currents if argument is end of input ' +
-                    ' and receiver is not last end document',
+                'returning all documents after currents if the argument is the end of input ' +
+                    ' and the receiver is not last end of document',
                 () => {
                     const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
                     const firstEOD = new EndOfDocumentSourcePosition(
@@ -1181,8 +1122,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is an end of input ' +
-                    ' and receiver is last end document',
+                'returning an empty string if the argument is an end of input ' +
+                    ' and the receiver is last end document',
                 () => {
                     const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
                     const lastEOD = new EndOfDocumentSourcePosition(
@@ -1198,7 +1139,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is end of ' +
+                'returning an empty string if the argument is an end of ' +
                     'document that is before the receiver',
                 () => {
                     const firstEOD = new EndOfDocumentSourcePosition(
@@ -1214,7 +1155,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is end of ' +
+                'returning an empty string if the argument is an end of ' +
                     'document that is same as the receiver',
                 () => {
                     const posTest = new EndOfDocumentSourcePosition(
@@ -1230,8 +1171,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns the documents after receivers position if argument is ' +
-                    'end of document and is after the receiver',
+                "returning the documents after receiver's position if the argument is " +
+                    'an end of document that is after the receiver',
                 () => {
                     const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
@@ -1246,7 +1187,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is a ' +
+                'returning an empty string if the argument is a ' +
                     'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
@@ -1276,8 +1217,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns all the characters from the arguments starting position ' +
-                    'to the end of the document of receiver if argument is a ' +
+                "returning all the characters from the argument's starting position " +
+                    'to the end of the document of the receiver if the argument is a ' +
                     'defined document position after the receiver',
                 () => {
                     const posTest = new DocumentSourcePosition(
@@ -1293,15 +1234,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion fullContentsTo
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region visibleContentsFrom
-        // -----------------------------------------------
-        describe('visibleContentsFrom', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to visibleContentsFrom', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1317,7 +1252,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.visibleContentsFrom(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsFrom',
@@ -1325,11 +1260,11 @@ describe('EndOfDocumentSourcePosition', () => {
                     )
                 );
             });
-            it('returns an empty string if argument is an end of input', () => {
+            it('returning an empty string if the argument is an end of input', () => {
                 const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
-            it('returns an empty string if argument is an end of last document', () => {
+            it('returning an empty string if the argument is the end of last document', () => {
                 const posTest = new EndOfDocumentSourcePosition(
                     sr,
                     3,
@@ -1342,8 +1277,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it(
-                'returns all document visible characters (non spaces) after the arguments ' +
-                    ' index one if argument is an of a document that is not the last',
+                "returning all document visible characters (non spaces) after the argument's " +
+                    ' index if the argument is a defined position of a document that is not ' +
+                    'the last',
                 () => {
                     const firstEOD = new EndOfDocumentSourcePosition(
                         sr,
@@ -1370,24 +1306,26 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is a ' +
+                'returning an empty string if the argument is a ' +
                     'defined document position after the receiver',
                 () => {
+                    const n = 'function suma(a, '.length;
+                    const visibleN = 'functionsuma(a, '.length;
                     const posTest = new DocumentSourcePosition(
                         sr,
                         1,
-                        'function suma(a, '.length,
+                        n,
                         ['a region'],
                         2,
-                        'function suma(a, '.length,
-                        'functionsuma(a,'.length
+                        n,
+                        visibleN
                     );
                     expect(pos.visibleContentsFrom(posTest)).toBe('');
                 }
             );
             it(
-                'returns all the visible characters (non spaces) from the arguments starting ' +
-                    'position to the receiver if argument is a ' +
+                "returning all the visible characters (non spaces) from the argument's starting " +
+                    'position to the receiver if the argument is a ' +
                     'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
@@ -1422,15 +1360,9 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion visibleContentsFrom
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region visibleContentsTo
-        // -----------------------------------------------
-        describe('visibleContentsTo', () => {
-            it('throws UnmatchedInputsError if argument has different source reader', () => {
+        describe('responds to visibleContentsTo', () => {
+            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1446,7 +1378,7 @@ describe('EndOfDocumentSourcePosition', () => {
                     new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
-            it('throws InvalidOperationAtUnknownPositionError if argument is unknown', () => {
+            it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
                 expect(() => pos.visibleContentsTo(UnknownSourcePosition.instance)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsTo',
@@ -1455,8 +1387,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 );
             });
             it(
-                'returns all documents visible characters (non spaces) after currents if ' +
-                    'argument is end of input and receiver is not last end document',
+                'returning all documents visible characters (non spaces) after current if ' +
+                    'the argument is and end of input and receiver is not last end of document',
                 () => {
                     const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
                     const firstEOD = new EndOfDocumentSourcePosition(
@@ -1475,8 +1407,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is an end of input ' +
-                    ' and receiver is last end document',
+                'returning an empty string if the argument is an end of input ' +
+                    ' and the receiver is last end of document',
                 () => {
                     const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
                     const lastEOD = new EndOfDocumentSourcePosition(
@@ -1492,7 +1424,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is end of ' +
+                'returning an empty string if the argument is end of ' +
                     'document that is before the receiver',
                 () => {
                     const firstEOD = new EndOfDocumentSourcePosition(
@@ -1508,7 +1440,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is end of ' +
+                'returning an empty string if the argument is end of ' +
                     'document that is same as the receiver',
                 () => {
                     const posTest = new EndOfDocumentSourcePosition(
@@ -1524,8 +1456,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns the documents visible characters (non spaces) after receivers position ' +
-                    'if argument is end of document and is after the receiver',
+                "returning the documents visible characters (non spaces) after receiver's " +
+                    'position if the argument is an end of document and it is after the receiver',
                 () => {
                     const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
@@ -1540,7 +1472,7 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns an empty string if argument is a ' +
+                'returning an empty string if the argument is a ' +
                     'defined document position before the receiver',
                 () => {
                     const posTestA = new DocumentSourcePosition(
@@ -1570,8 +1502,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns all the visible characters (non spaces) from the arguments starting ' +
-                    'position to the end of the document of receiver if argument is a ' +
+                "returning all the visible characters (non spaces) from the argument's starting " +
+                    'position to the end of the document of receiver if the argument is a ' +
                     'defined document position after the receiver',
                 () => {
                     const posTest = new DocumentSourcePosition(
@@ -1587,27 +1519,21 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion visibleContentsTo
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region documentContextBefore
-        // -----------------------------------------------
-        describe('documentContextBefore', () => {
-            it('returns array with the current line as element if requested lines is 0', () => {
+        describe('responds to documentContextBefore', () => {
+            it('returning an array with the current line as element if requested 0 lines', () => {
                 expect(pos.documentContextBefore(0)).toStrictEqual(['']);
             });
             it(
-                'returns array with 2 elements containing the previous line and then ' +
-                    'the current line if requested lines is 1',
+                'returning array with 2 elements containing the previous line and then ' +
+                    'the current line if requested 1 lines',
                 () => {
                     expect(pos.documentContextBefore(1)).toStrictEqual(['}\n', '']);
                 }
             );
             it(
-                'returns array with 4 elements containing the n previous lines and then ' +
-                    'the current line if requested lines is more than 1',
+                'returning array with elements containing the n previous lines and then ' +
+                    'the current line if requested more than 1 lines',
                 () => {
                     expect(pos.documentContextBefore(4)).toStrictEqual([
                         '  Sacar(Verde)\n',
@@ -1619,8 +1545,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns array with elements containing the all previous lines and then ' +
-                    'the current line if requested lines is the number of lines in document',
+                'returning array with elements containing the all previous lines and then ' +
+                    'the current line if requested the number of lines in document',
                 () => {
                     expect(pos.documentContextBefore(5)).toStrictEqual([
                         'procedure MoverAlienAlEste() {\n',
@@ -1633,8 +1559,8 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
             it(
-                'returns array with elements containing the all previous lines and then ' +
-                    'the current line if requested lines is more than lines in document',
+                'returning array with elements containing the all previous lines and then ' +
+                    'the current line if requested more than the lines in document',
                 () => {
                     expect(pos.documentContextBefore(42)).toStrictEqual([
                         'procedure MoverAlienAlEste() {\n',
@@ -1647,29 +1573,23 @@ describe('EndOfDocumentSourcePosition', () => {
                 }
             );
         });
-        // -----------------------------------------------
-        // #endregion contextBefore
-        // -----------------------------------------------
 
-        // -----------------------------------------------
-        // #region documentContextAfter
-        // -----------------------------------------------
-        describe('documentContextAfter', () => {
-            it('returns an array with empty string if requested lines is 0', () => {
+        describe('responds to documentContextAfter', () => {
+            it('returning an array with empty string if requested 0 lines', () => {
                 expect(pos.documentContextAfter(1)).toStrictEqual(['']);
             });
-            it('returns an array with empty string if requested lines is 1', () => {
+            it('returning an array with empty string if requested 1 lines', () => {
                 expect(pos.documentContextAfter(1)).toStrictEqual(['']);
             });
-            it('returns an array with empty string if requested lines more than 1', () => {
+            it('returning an array with empty string if requested more than 1 lines', () => {
                 expect(pos.documentContextAfter(4)).toStrictEqual(['']);
             });
         });
         // -----------------------------------------------
-        // #endregion documentContextAfter
-        // -----------------------------------------------
+        // #endregion } Contents access
+        // ===============================================
     });
-    // ===============================================
-    // #endregion Multiple lines & Multiple documents
+    // -----------------------------------------------
+    // #endregion } Multiple lines & Multiple documents
     // ===============================================
 });

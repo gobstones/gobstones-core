@@ -6,7 +6,7 @@ import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePos
 import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 
-const opAtUnknownError: string = 'InvalidOperationAtUnknownPositionError';
+const badOpAtUnknownError: string = 'InvalidOperationAtUnknownPositionError';
 
 describe('An UnknownSourcePosition', () => {
     given('in a normal situation', () => {
@@ -14,7 +14,7 @@ describe('An UnknownSourcePosition', () => {
         // #region Printing {
         // -----------------------------------------------
         describe('responds to toString', () => {
-            it(' with @<?>', () => {
+            it('with @<?>', () => {
                 expect(UnknownSourcePosition.instance.toString()).toBe('@<?>');
             });
         });
@@ -23,7 +23,7 @@ describe('An UnknownSourcePosition', () => {
         // ===============================================
 
         // ===============================================
-        // #region Basic properties {
+        // #region Properties {
         // -----------------------------------------------
         describe('responds to isUnknown', () => {
             it('with true', () => {
@@ -31,7 +31,7 @@ describe('An UnknownSourcePosition', () => {
             });
         });
         describe('responds to isEndOfInput', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.isEndOfInput).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'isEndOfInput',
@@ -41,7 +41,7 @@ describe('An UnknownSourcePosition', () => {
             });
         });
         describe('responds to isEndOfDocument', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.isEndOfDocument).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'isEndOfDocument',
@@ -51,35 +51,35 @@ describe('An UnknownSourcePosition', () => {
             });
         });
         // -----------------------------------------------
-        // #endregion } Basic properties
+        // #endregion } Properties
         // ===============================================
 
         // ===============================================
         // #region Access {
         // -----------------------------------------------
         describe('responds to line', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.line).toThrow(
                     new InvalidOperationAtUnknownPositionError('line', 'UnknownSourcePosition')
                 );
             });
         });
         describe('responds to column', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.column).toThrow(
                     new InvalidOperationAtUnknownPositionError('column', 'UnknownSourcePosition')
                 );
             });
         });
         describe('responds to regions', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.regions).toThrow(
                     new InvalidOperationAtUnknownPositionError('regions', 'UnknownSourcePosition')
                 );
             });
         });
         describe('responds to documentName', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.documentName).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'documentName',
@@ -96,7 +96,7 @@ describe('An UnknownSourcePosition', () => {
         // #region Contents access {
         // -----------------------------------------------
         describe('responds to fullDocumentContents', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.fullDocumentContents).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullDocumentContents',
@@ -105,8 +105,9 @@ describe('An UnknownSourcePosition', () => {
                 );
             });
         });
+
         describe('responds to visibleDocumentContents', () => {
-            it(`throwing ${opAtUnknownError}`, () => {
+            it(`throwing ${badOpAtUnknownError}`, () => {
                 expect(() => UnknownSourcePosition.instance.visibleDocumentContents).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleDocumentContents',
@@ -117,7 +118,7 @@ describe('An UnknownSourcePosition', () => {
         });
 
         describe('responds to fullContentsFrom', () => {
-            it(`throwing ${opAtUnknownError} 'from' is an undefined position`, () => {
+            it(`throwing ${badOpAtUnknownError} when 'from' is an undefined position`, () => {
                 expect(() =>
                     UnknownSourcePosition.instance.fullContentsFrom(UnknownSourcePosition.instance)
                 ).toThrow(
@@ -127,7 +128,7 @@ describe('An UnknownSourcePosition', () => {
                     )
                 );
             });
-            it(`throwing ${opAtUnknownError} when 'from' is an end of input position`, () => {
+            it(`throwing ${badOpAtUnknownError} when 'from' is an end of input position`, () => {
                 const input = 'irrelevant';
                 const dummy = new SourceReader(input);
                 const pos = new EndOfInputSourcePosition(dummy, 1, input.length + 1, []);
@@ -138,7 +139,7 @@ describe('An UnknownSourcePosition', () => {
                     )
                 );
             });
-            it(`throwing ${opAtUnknownError} when 'from' is an end of document position`, () => {
+            it(`throwing ${badOpAtUnknownError} when 'from' is an end of document position`, () => {
                 const input = 'irrelevant';
                 const n = input.length;
                 const dummy = new SourceReader(input);
@@ -150,7 +151,7 @@ describe('An UnknownSourcePosition', () => {
                     )
                 );
             });
-            it(`throwing ${opAtUnknownError} when 'from' is a defined position`, () => {
+            it(`throwing ${badOpAtUnknownError} when 'from' is a defined position`, () => {
                 const input = 'irrelevant';
                 const n = 'irre'.length;
                 const dummy = new SourceReader(input);
@@ -163,342 +164,224 @@ describe('An UnknownSourcePosition', () => {
                 );
             });
         });
+
+        describe('responds to fullContentsTo', () => {
+            it(`throwing ${badOpAtUnknownError} when 'to' is an undefined position`, () => {
+                expect(() =>
+                    UnknownSourcePosition.instance.fullContentsTo(UnknownSourcePosition.instance)
+                ).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'fullContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'to' is an end of input position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const sr = new SourceReader(input);
+                const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
+                expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'fullContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'to' is an end of document position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const n = input.length;
+                const sr = new SourceReader(input);
+                const pos = new EndOfDocumentSourcePosition(sr, 1, n, [], 0, n, n);
+                expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'fullContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'to' is a defined document position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const n = 'program { '.length;
+                const sr = new SourceReader(input);
+                const pos = new DocumentSourcePosition(sr, 1, n, [], 0, n, n);
+                expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'fullContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+        });
+
+        describe('responds to visibleContentsFrom', () => {
+            it(`throwing ${badOpAtUnknownError} when 'from' is an undefined position`, () => {
+                expect(() =>
+                    UnknownSourcePosition.instance.visibleContentsFrom(
+                        UnknownSourcePosition.instance
+                    )
+                ).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsFrom',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'from' is an end of input position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const sr = new SourceReader(input);
+                const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
+                expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsFrom',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'from' is an end of document position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const n = input.length;
+                const sr = new SourceReader(input);
+                const pos = new EndOfDocumentSourcePosition(sr, 1, n, [], 0, n, n);
+                expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsFrom',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'from' is a defined document position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const n = 'program { '.length;
+                const sr = new SourceReader(input);
+                const pos = new DocumentSourcePosition(sr, 1, n, [], 0, n, n);
+                expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsFrom',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+        });
+
+        describe('responds to visibleContentsTo', () => {
+            it(`throwing ${badOpAtUnknownError} when 'to' is an undefined position`, () => {
+                expect(() =>
+                    UnknownSourcePosition.instance.visibleContentsTo(UnknownSourcePosition.instance)
+                ).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'to' is an end of input position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const sr = new SourceReader(input);
+                const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
+                expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'to' is an end of document position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const n = input.length;
+                const sr = new SourceReader(input);
+                const pos = new EndOfDocumentSourcePosition(sr, 1, n, [], 0, n, n);
+                expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+            it(`throwing ${badOpAtUnknownError} when 'to' is a defined document position`, () => {
+                const input = 'program { Poner(Verde) }';
+                const n = 'program { '.length;
+                const sr = new SourceReader(input);
+                const pos = new DocumentSourcePosition(sr, 1, n, [], 0, n, n);
+                expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'visibleContentsTo',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+        });
+
+        describe('responds to documentContextBefore', () => {
+            it(`throwing ${badOpAtUnknownError} when 'n' is any number of lines`, () => {
+                expect(() => UnknownSourcePosition.instance.documentContextBefore(0)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextBefore',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextBefore(1)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextBefore',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextBefore(5)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextBefore',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextBefore(42)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextBefore',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextBefore(-10)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextBefore',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+        });
+
+        describe('responds to documentContextAfter', () => {
+            it(`throwing ${badOpAtUnknownError} when 'n' is any number of lines`, () => {
+                expect(() => UnknownSourcePosition.instance.documentContextAfter(0)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextAfter',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextAfter(1)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextAfter',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextAfter(5)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextAfter',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextAfter(42)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextAfter',
+                        'UnknownSourcePosition'
+                    )
+                );
+                expect(() => UnknownSourcePosition.instance.documentContextAfter(-10)).toThrow(
+                    new InvalidOperationAtUnknownPositionError(
+                        'documentContextAfter',
+                        'UnknownSourcePosition'
+                    )
+                );
+            });
+        });
         // -----------------------------------------------
         // #endregion } Contents access
-        // ===============================================
-
-        // ===============================================
-        // #region fullContentsTo {
-    // -----------------------------------------------
-    it(
-        'throws InvalidOperationAtUnknownPositionError when asked for the full contents ' +
-            'to "another" undefined position',
-        () => {
-            expect(() =>
-                UnknownSourcePosition.instance.fullContentsTo(UnknownSourcePosition.instance)
-            ).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'fullContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-        }
-    );
-    it(
-        'throws InvalidOperationAtUnknownPositionError when asked for the full contents ' +
-            'to an end of input position',
-        () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
-
-            expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'fullContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-        }
-    );
-    it(
-        'throws InvalidOperationAtUnknownPositionError when asked for the full contents ' +
-            'to an end of document position',
-        () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new EndOfDocumentSourcePosition(
-                sr,
-                1,
-                input.length,
-                [],
-                0,
-                input.length,
-                input.length
-            );
-
-            expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'fullContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-        }
-    );
-    it(
-        'throws InvalidOperationAtUnknownPositionError when asked for the full contents ' +
-            'from a defined document position',
-        () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new DocumentSourcePosition(
-                sr,
-                1,
-                'program { '.length,
-                [],
-                0,
-                'program { '.length,
-                'program { '.length
-            );
-
-            expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'fullContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-        }
-    );
-    // -----------------------------------------------
-    // #endregion } fullContentsTo
-        // ===============================================
-
-        // ===============================================
-        // #region visibleContentsFrom {
-        // -----------------------------------------------
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'from "another" undefined position',
-            () => {
-            expect(() =>
-                UnknownSourcePosition.instance.visibleContentsFrom(UnknownSourcePosition.instance)
-            ).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsFrom',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'from an end of input position',
-            () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
-
-            expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsFrom',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'from an end of document position',
-            () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new EndOfDocumentSourcePosition(
-                sr,
-                1,
-                input.length,
-                [],
-                0,
-                input.length,
-                input.length
-            );
-
-            expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsFrom',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'from a defined document position',
-            () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new DocumentSourcePosition(
-                sr,
-                1,
-                'program { '.length,
-                [],
-                0,
-                'program { '.length,
-                'program { '.length
-            );
-
-            expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsFrom',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        // -----------------------------------------------
-        // #endregion } visibleContentsFrom
-        // ===============================================
-
-        // ===============================================
-        // #region visibleContentsTo {
-        // -----------------------------------------------
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'to "another" undefined position',
-            () => {
-            expect(() =>
-                UnknownSourcePosition.instance.visibleContentsTo(UnknownSourcePosition.instance)
-            ).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'to an end of input position',
-            () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
-
-            expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'to an end of document position',
-            () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new EndOfDocumentSourcePosition(
-                sr,
-                1,
-                input.length,
-                [],
-                0,
-                input.length,
-                input.length
-            );
-
-            expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the visible contents ' +
-                'from a defined document position',
-            () => {
-            const input = 'program { Poner(Verde) }';
-            const sr = new SourceReader(input);
-            const pos = new DocumentSourcePosition(
-                sr,
-                1,
-                'program { '.length,
-                [],
-                0,
-                'program { '.length,
-                'program { '.length
-            );
-
-            expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'visibleContentsTo',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        // -----------------------------------------------
-        // #endregion } visibleContentsTo
-        // ===============================================
-
-        // ===============================================
-        // #region documentContextBefore & documentContextAfter {
-        // -----------------------------------------------
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the context ' +
-                'before with any number of lines',
-            () => {
-            expect(() => UnknownSourcePosition.instance.documentContextBefore(0)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextBefore',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextBefore(1)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextBefore',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextBefore(5)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextBefore',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextBefore(42)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextBefore',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextBefore(-10)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextBefore',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        it(
-            'throws InvalidOperationAtUnknownPositionError when asked for the context ' +
-                'after with any number of lines',
-            () => {
-            expect(() => UnknownSourcePosition.instance.documentContextAfter(0)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextAfter',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextAfter(1)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextAfter',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextAfter(5)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextAfter',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextAfter(42)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextAfter',
-                    'UnknownSourcePosition'
-                )
-            );
-            expect(() => UnknownSourcePosition.instance.documentContextAfter(-10)).toThrow(
-                new InvalidOperationAtUnknownPositionError(
-                    'documentContextAfter',
-                    'UnknownSourcePosition'
-                )
-            );
-            }
-        );
-        // -----------------------------------------------
-        // #endregion } documentContextBefore & documentContextAfter
         // ===============================================
     });
 });
