@@ -4,7 +4,7 @@
  */
 import {
     InvalidOperationAtUnknownPositionError,
-    UnmatchedInputsError
+    MismatchedInputsError
 } from '../SourceReaderErrors';
 
 import { AbstractSourcePosition } from './AbstractSourcePosition';
@@ -181,7 +181,7 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link UnmatchedInputsError}
+     * @throws {@link MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
      *
      * @group Internal: Helpers
@@ -196,7 +196,7 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
             .orThrow(new InvalidOperationAtUnknownPositionError(operation, context));
         expect(this.sourceReader)
             .toBe((that as unknown as AbstractKnownSourcePosition).sourceReader)
-            .orThrow(new UnmatchedInputsError(operation, context));
+            .orThrow(new MismatchedInputsError(operation, context));
     }
 
     /**

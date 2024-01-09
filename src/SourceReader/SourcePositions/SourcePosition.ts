@@ -9,7 +9,7 @@ import {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     InvalidOperationAtEOIError,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    UnmatchedInputsError
+    MismatchedInputsError
 } from '../SourceReaderErrors';
 
 // ===============================================
@@ -201,7 +201,7 @@ export interface SourcePosition {
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link UnmatchedInputsError}
+     * @throws {@link MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
      * @throws {@link InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
@@ -227,7 +227,7 @@ export interface SourcePosition {
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link UnmatchedInputsError}
+     * @throws {@link MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
      * @throws {@link InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
@@ -253,7 +253,7 @@ export interface SourcePosition {
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link UnmatchedInputsError}
+     * @throws {@link MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
      * @throws {@link InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
@@ -279,7 +279,7 @@ export interface SourcePosition {
      *
      * @throws {@link InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link UnmatchedInputsError}
+     * @throws {@link MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
      * @throws {@link InvalidOperationAtEOIError}
      *         if the receiver is the end of input.

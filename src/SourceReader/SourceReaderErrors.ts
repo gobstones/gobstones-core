@@ -47,10 +47,10 @@ export class NoInputError extends SourceReaderError {
  *
  * @group API: Errors
  */
-export class UnmatchedInputsError extends SourceReaderError {
+export class MismatchedInputsError extends SourceReaderError {
     /**
      * The constructor for
-     * {@link UnmatchedInputsError | UnmatchedInputsError} errors.
+     * {@link MismatchedInputsError | MismatchedInputsError} errors.
      *
      * @param operation A string indicating which function inform as the producer of the error.
      * @param context A string indicating the context in which the function produce the error.

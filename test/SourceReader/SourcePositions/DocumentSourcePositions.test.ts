@@ -4,7 +4,7 @@
 import {
     InvalidOperationAtUnknownPositionError,
     SourceReader,
-    UnmatchedInputsError
+    MismatchedInputsError
 } from '../../../src/SourceReader';
 import { describe, expect, describe as given, it } from '@jest/globals';
 
@@ -14,7 +14,7 @@ import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositi
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 
 const badOpAtUnknownError: string = 'InvalidOperationAtUnknownPositionError';
-const badSRError: string = 'UnmatchedInputsError';
+const badSRError: string = 'MismatchedInputsError';
 
 describe('A DocumentSourcePosition', () => {
     // ===============================================
@@ -143,7 +143,7 @@ describe('A DocumentSourcePosition', () => {
                     visibleN
                 );
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -211,7 +211,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -294,7 +294,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -369,7 +369,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -623,7 +623,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -702,7 +702,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -789,7 +789,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -868,7 +868,7 @@ describe('A DocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -1224,7 +1224,7 @@ describe('A DocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -1380,7 +1380,7 @@ describe('A DocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {
@@ -1522,7 +1522,7 @@ describe('A DocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing ${badOpAtUnknownError} if the argument is unknown', () => {
@@ -1684,7 +1684,7 @@ describe('A DocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it(`throwing ${badOpAtUnknownError} if the argument is unknown`, () => {

@@ -110,7 +110,7 @@ If the receiver does not come after the argument, the result is the empty string
         It indicates a starting position to consult, where the receiver is the last.</p>
 </div><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver or the argument positions are unknown.</p>
-<h4>Throws</h4><p><a href="SourceReader.UnmatchedInputsError.html" class="tsd-kind-class">UnmatchedInputsError</a>
+<h4>Throws</h4><p><a href="SourceReader.MismatchedInputsError.html" class="tsd-kind-class">MismatchedInputsError</a>
         if the receiver and the argument positions do not belong to the same reader.</p>
 <h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a>
         if the receiver is the end of input.</p>
@@ -128,7 +128,7 @@ If the argument does not come after the receiver, the result is the empty string
         It indicates a final position to consult, where the receiver is the first.</p>
 </div><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver or the argument positions are unknown.</p>
-<h4>Throws</h4><p><a href="SourceReader.UnmatchedInputsError.html" class="tsd-kind-class">UnmatchedInputsError</a>
+<h4>Throws</h4><p><a href="SourceReader.MismatchedInputsError.html" class="tsd-kind-class">MismatchedInputsError</a>
         if the receiver and the argument positions do not belong to the same reader.</p>
 <h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a>
         if the receiver is the end of input.</p>
@@ -146,7 +146,7 @@ does not come after <code>from</code>, the result is the empty string.</p>
           It indicates a starting position to consult, where the receiver is the last.</p>
 </div><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver or the argument positions are unknown.</p>
-<h4>Throws</h4><p><a href="SourceReader.UnmatchedInputsError.html" class="tsd-kind-class">UnmatchedInputsError</a>
+<h4>Throws</h4><p><a href="SourceReader.MismatchedInputsError.html" class="tsd-kind-class">MismatchedInputsError</a>
         if the receiver and the argument positions do not belong to the same reader.</p>
 <h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a>
         if the receiver is the end of input.</p>
@@ -161,7 +161,7 @@ not come after <code>this</code>, the result is the empty string.</p>
 </ul>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">to</span>: <a href="../interfaces/SourceReader.SourcePosition.html" class="tsd-signature-type tsd-kind-interface">SourcePosition</a></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver or the argument positions are unknown.</p>
-<h4>Throws</h4><p><a href="SourceReader.UnmatchedInputsError.html" class="tsd-kind-class">UnmatchedInputsError</a>
+<h4>Throws</h4><p><a href="SourceReader.MismatchedInputsError.html" class="tsd-kind-class">MismatchedInputsError</a>
         if the receiver and the argument positions do not belong to the same reader.</p>
 <h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a>
         if the receiver is the end of input.</p>
@@ -220,9 +220,9 @@ next document started.</p>
 </div><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="SourceReader.AbstractDocumentSourcePosition.html" class="tsd-signature-type tsd-kind-class">AbstractDocumentSourcePosition</a></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Overrides <a href="SourceReader.AbstractKnownSourcePosition.html">AbstractKnownSourcePosition</a>.<a href="SourceReader.AbstractKnownSourcePosition.html#constructor">constructor</a></p></aside></li></ul></section></section><section class="tsd-panel-group tsd-member-group"><h2>Internal: Helpers</h2><section class="tsd-panel tsd-member tsd-is-protected"><a id="_documentContextAfter" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagAbstract">Abstract</code> <span>_document<wbr/>Context<wbr/>After</span><a href="#_documentContextAfter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected"><li class="tsd-signature tsd-anchor-link"><a id="_documentContextAfter._documentContextAfter-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">_document<wbr/>Context<wbr/>After</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">lines</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#_documentContextAfter._documentContextAfter-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>Returns the full context of the source document after the position, up to the beginning
 of the given number of lines or the end of the document, whichever comes first.</p>
 <p>The char at the given position is the first one in the solution.</p>
-<p>It implements the specific logic of each subclass for the Template Method
-Pattern of
-<a href="SourceReader.AbstractDocumentSourcePosition.html#documentContextBefore" class="tsd-kind-method">documentContextBefore</a>.
+<p>It implements the specific logic of each subclass for the
+<a href="https://en.wikipedia.org/wiki/Template_method_pattern">Template Method Pattern</a>
+of <a href="SourceReader.AbstractDocumentSourcePosition.html#documentContextBefore" class="tsd-kind-method">documentContextBefore</a>.
 It must be reimplemented by subclasses.</p>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">lines</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the at the end of input.</p>
@@ -230,18 +230,18 @@ It must be reimplemented by subclasses.</p>
 beginning of the given number of lines, or the beginning of the document, whichever
 comes first.</p>
 <p>The char at the given position is NOT included in the solution.</p>
-<p>It implements the specific logic of each subclass for the Template Method
-Pattern of
-<a href="SourceReader.AbstractDocumentSourcePosition.html#documentContextBefore" class="tsd-kind-method">documentContextBefore</a>.
+<p>It implements the specific logic of each subclass for the
+<a href="https://en.wikipedia.org/wiki/Template_method_pattern">Template Method Pattern</a>
+of <a href="SourceReader.AbstractDocumentSourcePosition.html#documentContextBefore" class="tsd-kind-method">documentContextBefore</a>.
 It must be reimplemented by subclasses.</p>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">lines</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a> if the position is unknown.</p>
 <h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtEOIError.html" class="tsd-kind-class">InvalidOperationAtEOIError</a> if the at the end of input.</p>
 </div></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="_fullContentsFrom" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>_full<wbr/>Contents<wbr/>From</span><a href="#_fullContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected tsd-is-inherited"><li class="tsd-signature tsd-anchor-link"><a id="_fullContentsFrom._fullContentsFrom-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">_full<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_fullContentsFrom._fullContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>from</code> position
 and <code>this</code> position (not included), both visible and non-visible.
 If <code>from</code> comes after <code>this</code>, the result is the empty string.</p>
-<p>It implements the specific logic of each subclass for the Template Method
-Pattern of
-<a href="SourceReader.AbstractDocumentSourcePosition.html#fullContentsFrom" class="tsd-kind-method">fullContentsFrom</a>.
+<p>It implements the specific logic of each subclass for the
+<a href="https://en.wikipedia.org/wiki/Template_method_pattern">Template Method Pattern</a>
+of <a href="SourceReader.AbstractDocumentSourcePosition.html#fullContentsFrom" class="tsd-kind-method">fullContentsFrom</a>.
 It must be reimplemented by subclasses.</p>
 <p><strong>PRECONDITION:</strong></p>
 <ul>
@@ -255,9 +255,9 @@ It must be reimplemented by subclasses.</p>
 </div><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Inherited from <a href="SourceReader.AbstractKnownSourcePosition.html">AbstractKnownSourcePosition</a>.<a href="SourceReader.AbstractKnownSourcePosition.html#_fullContentsFrom">_fullContentsFrom</a></p></aside></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected"><a id="_fullContentsTo" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>_full<wbr/>Contents<wbr/>To</span><a href="#_fullContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected"><li class="tsd-signature tsd-anchor-link"><a id="_fullContentsTo._fullContentsTo-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">_full<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_fullContentsTo._fullContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>this</code> position
 and <code>to</code> position (not included), both visible and non-visible.
 If <code>this</code> comes after <code>to</code>, the result is the empty string.</p>
-<p>It implements the specific logic of each subclass for the Template Method
-Pattern of
-<a href="SourceReader.AbstractDocumentSourcePosition.html#fullContentsTo" class="tsd-kind-method">fullContentsTo</a>. It
+<p>It implements the specific logic of each subclass for the
+<a href="https://en.wikipedia.org/wiki/Template_method_pattern">Template Method Pattern</a>
+of <a href="SourceReader.AbstractDocumentSourcePosition.html#fullContentsTo" class="tsd-kind-method">fullContentsTo</a>. It
 must be reimplemented by subclasses.</p>
 <p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not
                   validated, as it is a protected operation).</p>
@@ -279,14 +279,14 @@ It may be one longer that the lenght, in case the position is EOI.</p>
 <p>Implements a common validation for the Template Method Pattern.</p>
 </div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><h5><span class="tsd-kind-parameter">that</span>: <a href="../interfaces/SourceReader.SourcePosition.html" class="tsd-signature-type tsd-kind-interface">SourcePosition</a></h5></li><li><h5><span class="tsd-kind-parameter">operation</span>: <span class="tsd-signature-type">string</span></h5></li><li><h5><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><div class="tsd-comment tsd-typography"><h4>Throws</h4><p><a href="SourceReader.InvalidOperationAtUnknownPositionError.html" class="tsd-kind-class">InvalidOperationAtUnknownPositionError</a>
         if the receiver or the argument positions are unknown.</p>
-<h4>Throws</h4><p><a href="SourceReader.UnmatchedInputsError.html" class="tsd-kind-class">UnmatchedInputsError</a>
+<h4>Throws</h4><p><a href="SourceReader.MismatchedInputsError.html" class="tsd-kind-class">MismatchedInputsError</a>
         if the receiver and the argument positions do not belong to the same reader.</p>
 </div><aside class="tsd-sources"><p>Inherited from <a href="SourceReader.AbstractKnownSourcePosition.html">AbstractKnownSourcePosition</a>.<a href="SourceReader.AbstractKnownSourcePosition.html#_validateSourceReaders">_validateSourceReaders</a></p></aside></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="_visibleContentsFrom" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>_visible<wbr/>Contents<wbr/>From</span><a href="#_visibleContentsFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected tsd-is-inherited"><li class="tsd-signature tsd-anchor-link"><a id="_visibleContentsFrom._visibleContentsFrom-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">_visible<wbr/>Contents<wbr/>From</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">from</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_visibleContentsFrom._visibleContentsFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>from</code> position
 and <code>this</code> position (not included) and is visible.
 If <code>from</code> comes after <code>this</code>, the result is the empty string.</p>
-<p>It implements the specific logic of each subclass for the Template Method
-Pattern of
-<a href="SourceReader.AbstractDocumentSourcePosition.html#visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom</a>.
+<p>It implements the specific logic of each subclass for the
+<a href="https://en.wikipedia.org/wiki/Template_method_pattern">Template Method Pattern</a>
+of <a href="SourceReader.AbstractDocumentSourcePosition.html#visibleContentsFrom" class="tsd-kind-method">visibleContentsFrom</a>.
 It must be reimplemented by subclasses.</p>
 <p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not
                   validated, as it is a protected operation).</p>
@@ -297,9 +297,9 @@ It must be reimplemented by subclasses.</p>
 </div><div class="tsd-comment tsd-typography"></div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><div class="tsd-comment tsd-typography"></div><aside class="tsd-sources"><p>Inherited from <a href="SourceReader.AbstractKnownSourcePosition.html">AbstractKnownSourcePosition</a>.<a href="SourceReader.AbstractKnownSourcePosition.html#_visibleContentsFrom">_visibleContentsFrom</a></p></aside></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected"><a id="_visibleContentsTo" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>_visible<wbr/>Contents<wbr/>To</span><a href="#_visibleContentsTo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected"><li class="tsd-signature tsd-anchor-link"><a id="_visibleContentsTo._visibleContentsTo-1" class="tsd-anchor"></a><span class="tsd-kind-call-signature">_visible<wbr/>Contents<wbr/>To</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">to</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_visibleContentsTo._visibleContentsTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li><li class="tsd-description"><div class="tsd-comment tsd-typography"><p>The exact portion of the source that is enclosed between <code>this</code> position
 and <code>to</code> position (not included) and is visible.
 If <code>this</code> comes after <code>to</code>, the result is the empty string.</p>
-<p>It implements the specific logic of each subclass for the Template Method
-Pattern of
-<a href="SourceReader.AbstractDocumentSourcePosition.html#visibleContentsTo" class="tsd-kind-method">visibleContentsTo</a>.
+<p>It implements the specific logic of each subclass for the
+<a href="https://en.wikipedia.org/wiki/Template_method_pattern">Template Method Pattern</a>
+of <a href="SourceReader.AbstractDocumentSourcePosition.html#visibleContentsTo" class="tsd-kind-method">visibleContentsTo</a>.
 It must be reimplemented by subclasses.</p>
 <p><strong>PRECONDITION:</strong> both positions correspond to the same reader (not
                   validated, as it is a protected operation).</p>

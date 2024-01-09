@@ -4,7 +4,7 @@
 import {
     InvalidOperationAtUnknownPositionError,
     SourceReader,
-    UnmatchedInputsError
+    MismatchedInputsError
 } from '../../../src/SourceReader';
 import { describe, expect, describe as given, it } from '@jest/globals';
 
@@ -126,7 +126,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to fullContentsFrom', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -138,7 +138,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -178,7 +178,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to fullContentsTo', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const n = input.length;
                 const visibleN = n - numberOfInvisibles;
                 const anotherSR = new SourceReader(input);
@@ -192,7 +192,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     visibleN
                 );
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -222,7 +222,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to visibleContentsFrom', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const n = input.length;
                 const visibleN = n - numberOfInvisibles;
                 const anotherSr = new SourceReader(input);
@@ -236,7 +236,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     visibleN
                 );
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -271,7 +271,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to visibleContentsTo', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const n = input.length;
                 const visibleN = n - numberOfInvisibles;
                 const anotherSr = new SourceReader(input);
@@ -285,7 +285,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     visibleN
                 );
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -482,7 +482,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to fullContentsFrom', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -494,7 +494,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -546,7 +546,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to fullContentsTo', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -558,7 +558,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -604,7 +604,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to visibleContentsFrom', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -616,7 +616,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -669,7 +669,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to visibleContentsTo', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -681,7 +681,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                     input.length - numberOfInvisibles
                 );
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -962,7 +962,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to fullContentsFrom', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -975,7 +975,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -1079,7 +1079,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to fullContentsTo', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1092,7 +1092,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -1236,7 +1236,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to visibleContentsFrom', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1249,7 +1249,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {
@@ -1362,7 +1362,7 @@ describe('An EndOfDocumentSourcePosition', () => {
         });
 
         describe('responds to visibleContentsTo', () => {
-            it('throwing UnmatchedInputsError if the argument has different source reader', () => {
+            it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
                 const posTest = new EndOfDocumentSourcePosition(
                     anotherSr,
@@ -1375,7 +1375,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
 
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
-                    new UnmatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
+                    new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
             });
             it('throwing InvalidOperationAtUnknownPositionError if the argument is unknown', () => {

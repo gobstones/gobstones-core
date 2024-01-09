@@ -53,9 +53,9 @@ export type SourceInput = string | Record<string, string> | string[];
 // ===============================================
 
 // ===============================================
-// #region class SourceReader {
+// #region class SourceReader { TO DO: Update
 // -----------------------------------------------
-/**
+/** TO DO: Update
  * A {@link SourceReader} allows you to read input from some source, either one
  * single document of content or several named or indexed source documents, in
  * such a way that each character read registers its position in the source as a
@@ -206,9 +206,9 @@ export type SourceInput = string | Record<string, string> | string[];
  */
 export class SourceReader {
     // ===============================================
-    // #region Implementation Details {
+    // #region Implementation Details { TO DO: Update
     // -----------------------------------------------
-    /**
+    /** TO DO: Update
      * The implementation of {@link SourceReader} keeps:
      *  * an object associating input document names to input document contents,
      *    {@link SourceReader._documents | _documents},
@@ -493,7 +493,7 @@ export class SourceReader {
      *
      * @group API: Access
      */
-    public currentDocument(): string {
+    public currentDocumentName(): string {
         return this.documentsNames[this._documentIndex];
     }
 
