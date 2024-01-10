@@ -98,15 +98,6 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *  * numbers are consistent with the reader's state
      *
      * @param _sourceReader The {@link SourceReader} of the input this position belongs to.
-     * @param line The line number of this position in the current input. It will be
-     *      modified only by the constructor.
-     *      **INVARIANT:** `line >=1`, and it is a valid line in that reader.
-     * @param column The column number of this position in the current input. It will be
-     *      modified only by the constructor.
-     *      **INVARIANT:** `column >= 1` and it is a valid column in that reader.
-     * @param regions The regions the position in the current input belongs to. It will be
-     *      modified only by the constructor.
-     *      **INVARIANT:** the regions are valid in the position's reader.
      *
      * @group Internal: Constructors
      * @private

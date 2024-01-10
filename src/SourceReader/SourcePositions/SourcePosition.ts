@@ -85,6 +85,20 @@ export interface SourcePosition {
     // #region API: Access {
     // -----------------------------------------------
     /**
+     * The name of the input document this position belongs to.
+     *
+     * **PRECONDITIONS:**
+     *  * the position is not unknown
+     *  * the position is not at the end of input
+     *
+     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
+     *
+     * @group API: Access
+     */
+    readonly documentName: string;
+
+    /**
      * The line number of this position in the current input.
      *
      * **PRECONDITIONS:**
@@ -129,20 +143,6 @@ export interface SourcePosition {
      * @group API: Access
      */
     readonly regions: string[];
-
-    /**
-     * The name of the input document this position belongs to.
-     *
-     * **PRECONDITIONS:**
-     *  * the position is not unknown
-     *  * the position is not at the end of input
-     *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Access
-     */
-    readonly documentName: string;
     // -----------------------------------------------
     // #endregion } API: Access
     // ===============================================

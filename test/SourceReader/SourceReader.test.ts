@@ -919,6 +919,278 @@ describe('SourceReader equivalent operations', () => {
 // #endregion } Equivalences
 // ===============================================
 
+// ===============================================
+// #region Source Reader case 3 (complete and use as template) {
+/*  OBS: because equivalences has been tested, there is no need to test for
+//   * single string input or array input
+//   * default line ender
+//   * skip with 2nd argument true
+//   * skip with 1st argument string, number 0, or no 1st argument
+//   * takeWhile with 2nd argument true
+//   * takeWhile with 1st argument (\ch -> False), (\ch -> ch === ''), or (\ch -> ch.length > 0)
+//   * dangling endRegions
+*/
+// -----------------------------------------------
+describe('A SourceReader with 3 non empty documents', () => {
+    // ===============================================
+    // #region Setup of global stuff {
+    // -----------------------------------------------
+    const progs = [
+        'program {\n  MoverMarcianoAl(Este)\n}\n',
+        'procedure MoverMarcianoAl(d) {\n' +
+            '  Poner(marciano())\n' +
+            '  Mover(d)\n' +
+            '  Poner(marciano())\n}\n',
+        'function marciano() {\n  return(Verde)\n}\n'
+    ];
+    const docNames = ['studentProg', 'courseLib', 'teacherLib'];
+    let input: SourceInput;
+    let baseSR: SourceReader;
+    // -----------------------------------------------
+    // #endregion } Setup of global stuff
+    // ===============================================
+
+    // ===============================================
+    // #region Right after creation {
+    // -----------------------------------------------
+    given('Right after creation', () => {
+        // ===============================================
+        // #region Setup of the instance and state {
+        // -----------------------------------------------
+        beforeEach(() => {
+            input = {};
+            input[docNames[0]] = progs[0];
+            input[docNames[1]] = progs[1];
+            input[docNames[2]] = progs[2];
+            baseSR = new SourceReader(input);
+            // No state change
+        });
+        // -----------------------------------------------
+        // #endregion } Setup of the instance and state
+        // ===============================================
+
+        // ===============================================
+        // #region Properties {
+        // -----------------------------------------------
+        describe('responds to documentsNames', () => {
+            it('returning an array with the keys of the input', () => {
+                expect(baseSR.documentsNames).toStrictEqual(docNames);
+
+                input = {};
+                input[docNames[2]] = progs[0];
+                input[docNames[1]] = progs[2];
+                baseSR = new SourceReader(input);
+                expect(baseSR.documentsNames).toStrictEqual([docNames[2], docNames[1]]);
+            });
+        });
+        describe('responds to lineEnders', () => {
+            it('returning the argument used when created', () => {
+                expect(baseSR.lineEnders).toStrictEqual('\n');
+
+                baseSR = new SourceReader(input, '¤€');
+                expect(baseSR.lineEnders).toStrictEqual('¤€');
+
+                baseSR = new SourceReader(input, '$');
+                expect(baseSR.lineEnders).toStrictEqual('$');
+            });
+        });
+        // -----------------------------------------------
+        // #endregion } Properties
+        // ===============================================
+
+        // ===============================================
+        // #region Access {
+        // -----------------------------------------------
+        describe('responds to atEndOfInput', () => {
+            it('returning false', () => {
+                expect(baseSR.atEndOfInput()).toStrictEqual(false);
+            });
+        });
+        describe('responds to atEndOfDocument', () => {
+            it('returning false', () => {
+                expect(baseSR.atEndOfDocument()).toStrictEqual(false);
+            });
+        });
+        describe('responds to currentDocumentName', () => {
+            it('returning the name of the first document', () => {
+                expect(baseSR.currentDocumentName()).toStrictEqual(docNames[0]);
+            });
+        });
+        describe('responds to peek', () => {
+            it('returning the first char in the first doc', () => {
+                expect(baseSR.peek()).toStrictEqual(progs[0][0]);
+            });
+        });
+        describe('responds to startsWith', () => {
+            it('returning true when the string is empty', () => {
+                expect(baseSR.startsWith('')).toStrictEqual(true);
+            });
+            it('returning true when the string is the right one', () => {
+                expect(baseSR.startsWith('p')).toStrictEqual(true);
+                expect(baseSR.startsWith('prog')).toStrictEqual(true);
+                expect(baseSR.startsWith('program')).toStrictEqual(true);
+                expect(baseSR.startsWith('program {\n  ')).toStrictEqual(true);
+            });
+            it('returning false when the string is some other', () => {
+                expect(baseSR.startsWith('rogram')).toStrictEqual(false);
+                expect(baseSR.startsWith('program (')).toStrictEqual(false);
+                expect(baseSR.startsWith('another wrong one')).toStrictEqual(false);
+            });
+        });
+        describe('responds to getPosition', () => {
+            it('returning a defined position with line 1 and column 1 in the firs focument', () => {
+                const pos = baseSR.getPosition();
+                expect(pos.isUnknown).toStrictEqual(false);
+                expect(pos.isEndOfInput).toStrictEqual(false);
+                expect(pos.isEndOfDocument).toStrictEqual(false);
+                expect(pos.documentName).toStrictEqual(docNames[0]);
+                expect(pos.line).toStrictEqual(1);
+                expect(pos.column).toStrictEqual(1);
+                expect(pos.regions).toStrictEqual([]);
+                expect(pos.fullDocumentContents).toStrictEqual(progs[0]);
+            });
+        });
+        // -----------------------------------------------
+        // #endregion } Access
+        // ===============================================
+    });
+    // -----------------------------------------------
+    // #endregion } Right after creation
+    // ===============================================
+
+    // ===============================================
+    // #region After skip with argument 1 {
+    // -----------------------------------------------
+    given('After skip with argument 1', () => {
+        // ===============================================
+        // #region Setup of the instance and state {
+        // -----------------------------------------------
+        beforeEach(() => {
+            input = {};
+            input[docNames[0]] = progs[0];
+            input[docNames[1]] = progs[1];
+            input[docNames[2]] = progs[2];
+            baseSR = new SourceReader(input);
+            baseSR.skip(1);
+        });
+        // -----------------------------------------------
+        // #endregion } Setup of the instance and state
+        // ===============================================
+
+        // ===============================================
+        // #region Properties {
+        // -----------------------------------------------
+        describe('responds to documentsNames', () => {
+            it('returning an array with the keys of the input', () => {
+                expect(baseSR.documentsNames).toStrictEqual(docNames);
+
+                input = {};
+                input[docNames[2]] = progs[0];
+                input[docNames[1]] = progs[2];
+                baseSR = new SourceReader(input);
+                expect(baseSR.documentsNames).toStrictEqual([docNames[2], docNames[1]]);
+            });
+        });
+        describe('responds to lineEnders', () => {
+            it('returning the argument used when created', () => {
+                expect(baseSR.lineEnders).toStrictEqual('\n');
+
+                baseSR = new SourceReader(input, '¤€');
+                expect(baseSR.lineEnders).toStrictEqual('¤€');
+
+                baseSR = new SourceReader(input, '$');
+                expect(baseSR.lineEnders).toStrictEqual('$');
+            });
+        });
+        // -----------------------------------------------
+        // #endregion } Properties
+        // ===============================================
+
+        // ===============================================
+        // #region Access {
+        // -----------------------------------------------
+        describe('responds to atEndOfInput', () => {
+            it('returning false', () => {
+                expect(baseSR.atEndOfInput()).toStrictEqual(false);
+            });
+        });
+        describe('responds to atEndOfDocument', () => {
+            it('returning false', () => {
+                expect(baseSR.atEndOfDocument()).toStrictEqual(false);
+            });
+        });
+        describe('responds to currentDocumentName', () => {
+            it('returning the name of the first document', () => {
+                expect(baseSR.currentDocumentName()).toStrictEqual(docNames[0]);
+            });
+        });
+        describe('responds to peek', () => {
+            it('returning the first char in the first doc', () => {
+                expect(baseSR.peek()).toStrictEqual(progs[0][1]);
+            });
+        });
+        describe('responds to startsWith', () => {
+            it('returning true when the string is empty', () => {
+                expect(baseSR.startsWith('')).toStrictEqual(true);
+            });
+            it('returning true when the string is the right one', () => {
+                expect(baseSR.startsWith('r')).toStrictEqual(true);
+                expect(baseSR.startsWith('rogr')).toStrictEqual(true);
+                expect(baseSR.startsWith('rogram')).toStrictEqual(true);
+                expect(baseSR.startsWith('rogram {\n  ')).toStrictEqual(true);
+            });
+            it('returning false when the string is some other', () => {
+                expect(baseSR.startsWith('prog')).toStrictEqual(false);
+                expect(baseSR.startsWith('ogram')).toStrictEqual(false);
+                expect(baseSR.startsWith('another wrong one')).toStrictEqual(false);
+            });
+        });
+        describe('responds to getPosition', () => {
+            it('returning a defined position with line 1 and column 2 in the firs focument', () => {
+                const pos = baseSR.getPosition();
+                expect(pos.isUnknown).toStrictEqual(false);
+                expect(pos.isEndOfInput).toStrictEqual(false);
+                expect(pos.isEndOfDocument).toStrictEqual(false);
+                expect(pos.documentName).toStrictEqual(docNames[0]);
+                expect(pos.line).toStrictEqual(1);
+                expect(pos.column).toStrictEqual(2);
+                expect(pos.regions).toStrictEqual([]);
+                expect(pos.fullDocumentContents).toStrictEqual(progs[0]);
+            });
+        });
+        // -----------------------------------------------
+        // #endregion } Access
+        // ===============================================
+    });
+    // -----------------------------------------------
+    // #endregion } After skip with argument 1
+    // ===============================================
+
+    /* TO ADD more states (copy "skip 1" and adapt tests):
+     *   * skip N
+     *   * skip 1, invisible
+     *   * skip N, invisible
+     *   * take some
+     *       * misma linea
+     *       * mismo doc, medio
+     *       * mismo doc, end
+     *       * otro doc, inicio
+     *       * otro doc,medio
+     *       * otro doc, end
+     *       * To EOI
+     *   * take all
+     *   * beginRegion
+     *       * no endRegion
+     *           * no EOD
+     *           * EOD
+     *           * past EOD
+     *       * skip N + endRegion
+     */
+});
+// -----------------------------------------------
+// #endregion } Source Reader case 3 (complete and use as template)
+// ===============================================
+
 /*
 // ===============================================
 // ===============================================
