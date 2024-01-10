@@ -155,7 +155,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -226,7 +226,7 @@ describe('A DocumentSourcePosition', () => {
                 "returning all characters in input starting from receiver's position to the " +
                     'end if the argument is an end of input',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     expect(pos.fullContentsTo(posTest)).toBe(' Poner(Verde) }');
                 }
             );
@@ -306,7 +306,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the end of document', () => {
@@ -384,7 +384,7 @@ describe('A DocumentSourcePosition', () => {
                 'returning all visible characters (non spaces) in the input starting from the ' +
                     "receiver's position to end if the argument is an end of input",
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     expect(pos.visibleContentsTo(posTest)).toBe('Poner(Verde)}');
                 }
             );
@@ -635,11 +635,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is the end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the end of document', () => {
@@ -717,11 +713,7 @@ describe('A DocumentSourcePosition', () => {
                 "returning all characters in the input starting from the receiver's " +
                     ' position to the end of document if the argument is an end of input',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                        'region2',
-                        'region1',
-                        'region3'
-                    ]);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     expect(pos.fullContentsTo(posTest)).toBe('  Poner(Rojo)\n  Mover(Sur)\n}\n');
                 }
             );
@@ -801,11 +793,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is the end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the end of document', () => {
@@ -883,11 +871,7 @@ describe('A DocumentSourcePosition', () => {
                 'returning all visible characters (non spaces) in input starting from the ' +
                     "receiver's position to the end of document if the argument is an end of input",
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                        'region2',
-                        'region1',
-                        'region3'
-                    ]);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     expect(pos.visibleContentsTo(posTest)).toBe('Poner(Rojo)\nMover(Sur)\n}\n');
                 }
             );
@@ -1236,7 +1220,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is the end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it(
@@ -1392,7 +1376,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning the rest of the input if the argument is the end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsTo(posTest)).toBe('(Este)\n  Poner(Verde)\n}\n' + input[2]);
             });
             it(
@@ -1534,7 +1518,7 @@ describe('A DocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is the end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it(
@@ -1699,7 +1683,7 @@ describe('A DocumentSourcePosition', () => {
                 'returning the rest of the input to the last document if the argument is ' +
                     'the end of input',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     expect(pos.visibleContentsTo(posTest)).toBe(
                         '(Este)\nPoner(Verde)\n}\n' + input[2].replace(/ /g, '')
                     );

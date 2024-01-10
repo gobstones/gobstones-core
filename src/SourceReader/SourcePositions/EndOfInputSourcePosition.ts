@@ -58,13 +58,8 @@ export class EndOfInputSourcePosition
      * @group Internal: Constructors
      * @private
      */
-    public constructor(
-        sourceReader: SourceReader,
-        line: number,
-        column: number,
-        regions: string[]
-    ) {
-        super(sourceReader, line, column, regions);
+    public constructor(sourceReader: SourceReader) {
+        super(sourceReader);
     }
     // -----------------------------------------------
     // #endregion } Internal: Constructors
@@ -87,6 +82,30 @@ export class EndOfInputSourcePosition
     // ===============================================
     // #region API: Access {
     // -----------------------------------------------
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
+    public get line(): number {
+        throw new InvalidOperationAtEOIError('line', 'EndOfInputSourcePosition');
+    }
+
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
+    public get column(): number {
+        throw new InvalidOperationAtEOIError('column', 'EndOfInputSourcePosition');
+    }
+
+    /**
+     * @inheritdoc
+     * @group API: Access
+     */
+    public get regions(): string[] {
+        throw new InvalidOperationAtEOIError('regions', 'EndOfInputSourcePosition');
+    }
+
     /**
      * @inheritdoc
      * @group API: Access

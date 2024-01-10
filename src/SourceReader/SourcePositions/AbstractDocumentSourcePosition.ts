@@ -108,9 +108,12 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      */
     public constructor(
         sourceReader: SourceReader,
-        line: number,
-        column: number,
-        regions: string[],
+        /** @group API: Access */
+        public readonly line: number,
+        /** @group API: Access */
+        public readonly column: number,
+        /** @group API: Access */
+        public readonly regions: string[],
         /** @group Internal: Properties @private */
         public readonly _documentIndex: number,
         /** @group Internal: Properties @private */
@@ -118,7 +121,7 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
         /** @group Internal: Properties @private */
         public readonly _visibleCharIndex: number
     ) {
-        super(sourceReader, line, column, regions);
+        super(sourceReader);
     }
     // -----------------------------------------------
     // #endregion } Internal: Constructor

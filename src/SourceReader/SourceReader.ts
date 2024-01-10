@@ -489,15 +489,6 @@ export class SourceReader {
     // #region API: Access {
     // -----------------------------------------------
     /**
-     * Answers the current document name.
-     *
-     * @group API: Access
-     */
-    public currentDocumentName(): string {
-        return this.documentsNames[this._documentIndex];
-    }
-
-    /**
      * Answers if there are no more characters to read from the input.
      *
      * @group API: Access
@@ -513,6 +504,23 @@ export class SourceReader {
      */
     public atEndOfDocument(): boolean {
         return this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument();
+    }
+
+    /**
+     * Answers the current document name.
+     *
+     * **PRECONDITION:** `!this.atEndOfInput()`
+     *
+     * @throws {@link InvalidOperationAtEOIError}
+     *         if the source reader is at EndOfDocument in the current position.
+     *
+     * @group API: Access
+     */
+    public currentDocumentName(): string {
+        expect(this._hasMoreDocuments())
+            .toBeTrue()
+            .orThrow(new InvalidOperationAtEOIError('peek', 'SourceReader'));
+        return this.documentsNames[this._documentIndex];
     }
 
     /**

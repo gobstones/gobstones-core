@@ -150,7 +150,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -204,7 +204,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is en end of document', () => {
@@ -248,7 +248,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -297,7 +297,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -506,11 +506,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -570,11 +566,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -628,11 +620,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -693,11 +681,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -987,7 +971,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the end of last document', () => {
@@ -1107,7 +1091,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 'returning all documents after currents if the argument is the end of input ' +
                     ' and the receiver is not last end of document',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     const firstEOD = new EndOfDocumentSourcePosition(
                         sr,
                         5,
@@ -1125,7 +1109,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 'returning an empty string if the argument is an end of input ' +
                     ' and the receiver is last end document',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
                         3,
@@ -1261,7 +1245,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the end of last document', () => {
@@ -1390,7 +1374,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 'returning all documents visible characters (non spaces) after current if ' +
                     'the argument is and end of input and receiver is not last end of document',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     const firstEOD = new EndOfDocumentSourcePosition(
                         sr,
                         5,
@@ -1410,7 +1394,7 @@ describe('An EndOfDocumentSourcePosition', () => {
                 'returning an empty string if the argument is an end of input ' +
                     ' and the receiver is last end of document',
                 () => {
-                    const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                    const posTest = new EndOfInputSourcePosition(sr);
                     const lastEOD = new EndOfDocumentSourcePosition(
                         sr,
                         3,

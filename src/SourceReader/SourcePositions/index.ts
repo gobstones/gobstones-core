@@ -19,8 +19,7 @@ import { UnknownSourcePosition } from './UnknownSourcePosition';
  */
 export const SourcePositions = {
     Unknown: () => UnknownSourcePosition.instance,
-    EndOfInput: (_sr, line, column, regions) =>
-        new EndOfInputSourcePosition(_sr, line, column, regions),
+    EndOfInput: (_sr, line, column, regions) => new EndOfInputSourcePosition(_sr),
     EndOfDocument: (_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx) =>
         new EndOfDocumentSourcePosition(
             _sr,

@@ -37,7 +37,7 @@ describe('An EndOfInputSourcePosition', () => {
         // skip to end of input
         sr.skip(2);
         // create the position
-        const pos = new EndOfInputSourcePosition(sr, 1, 1, []);
+        const pos = new EndOfInputSourcePosition(sr);
         // -----------------------------------------------
         // #endregion } Setup
         // ===============================================
@@ -82,18 +82,24 @@ describe('An EndOfInputSourcePosition', () => {
         // #region Access {
         // -----------------------------------------------
         describe('responds to line', () => {
-            it('returning 1', () => {
-                expect(pos.line).toBe(1);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.line).toThrow(
+                    new InvalidOperationAtEOIError('line', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to columns', () => {
-            it('returns 1', () => {
-                expect(pos.column).toBe(1);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.column).toThrow(
+                    new InvalidOperationAtEOIError('column', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to regions', () => {
-            it('responds with the regions it was created with', () => {
-                expect(pos.regions).toStrictEqual([]);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.regions).toThrow(
+                    new InvalidOperationAtEOIError('regions', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to documentName', () => {
@@ -135,7 +141,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to fullContentsFrom', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
                     new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
@@ -149,7 +155,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is end of document', () => {
@@ -173,7 +179,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to fullContentsTo', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
                     new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
@@ -187,7 +193,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -207,7 +213,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to visibleContentsFrom', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
                     new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
@@ -221,7 +227,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -245,7 +251,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to visibleContentsTo', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
                     new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
@@ -259,7 +265,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, []);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -354,7 +360,7 @@ describe('An EndOfInputSourcePosition', () => {
         // skip to end of input
         sr.skip(2);
         // create the position
-        const pos = new EndOfInputSourcePosition(sr, 1, 1, ['region2', 'region1', 'region3']);
+        const pos = new EndOfInputSourcePosition(sr);
         // -----------------------------------------------
         // #endregion } Setup
         // ===============================================
@@ -399,18 +405,24 @@ describe('An EndOfInputSourcePosition', () => {
         // #region Access {
         // -----------------------------------------------
         describe('responds to line', () => {
-            it('returning 1', () => {
-                expect(pos.line).toBe(1);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.line).toThrow(
+                    new InvalidOperationAtEOIError('line', 'EndOfInputSourcePosition')
+                );
             });
         });
-        describe('responds to column', () => {
-            it('returning 1', () => {
-                expect(pos.column).toBe(1);
+        describe('responds to columns', () => {
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.column).toThrow(
+                    new InvalidOperationAtEOIError('column', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to regions', () => {
-            it('returning the regions it was created with', () => {
-                expect(pos.regions).toStrictEqual(['region2', 'region1', 'region3']);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.regions).toThrow(
+                    new InvalidOperationAtEOIError('regions', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to documentName', () => {
@@ -452,11 +464,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to fullContentsFrom', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
                     new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
                 );
@@ -470,11 +478,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -512,11 +516,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to fullContentsTo', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
                     new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
                 );
@@ -530,11 +530,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -566,11 +562,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to visibleContentsFrom', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
                     new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
                 );
@@ -584,11 +576,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -626,11 +614,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to visibleContentsTo', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
                     new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
                 );
@@ -644,11 +628,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, [
-                    'region2',
-                    'region1',
-                    'region3'
-                ]);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -789,7 +769,7 @@ describe('An EndOfInputSourcePosition', () => {
         // skip to end of input
         sr.skip(2);
         // create the position
-        const pos = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+        const pos = new EndOfInputSourcePosition(sr);
         // -----------------------------------------------
         // #endregion } Setup
         // ===============================================
@@ -834,18 +814,24 @@ describe('An EndOfInputSourcePosition', () => {
         // #region Access {
         // -----------------------------------------------
         describe('responds to line', () => {
-            it('returning 1', () => {
-                expect(pos.line).toBe(1);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.line).toThrow(
+                    new InvalidOperationAtEOIError('line', 'EndOfInputSourcePosition')
+                );
             });
         });
-        describe('responds to column', () => {
-            it('returning 1', () => {
-                expect(pos.column).toBe(1);
+        describe('responds to columns', () => {
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.column).toThrow(
+                    new InvalidOperationAtEOIError('column', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to regions', () => {
-            it('returning the regions it was created with', () => {
-                expect(pos.regions).toStrictEqual(['a region']);
+            it('throwing InvalidOperationAtEOIError', () => {
+                expect(() => pos.regions).toThrow(
+                    new InvalidOperationAtEOIError('regions', 'EndOfInputSourcePosition')
+                );
             });
         });
         describe('responds to documentName', () => {
@@ -886,7 +872,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to fullContentsFrom', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
 
                 expect(() => pos.fullContentsFrom(posTest)).toThrow(
                     new MismatchedInputsError('fullContentsFrom', 'AbstractKnownSourcePosition')
@@ -901,7 +887,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the end of the last document', () => {
@@ -970,7 +956,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to fullContentsTo', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
 
                 expect(() => pos.fullContentsTo(posTest)).toThrow(
                     new MismatchedInputsError('fullContentsTo', 'AbstractKnownSourcePosition')
@@ -985,7 +971,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.fullContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {
@@ -1032,7 +1018,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to visibleContentsFrom', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
 
                 expect(() => pos.visibleContentsFrom(posTest)).toThrow(
                     new MismatchedInputsError('visibleContentsFrom', 'AbstractKnownSourcePosition')
@@ -1047,7 +1033,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsFrom(posTest)).toBe('');
             });
             it('returning an empty string if the argument is the last end of document', () => {
@@ -1120,7 +1106,7 @@ describe('An EndOfInputSourcePosition', () => {
         describe('responds to visibleContentsTo', () => {
             it('throwing MismatchedInputsError if the argument has different source reader', () => {
                 const anotherSr = new SourceReader(input);
-                const posTest = new EndOfInputSourcePosition(anotherSr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(anotherSr);
 
                 expect(() => pos.visibleContentsTo(posTest)).toThrow(
                     new MismatchedInputsError('visibleContentsTo', 'AbstractKnownSourcePosition')
@@ -1135,7 +1121,7 @@ describe('An EndOfInputSourcePosition', () => {
                 );
             });
             it('returning an empty string if the argument is an end of input', () => {
-                const posTest = new EndOfInputSourcePosition(sr, 1, 1, ['a region']);
+                const posTest = new EndOfInputSourcePosition(sr);
                 expect(pos.visibleContentsTo(posTest)).toBe('');
             });
             it('returning an empty string if the argument is an end of document', () => {

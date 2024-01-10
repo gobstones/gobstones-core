@@ -131,7 +131,7 @@ describe('An UnknownSourcePosition', () => {
             it(`throwing ${badOpAtUnknownError} when 'from' is an end of input position`, () => {
                 const input = 'irrelevant';
                 const dummy = new SourceReader(input);
-                const pos = new EndOfInputSourcePosition(dummy, 1, input.length + 1, []);
+                const pos = new EndOfInputSourcePosition(dummy);
                 expect(() => UnknownSourcePosition.instance.fullContentsFrom(pos)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsFrom',
@@ -179,7 +179,7 @@ describe('An UnknownSourcePosition', () => {
             it(`throwing ${badOpAtUnknownError} when 'to' is an end of input position`, () => {
                 const input = 'program { Poner(Verde) }';
                 const sr = new SourceReader(input);
-                const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
+                const pos = new EndOfInputSourcePosition(sr);
                 expect(() => UnknownSourcePosition.instance.fullContentsTo(pos)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'fullContentsTo',
@@ -229,7 +229,7 @@ describe('An UnknownSourcePosition', () => {
             it(`throwing ${badOpAtUnknownError} when 'from' is an end of input position`, () => {
                 const input = 'program { Poner(Verde) }';
                 const sr = new SourceReader(input);
-                const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
+                const pos = new EndOfInputSourcePosition(sr);
                 expect(() => UnknownSourcePosition.instance.visibleContentsFrom(pos)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsFrom',
@@ -277,7 +277,7 @@ describe('An UnknownSourcePosition', () => {
             it(`throwing ${badOpAtUnknownError} when 'to' is an end of input position`, () => {
                 const input = 'program { Poner(Verde) }';
                 const sr = new SourceReader(input);
-                const pos = new EndOfInputSourcePosition(sr, 1, input.length + 1, []);
+                const pos = new EndOfInputSourcePosition(sr);
                 expect(() => UnknownSourcePosition.instance.visibleContentsTo(pos)).toThrow(
                     new InvalidOperationAtUnknownPositionError(
                         'visibleContentsTo',

@@ -113,13 +113,7 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      */
     public constructor(
         /** @group API: Access */
-        public readonly sourceReader: SourceReader,
-        /** @group API: Access */
-        public readonly line: number,
-        /** @group API: Access */
-        public readonly column: number,
-        /** @group API: Access */
-        public readonly regions: string[]
+        public readonly sourceReader: SourceReader
     ) {
         super();
     }
