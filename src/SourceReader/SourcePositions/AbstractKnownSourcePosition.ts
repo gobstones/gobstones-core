@@ -97,7 +97,7 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader's state
      *
-     * @param _sourceReader The {@link SourceReader} of the input this position belongs to.
+     * @param sourceReader The {@link SourceReader} of the input this position belongs to.
      *
      * @group Internal: Constructors
      * @private

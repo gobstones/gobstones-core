@@ -69,6 +69,14 @@ export class DocumentSourcePosition
      * @group API: Printing
      */
     public toString(): string {
+        // if (
+        //     this.sourceReader.documentsNames.length === 1 &&
+        //     this.sourceReader.documentsNames[0] === SourceReader.defaultDocumentNamePrefix + 1
+        // ) {
+        //     return `@<${this.line},${this.column}>`;
+        // } else {
+        //     return `@<${this.documentName}:${this.line},${this.column}>`;
+        // }
         return `@<${this.documentName}:${this.line},${this.column}>`;
     }
     // -----------------------------------------------

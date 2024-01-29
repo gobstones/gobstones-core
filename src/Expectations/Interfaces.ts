@@ -95,7 +95,7 @@ export interface IGenericExpectation<T> {
  *
  * @group API: Types
  */
-export interface IBooleanExpectation extends IGenericExpectation<number> {
+export interface IBooleanExpectation extends IGenericExpectation<boolean> {
     /**
      * Answers if the actual value is true
      */
