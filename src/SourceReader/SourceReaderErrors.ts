@@ -14,7 +14,7 @@ import { SourceReaderIntl as intl } from './translations';
  * It also restores the prototype chain, as described in the
  *  {@link https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#support-for-newtarget
  *   | Typescript Handbook}.
- * @group API: Errors
+ * @group Errors
  */
 export class SourceReaderError extends Error {
     /**
@@ -35,7 +35,7 @@ export class SourceReaderError extends Error {
  * The superclass for all {@link SourceReader} errors with `operation` and `context` as
  * interpolations.
  * It constructs the corresponding interpolation.
- * @group API: Errors
+ * @group Errors
  */
 export class SourceReaderErrorBy extends SourceReaderError {
     /**
@@ -55,7 +55,7 @@ export class SourceReaderErrorBy extends SourceReaderError {
 // ===============================================
 /**
  * The error to produce when a SourceReader is called with no input (an empty object or array).
- * @group API: Errors
+ * @group Errors
  */
 export class ErrorNoInput extends SourceReaderError {
     /**
@@ -69,7 +69,7 @@ export class ErrorNoInput extends SourceReaderError {
 /**
  * The error to produce when two positions related with different readers are used to determine
  * a portion of the contents.
- * @group API: Errors
+ * @group Errors
  */
 export class ErrorUnmatchingPositionsBy extends SourceReaderErrorBy {
     /**
@@ -85,7 +85,7 @@ export class ErrorUnmatchingPositionsBy extends SourceReaderErrorBy {
 
 /**
  * The error to produce when a function that is not supposed to be used at EndOfInput is called.
- * @group API: Errors
+ * @group Errors
  */
 export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
     /**
@@ -100,7 +100,7 @@ export class ErrorAtEndOfInputBy extends SourceReaderErrorBy {
 
 /**
  * The error to produce when a function that is not supposed to be used at EndOfDocument is called.
- * @group API: Errors
+ * @group Errors
  */
 export class ErrorAtEndOfDocumentBy extends SourceReaderErrorBy {
     /**
