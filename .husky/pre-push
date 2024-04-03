@@ -1,5 +1,23 @@
 #!/usr/bin/env sh
 
+# Load husky
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Read parameters
+REMOTE_NAME=$1;
+REMOTE_URL=$2;
+# Read the input and split it approprietly
+INPUT=$(cat);
+INPUT_ARR=($INPUT);
+
+LOCAL_REF=${INPUT_ARR[0]}
+LOCAL_OBJ_NAME=${INPUT_ARR[1]}
+REMOTE_REF=${INPUT_ARR[2]}
+REMOTE_OBJ_NAME=${INPUT_ARR[3]}
+
+# Set failing on command fail, pipe fail, and undefined variable use
+set -euo pipefail
+
 # This hook is called by git-push and can be used to prevent a
 # push from taking place. The hook is called with two parameters
 # which provide the name and location of the destination remote,
@@ -25,21 +43,6 @@
 # If this hook exits with a non-zero status, git push will abort without
 # pushing anything. Information about why the push is rejected may be
 # sent to the user by writing to standard error.
-
-# Load husky
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Read parameters
-REMOTE_NAME=$1;
-REMOTE_URL=$2;
-# Read the input and split it approprietly
-INPUT=$(cat);
-INPUT_ARR=($INPUT);
-
-LOCAL_REF=${INPUT_ARR[0]}
-LOCAL_OBJ_NAME=${INPUT_ARR[1]}
-REMOTE_REF=${INPUT_ARR[2]}
-REMOTE_OBJ_NAME=${INPUT_ARR[3]}
 
 # We currently use this hook to verify that any commit (to any branch)
 # passes the tests configured.

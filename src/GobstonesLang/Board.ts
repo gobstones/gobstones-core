@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * @module GobstonesLang
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -79,10 +91,7 @@ export type OnBoardSizeChangedCallback = (
  * @event
  * @group API: Events
  */
-export type OnBoardHeadMovedCallback = (
-    currentLocation: CellLocation,
-    previousLocation: CellLocation
-) => void;
+export type OnBoardHeadMovedCallback = (currentLocation: CellLocation, previousLocation: CellLocation) => void;
 
 /**
  * This interface contains the signature of the
@@ -254,18 +263,8 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *      that you want to specify initial stones to.
      */
     public constructor();
-    public constructor(
-        width: number,
-        height: number,
-        head?: CellLocation,
-        initialState?: CellDataDefinition[]
-    );
-    public constructor(
-        width?: number,
-        height?: number,
-        head?: CellLocation,
-        initialState?: CellDataDefinition[]
-    ) {
+    public constructor(width: number, height: number, head?: CellLocation, initialState?: CellDataDefinition[]);
+    public constructor(width?: number, height?: number, head?: CellLocation, initialState?: CellDataDefinition[]) {
         super();
         this.boardWidth = width ?? Defaults.width;
         this.boardHeight = height ?? Defaults.height;
@@ -277,9 +276,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
             expect(this.boardHeight).toBeGreaterThan(0),
             expect(this.headX).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardWidth),
             expect(this.headY).toBeGreaterThanOrEqual(0).toBeLowerThan(this.boardHeight)
-        ).orThrow(
-            new InvalidBoardDescription(this.boardHeight, this.boardWidth, [this.headX, this.headY])
-        );
+        ).orThrow(new InvalidBoardDescription(this.boardHeight, this.boardWidth, [this.headX, this.headY]));
 
         const cells: Map<string, CellDataDefinition> = new Map(
             (initialState ?? []).map((cellDef) => {
@@ -562,10 +559,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *  the same type as the accumulated value.
      * @param initialValue The initial value to fold against.
      */
-    public foldCells<A>(
-        f: (previousValue: A, cell: Cell, row: number, column: number) => A,
-        initialValue: A
-    ): A {
+    public foldCells<A>(f: (previousValue: A, cell: Cell, row: number, column: number) => A, initialValue: A): A {
         let currentValue = initialValue;
         for (let c = 0; c < this.boardData.length; c++) {
             const column = this.boardData[c];
@@ -748,12 +742,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
             new TypeError('The direction to addColumns should be East or West')
         );
-        this.innerChangeSize(
-            this.width + amount,
-            this.height,
-            dir === Direction.West,
-            'AddColumns'
-        );
+        this.innerChangeSize(this.width + amount, this.height, dir === Direction.West, 'AddColumns');
     }
 
     /**
@@ -790,12 +779,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         or(expect(dir).toBe(Direction.East), expect(dir).toBe(Direction.West)).orThrow(
             new TypeError('The direction to removeColumns should be East or West')
         );
-        this.innerChangeSize(
-            this.width - amount,
-            this.height,
-            dir === Direction.West,
-            'RemoveColumn'
-        );
+        this.innerChangeSize(this.width - amount, this.height, dir === Direction.West, 'RemoveColumn');
     }
 
     /**
@@ -869,12 +853,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         or(expect(dir).toBe(Direction.North), expect(dir).toBe(Direction.South)).orThrow(
             new TypeError('The direction to removeRows should be North or South')
         );
-        this.innerChangeSize(
-            this.width,
-            this.height - amount,
-            dir === Direction.South,
-            'RemoveRow'
-        );
+        this.innerChangeSize(this.width, this.height - amount, dir === Direction.South, 'RemoveRow');
     }
 
     /**
@@ -891,20 +870,15 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         const cellString = (cell: Cell, line: number): string => {
             const sep = cell.isHeadLocation() ? '|' : '¦';
             return line === 0
-                ? `${sep} ${cell.getStonesOf(Color.Blue)} B ${cell.getStonesOf(
-                      Color.Black
-                  )} K ${sep}`
-                : `${sep} ${cell.getStonesOf(Color.Red)} R ${cell.getStonesOf(
-                      Color.Green
-                  )} G ${sep}`;
+                ? `${sep} ${cell.getStonesOf(Color.Blue)} B ${cell.getStonesOf(Color.Black)} K ${sep}`
+                : `${sep} ${cell.getStonesOf(Color.Red)} R ${cell.getStonesOf(Color.Green)} G ${sep}`;
         };
 
         for (let r = this.height - 1; r >= 0; r--) {
             board += '  ';
             for (let c = 0; c < this.width; c++) {
                 board +=
-                    this.boardData[c][r].isHeadLocation() ||
-                    this.boardData[c][r + 1]?.isHeadLocation()
+                    this.boardData[c][r].isHeadLocation() || this.boardData[c][r + 1]?.isHeadLocation()
                         ? '-----------'
                         : '- - - - - -';
             }
@@ -1012,10 +986,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *
      * @param location The location to move the head to.
      */
-    private innerSetHeadLocation(
-        location: CellLocation,
-        performedAction: LocationChangeActionAttempt
-    ): void {
+    private innerSetHeadLocation(location: CellLocation, performedAction: LocationChangeActionAttempt): void {
         and(
             expect(location[0]).toBeGreaterThanOrEqual(0).toBeLowerThan(this.width),
             expect(location[1]).toBeGreaterThanOrEqual(0).toBeLowerThan(this.height)
@@ -1024,11 +995,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         const oldHeadY = this.headYLocation;
         this.headXLocation = location[0];
         this.headYLocation = location[1];
-        this.emit(
-            Board.onHeadMoved,
-            [this.headXLocation, this.headYLocation],
-            [oldHeadX, oldHeadY]
-        );
+        this.emit(Board.onHeadMoved, [this.headXLocation, this.headYLocation], [oldHeadX, oldHeadY]);
     }
 
     /**

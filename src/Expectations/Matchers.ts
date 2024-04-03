@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * @module Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -113,10 +125,7 @@ export class Matchers {
      * If no amount of digits is given, 5 is taken by default.
      */
     public static toBeCloseTo(actual: number, expected: number, numDigits: number): boolean {
-        return (
-            typeof actual === 'number' &&
-            Math.abs(expected - actual) < Math.pow(10, -numDigits) / 10
-        );
+        return typeof actual === 'number' && Math.abs(expected - actual) < Math.pow(10, -numDigits) / 10;
     }
     // String
     /** Answer if the actual value has expected as a substring. */
@@ -177,11 +186,7 @@ export class Matchers {
         );
     }
     /** Answer if a given amount of elements of the actual value satisfy a given criteria. */
-    public static amountToSatisfy(
-        actual: any[],
-        amount: number,
-        criteria: (elem: any) => boolean
-    ): boolean {
+    public static amountToSatisfy(actual: any[], amount: number, criteria: (elem: any) => boolean): boolean {
         return (
             typeof actual === 'object' &&
             Array.isArray(actual) &&
@@ -200,8 +205,7 @@ export class Matchers {
     public static toHavePropertyCount(actual: any, amount: number): boolean {
         return (
             typeof actual === 'object' &&
-            Object.keys(actual).filter((e) => Object.hasOwnProperty.call(actual, e)).length ===
-                amount
+            Object.keys(actual).filter((e) => Object.hasOwnProperty.call(actual, e)).length === amount
         );
     }
     /** Answer if an object has  at least all keys in the least. Combine with
@@ -226,9 +230,7 @@ export class Matchers {
     }
     /** Answer if the actual element has a property with the given name. */
     public static toHaveProperty(actual: any, propertyName: string): boolean {
-        return (
-            typeof actual === 'object' && Object.prototype.hasOwnProperty.call(actual, propertyName)
-        );
+        return typeof actual === 'object' && Object.prototype.hasOwnProperty.call(actual, propertyName);
     }
     /** Answer if the actual element is an instance of a given class (using instanceof). */
     // eslint-disable-next-line @typescript-eslint/ban-types

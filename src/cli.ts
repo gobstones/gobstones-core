@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * This module provides the tools to create a CLI application
  * using commander as the background tool, but providing some
@@ -124,11 +136,7 @@ export class CLICommandBuilder {
     protected options: WithRequired<CLIAppOptions, 'flags'>;
     protected isSubcommand: boolean;
 
-    public constructor(
-        cmdrProgram: commander.Command,
-        options: CLIAppOptions,
-        isSubcommand: boolean = false
-    ) {
+    public constructor(cmdrProgram: commander.Command, options: CLIAppOptions, isSubcommand: boolean = false) {
         // Set default flags, or use custom ones
         const defaultFlags = {
             help: {
@@ -154,10 +162,7 @@ export class CLICommandBuilder {
         };
 
         this.program = cmdrProgram;
-        this.options = Object.assign({ ...defaultFlags }, options) as WithRequired<
-            CLIAppOptions,
-            'flags'
-        >;
+        this.options = Object.assign({ ...defaultFlags }, options) as WithRequired<CLIAppOptions, 'flags'>;
         this.isSubcommand = isSubcommand;
     }
 
@@ -199,9 +204,7 @@ export class CLICommandBuilder {
     public option(flags: string, description?: string, defaultValue?: string | boolean): this {
         this.program.option(
             flags,
-            this.options.translator
-                ? this.options.translator.translate(description ?? '')
-                : description,
+            this.options.translator ? this.options.translator.translate(description ?? '') : description,
             defaultValue
         );
         return this;
@@ -217,8 +220,7 @@ export class CLICommandBuilder {
      */
     public action(f: (cliapp: this, ...args: any[]) => void): this {
         this.program.action((...options: any[]) => {
-            this.currentArgs =
-                options.length >= 2 ? options.slice(0, options.length - 2) : [options[0]];
+            this.currentArgs = options.length >= 2 ? options.slice(0, options.length - 2) : [options[0]];
             this.currentOptions = options.length >= 2 ? options[options.length - 2] : options[1];
             this.setCorrectLanguage(this.currentOptions.language);
             f(this, ...options);
@@ -314,8 +316,7 @@ export class CLICommandBuilder {
         if (sliced.length === 0) return true;
         if (
             sliced.length === 2 &&
-            (sliced[0] === this.options.flags.language.short ||
-                sliced[0] === this.options.flags.language.long)
+            (sliced[0] === this.options.flags.language.short || sliced[0] === this.options.flags.language.long)
         )
             return true;
         return false;
@@ -358,9 +359,7 @@ export class CLICommandBuilder {
 
     /** Validate that the given language flag, if any, is a valid translation */
     protected validateLanguageFlag(locale: string): void {
-        const availableLangs = Object.keys(
-            this.options.translator?.getAvailableTranslations() || {}
-        )
+        const availableLangs = Object.keys(this.options.translator?.getAvailableTranslations() || {})
             .map((e) => '"' + e + '"')
             .join(' | ');
         this.ensureOrFailAndExit(
@@ -435,11 +434,7 @@ export class CLIApp extends CLICommandBuilder {
     public command(name: string, description: string, f: (cmd: CLICommandBuilder) => void): this {
         const newCmd = this.program
             .command(name)
-            .description(
-                this.options.translator
-                    ? this.options.translator.translate(description)
-                    : description
-            );
+            .description(this.options.translator ? this.options.translator.translate(description) : description);
         this.setLanguageIfConfigured(newCmd);
         f(new CLICommandBuilder(newCmd, this.options, true));
         return this;
@@ -485,9 +480,7 @@ export class CLIApp extends CLICommandBuilder {
                 this.processArgs.indexOf(this.options.flags.language.short) >= 0
                     ? this.processArgs.indexOf(this.options.flags.language.short)
                     : this.processArgs.indexOf(this.options.flags.language.long);
-            return this.processArgs.length > langIndex
-                ? this.processArgs[langIndex + 1]
-                : envLocale;
+            return this.processArgs.length > langIndex ? this.processArgs[langIndex + 1] : envLocale;
         }
         return envLocale;
     }
@@ -498,8 +491,7 @@ export class CLIApp extends CLICommandBuilder {
     private getUserEnvLocale(): string {
         const env = process.env ?? {};
         // Retrieve locale from environment
-        const locale: string =
-            env.LANG ?? env.LANGUAGE ?? env.LC_NAME ?? env.LC_ALL ?? env.LC_MESSAGES ?? '';
+        const locale: string = env.LANG ?? env.LANGUAGE ?? env.LC_NAME ?? env.LC_ALL ?? env.LC_MESSAGES ?? '';
         // The locale from environment is returned as something like 'es_ES.UTF-8'.
         // The encoding is not needed at all for our translation system.
         const localeName = locale?.split('.')?.[0];

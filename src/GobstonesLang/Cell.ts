@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * @module GobstonesLang
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -574,11 +586,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
             if (!this.isAtBorderAt(dir) && location !== 'diagonal') {
                 neighbors.push(this.neighborTo(dir) as Cell);
             }
-            if (
-                !this.isAtBorderAt(dir) &&
-                !this.isAtBorderAt(nextDir) &&
-                location !== 'orthogonal'
-            ) {
+            if (!this.isAtBorderAt(dir) && !this.isAtBorderAt(nextDir) && location !== 'orthogonal') {
                 neighbors.push(
                     this.neighborDiagonalTo(
                         Direction.isVertical(dir) ? dir : nextDir,
@@ -656,11 +664,7 @@ export class Cell extends EventEmitter<CellEvents> implements CellInfo {
      * @param amount The amount to set the stones of that color.
      * @param performedAction The attempt to set the error to in case of failure.
      */
-    private innerSetStones(
-        color: Color,
-        amount: number,
-        performedAction: StonesChangeActionAttempt
-    ): void {
+    private innerSetStones(color: Color, amount: number, performedAction: StonesChangeActionAttempt): void {
         expect(amount)
             .toBeGreaterThanOrEqual(0)
             .orThrow(new InvalidStonesAmount(performedAction, color.toString(), amount, this));

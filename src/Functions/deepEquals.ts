@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * @module Functions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -199,11 +211,7 @@ const setEquals = <T>(a: Set<T>, b: Set<T>): boolean => {
  *
  * @returns `true` if both Maps are equal, `false` otherwise.
  */
-const mapEquals = <K, V>(
-    a: Map<K, V>,
-    b: Map<K, V>,
-    innerComparer: (a: V, b: V) => boolean
-): boolean => {
+const mapEquals = <K, V>(a: Map<K, V>, b: Map<K, V>, innerComparer: (a: V, b: V) => boolean): boolean => {
     if (a.size !== b.size) return false;
     const aEntries = a.entries();
     let aNext = aEntries.next();
@@ -236,8 +244,7 @@ const errorEquals = (a: Error, b: Error): boolean => a.name === b.name && a.mess
  *
  * @returns `true` if both RegExp are equal, `false` otherwise.
  */
-const regexpEquals = (a: RegExp, b: RegExp): boolean =>
-    a.source === b.source && a.flags === b.flags;
+const regexpEquals = (a: RegExp, b: RegExp): boolean => a.source === b.source && a.flags === b.flags;
 
 /**
  * Answer if two Dates are equal. Two Date are equal when they both
@@ -274,5 +281,4 @@ const bufferEquals = (a: Buffer, b: Buffer): boolean => {
  *
  * @returns `true` if the element is a Buffer, `false` otherwise.
  */
-const isBuffer = (x: any): boolean =>
-    !!(x.constructor && x.constructor.isBuffer && x.constructor.isBuffer(x));
+const isBuffer = (x: any): boolean => !!(x.constructor && x.constructor.isBuffer && x.constructor.isBuffer(x));

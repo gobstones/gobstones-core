@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 import { describe, expect, it } from '@jest/globals';
 
 import { expect as assert } from '../../src/Expectations';
@@ -28,9 +40,7 @@ describe('IGenericExpectation', () => {
                 expect(assert([1, 2, 3, 4]).toBe([5, 6, 7, 8]).getResult()).toBe(false);
 
                 expect(
-                    assert({ a: 1, b: 2, c: 'hello', d: 'world' })
-                        .toBe({ a: 7, b: 8, c: 'hi', d: 'earth' })
-                        .getResult()
+                    assert({ a: 1, b: 2, c: 'hello', d: 'world' }).toBe({ a: 7, b: 8, c: 'hi', d: 'earth' }).getResult()
                 ).toBe(false);
 
                 // Should match the same object, not deep matching
@@ -440,9 +450,7 @@ describe('IGenericExpectation', () => {
 
                 expect(assert(false).not.toHaveType('boolean').getResult()).toBe(false);
 
-                expect(assert({ a: 'hello', b: 5 }).not.toHaveType('object').getResult()).toBe(
-                    false
-                );
+                expect(assert({ a: 'hello', b: 5 }).not.toHaveType('object').getResult()).toBe(false);
 
                 expect(assert([1, 3, 4]).not.toHaveType('array').getResult()).toBe(false);
             });

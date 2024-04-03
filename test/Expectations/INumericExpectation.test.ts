@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 import { describe, expect, it } from '@jest/globals';
 
 import { expect as assert } from '../../src/Expectations';
@@ -296,35 +308,32 @@ describe('INumericExpectation', () => {
                 ).toBe(false);
             });
         });
-        given(
-            'when actual is not close by the given decimals to expected but not was called',
-            () => {
-                it('Should have true result', () => {
-                    expect(
-                        assert(3.0 + 1.0005)
-                            .not.toBeCloseTo(4.0)
-                            .getResult()
-                    ).toBe(true);
+        given('when actual is not close by the given decimals to expected but not was called', () => {
+            it('Should have true result', () => {
+                expect(
+                    assert(3.0 + 1.0005)
+                        .not.toBeCloseTo(4.0)
+                        .getResult()
+                ).toBe(true);
 
-                    expect(
-                        assert(3.0 + 1.001)
-                            .not.toBeCloseTo(4.0, 3)
-                            .getResult()
-                    ).toBe(true);
+                expect(
+                    assert(3.0 + 1.001)
+                        .not.toBeCloseTo(4.0, 3)
+                        .getResult()
+                ).toBe(true);
 
-                    expect(
-                        assert(3.0 + 1.0001)
-                            .not.toBeCloseTo(4.0, 4)
-                            .getResult()
-                    ).toBe(true);
+                expect(
+                    assert(3.0 + 1.0001)
+                        .not.toBeCloseTo(4.0, 4)
+                        .getResult()
+                ).toBe(true);
 
-                    expect(
-                        assert(3.0 + 1.1)
-                            .not.toBeCloseTo(4.0, 1)
-                            .getResult()
-                    ).toBe(true);
-                });
-            }
-        );
+                expect(
+                    assert(3.0 + 1.1)
+                        .not.toBeCloseTo(4.0, 1)
+                        .getResult()
+                ).toBe(true);
+            });
+        });
     });
 });

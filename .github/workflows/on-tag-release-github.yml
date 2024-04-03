@@ -20,7 +20,7 @@ jobs:
             - name: Installing project dependencies
               run: npm install
             - name: Building the project
-              run: npm run build
+              run: npm start build
             - name: Create Release on GitHub
               uses: ncipollo/release-action@v1
               with:

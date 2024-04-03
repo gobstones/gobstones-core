@@ -1,11 +1,19 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 // Imports
 import * as SR from '../../src/SourceReader';
 
-import {
-    ErrorAtEndOfDocumentBy,
-    ErrorAtEndOfInputBy,
-    ErrorNoInput
-} from '../../src/SourceReader/SourceReaderErrors';
+import { ErrorAtEndOfDocumentBy, ErrorAtEndOfInputBy, ErrorNoInput } from '../../src/SourceReader/SourceReaderErrors';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import { fail } from 'assert';
@@ -318,16 +326,11 @@ describe('SourceReader empty inputs', () => {
         verifyEmptyFileInSourceReader(new SR.SourceReader({ empty1: '' }, defaultLineEnders));
     });
     it('SR.empty - o2.0*', () => {
-        verifyEmptyFileInSourceReader(
-            new SR.SourceReader({ empty1: '', empty2: '' }, defaultLineEnders)
-        );
+        verifyEmptyFileInSourceReader(new SR.SourceReader({ empty1: '', empty2: '' }, defaultLineEnders));
     });
     it('SR.empty - oN.0*', () => {
         verifyEmptyFileInSourceReader(
-            new SR.SourceReader(
-                { empty1: '', empty2: '', empty3: '', empty4: '' },
-                defaultLineEnders
-            )
+            new SR.SourceReader({ empty1: '', empty2: '', empty3: '', empty4: '' }, defaultLineEnders)
         );
     });
 });
@@ -1202,12 +1205,7 @@ describe('SourceReader array 2, several lines', () => {
                 vInpConts,
                 inpConts,
                 [inputLines[0][0].slice(0, col - 1)],
-                [
-                    inputLines[0][0].slice(col - 1),
-                    inputLines[0][1],
-                    inputLines[0][2],
-                    inputLines[0][3]
-                ]
+                [inputLines[0][0].slice(col - 1), inputLines[0][1], inputLines[0][2], inputLines[0][3]]
             );
         });
         describe('Regions', () => {
@@ -1295,12 +1293,7 @@ describe('SourceReader array 2, several lines', () => {
                 vInpConts,
                 inpConts,
                 [inputLines[0][0].slice(0, col - 1)],
-                [
-                    inputLines[0][0].slice(col - 1),
-                    inputLines[0][1],
-                    inputLines[0][2],
-                    inputLines[0][3]
-                ]
+                [inputLines[0][0].slice(col - 1), inputLines[0][1], inputLines[0][2], inputLines[0][3]]
             );
         });
         describe('Regions', () => {
@@ -1390,12 +1383,7 @@ describe('SourceReader array 2, several lines', () => {
                 vInpConts,
                 inpConts,
                 [inputLines[0][0].slice(0, col - 1)],
-                [
-                    inputLines[0][0].slice(col - 1),
-                    inputLines[0][1],
-                    inputLines[0][2],
-                    inputLines[0][3]
-                ]
+                [inputLines[0][0].slice(col - 1), inputLines[0][1], inputLines[0][2], inputLines[0][3]]
             );
         });
         describe('Regions', () => {
@@ -1576,12 +1564,7 @@ describe('SourceReader array 2, several lines', () => {
                 inputName,
                 vInpConts,
                 inpConts,
-                [
-                    inputLines[0][0],
-                    inputLines[0][1],
-                    inputLines[0][2],
-                    inputLines[0][3].slice(col - 1)
-                ],
+                [inputLines[0][0], inputLines[0][1], inputLines[0][2], inputLines[0][3].slice(col - 1)],
                 [inputLines[0][3].slice(0, col - 1)]
             );
         });

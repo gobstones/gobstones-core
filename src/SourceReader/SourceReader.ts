@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  * @module SourceReader
@@ -349,12 +361,7 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Protected for Source Reader
      * @private
      */
-    public constructor(
-        sourceReader: SourceReader,
-        line: number,
-        column: number,
-        regions: string[]
-    ) {
+    public constructor(sourceReader: SourceReader, line: number, column: number, regions: string[]) {
         super();
         this._sourceReader = sourceReader;
         this._line = line;
@@ -523,14 +530,8 @@ export abstract class KnownSourcePosition extends SourcePosition {
      * @group Implementation: Auxiliaries
      * @private
      */
-    protected _validateSourceReaders(
-        that: KnownSourcePosition,
-        operation: string,
-        context: string
-    ): void {
-        expect(this.sourceReader)
-            .toBe(that.sourceReader)
-            .orThrow(new ErrorUnmatchingPositionsBy(operation, context));
+    protected _validateSourceReaders(that: KnownSourcePosition, operation: string, context: string): void {
+        expect(this.sourceReader).toBe(that.sourceReader).orThrow(new ErrorUnmatchingPositionsBy(operation, context));
     }
 
     /**
@@ -656,12 +657,7 @@ export class EndOfInputSourcePosition extends KnownSourcePosition {
      * @group Implementation: Protected for Source Reader
      * @private
      */
-    public constructor(
-        sourceReader: SourceReader,
-        line: number,
-        column: number,
-        regions: string[]
-    ) {
+    public constructor(sourceReader: SourceReader, line: number, column: number, regions: string[]) {
         super(sourceReader, line, column, regions);
     }
     // ------------------
@@ -1251,15 +1247,7 @@ export class DefinedSourcePosition extends DocumentSourcePosition {
      * @group API: Access
      */
     public toString(): string {
-        return (
-            '@<' +
-            this.documentName +
-            (this.documentName === '' ? '' : ':') +
-            this._line +
-            ',' +
-            this._column +
-            '>'
-        );
+        return '@<' + this.documentName + (this.documentName === '' ? '' : ':') + this._line + ',' + this._column + '>';
     }
     // ------------------
     // #endregion } API: Access
@@ -1691,9 +1679,7 @@ export class SourceReader {
         // Optimized by manually inlining:
         //    expect(this.atEndOfInput())
         // ===     (inlining)
-        expect(!this._hasMoreDocuments())
-            .toBe(false)
-            .orThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
+        expect(!this._hasMoreDocuments()).toBe(false).orThrow(new ErrorAtEndOfInputBy('peek', 'SourceReader'));
         // Optimized by manually inlining and simplifying:
         //    expect(this.atEndOfDocument())
         // ===     (inlining)
@@ -1746,12 +1732,7 @@ export class SourceReader {
         //    if (this.atEndOfInput()) {
         // ===     (inlining)
         if (!this._hasMoreDocuments()) {
-            return new EndOfInputSourcePosition(
-                this,
-                this._line,
-                this._column,
-                this._cloneRegions()
-            );
+            return new EndOfInputSourcePosition(this, this._line, this._column, this._cloneRegions());
         } else {
             return this.getDocumentPosition();
         }
@@ -2119,8 +2100,7 @@ export class SourceReader {
             // peeking.
             // Precondition satisfied: !atEndOfInput() && !atEndOfSting().
             if (!silently) {
-                this._visibleDocumentContents[this._documentsNames[this._documentIndex]] +=
-                    this.peek();
+                this._visibleDocumentContents[this._documentsNames[this._documentIndex]] += this.peek();
                 if (this._isEndOfLine(this.peek())) {
                     this._line++;
                     this._column = 1;
@@ -2142,11 +2122,7 @@ export class SourceReader {
      * @group Implementation: Auxiliaries
      * @private
      */
-    private _inputFromToIn(
-        from: KnownSourcePosition,
-        to: KnownSourcePosition,
-        visible: boolean = false
-    ): string {
+    private _inputFromToIn(from: KnownSourcePosition, to: KnownSourcePosition, visible: boolean = false): string {
         let inputFrom: number;
         let charFrom: number;
         // Distinguish between the two subclasses of KnownSourcePosition
@@ -2187,9 +2163,7 @@ export class SourceReader {
                 ? this._visibleDocumentContentsAt(inputFrom).slice(charFrom)
                 : this._fullDocumentContentsAt(inputFrom).slice(charFrom);
             for (let i = inputFrom + 1; i < inputTo; i++) {
-                slice += visible
-                    ? this._visibleDocumentContentsAt(i)
-                    : this._fullDocumentContentsAt(i);
+                slice += visible ? this._visibleDocumentContentsAt(i) : this._fullDocumentContentsAt(i);
             }
             slice += visible
                 ? this._visibleDocumentContentsAt(inputTo).slice(0, charTo)

@@ -1,5 +1,14 @@
 #!/usr/bin/env sh
 
+# Load husky
+. "$(dirname -- "$0")/_/husky.sh";
+
+# Read parameters
+# NOTHING TO READ HERE
+
+# Set failing on command fail, pipe fail, and undefined variable use
+set -euo pipefail
+
 # This hook is invoked by git-commit, and can be bypassed with the
 # --no-verify option. It takes no parameters, and is invoked before
 # obtaining the proposed commit log message and making a commit.
@@ -16,12 +25,6 @@
 
 # The default pre-commit hook, when enabled and with the hooks.allownonascii
 # config option unset or set to false prevents the use of non-ASCII filenames.
-
-# Load husky
-. "$(dirname -- "$0")/_/husky.sh";
-
-# Read parameters
-# NOTHING TO READ HERE
 
 # We currently use this hook to update the changelog of the project
 # and make sure all files are prettified before sending them to the commit.
@@ -44,6 +47,10 @@ npx --no gobstones-scripts run changelog --silent ;
 # Add all generated files
 echo "\nAdd generated files to commit\n";
 git add --all;
+
+# Run license
+echo "\nAdd license text to code files\n";
+npx --no gobstones-scripts run license --silent ;
 
 # Exit
 exit 0;

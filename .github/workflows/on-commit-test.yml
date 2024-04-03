@@ -21,7 +21,7 @@ jobs:
                   node-version: '20'
             - name: Installing project dependencies
               run: npm install
-            - name: Build the code
-              run: npm test
+            - name: Test the code
+              run: npm start test
               env:
                   CI: true

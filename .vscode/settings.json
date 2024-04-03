@@ -1,13 +1,18 @@
 {
+    // Node and npm configuration
     "npm.autoDetect": "on",
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "cSpell.enabled": true,
+    "debug.node.autoAttach": "smart",
     "files.exclude": {
         "tsconfig.build.json": true
     },
+    // Code style, regular and ESLint related
     "files.trimTrailingWhitespace": true,
-    "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "cSpell.words": ["Tlocale"],
-    "debug.node.autoAttach": "smart"
+    "eslint.validate": ["typescript"],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+    "editor.formatOnSave": false,
+    // CSpell
+    "cSpell.words": []
 }

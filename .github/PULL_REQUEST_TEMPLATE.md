@@ -21,8 +21,8 @@ Before opening a pull request, please ensure:
         issues
 
 Be kind to code reviewers, please try to keep pull requests as small and focused
-as possible :)
+as possible.
 
-**IMPORTANT**: By submitting a patch, you agree to allow the project owners to
-license your work under the terms of the
-[MIT License](https://github.com/gobstones/gobstones-guidelines/blob/main/LICENSE).
+**IMPORTANT**: By submitting a patch, you agree to allow the project
+owners to license your work under the terms of our
+[License](https://github.com/gobstones/gobstones-guidelines/blob/main/LICENSE).

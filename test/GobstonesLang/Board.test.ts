@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 import { Board, Cell, Color, Direction } from '../../src/GobstonesLang';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
@@ -40,13 +52,9 @@ describe(`Board`, () => {
         expect(newBoard.headY).toBe(board.headY);
         newBoard.foreachCells((cell, j, i) => {
             expect(cell.getStonesOf(Color.Blue)).toBe(board.getCell(i, j).getStonesOf(Color.Blue));
-            expect(cell.getStonesOf(Color.Black)).toBe(
-                board.getCell(i, j).getStonesOf(Color.Black)
-            );
+            expect(cell.getStonesOf(Color.Black)).toBe(board.getCell(i, j).getStonesOf(Color.Black));
             expect(cell.getStonesOf(Color.Red)).toBe(board.getCell(i, j).getStonesOf(Color.Red));
-            expect(cell.getStonesOf(Color.Green)).toEqual(
-                board.getCell(i, j).getStonesOf(Color.Green)
-            );
+            expect(cell.getStonesOf(Color.Green)).toEqual(board.getCell(i, j).getStonesOf(Color.Green));
         });
     });
 
@@ -164,22 +172,13 @@ describe(`Board`, () => {
     });
 
     it(`Answers with a correct result when folding over cells`, () => {
-        const totalOfRed = board.foldCells(
-            (total: number, cell: Cell) => total + cell.getStonesOf(Color.Red),
-            0
-        );
+        const totalOfRed = board.foldCells((total: number, cell: Cell) => total + cell.getStonesOf(Color.Red), 0);
         expect(totalOfRed).toBe(5);
 
-        const totalOfGreen = board.foldCells(
-            (total: number, cell: Cell) => total + cell.getStonesOf(Color.Green),
-            0
-        );
+        const totalOfGreen = board.foldCells((total: number, cell: Cell) => total + cell.getStonesOf(Color.Green), 0);
         expect(totalOfGreen).toBe(7);
 
-        const totalOfStones = board.foldCells(
-            (total: number, cell: Cell) => total + cell.getStonesAmount(),
-            0
-        );
+        const totalOfStones = board.foldCells((total: number, cell: Cell) => total + cell.getStonesAmount(), 0);
         expect(totalOfStones).toBe(20);
     });
 
@@ -192,9 +191,7 @@ describe(`Board`, () => {
 
         const matrixWithStoneAmount = board.mapCells((cell: Cell) => cell.getStonesAmount());
         expect(matrixWithStoneAmount).toStrictEqual(
-            matrix(5, 7, (x, y) =>
-                x === 0 && y === 0 ? 2 : x === 0 ? 1 : y === 0 ? 1 : x === 2 && y === 3 ? 8 : 0
-            )
+            matrix(5, 7, (x, y) => (x === 0 && y === 0 ? 2 : x === 0 ? 1 : y === 0 ? 1 : x === 2 && y === 3 ? 8 : 0))
         );
     });
 

@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 import { describe, expect, it } from '@jest/globals';
 
 import { deepEquals } from '../../src/Functions/deepEquals';
@@ -31,12 +43,7 @@ describe(`deepEquals`, () => {
     given('equally shaped objects with same values in each key', () => {
         it(`Should return true`, () => {
             expect(deepEquals({ a: 1, b: 2, c: 3 }, { a: 1, b: 2, c: 3 })).toBe(true);
-            expect(
-                deepEquals(
-                    { a: 1, b: 2, c: { ca: 31, cb: 32 } },
-                    { a: 1, b: 2, c: { ca: 31, cb: 32 } }
-                )
-            ).toBe(true);
+            expect(deepEquals({ a: 1, b: 2, c: { ca: 31, cb: 32 } }, { a: 1, b: 2, c: { ca: 31, cb: 32 } })).toBe(true);
             expect(
                 deepEquals(
                     { a: 1, b: 2, c: { ca: 31, cb: { cba: 321, cbb: 322 } } },
@@ -99,16 +106,10 @@ describe(`deepEquals`, () => {
             expect(deepEquals(new Date(2000, 0, 1), new Date(2000, 0, 1))).toBe(true);
             expect(deepEquals(new Date(2000, 0, 1), new Date('1/1/2000'))).toBe(true);
             expect(deepEquals(new Date(2000, 0, 1), new Date('1/1/2000'))).toBe(true);
-            expect(
-                deepEquals(new Date(2000, 0, 1, 12, 30, 25), new Date('1/1/2000 12:30:25'))
-            ).toBe(true);
+            expect(deepEquals(new Date(2000, 0, 1, 12, 30, 25), new Date('1/1/2000 12:30:25'))).toBe(true);
             expect(deepEquals(new Date(2000, 0, 1), new Date('January 1, 2000'))).toBe(true);
-            expect(
-                deepEquals(new Date(2000, 0, 1, 12, 30, 45, 265), new Date('2000-1-1 12:30:45.265'))
-            ).toBe(true);
-            expect(
-                deepEquals(new Date(2000, 0, 1, 12, 30, 45, 265), new Date('2000-1-1 12:30:45.265'))
-            ).toBe(true);
+            expect(deepEquals(new Date(2000, 0, 1, 12, 30, 45, 265), new Date('2000-1-1 12:30:45.265'))).toBe(true);
+            expect(deepEquals(new Date(2000, 0, 1, 12, 30, 45, 265), new Date('2000-1-1 12:30:45.265'))).toBe(true);
         });
     });
     given('equal errors (same msg and name)', () => {
@@ -168,24 +169,17 @@ describe(`deepEquals`, () => {
             expect(deepEquals([1, 2, 0, 4], [1, 2, 3, 4])).toBe(false);
             expect(deepEquals([0, 2, 3, 4], [1, 2, 3, 4])).toBe(false);
             expect(deepEquals(['a', 'b', 'c'], ['a', 'x', 'c'])).toBe(false);
-            expect(deepEquals([{ a: 1 }, { b: 2 }, { d: 0 }], [{ a: 1 }, { b: 2 }, { c: 3 }])).toBe(
-                false
-            );
-            expect(deepEquals([{ a: 1 }, { b: 0 }, { c: 3 }], [{ a: 1 }, { b: 2 }, { c: 3 }])).toBe(
-                false
-            );
+            expect(deepEquals([{ a: 1 }, { b: 2 }, { d: 0 }], [{ a: 1 }, { b: 2 }, { c: 3 }])).toBe(false);
+            expect(deepEquals([{ a: 1 }, { b: 0 }, { c: 3 }], [{ a: 1 }, { b: 2 }, { c: 3 }])).toBe(false);
         });
     });
 
     given('objects with the different shape', () => {
         it(`Should return false`, () => {
             expect(deepEquals({ a: 1, b: 2, c: 3 }, { a: 1, b: 2, c: 3, d: 4 })).toBe(false);
-            expect(
-                deepEquals(
-                    { a: 1, b: 2, c: { ca: 31, cc: 33 } },
-                    { a: 1, b: 2, c: { ca: 31, cb: 32 } }
-                )
-            ).toBe(false);
+            expect(deepEquals({ a: 1, b: 2, c: { ca: 31, cc: 33 } }, { a: 1, b: 2, c: { ca: 31, cb: 32 } })).toBe(
+                false
+            );
             expect(
                 deepEquals(
                     { a: 1, b: 2, c: { ca: 31, cb: { cba: 321, cbb: 322 } } },
@@ -198,12 +192,7 @@ describe(`deepEquals`, () => {
     given('objects with the same shape but different values in any key', () => {
         it(`Should return false`, () => {
             expect(deepEquals({ a: 1, b: 2, c: 3 }, { a: 1, b: 2, c: 0 })).toBe(false);
-            expect(
-                deepEquals(
-                    { a: 1, b: 2, c: { ca: 31, cb: 0 } },
-                    { a: 1, b: 2, c: { ca: 31, cb: 32 } }
-                )
-            ).toBe(false);
+            expect(deepEquals({ a: 1, b: 2, c: { ca: 31, cb: 0 } }, { a: 1, b: 2, c: { ca: 31, cb: 32 } })).toBe(false);
             expect(
                 deepEquals(
                     { a: 1, b: 2, c: { ca: 31, cb: { cba: 321, cbb: 322 } } },
@@ -328,13 +317,9 @@ describe(`deepEquals`, () => {
             expect(deepEquals(new Date(2000, 1, 1), new Date(2000, 0, 1))).toBe(false);
             expect(deepEquals(new Date(2000, 0, 1), new Date('1/1/2001'))).toBe(false);
             expect(deepEquals(new Date(2000, 0, 1), new Date('1/1/2000 12:30:45'))).toBe(false);
-            expect(
-                deepEquals(new Date(2000, 0, 1, 12, 30, 25), new Date('1/1/2001 12:30:25'))
-            ).toBe(false);
+            expect(deepEquals(new Date(2000, 0, 1, 12, 30, 25), new Date('1/1/2001 12:30:25'))).toBe(false);
             expect(deepEquals(new Date(2000, 0, 1), new Date('January 1, 2010'))).toBe(false);
-            expect(
-                deepEquals(new Date(2000, 0, 1, 12, 30, 45, 265), new Date('2000-1-1 12:30:45.266'))
-            ).toBe(false);
+            expect(deepEquals(new Date(2000, 0, 1, 12, 30, 45, 265), new Date('2000-1-1 12:30:45.266'))).toBe(false);
         });
     });
 

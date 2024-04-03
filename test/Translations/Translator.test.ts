@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import { Translator } from '../../src/Translations/Translator';
@@ -84,12 +96,7 @@ describe(`Translator`, () => {
         describe('getLocale', () => {
             it(`Return current locale as default locale, unless otherwise specified`, () => {
                 expect(unflatTranslator.getLocale()).toBe('lang1');
-                const translatorWithOtherLocale = new Translator<Locale>(
-                    { lang1, lang2 },
-                    'lang1',
-                    false,
-                    'lang2'
-                );
+                const translatorWithOtherLocale = new Translator<Locale>({ lang1, lang2 }, 'lang1', false, 'lang2');
                 expect(translatorWithOtherLocale.getLocale()).toBe('lang2');
             });
         });
@@ -143,12 +150,7 @@ describe(`Translator`, () => {
         describe('getLocale', () => {
             it(`Return current locale as default locale, unless otherwise specified`, () => {
                 expect(flatTranslator.getLocale()).toBe('lang1');
-                const translatorWithOtherLocale = new Translator<Locale>(
-                    { lang1, lang2 },
-                    'lang1',
-                    true,
-                    'lang2'
-                );
+                const translatorWithOtherLocale = new Translator<Locale>({ lang1, lang2 }, 'lang1', true, 'lang2');
                 expect(translatorWithOtherLocale.getLocale()).toBe('lang2');
             });
         });
@@ -189,15 +191,9 @@ describe(`Translator`, () => {
                 expect(flatTranslator.translate('deep1.deep2.msg1')).toBe('lang2-deep1-deep2-msg1');
             });
             it(`Translates using the given interpolations`, () => {
-                expect(flatTranslator.translate('deep1.msg1', { key: 'test' })).toBe(
-                    'lang1-deep1-msg1'
-                );
-                expect(flatTranslator.translate('deep1.msg2', { key: 'test' })).toBe(
-                    'lang1-deep1-msg2 test'
-                );
-                expect(flatTranslator.translate('deep1.msg2', { nonexistent: 'test' })).toBe(
-                    'lang1-deep1-msg2 ${key}'
-                );
+                expect(flatTranslator.translate('deep1.msg1', { key: 'test' })).toBe('lang1-deep1-msg1');
+                expect(flatTranslator.translate('deep1.msg2', { key: 'test' })).toBe('lang1-deep1-msg2 test');
+                expect(flatTranslator.translate('deep1.msg2', { nonexistent: 'test' })).toBe('lang1-deep1-msg2 ${key}');
             });
             it(`Retrieves the key when a translation is not found`, () => {
                 expect(flatTranslator.translate('nonexistent')).toBe('nonexistent');

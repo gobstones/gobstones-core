@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 /**
  * @module GobstonesLang
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
@@ -25,12 +37,7 @@ export type LocationChangeActionAttempt = 'Move' | 'SetLocation' | 'MoveToEdge';
  * @group API: Options
  * @internal
  */
-export type InvalidSizeChangeAttempt =
-    | 'Resize'
-    | 'RemoveRow'
-    | 'RemoveColumn'
-    | 'AddRows'
-    | 'AddColumns';
+export type InvalidSizeChangeAttempt = 'Resize' | 'RemoveRow' | 'RemoveColumn' | 'AddRows' | 'AddColumns';
 /**
  * The operation attempted to be performed when a {@link InvalidStonesAmount} error ocurred.
  *
@@ -100,8 +107,7 @@ export class InvalidCellReading extends BoardError {
     public constructor(attempt: CellReadingActionAttempt, failingCoordinate: CellLocation) {
         super(
             'InvalidCellReading',
-            `The attempt of ${attempt} failed for coordinate ` +
-                `[${failingCoordinate[0]}, ${failingCoordinate[1]}].`
+            `The attempt of ${attempt} failed for coordinate ` + `[${failingCoordinate[0]}, ${failingCoordinate[1]}].`
         );
         this.attempt = attempt;
         this.failingCoordinate = failingCoordinate;
@@ -197,16 +203,8 @@ export class InvalidStonesAmount extends BoardError {
     /** The state the cell was previously in */
     public readonly previousCellState: CellInfo;
 
-    public constructor(
-        attempt: StonesChangeActionAttempt,
-        color: string,
-        amount: number,
-        previousCellState: CellInfo
-    ) {
-        super(
-            'InvalidStonesAmount',
-            `The attempt of ${attempt} failed for color ${color} given ${amount}.`
-        );
+    public constructor(attempt: StonesChangeActionAttempt, color: string, amount: number, previousCellState: CellInfo) {
+        super('InvalidStonesAmount', `The attempt of ${attempt} failed for color ${color} given ${amount}.`);
         this.attempt = attempt;
         this.color = color;
         this.amount = amount;

@@ -1,3 +1,15 @@
+/*
+ * *****************************************************************************
+ * Copyright (C) National University of Quilmes 2012-2024
+ * Gobstones is a registered trademark of the National University of Quilmes.
+ *
+ * This program is free software distributed under the terms of the
+ * GNU Affero General Public License version 3.
+ *
+ * Additional terms added in compliance to section 7 of such license apply.
+ * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
+ * *****************************************************************************
+ */
 import { Board, Cell, Color, Direction } from '../../src/GobstonesLang';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
@@ -178,9 +190,7 @@ describe(`Cell`, () => {
         expect(headCell.getStonesOf(Color.Blue)).toBe(2147483647);
         expect(headCell.getStonesOf(Color.Black)).toBe(2147483648);
         expect(headCell.getStonesOf(Color.Red)).toBe(4294967296);
-        expect(headCell.getStonesOf(Color.Green)).toBe(
-            1427247692705959881058285969449495136382746624
-        );
+        expect(headCell.getStonesOf(Color.Green)).toBe(1427247692705959881058285969449495136382746624);
     });
 
     it(`Throws an InvalidStonesAmount with the attempt set to SetStones with negatives`, () => {
@@ -347,26 +357,14 @@ describe(`Cell`, () => {
 
     it(`Answers correctly when asked for the diagonal neighbor`, () => {
         // 2, 3
-        expect(headCell.neighborDiagonalTo(Direction.North, Direction.East)).toBe(
-            board.getCell(3, 4)
-        );
-        expect(headCell.neighborDiagonalTo(Direction.North, Direction.West)).toBe(
-            board.getCell(1, 4)
-        );
-        expect(headCell.neighborDiagonalTo(Direction.South, Direction.East)).toBe(
-            board.getCell(3, 2)
-        );
-        expect(headCell.neighborDiagonalTo(Direction.South, Direction.West)).toBe(
-            board.getCell(1, 2)
-        );
+        expect(headCell.neighborDiagonalTo(Direction.North, Direction.East)).toBe(board.getCell(3, 4));
+        expect(headCell.neighborDiagonalTo(Direction.North, Direction.West)).toBe(board.getCell(1, 4));
+        expect(headCell.neighborDiagonalTo(Direction.South, Direction.East)).toBe(board.getCell(3, 2));
+        expect(headCell.neighborDiagonalTo(Direction.South, Direction.West)).toBe(board.getCell(1, 2));
 
-        expect(cornerCell.neighborDiagonalTo(Direction.South, Direction.West)).toBe(
-            board.getCell(3, 5)
-        );
+        expect(cornerCell.neighborDiagonalTo(Direction.South, Direction.West)).toBe(board.getCell(3, 5));
 
-        expect(originCell.neighborDiagonalTo(Direction.North, Direction.East)).toBe(
-            board.getCell(1, 1)
-        );
+        expect(originCell.neighborDiagonalTo(Direction.North, Direction.East)).toBe(board.getCell(1, 1));
     });
 
     it(`Answers with undefined when neighbors do not exist`, () => {
@@ -420,15 +418,11 @@ describe(`Cell`, () => {
 
         const cornerNeighbors = cornerCell.neighbors('diagonal');
         expect(cornerNeighbors.length).toBe(1);
-        expect(cornerNeighbors[0]).toBe(
-            cornerCell.neighborDiagonalTo(Direction.South, Direction.West)
-        );
+        expect(cornerNeighbors[0]).toBe(cornerCell.neighborDiagonalTo(Direction.South, Direction.West));
 
         const originNeighbors = originCell.neighbors('diagonal');
         expect(originNeighbors.length).toBe(1);
-        expect(originNeighbors[0]).toBe(
-            originCell.neighborDiagonalTo(Direction.North, Direction.East)
-        );
+        expect(originNeighbors[0]).toBe(originCell.neighborDiagonalTo(Direction.North, Direction.East));
     });
 
     it(`Answers neighbors are to all directions and corners when both given`, () => {
@@ -446,17 +440,13 @@ describe(`Cell`, () => {
         const cornerNeighbors = cornerCell.neighbors('both');
         expect(cornerNeighbors.length).toBe(3);
         expect(cornerNeighbors[0]).toBe(cornerCell.neighborTo(Direction.South));
-        expect(cornerNeighbors[1]).toBe(
-            cornerCell.neighborDiagonalTo(Direction.South, Direction.West)
-        );
+        expect(cornerNeighbors[1]).toBe(cornerCell.neighborDiagonalTo(Direction.South, Direction.West));
         expect(cornerNeighbors[2]).toBe(cornerCell.neighborTo(Direction.West));
 
         const originNeighbors = originCell.neighbors('both');
         expect(originNeighbors.length).toBe(3);
         expect(originNeighbors[0]).toBe(originCell.neighborTo(Direction.North));
-        expect(originNeighbors[1]).toBe(
-            originCell.neighborDiagonalTo(Direction.North, Direction.East)
-        );
+        expect(originNeighbors[1]).toBe(originCell.neighborDiagonalTo(Direction.North, Direction.East));
         expect(originNeighbors[2]).toBe(originCell.neighborTo(Direction.East));
     });
 });
