@@ -1,30 +1,9 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones (TM) is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3. Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- *
- * Additional terms added in compliance to section 7 of such license apply.
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
- * @module Functions
+ * @module API.Functions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
+import { isBuffer } from './isBuffer';
 
 /**
  * Answer wether or not two elements are semantically equal, considering them
@@ -72,7 +51,7 @@
  *
  * @return `true` if both elements are equal, `false` otherwise.
  *
- * @group API: Main
+ * @group API: Functions
  */
 export const deepEquals = <T>(first: T, second: T): boolean => {
     const compare = (a: any, b: any): boolean => {
@@ -121,6 +100,9 @@ export const deepEquals = <T>(first: T, second: T): boolean => {
  * @param b The second number
  *
  * @returns true when both numbers are the same, or both are NaN.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const numberEquals = (a: number, b: number): boolean => {
     if (Number.isNaN(a) && Number.isNaN(b)) return true;
@@ -139,6 +121,9 @@ const numberEquals = (a: number, b: number): boolean => {
  * @param innerComparer The function for testing if two inner elements are equal
  *
  * @returns `true` if both arrays are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const arrayEquals = <T>(aArr: T[], bArr: T[], innerComparer: (a: T, b: T) => boolean): boolean => {
     // Two arrays should have the same length
@@ -166,6 +151,9 @@ const arrayEquals = <T>(aArr: T[], bArr: T[], innerComparer: (a: T, b: T) => boo
  * @param innerComparer The function for testing if two inner elements are equal
  *
  * @returns `true` if both object are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const objectEquals = <T>(objA: T, objB: T, innerComparer: (a: T, b: T) => boolean): boolean => {
     // Obtain the object keys, sorted
@@ -197,6 +185,9 @@ const objectEquals = <T>(objA: T, objB: T, innerComparer: (a: T, b: T) => boolea
  * @param b The second object
  *
  * @returns `true` if both object are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const setEquals = <T>(a: Set<T>, b: Set<T>): boolean => {
     if (a.size !== b.size) return false;
@@ -221,6 +212,9 @@ const setEquals = <T>(a: Set<T>, b: Set<T>): boolean => {
  * @param innerComparer The function for testing if two inner elements are equal
  *
  * @returns `true` if both Maps are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const mapEquals = <K, V>(a: Map<K, V>, b: Map<K, V>, innerComparer: (a: V, b: V) => boolean): boolean => {
     if (a.size !== b.size) return false;
@@ -243,6 +237,9 @@ const mapEquals = <K, V>(a: Map<K, V>, b: Map<K, V>, innerComparer: (a: V, b: V)
  * @param b The second Error
  *
  * @returns `true` if both Errors are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const errorEquals = (a: Error, b: Error): boolean => a.name === b.name && a.message === b.message;
 
@@ -254,6 +251,9 @@ const errorEquals = (a: Error, b: Error): boolean => a.name === b.name && a.mess
  * @param b The second RegExp
  *
  * @returns `true` if both RegExp are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const regexpEquals = (a: RegExp, b: RegExp): boolean => a.source === b.source && a.flags === b.flags;
 
@@ -265,6 +265,9 @@ const regexpEquals = (a: RegExp, b: RegExp): boolean => a.source === b.source &&
  * @param b The second Date
  *
  * @returns `true` if both Date are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const dateEquals = (a: Date, b: Date): boolean => a.getTime() === b.getTime();
 
@@ -276,6 +279,9 @@ const dateEquals = (a: Date, b: Date): boolean => a.getTime() === b.getTime();
  * @param b The second Buffer
  *
  * @returns `true` if both Buffers are equal, `false` otherwise.
+ *
+ * @group Internal: Function
+ * @internal
  */
 const bufferEquals = (a: Buffer, b: Buffer): boolean => {
     if (a.length !== b.length) return false;
@@ -284,12 +290,3 @@ const bufferEquals = (a: Buffer, b: Buffer): boolean => {
     }
     return true;
 };
-
-/**
- * Answer if an element is a Buffer.
- *
- * @param x The element to test if it's a buffer
- *
- * @returns `true` if the element is a Buffer, `false` otherwise.
- */
-const isBuffer = (x: any): boolean => !!(x.constructor && x.constructor.isBuffer && x.constructor.isBuffer(x));

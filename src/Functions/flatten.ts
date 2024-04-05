@@ -1,28 +1,5 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones (TM) is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3. Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- *
- * Additional terms added in compliance to section 7 of such license apply.
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
- * @module Functions
+ * @module API.Functions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  *
  * Most of the code is copied from the `flat` library by
@@ -31,6 +8,8 @@
  * when using ESM instead of CJS.
  */
 
+import { isBuffer } from './isBuffer';
+
 /**
  * This type represent the options that are available for
  * a flattening action. This are copies of the definitions in
@@ -38,7 +17,7 @@
  * and we do not recommend to relay on them, as they might change
  * in the future.
  *
- * @group Internal: Definition types
+ * @group Internal: Types
  * @internal
  */
 export interface FlattenOptions {
@@ -55,7 +34,7 @@ export interface FlattenOptions {
  * and we do not recommend to relay on them, as they might change
  * in the future.
  *
- * @group Internal: Definition types
+ * @group Internal: Types
  * @internal
  */
 export interface UnflattenOptions {
@@ -101,7 +80,7 @@ flatten({
  * @param target The element to flatten.
  * @param options The option to flatten.
  *
- * @group API: Main
+ * @group API: Functions
  */
 export function flatten<TTarget extends Record<string, any>, TResult extends Record<string, any>>(
     target: TTarget,
@@ -173,7 +152,7 @@ unflatten({
  * @param target The element to unflatten.
  * @param options The option to unflatten.
  *
- * @group API: Main
+ * @group API: Functions
  */
 export function unflatten<TTarget extends Record<string, any>, TResult extends Record<string, any>>(
     target: TTarget,
@@ -268,9 +247,12 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
     return output as TResult;
 }
 
-const isBuffer = (obj: any): boolean =>
-    obj && obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj);
-
+/**
+ * The default options for the flatten function.
+ *
+ * @group Internal: Objects
+ * @internal
+ */
 const flattenOptionsDefaults: FlattenOptions = {
     delimiter: '.',
     maxDepth: undefined,
@@ -278,6 +260,12 @@ const flattenOptionsDefaults: FlattenOptions = {
     transformKey: (key: any): any => key
 };
 
+/**
+ * The default options for the unflatten function.
+ *
+ * @group Internal: Objects
+ * @internal
+ */
 const unflattenOptionsDefaults: UnflattenOptions = {
     delimiter: '.',
     object: false,

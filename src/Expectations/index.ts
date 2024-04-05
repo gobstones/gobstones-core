@@ -66,7 +66,7 @@ expect(x+y).toBeGreaterThan(z)
  * To see a list of all matchers, read the {@link expect} documentation, and the
  * {@link Matchers} documentation.
  *
- * @module Expectations
+ * @module API.Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-export * from './Expectations';
+export * from './expect';

@@ -1,28 +1,5 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones (TM) is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3. Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- *
- * Additional terms added in compliance to section 7 of such license apply.
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
- * @module Events
+ * @module API.Events
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
@@ -33,7 +10,7 @@
  * Multiple events could be added, with different signatures for each
  * subscriber.
  *
- * @group Internal: Definition types
+ * @group Internal: Types
  */
 export type EventSignature<L> = {
     [E in keyof L]: (...args: any[]) => any;
@@ -45,7 +22,7 @@ export type EventSignature<L> = {
  * functions are any function. This is the default behavior of most
  * JavaScript event emitter, and the DOM event's signature.
  *
- * @group Internal: Definition types
+ * @group Internal: Types
  */
 export type DefaultEventSignature = {
     [k: string]: (...args: any[]) => any;

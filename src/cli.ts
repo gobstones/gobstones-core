@@ -1,26 +1,3 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones (TM) is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3. Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- *
- * Additional terms added in compliance to section 7 of such license apply.
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
  * This module provides the tools to create a CLI application
  * using commander as the background tool, but providing some
@@ -30,13 +7,14 @@
  *
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  *
- * @module cli
+ * @module CLI
  */
+import fs from 'fs';
+
 import commander, { program } from 'commander';
 
-import { Translator } from './Translations';
-import { WithRequired } from './Types';
-import fs from 'fs';
+import { Translator } from './translations';
+import { WithRequired } from './types';
 
 /**
  * The general texts that a CLI app uses.
@@ -467,7 +445,6 @@ export class CLIApp extends CLICommandBuilder {
 
             // Language flag is only set when a translator is being used.
             cmd.option(
-                // eslint-disable-next-line max-len
                 `${this.options.flags.language.short}, ${this.options.flags.language.long}, <locale>`,
                 this.options.translator.translate(this.options.texts.language ?? '', {
                     availableLangs

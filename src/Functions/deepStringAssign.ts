@@ -1,31 +1,8 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones (TM) is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3. Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2012-2024
- * Gobstones is a registered trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- *
- * Additional terms added in compliance to section 7 of such license apply.
- * You may read the full license at https://gobstones.github.org/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
- * @module Functions
+ * @module API.Functions
  * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
-import { Subset } from '../Types/Subset';
+import { Subset } from '../types/Subset';
 
 /**
  * It returns a copy of the target object, where its string keys has been overwritten with
