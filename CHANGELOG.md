@@ -1,34 +1,32 @@
 ## 0.5.0 (2024-04-06)
 
-* refactor: rename folders to match guidelines ([be8838f](https://github.com/gobstones/gobstones-core/commit/be8838f))
-* refactor: sourceReader ([db6ba94](https://github.com/gobstones/gobstones-core/commit/db6ba94))
-* refactor(sourcereader): improve the code structure and tests ([decc023](https://github.com/gobstones/gobstones-core/commit/decc023))
-* build: update build configuration to scripts 0.6.x ([eb92008](https://github.com/gobstones/gobstones-core/commit/eb92008)), closes [#27](https://github.com/gobstones/gobstones-core/issues/27)
-* build: updated gobtones-scripts to 0.8.0 ([9d8765d](https://github.com/gobstones/gobstones-core/commit/9d8765d))
-* build: updated version of gobstones-scripts to 0.8.0 ([1cef7d4](https://github.com/gobstones/gobstones-core/commit/1cef7d4))
-* build(version): commit for version 0.5.0 ([c4cb89c](https://github.com/gobstones/gobstones-core/commit/c4cb89c))
-* fix(expectations): boolean expectations had "number" in its generic type instantiation ([ea9d131](https://github.com/gobstones/gobstones-core/commit/ea9d131))
-* fix(sourcereader.ts): the method `toString` of `SourcePosition` was made consistent ([f4428e5](https://github.com/gobstones/gobstones-core/commit/f4428e5))
-* docs(sourcereader): fine tuning of documentation ([6439a76](https://github.com/gobstones/gobstones-core/commit/6439a76))
-* docs(sourcereader): more tests to SR. Minor docs corrections and code tiding ([a52944e](https://github.com/gobstones/gobstones-core/commit/a52944e))
-* docs(sourcereader): more tiding. A little correction in Expectations ([8e0d2f6](https://github.com/gobstones/gobstones-core/commit/8e0d2f6))
-* test(sourceposition): fixing testing ([20c60bf](https://github.com/gobstones/gobstones-core/commit/20c60bf))
-* test(sourcereader): testing tiding of SourceReader, started. Minor name change for an error ([7a54e97](https://github.com/gobstones/gobstones-core/commit/7a54e97))
-* test(sourcereader): tests for equivalences, added ([d4f877e](https://github.com/gobstones/gobstones-core/commit/d4f877e))
-* feat: adad ([1d02af1](https://github.com/gobstones/gobstones-core/commit/1d02af1))
-* feat(sourcereader): added contextual contents operations to DocumentPositions ([d60d9b1](https://github.com/gobstones/gobstones-core/commit/d60d9b1)), closes [#31](https://github.com/gobstones/gobstones-core/issues/31)
-* feat(sourcereader): sourceReaderErrors were added to the export (+ some minor changes) ([14a6838](https://github.com/gobstones/gobstones-core/commit/14a6838)), closes [#23](https://github.com/gobstones/gobstones-core/issues/23)
-* PARTIAL: Fixed tests for SourcePosition ([24063e6](https://github.com/gobstones/gobstones-core/commit/24063e6))
-* [PARTIAL] One operation optimized, more to go ([f2a4262](https://github.com/gobstones/gobstones-core/commit/f2a4262))
-* All optimizations done, and justified with explicit reasonings ([89dcbd9](https://github.com/gobstones/gobstones-core/commit/89dcbd9))
-* Changed all names from "string" to "document". Documentation improved a little ([5cdeda9](https://github.com/gobstones/gobstones-core/commit/5cdeda9))
-
+-   refactor: rename folders to match guidelines ([be8838f](https://github.com/gobstones/gobstones-core/commit/be8838f))
+-   refactor: sourceReader ([db6ba94](https://github.com/gobstones/gobstones-core/commit/db6ba94))
+-   refactor(sourcereader): improve the code structure and tests ([decc023](https://github.com/gobstones/gobstones-core/commit/decc023))
+-   build: update build configuration to scripts 0.6.x ([eb92008](https://github.com/gobstones/gobstones-core/commit/eb92008)), closes [#27](https://github.com/gobstones/gobstones-core/issues/27)
+-   build: updated gobtones-scripts to 0.8.0 ([9d8765d](https://github.com/gobstones/gobstones-core/commit/9d8765d))
+-   build: updated version of gobstones-scripts to 0.8.0 ([1cef7d4](https://github.com/gobstones/gobstones-core/commit/1cef7d4))
+-   build(version): commit for version 0.5.0 ([c4cb89c](https://github.com/gobstones/gobstones-core/commit/c4cb89c))
+-   fix(expectations): boolean expectations had "number" in its generic type instantiation ([ea9d131](https://github.com/gobstones/gobstones-core/commit/ea9d131))
+-   fix(sourcereader.ts): the method `toString` of `SourcePosition` was made consistent ([f4428e5](https://github.com/gobstones/gobstones-core/commit/f4428e5))
+-   docs(sourcereader): fine tuning of documentation ([6439a76](https://github.com/gobstones/gobstones-core/commit/6439a76))
+-   docs(sourcereader): more tests to SR. Minor docs corrections and code tiding ([a52944e](https://github.com/gobstones/gobstones-core/commit/a52944e))
+-   docs(sourcereader): more tiding. A little correction in Expectations ([8e0d2f6](https://github.com/gobstones/gobstones-core/commit/8e0d2f6))
+-   test(sourceposition): fixing testing ([20c60bf](https://github.com/gobstones/gobstones-core/commit/20c60bf))
+-   test(sourcereader): testing tiding of SourceReader, started. Minor name change for an error ([7a54e97](https://github.com/gobstones/gobstones-core/commit/7a54e97))
+-   test(sourcereader): tests for equivalences, added ([d4f877e](https://github.com/gobstones/gobstones-core/commit/d4f877e))
+-   feat: adad ([1d02af1](https://github.com/gobstones/gobstones-core/commit/1d02af1))
+-   feat(sourcereader): added contextual contents operations to DocumentPositions ([d60d9b1](https://github.com/gobstones/gobstones-core/commit/d60d9b1)), closes [#31](https://github.com/gobstones/gobstones-core/issues/31)
+-   feat(sourcereader): sourceReaderErrors were added to the export (+ some minor changes) ([14a6838](https://github.com/gobstones/gobstones-core/commit/14a6838)), closes [#23](https://github.com/gobstones/gobstones-core/issues/23)
+-   PARTIAL: Fixed tests for SourcePosition ([24063e6](https://github.com/gobstones/gobstones-core/commit/24063e6))
+-   [PARTIAL] One operation optimized, more to go ([f2a4262](https://github.com/gobstones/gobstones-core/commit/f2a4262))
+-   All optimizations done, and justified with explicit reasonings ([89dcbd9](https://github.com/gobstones/gobstones-core/commit/89dcbd9))
+-   Changed all names from "string" to "document". Documentation improved a little ([5cdeda9](https://github.com/gobstones/gobstones-core/commit/5cdeda9))
 
 ### BREAKING CHANGE
 
-* The names of the documents now are homogeneous, even for single input unnamed
-documents.
-
+-   The names of the documents now are homogeneous, even for single input unnamed
+    documents.
 
 ## 0.5.0 (2024-04-06)
 
