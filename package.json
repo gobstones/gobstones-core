@@ -41,19 +41,13 @@
   "packageManager": "npm@9.2.0",
   "scripts": {
     "prepare": "is-ci || husky install",
-    "prepack": "gobstones-scripts run build",
+    "prepack": "npm start build",
     "start": "gobstones-scripts run",
-    "dev": "gobstones-scripts run dev",
-    "build": "gobstones-scripts run build",
-    "test": "gobstones-scripts run test",
-    "doc": "gobstones-scripts run doc",
-    "lint": "gobstones-scripts run lint",
-    "prettify": "gobstones-scripts run prettify",
     "gbs": "gobstones-scripts"
   },
   "config": {
     "gobstones-scripts": {
-      "type": "library",
+      "type": "cliLibrary",
       "manager": "npm"
     }
   },

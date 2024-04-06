@@ -16,7 +16,7 @@
  */
 /**
  * The superclass for all {@link SourceReader} errors.
- * It provides internationalization of error messages through a {@link Translator}.
+ * It provides internationalization of error messages through a {@link API.Translator!Translator}.
  * It also restores the prototype chain.
  *
  * @group API: Main

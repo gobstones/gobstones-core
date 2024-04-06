@@ -17,9 +17,8 @@
  * multiple languages, input and output from and to files as well
  * as stdout, and other perks.
  *
+ * @module API.CLI
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- *
- * @module CLI
  */
 import fs from 'fs';
 

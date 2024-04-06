@@ -14,7 +14,7 @@
  * @module API.SourceReader
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  */
-import { SourcePosition, SourcePositions } from './SourcePositions';
+import { SourcePosition, SourcePositions } from './source-positions';
 import { InvalidOperationAtEODError, InvalidOperationAtEOIError, NoInputError } from './SourceReaderErrors';
 
 import { and, expect } from '../expectations';
