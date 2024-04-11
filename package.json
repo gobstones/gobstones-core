@@ -1,6 +1,6 @@
 {
   "name": "@gobstones/gobstones-core",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.",
   "repository": "https://github.com/gobstones/gobstones-core",
   "homepage": "https://gobstones.github.io/gobstones-core",
@@ -47,7 +47,7 @@
   },
   "config": {
     "gobstones-scripts": {
-      "type": "cliLibrary",
+      "type": "library",
       "manager": "npm"
     }
   },
@@ -55,7 +55,7 @@
     "commander": "^11.1.0"
   },
   "devDependencies": {
-    "@gobstones/gobstones-scripts": "^0.8.2",
+    "@gobstones/gobstones-scripts": "^0.8.3",
     "husky": "^8.0.2"
   }
 }

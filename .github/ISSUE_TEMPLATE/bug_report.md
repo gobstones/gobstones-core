@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 ---
 
-Before opening a new issue, please take a moment to review our [**guidelines**](https://github.com/gobstones/gobstones-guidelines) to make the contribution process easy and effective for everyone involved.
+Before opening a new issue, please take a moment to review our [**guidelines**](https://gobstones.github.io/gobstones-guidelines/) to make the contribution process easy and effective for everyone involved.
 
 ## Description
 

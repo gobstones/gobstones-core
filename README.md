@@ -2,7 +2,9 @@
 
 A set of utility types, interfaces and classes that are used through all the Gobstones Platform repositories.
 
-[![Licence](https://img.shields.io/github/license/gobstones/gobstones-core?style=plastic&label=License&logo=open-source-initiative&logoColor=white&color=olivegreen)](https://github.com/gobstones/gobstones-core/blob/main/LICENSE) [![Version](https://img.shields.io/github/package-json/v/gobstones/gobstones-core?style=plastic&label=Version&logo=git-lfs&logoColor=white&color=crimson)](https://www.npmjs.com/package/@gobstones/gobstones-core) [![API Docs](https://img.shields.io/github/package-json/homepage/gobstones/gobstones-core?color=blue&label=API%20Docs&logo=gitbook&logoColor=white&style=plastic)](https://gobstones.github.io/gobstones-core)
+[![Licence](https://img.shields.io/badge/AGPL--3.0_with_additional_terms-olivegreen?style=plastic&label=License&logo=open-source-initiative&logoColor=white&color=olivegreen)](https://github.com/gobstones/gobstones-core/blob/main/LICENSE) [![Version](https://img.shields.io/github/package-json/v/gobstones/gobstones-core?style=plastic&label=Version&logo=git-lfs&logoColor=white&color=crimson)](https://www.npmjs.com/package/@gobstones/gobstones-core)
+
+[![API Docs](https://img.shields.io/github/package-json/homepage/gobstones/gobstones-core?color=blue&label=API%20Docs&logo=gitbook&logoColor=white&style=plastic)](https://gobstones.github.io/gobstones-core)
 
 ![GitHub Workflow Tests](https://img.shields.io/github/actions/workflow/status/gobstones/gobstones-core/on-commit-test.yml?style=plastic&label=Tests&logo=github-actions&logoColor=white) ![GitHub Workflow Build](https://img.shields.io/github/actions/workflow/status/gobstones/gobstones-core/on-commit-build.yml?style=plastic&label=Build&logo=github-actions&logoColor=white)
 

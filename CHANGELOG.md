@@ -1,3 +1,9 @@
+## <small>0.5.1 (2024-04-11)</small>
+
+* refactor(docs): remove docs folder ([2a19a81](https://github.com/gobstones/gobstones-core/commit/2a19a81))
+
+
+
 ## 0.5.0 (2024-04-06)
 
 -   refactor: rename folders to match guidelines ([be8838f](https://github.com/gobstones/gobstones-core/commit/be8838f))

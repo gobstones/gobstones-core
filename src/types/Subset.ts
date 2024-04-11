@@ -15,7 +15,6 @@
  * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
 
-/* eslint-disable prettier/prettier */
 /** This Utility Type works similar to `Partial`, but it proceeds recursively applying `Partial`
  * to all attributes of the type argument `K`, included nested ones.
  *
