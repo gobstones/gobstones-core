@@ -1,5 +1,6 @@
 module.exports = {
     parser: '@typescript-eslint/parser',
+    ignorePatterns: ['**/Subset.ts'],
     parserOptions: {
         ecmaVersion: 2018,
         sourceType: 'module',
