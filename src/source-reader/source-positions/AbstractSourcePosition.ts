@@ -104,7 +104,7 @@ export abstract class AbstractSourcePosition implements SourcePosition {
      * @inheritdoc
      * @group API: Contents access
      */
-    public abstract visibleContentsTo(from: SourcePosition): string;
+    public abstract visibleContentsTo(to: SourcePosition): string;
     /**
      * @inheritdoc
      * @group API: Contents access

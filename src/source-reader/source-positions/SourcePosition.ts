@@ -298,7 +298,7 @@ export interface SourcePosition {
      *
      * @group API: Contents access
      */
-    visibleContentsTo(from: SourcePosition): string;
+    visibleContentsTo(to: SourcePosition): string;
 
     /**
      * Returns the full context of the source document before the position, up to the beginning
