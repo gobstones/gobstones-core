@@ -7,7 +7,7 @@
 COMMIT_MSG_FILE=$1;
 
 # Set failing on command fail, pipe fail, and undefined variable use
-set -euo pipefail
+set -eu;
 
 # This hook is invoked by git-commit and git-merge, and can be
 # bypassed with the --no-verify option. It takes a single

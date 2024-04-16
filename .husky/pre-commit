@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Load husky
 . "$(dirname -- "$0")/_/husky.sh";
@@ -7,7 +7,7 @@
 # NOTHING TO READ HERE
 
 # Set failing on command fail, pipe fail, and undefined variable use
-set -euo pipefail
+set -eu;
 
 # This hook is invoked by git-commit, and can be bypassed with the
 # --no-verify option. It takes no parameters, and is invoked before

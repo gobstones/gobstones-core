@@ -66,7 +66,7 @@ export type SourceInput = string | Record<string, string> | string[];
 // -----------------------------------------------
 /** TO DO: Update
  * A {@link SourceReader} allows you to read input from some source, either one
- * single document of content or several named or u source documents, in
+ * single document of content or several named or index source documents, in
  * such a way that each character read registers its position in the source as a
  * tuple index-line-column.
  * That is, the main problem it solves is that of calculating the position of each
