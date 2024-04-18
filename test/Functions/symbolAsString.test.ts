@@ -11,17 +11,14 @@
  * *****************************************************************************
  */
 /**
- * This module provides different functions that provide common functionality
- * that may be reused in different packages.
- * Functions that are widely used in different packages should be added here
- * for better accessibility in all packages.
- *
- *
- * @module API.Functions
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
-export * from './deepEquals';
-export * from './flatten';
-export * from './matrix';
-export * from './symbolAsString';
-export * from './deepStringAssign';
+import { describe, expect, it } from '@jest/globals';
+
+import { symbolAsString } from '../../src/functions/symbolAsString';
+
+describe(`matrix`, () => {
+    it('symbolAsString works as expected', () => {
+        expect(symbolAsString(Symbol.for('ABC'))).toBe('ABC');
+    });
+});

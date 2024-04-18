@@ -11,17 +11,15 @@
  * *****************************************************************************
  */
 /**
- * This module provides different functions that provide common functionality
- * that may be reused in different packages.
- * Functions that are widely used in different packages should be added here
- * for better accessibility in all packages.
- *
- *
  * @module API.Functions
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
-export * from './deepEquals';
-export * from './flatten';
-export * from './matrix';
-export * from './symbolAsString';
-export * from './deepStringAssign';
+
+/**
+ * Gives the string for a symbol, without the 'Symbol(...)' in it.
+ * @group Static operations
+ */
+export const symbolAsString = (s: symbol): string => {
+    const str = s.toString();
+    return str.slice(7, str.length - 1);
+};
