@@ -1,11 +1,14 @@
+## <small>0.5.3 (2024-05-05)</small>
+
+
+
+
 ## <small>0.5.2 (2024-05-05)</small>
 
-* feat(functions): a new function to convert symbols to string (without the "Symbol(...)" part) ([8aca4a3](https://github.com/gobstones/gobstones-core/commit/8aca4a3))
-* build: updating huksy scripts ([eb72185](https://github.com/gobstones/gobstones-core/commit/eb72185))
-* refactor(sourcerange + others): sourceRange was refactored as SourceSpan. Minor corrections ([37b7dc6](https://github.com/gobstones/gobstones-core/commit/37b7dc6))
-* fix: fix weird indentation in Subset ([9b5df13](https://github.com/gobstones/gobstones-core/commit/9b5df13))
-
-
+-   feat(functions): a new function to convert symbols to string (without the "Symbol(...)" part) ([8aca4a3](https://github.com/gobstones/gobstones-core/commit/8aca4a3))
+-   build: updating huksy scripts ([eb72185](https://github.com/gobstones/gobstones-core/commit/eb72185))
+-   refactor(sourcerange + others): sourceRange was refactored as SourceSpan. Minor corrections ([37b7dc6](https://github.com/gobstones/gobstones-core/commit/37b7dc6))
+-   fix: fix weird indentation in Subset ([9b5df13](https://github.com/gobstones/gobstones-core/commit/9b5df13))
 
 ## <small>0.5.2 (2024-05-05)</small>
 
