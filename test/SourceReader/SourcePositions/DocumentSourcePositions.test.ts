@@ -1,29 +1,18 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2018-2024
- * Gobstones (TM) is a trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- * Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { describe, expect, describe as given, it } from '@jest/globals';
 
+import { DocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/DocumentSourcePosition';
+import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfDocumentSourcePosition';
+import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
+import { SourcePositions } from '../../../src/SourceReader/SourcePositions/SourcePositions';
+import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
+import { SourceReader } from '../../../src/SourceReader/SourceReader';
 import {
     InvalidOperationAtUnknownPositionError,
-    SourceReader,
     MismatchedInputsError
-} from '../../../src/source-reader';
-import { DocumentSourcePosition } from '../../../src/source-reader/source-positions/DocumentSourcePosition';
-import { EndOfDocumentSourcePosition } from '../../../src/source-reader/source-positions/EndOfDocumentSourcePosition';
-import { EndOfInputSourcePosition } from '../../../src/source-reader/source-positions/EndOfInputSourcePosition';
-import { UnknownSourcePosition } from '../../../src/source-reader/source-positions/UnknownSourcePosition';
+} from '../../../src/SourceReader/SourceReaderErrors';
 
 const badOpAtUnknownError: string = 'InvalidOperationAtUnknownPositionError';
 const badSRError: string = 'MismatchedInputsError';
@@ -52,6 +41,22 @@ describe('A DocumentSourcePosition', () => {
         sr.skip(1);
         // create the position
         const pos = new DocumentSourcePosition(sr, 1, 'program {'.length, [], 0, 'program {'.length, 'program{'.length);
+
+        describe('when obtained through the factory', () => {
+            it('it provides the same sort of instance', () => {
+                const posEq = SourcePositions.Document(
+                    sr,
+                    1,
+                    'program {'.length,
+                    [],
+                    0,
+                    'program {'.length,
+                    'program{'.length
+                );
+
+                expect(pos).toStrictEqual(posEq);
+            });
+        });
         // -----------------------------------------------
         // #endregion } Setup
         // ===============================================

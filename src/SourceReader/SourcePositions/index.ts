@@ -11,14 +11,9 @@
  * *****************************************************************************
  */
 /**
- * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ * @module API.SourceReader
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { describe, expect, it } from '@jest/globals';
-
-import { symbolAsString } from '../../src/Functions/symbolAsString';
-
-describe(`matrix`, () => {
-    it('symbolAsString works as expected', () => {
-        expect(symbolAsString(Symbol.for('ABC'))).toBe('ABC');
-    });
-});
+export * from './SourceSpan';
+export * from './SourcePosition';
+export * from './SourcePositions';

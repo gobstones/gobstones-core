@@ -24,8 +24,8 @@ import fs from 'fs';
 
 import commander, { program } from 'commander';
 
-import { Translator } from './translations';
-import { WithRequired } from './types';
+import { Translator } from './Translations';
+import { WithRequired } from './Types';
 
 /**
  * The general texts that a CLI app uses.

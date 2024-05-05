@@ -13,10 +13,10 @@
 /**
  * @ignore
  */
-export * from './types';
-export * from './functions';
-export * from './events/EventEmitter';
-export * from './expectations';
-export * from './translations';
-export * from './source-reader';
-export * from './gobstones-lang';
+export * from './Types';
+export * from './Functions';
+export * from './Events/EventEmitter';
+export * from './Expectations';
+export * from './Translations';
+export * from './SourceReader';
+export * from './GobstonesLang';

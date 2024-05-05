@@ -1,26 +1,24 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2018-2024
- * Gobstones (TM) is a trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- * Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
-import { matrix } from '../../src/functions/matrix';
-import { Board, Cell, Color, Direction } from '../../src/gobstones-lang';
+import { matrix } from '../../src/Functions/matrix';
+import { Board } from '../../src/GobstonesLang/Board';
+import { Cell } from '../../src/GobstonesLang/Cell';
+import { Color } from '../../src/GobstonesLang/Color';
+import { Direction } from '../../src/GobstonesLang/Direction';
 
 let board: Board;
 
 describe(`Board`, () => {
+    it(`Has sensitive defaults`, () => {
+        board = new Board();
+        expect(board.width).toBe(4);
+        expect(board.height).toBe(4);
+        expect(board.head).toStrictEqual([0, 0]);
+    });
+
     beforeEach(() => {
         // 5x7 board with head in center, red in first row,
         // green in first column, 5 blue and 3 black in center
@@ -120,6 +118,11 @@ describe(`Board`, () => {
         expect(board.getCell(4, 6).hasStonesOf(Color.Black)).toBe(false);
         expect(board.getCell(4, 6).hasStonesOf(Color.Red)).toBe(false);
         expect(board.getCell(4, 6).hasStonesOf(Color.Green)).toBe(false);
+
+        expect(board.getCell().getStonesOf(Color.Blue)).toBe(5);
+        expect(board.getCell().getStonesOf(Color.Black)).toBe(3);
+        expect(board.getCell().getStonesOf(Color.Red)).toBe(0);
+        expect(board.getCell().getStonesOf(Color.Green)).toBe(0);
     });
 
     it(`Answers with a column data correctly`, () => {

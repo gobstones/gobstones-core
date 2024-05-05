@@ -10,15 +10,8 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
-/**
- * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
- */
-import { describe, expect, it } from '@jest/globals';
-
-import { symbolAsString } from '../../src/Functions/symbolAsString';
-
-describe(`matrix`, () => {
-    it('symbolAsString works as expected', () => {
-        expect(symbolAsString(Symbol.for('ABC'))).toBe('ABC');
-    });
-});
+export * from './History';
+export * from './Changeable';
+export * from './Compactable';
+export * from './Undoable';
+export * from './Transactional';

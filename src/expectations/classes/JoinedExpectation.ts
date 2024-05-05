@@ -16,7 +16,7 @@
  */
 import { AbstractFinishedExpectation } from './AbstractFinishedExpectation';
 
-import { FinishedExpectation } from '../interfaces';
+import { FinishedExpectation } from '../Interfaces';
 
 /**
  * A joined expectation consist of multiple expectations joined by a specific

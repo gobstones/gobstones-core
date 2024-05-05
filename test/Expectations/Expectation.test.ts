@@ -1,21 +1,9 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2018-2024
- * Gobstones (TM) is a trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- * Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { describe, expect, it } from '@jest/globals';
 
-import { expect as assert } from '../../src/expectations';
+import { expect as assert } from '../../src/Expectations/expect';
 
 const given = describe;
 
@@ -426,6 +414,10 @@ describe('IGenericExpectation', () => {
                 expect(assert({ a: 'hello', b: 5 }).toHaveType('object').getResult()).toBe(true);
 
                 expect(assert([1, 3, 4]).toHaveType('array').getResult()).toBe(true);
+
+                expect(assert(/ab/).toHaveType('regexp').getResult()).toBe(true);
+
+                expect(assert(Buffer.from('test', 'utf-8')).toHaveType('buffer').getResult()).toBe(true);
             });
         });
         given('actual has not the given type', () => {

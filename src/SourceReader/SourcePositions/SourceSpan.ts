@@ -15,7 +15,7 @@
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { SourcePosition } from './SourcePosition';
-import { SourcePositions } from './SourcePositionsFactory';
+import { SourcePositions } from './SourcePositions';
 
 /**
  * A {@link SourceSpan} delimitates a span in a {@link SourceInput}.

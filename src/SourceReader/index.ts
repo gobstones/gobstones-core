@@ -80,5 +80,5 @@
  * @module SourceReader
  */
 export * from './SourceReader';
-export { SourcePosition, SourceSpan } from './source-positions';
+export { SourcePosition, SourceSpan } from './SourcePositions';
 export * from './SourceReaderErrors';

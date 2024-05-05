@@ -8,7 +8,7 @@ COMMIT_MSG_FILE=$1;
 COMMIT_SOURCE=$2;
 SHA1=$3;
 
-# Set failing on command fail, pipe fail, and undefined variable use
+# Set failing on command fail, and undefined variable use
 set -eu;
 
 # This hook is invoked by git-commit right after preparing
@@ -45,7 +45,7 @@ echo "**************************";
 echo "";
 
 # Check if we are doing an amend
-if [ "$COMMIT_SOURCE" = 'commit' ] && [ -n "$SHA1" ]; then
+if [ "$COMMIT_SOURCE" = 'commit' ] && [ -n $SHA1 ]; then
     # Amends do not call the "cz" command.
     exit 0;
 fi

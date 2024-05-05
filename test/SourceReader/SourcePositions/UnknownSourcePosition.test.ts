@@ -1,26 +1,25 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2018-2024
- * Gobstones (TM) is a trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- * Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
- * *****************************************************************************
+/**
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { describe, describe as given, expect, it } from '@jest/globals';
 
-import { InvalidOperationAtUnknownPositionError, SourceReader } from '../../../src/source-reader';
-import { DocumentSourcePosition } from '../../../src/source-reader/source-positions/DocumentSourcePosition';
-import { EndOfDocumentSourcePosition } from '../../../src/source-reader/source-positions/EndOfDocumentSourcePosition';
-import { EndOfInputSourcePosition } from '../../../src/source-reader/source-positions/EndOfInputSourcePosition';
-import { UnknownSourcePosition } from '../../../src/source-reader/source-positions/UnknownSourcePosition';
+import { DocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/DocumentSourcePosition';
+import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfDocumentSourcePosition';
+import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
+import { SourcePositions } from '../../../src/SourceReader/SourcePositions/SourcePositions';
+import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
+import { SourceReader } from '../../../src/SourceReader/SourceReader';
+import { InvalidOperationAtUnknownPositionError } from '../../../src/SourceReader/SourceReaderErrors';
 
 const badOpAtUnknownError: string = 'InvalidOperationAtUnknownPositionError';
 
 describe('An UnknownSourcePosition', () => {
+    describe('when obtained through the factory', () => {
+        it('it provides the same sort of instance', () => {
+            expect(UnknownSourcePosition.instance).toStrictEqual(SourcePositions.Unknown());
+        });
+    });
+
     given('in a normal situation', () => {
         // ===============================================
         // #region Printing {

@@ -14,7 +14,7 @@
  * @module API.Functions
  * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
-import { Subset } from '../types/Subset';
+import { Subset } from '../Types/Subset';
 
 /**
  * It returns a copy of the target object, where its string keys has been overwritten with

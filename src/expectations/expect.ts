@@ -14,8 +14,8 @@
  * @module API.Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { FullExpectation } from './classes/FullExpectation';
-import { JoinedExpectation } from './classes/JoinedExpectation';
+import { FullExpectation } from './Classes/FullExpectation';
+import { JoinedExpectation } from './Classes/JoinedExpectation';
 import {
     ArrayExpectation,
     BooleanExpectation,
@@ -23,7 +23,7 @@ import {
     NumberExpectation,
     ObjectExpectation,
     StringExpectation
-} from './interfaces';
+} from './Interfaces';
 
 /**
  * Create a new expectation over an element. The type of the returned expectation

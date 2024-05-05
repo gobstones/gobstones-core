@@ -6,7 +6,7 @@
 # Read parameters
 # NOTHING TO READ HERE
 
-# Set failing on command fail, pipe fail, and undefined variable use
+# Set failing on command fail, and undefined variable use
 set -eu;
 
 # This hook is invoked by git-commit, and can be bypassed with the
@@ -36,17 +36,17 @@ echo "Running pre commit hooks";
 echo "**************************";
 echo "";
 
+# Run license
+echo "\nAdd license text to code files\n";
+npx --no -- gobstones-scripts run license --silent ;
+
 # Run prettify
 echo "Run prettify\n";
 npx --no -- gobstones-scripts run prettify --silent ;
 
 # Run changelog
 echo "\nRun changelog\n";
-npx --no gobstones-scripts run changelog --silent ;
-
-# Run license
-echo "\nAdd license text to code files\n";
-npx --no gobstones-scripts run license --silent ;
+npx --no -- gobstones-scripts run changelog --silent ;
 
 # Add all generated files
 echo "\nAdd generated files to commit\n";

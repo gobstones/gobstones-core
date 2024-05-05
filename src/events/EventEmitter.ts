@@ -170,8 +170,8 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      */
     private appendToMap<U extends keyof L>(event: U, observer: L[U], map: Map<U, Set<L[U]>>): void {
         if (map.has(event)) {
-            const set = map.get(event);
-            set?.add(observer);
+            const set = map.get(event) as Set<L[U]>;
+            set.add(observer);
         } else {
             const set = new Set<L[U]>();
             set.add(observer);

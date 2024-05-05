@@ -21,8 +21,8 @@ import { InvalidStonesAmount, StonesChangeActionAttempt } from './BoardErrors';
 import { Color } from './Color';
 import { Direction } from './Direction';
 
-import { EventEmitter } from '../events/EventEmitter';
-import { expect } from '../expectations';
+import { EventEmitter } from '../Events/EventEmitter';
+import { expect } from '../Expectations';
 
 /**
  * This object contains the default values for a {@link Board} and it's cells.

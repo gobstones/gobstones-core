@@ -14,7 +14,7 @@
  * @module API.Translator
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { flatten } from '../functions/flatten';
+import { flatten } from '../Functions/flatten';
 
 /**
  * A Translator consist of an object that hold the state of the current
@@ -149,8 +149,9 @@ export class Translator<TLocale extends Record<string, any>> {
         if (!value || typeof value !== 'string') {
             return key;
         }
-        for (const each in interpolations || []) {
-            value = value.replace(`\${${each}}`, `${interpolations?.[each]}`);
+        const replacements = interpolations ?? [];
+        for (const each in replacements) {
+            value = value.replace(`\${${each}}`, `${replacements[each]}`);
         }
         return value;
     }

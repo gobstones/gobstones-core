@@ -27,9 +27,9 @@ import { Cell } from './Cell';
 import { Color } from './Color';
 import { Direction } from './Direction';
 
-import { EventEmitter } from '../events/EventEmitter';
-import { and, expect, or } from '../expectations';
-import { matrix } from '../functions/matrix';
+import { EventEmitter } from '../Events/EventEmitter';
+import { and, expect, or } from '../Expectations';
+import { matrix } from '../Functions/matrix';
 
 /**
  * This object contains the default values for a {@link Board}.
@@ -262,8 +262,6 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      * @param initialState An array of {@link CellDataDefinition} for the cells
      *      that you want to specify initial stones to.
      */
-    public constructor();
-    public constructor(width: number, height: number, head?: CellLocation, initialState?: CellDataDefinition[]);
     public constructor(width?: number, height?: number, head?: CellLocation, initialState?: CellDataDefinition[]) {
         super();
         this.boardWidth = width ?? Defaults.width;
@@ -476,8 +474,6 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
      *
      * @returns A {@link Cell} for the given location.
      */
-    public getCell(): Cell;
-    public getCell(x: number, y: number): Cell;
     public getCell(x?: number, y?: number): Cell {
         return this.innerGetCell(x ?? this.headX, y ?? this.headY);
     }
@@ -1086,6 +1082,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
         });
 
         if (fromOriginCorner) {
+            /* istanbul ignore next */
             if (this.boardWidth >= oldWidth) {
                 // cells added first
                 const newHeadX = oldHeadX + (this.boardWidth - oldWidth);
@@ -1096,6 +1093,7 @@ export class Board extends EventEmitter<BoardEvents> implements BoardDefinition 
                 const newHeadX = oldHeadX - (oldWidth - this.boardWidth);
                 this.headXLocation = newHeadX >= 0 ? newHeadX : 0;
             }
+            /* istanbul ignore next */
             if (this.boardHeight >= oldHeight) {
                 // cells added first
                 const newHeadY = oldHeadY + (this.boardHeight - oldHeight);

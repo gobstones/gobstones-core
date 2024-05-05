@@ -24,7 +24,7 @@ import {
     StringExpectation,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Expectation
-} from '../interfaces';
+} from '../Interfaces';
 import { MatcherCall, Matchers } from '../Matchers';
 
 /**

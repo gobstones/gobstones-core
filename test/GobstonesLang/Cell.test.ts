@@ -1,21 +1,12 @@
-/*
- * *****************************************************************************
- * Copyright (C) National University of Quilmes 2018-2024
- * Gobstones (TM) is a trademark of the National University of Quilmes.
- *
- * This program is free software distributed under the terms of the
- * GNU Affero General Public License version 3.
- * Additional terms added in compliance to section 7 of such license apply.
- *
- * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
- * *****************************************************************************
- */
 /**
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
-import { Board, Cell, Color, Direction } from '../../src/gobstones-lang';
+import { Board } from '../../src/GobstonesLang/Board';
+import { Cell } from '../../src/GobstonesLang/Cell';
+import { Color } from '../../src/GobstonesLang/Color';
+import { Direction } from '../../src/GobstonesLang/Direction';
 
 let board: Board;
 let headCell: Cell;

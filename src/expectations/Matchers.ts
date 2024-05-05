@@ -14,7 +14,7 @@
  * @module API.Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { deepEquals } from '../functions/deepEquals';
+import { deepEquals } from '../Functions/deepEquals';
 
 // ===============================================
 // #region MatcherCall
@@ -91,6 +91,7 @@ export class Matchers {
         return (
             (expectedType !== 'object' && typeof actual === expectedType) ||
             (expectedType === 'array' && typeof actual === 'object' && Array.isArray(actual)) ||
+            (expectedType === 'regexp' && typeof actual === 'object' && actual instanceof RegExp) ||
             (expectedType === 'buffer' &&
                 actual &&
                 actual.constructor &&

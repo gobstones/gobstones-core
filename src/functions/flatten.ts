@@ -33,10 +33,10 @@ import { isBuffer } from './isBuffer';
  * @internal
  */
 export interface FlattenOptions {
-    delimiter?: string;
-    safe?: boolean;
+    delimiter: string;
+    safe: boolean;
     maxDepth?: number;
-    transformKey?: (key: string) => string;
+    transformKey: (key: string) => string;
 }
 
 /**
@@ -50,10 +50,10 @@ export interface FlattenOptions {
  * @internal
  */
 export interface UnflattenOptions {
-    delimiter?: string;
-    object?: boolean;
-    overwrite?: boolean;
-    transformKey?: (key: string) => string;
+    delimiter: string;
+    object: boolean;
+    overwrite: boolean;
+    transformKey: (key: string) => string;
 }
 
 /**
@@ -96,20 +96,20 @@ flatten({
  */
 export function flatten<TTarget extends Record<string, any>, TResult extends Record<string, any>>(
     target: TTarget,
-    options: FlattenOptions = {}
+    options: Partial<FlattenOptions> = {}
 ): TResult {
-    const opts = Object.assign({}, flattenOptionsDefaults, options);
+    const opts: FlattenOptions = Object.assign({}, flattenOptionsDefaults, options);
     const output: Record<string, any> = {};
 
     function step(object: any, prev?: any, currentDepth: number = 1): void {
         Object.keys(object).forEach(function (key) {
             const value: any = object[key];
             const type: string = Object.prototype.toString.call(value);
-            const isarray: boolean = opts.safe === undefined ? false : opts.safe && Array.isArray(value);
+            const isarray: boolean = opts.safe && Array.isArray(value);
             const isbuffer: boolean = isBuffer(value);
             const isobject: boolean = type === '[object Object]' || type === '[object Array]';
 
-            const newKey = prev ? prev + opts.delimiter + opts?.transformKey?.(key) : opts?.transformKey?.(key);
+            const newKey = prev ? prev + opts.delimiter + opts.transformKey(key) : opts.transformKey(key);
 
             if (
                 !isarray &&
@@ -168,9 +168,9 @@ unflatten({
  */
 export function unflatten<TTarget extends Record<string, any>, TResult extends Record<string, any>>(
     target: TTarget,
-    options?: UnflattenOptions
+    options?: Partial<UnflattenOptions>
 ): TResult {
-    const opts = Object.assign({}, unflattenOptionsDefaults, options);
+    const opts: UnflattenOptions = Object.assign({}, unflattenOptionsDefaults, options);
     const output = {};
 
     const isbuffer = isBuffer(target);
@@ -195,8 +195,8 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
         const isArray = type === '[object Array]';
         const isObject = type === '[object Object]';
 
+        /* istanbul ignore next */
         if (!val) {
-            /* istanbul ignore next */
             return true;
         } else if (isArray) {
             return !val.length;
@@ -219,7 +219,7 @@ export function unflatten<TTarget extends Record<string, any>, TResult extends R
     }, {}) as TTarget;
 
     Object.keys(target).forEach(function (key) {
-        const split = key.split(opts.delimiter || '.').map(opts.transformKey || ((e) => e));
+        const split = key.split(opts.delimiter).map(opts.transformKey);
         let key1 = getKey(split.shift() as string);
         let key2 = getKey(split[0]);
         let recipient = output;

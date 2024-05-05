@@ -14,10 +14,10 @@
  * @module API.SourceReader
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  */
-import { SourcePosition, SourcePositions } from './source-positions';
+import { SourcePosition, SourcePositions } from './SourcePositions';
 import { InvalidOperationAtEODError, InvalidOperationAtEOIError, NoInputError } from './SourceReaderErrors';
 
-import { and, expect } from '../expectations';
+import { and, expect } from '../Expectations';
 
 // ===============================================
 // #region SourceInput {
@@ -568,6 +568,7 @@ export class SourceReader {
         }
         // Needed as there is no current input if it is true
         // Optimized by inlining: if (this.atEndOfInput())
+        /* istanbul ignore next */
         if (!this._hasMoreDocuments()) {
             return false;
         }
@@ -581,15 +582,6 @@ export class SourceReader {
     }
 
     /**
-     * Returns the sole instance of the unknown source position.
-     *
-     * @group API: Access
-     */
-    public getUnknownPosition(): SourcePosition {
-        return SourcePositions.Unknown();
-    }
-
-    /**
      * Gives the current position as a {@link SourcePosition}.
      * See {@link SourceReader} documentation for an example.
      *
@@ -600,6 +592,7 @@ export class SourceReader {
      * @group API: Access
      */
     public getPosition(): SourcePosition {
+        /* istanbul ignore next */
         if (!this._hasMoreDocuments()) {
             return SourcePositions.EndOfInput(this);
         } else if (!this._hasMoreCharsAtCurrentDocument()) {

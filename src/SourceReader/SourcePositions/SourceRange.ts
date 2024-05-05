@@ -11,9 +11,15 @@
  * *****************************************************************************
  */
 /**
- * @module API.SourceReader
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ * @module API.Functions
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
-export * from './SourceSpan';
-export * from './SourcePosition';
-export * from './SourcePositionsFactory';
+
+/**
+ * Gives the string for a symbol, without the 'Symbol(...)' in it.
+ * @group Static operations
+ */
+export const symbolAsString = (s: symbol): string => {
+    const str = s.toString();
+    return str.slice(7, str.length - 1);
+};

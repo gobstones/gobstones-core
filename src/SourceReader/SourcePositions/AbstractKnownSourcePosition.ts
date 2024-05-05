@@ -18,7 +18,7 @@
 import { AbstractSourcePosition } from './AbstractSourcePosition';
 import { SourcePosition } from './SourcePosition';
 
-import { expect } from '../../expectations';
+import { expect } from '../../Expectations';
 import { SourceReader } from '../SourceReader';
 import { InvalidOperationAtUnknownPositionError, MismatchedInputsError } from '../SourceReaderErrors';
 

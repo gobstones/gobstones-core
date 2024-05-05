@@ -32,7 +32,7 @@ case "$LOCAL_REF" in
         IS_TAG=0;;
 esac
 
-# Set failing on command fail, pipe fail, and undefined variable use
+# Set failing on command fail, and undefined variable use
 set -eu;
 
 # This hook is called by git-push and can be used to prevent a
@@ -40,7 +40,7 @@ set -eu;
 # which provide the name and location of the destination remote,
 # if a named remote is not being used both values will be the same.
 
-# Information about what is to be pushed is provided on the hook`s
+# Information about what is to be pushed is provided on the hook's
 # standard input with lines of the form:
 # <local ref> SP <local object name> SP <remote ref> SP <remote object name> LF
 

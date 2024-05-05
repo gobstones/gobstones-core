@@ -14,7 +14,7 @@
  * @module API.Expectations
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { FinishedExpectation } from '../interfaces';
+import { FinishedExpectation } from '../Interfaces';
 
 /**
  * This abstract class provides finished expectation behavior for

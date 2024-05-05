@@ -19,6 +19,8 @@ import { EndOfDocumentSourcePosition } from './EndOfDocumentSourcePosition';
 import { EndOfInputSourcePosition } from './EndOfInputSourcePosition';
 import { UnknownSourcePosition } from './UnknownSourcePosition';
 
+import { SourceReader } from '../SourceReader';
+
 /**
  * The constant implementing the
  * [Abstract Factory Pattern](https://en.wikipedia.org/wiki/Abstract_factory_pattern)
@@ -29,9 +31,23 @@ import { UnknownSourcePosition } from './UnknownSourcePosition';
  */
 export const SourcePositions = {
     Unknown: () => UnknownSourcePosition.instance,
-    EndOfInput: (_sr) => new EndOfInputSourcePosition(_sr),
-    EndOfDocument: (_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx) =>
-        new EndOfDocumentSourcePosition(_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx),
-    Document: (_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx) =>
-        new DocumentSourcePosition(_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx)
+    EndOfInput: (_sr: SourceReader) => new EndOfInputSourcePosition(_sr),
+    EndOfDocument: (
+        _sr: SourceReader,
+        line: number,
+        column: number,
+        regions: string[],
+        _documentIdx: number,
+        _charIdx: number,
+        _visibleCharsIdx: number
+    ) => new EndOfDocumentSourcePosition(_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx),
+    Document: (
+        _sr: SourceReader,
+        line: number,
+        column: number,
+        regions: string[],
+        _documentIdx: number,
+        _charIdx: number,
+        _visibleCharsIdx: number
+    ) => new DocumentSourcePosition(_sr, line, column, regions, _documentIdx, _charIdx, _visibleCharsIdx)
 };

@@ -12,8 +12,9 @@
  */
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
-import { SourcePosition, SourceSpan } from '../../../src/source-reader/source-positions';
-import { SourceReader } from '../../../src/source-reader/SourceReader';
+import { SourcePosition } from '../../../src/SourceReader/SourcePositions/SourcePosition';
+import { SourceSpan } from '../../../src/SourceReader/SourcePositions/SourceSpan';
+import { SourceReader } from '../../../src/SourceReader/SourceReader';
 
 let sr: SourceReader;
 let pos: SourcePosition;
