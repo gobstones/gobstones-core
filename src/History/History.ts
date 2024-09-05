@@ -10,6 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
+/**
+ * @module History
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ */
+
 import { Changeable } from './Changeable';
 import { Compactable } from './Compactable';
 import { Transactional } from './Transactional';
@@ -112,11 +118,12 @@ export class History<A> implements Changeable<A>, Compactable<A>, Undoable, Tran
      * the current version of it.
      * Also transactions can be started and rolled back, and all changes can be compacted.
      *
-     * @param e the initial value of the history.
+     * @param e - the initial value of the history.
      */
     public constructor(e: A) {
         this._initializeWith(e);
     }
+
     // ----------------------------------------------------
     // #endregion } API: Constructor
     // ----------------------------------------------------
@@ -144,6 +151,7 @@ export class History<A> implements Changeable<A>, Compactable<A>, Undoable, Tran
             this._changes.splice(newSize, size - newSize);
         }
     }
+
     // ----------------------------------------------------
     // #endregion } API: Change management
     // ----------------------------------------------------
@@ -206,6 +214,7 @@ export class History<A> implements Changeable<A>, Compactable<A>, Undoable, Tran
     public numRedos(): number {
         return this._changes.length - this._currentValueIndex - 1;
     }
+
     // ----------------------------------------------------
     // #endregion } Undoing operations
     // ----------------------------------------------------

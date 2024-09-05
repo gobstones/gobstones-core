@@ -10,8 +10,9 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.Expectations
+ * @module Expectations/Interfaces
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
@@ -40,13 +41,13 @@ export interface Expectation<T> {
     /**
      * Answers if the actual value is the same as expected, using strict compare.
      * Do not use toBe with floating point numbers, use
-     * {@link Matchers.toBeCloseTo} instead.
+     * {@link Expectations/Matchers.toBeCloseTo} instead.
      */
     toBe(value: T): this & FinishedExpectation;
     /**
      * Answers if the actual value is the same as expected, using a deep compare mechanism.
      * Do not use toBeLike with floating point numbers, use
-     * {@link Matchers.toBeCloseTo} instead.
+     * {@link Expectations/Matchers.toBeCloseTo} instead.
      */
     toBeLike(value: T): this & FinishedExpectation;
     /**

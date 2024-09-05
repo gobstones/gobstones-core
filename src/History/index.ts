@@ -10,6 +10,15 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
+/**
+ * This module provides a set of function, interfaces and classes that allow
+ * to manage an object through a history, that is, save it's state, allow to
+ * undo state transformations, redo them, and so on.
+ *
+ * @module History
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ */
 export * from './History';
 export * from './Changeable';
 export * from './Compactable';

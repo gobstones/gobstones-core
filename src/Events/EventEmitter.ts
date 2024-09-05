@@ -10,21 +10,22 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.Events
+ * @module Events
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
+
+import { asDefined } from '../Functions';
 
 /**
  * This type describes the basic mapping of available events to the
  * corresponding subscriber functions that may subscribe to such event.
  * Multiple events could be added, with different signatures for each
  * subscriber.
- *
- * @group Internal: Types
  */
 export type EventSignature<L> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [E in keyof L]: (...args: any[]) => any;
 };
 
@@ -33,12 +34,9 @@ export type EventSignature<L> = {
  * event is key is a string (the most common case), and the subscriber
  * functions are any function. This is the default behavior of most
  * JavaScript event emitter, and the DOM event's signature.
- *
- * @group Internal: Types
  */
-export type DefaultEventSignature = {
-    [k: string]: (...args: any[]) => any;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DefaultEventSignature = Record<string, (...args: any[]) => any>;
 
 /**
  * The EventEmitter class is a minimal observer pattern class definition.
@@ -49,15 +47,13 @@ export type DefaultEventSignature = {
  * The EventEmitter accepts as a type as a {@link EventSignature}, that is,
  * a set of event names together with the expected parameters that the observer
  * will be called with when the event occurs.
- *
- * @group API: Main
  */
 export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
     /** A map of event to observers for the full time observers. */
-    private eventObservers: Map<keyof L, Set<L[keyof L]>> = new Map();
+    private eventObservers = new Map<keyof L, Set<L[keyof L]>>();
 
     /** A map of event to observers for the one time observers. */
-    private eventOnceObservers: Map<keyof L, Set<L[keyof L]>> = new Map();
+    private eventOnceObservers = new Map<keyof L, Set<L[keyof L]>>();
 
     /**
      * Register a observer to a particular event of this event emitter, as a
@@ -68,8 +64,8 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * as a one time observer. If it's a full time observer, it will be transformed
      * to a one time observer.
      *
-     * @param event The event that the observer will be registered to.
-     * @param observer The observer that will be called when the event occurs.
+     * @param event - The event that the observer will be registered to.
+     * @param observer - The observer that will be called when the event occurs.
      *
      * @returns The event emitter.
      */
@@ -88,8 +84,8 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * as a full time observer. If it's a one time observer, it will be transformed
      * to a full time observer.
      *
-     * @param event The event that the observer will be registered to.
-     * @param observer The observer that will be called when the event occurs.
+     * @param event - The event that the observer will be registered to.
+     * @param observer - The observer that will be called when the event occurs.
      *
      * @returns The event emitter.
      */
@@ -109,8 +105,8 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * Note that the observer is removed only to the specified event, and such
      * it may still be registered for other events.
      *
-     * @param event The event that the observer will be removed from.
-     * @param observer The observer that will be removed when the event occurs.
+     * @param event - The event that the observer will be removed from.
+     * @param observer - The observer that will be removed when the event occurs.
      *
      * @returns The event emitter.
      */
@@ -128,7 +124,7 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * Event if all observers are removed, an observer may subscribe again to
      * the event afterwards.
      *
-     * @param event The event that the observers will be removed from.
+     * @param event - The event that the observers will be removed from.
      *
      * @returns The event emitter.
      */
@@ -146,7 +142,7 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * After the emission, one time subscribers are removed as subscribers to the
      * event, as they should not be called again.
      *
-     * @param event The event to emit.
+     * @param event - The event to emit.
      */
     public emit<U extends keyof L>(event: U, ...args: Parameters<L[U]>): void {
         for (const observer of this.getSetOrEmpty(event, this.eventObservers)) {
@@ -164,13 +160,13 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * only the new observer. If the observer is already present for that
      * event in the given map, do nothing.
      *
-     * @param event The event to add the observer to.
-     * @param observer The observer to add.
-     * @param map The map to register the event and observer.
+     * @param event - The event to add the observer to.
+     * @param observer - The observer to add.
+     * @param map - The map to register the event and observer.
      */
     private appendToMap<U extends keyof L>(event: U, observer: L[U], map: Map<U, Set<L[U]>>): void {
         if (map.has(event)) {
-            const set = map.get(event) as Set<L[U]>;
+            const set = asDefined(map.get(event));
             set.add(observer);
         } else {
             const set = new Set<L[U]>();
@@ -184,9 +180,9 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * If the observer does not exists in the event for the map, or the event
      * is not present in the map, do nothing.
      *
-     * @param event The event to remove the observer from.
-     * @param observer The observer to be removed.
-     * @param map The map to unregister the event and observer.
+     * @param event - The event to remove the observer from.
+     * @param observer - The observer to be removed.
+     * @param map - The map to unregister the event and observer.
      */
     private removeOfMap<U extends keyof L>(event: U, observer: L[U], map: Map<U, Set<L[U]>>): void {
         const set = this.getSetOrEmpty(event, map);
@@ -197,8 +193,8 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * Remove all entries for an event in the given map. That is, remove the event
      * itself.
      *
-     * @param event The event to remove.
-     * @param map The map to remove the event from.
+     * @param event - The event to remove.
+     * @param map - The map to remove the event from.
      */
     private deleteEntriesInMap<U extends keyof L>(event: U, map: Map<U, Set<L[U]>>): void {
         if (map.has(event)) {
@@ -210,14 +206,14 @@ export class EventEmitter<L extends EventSignature<L> = DefaultEventSignature> {
      * Return a set for the given event. If the event exists in the given map,
      * return the set of that event. If not, return a new set.
      *
-     * @param event The event to obtain the set for.
-     * @param map The map from where to grab the set from.
+     * @param event - The event to obtain the set for.
+     * @param map - The map from where to grab the set from.
      *
      * @returns A set for the given event, a present one, or a new one.
      */
     private getSetOrEmpty<U extends keyof L>(event: U, map: Map<U, Set<L[U]>>): Set<L[U]> {
         if (map.has(event)) {
-            return map.get(event) as Set<L[U]>;
+            return asDefined(map.get(event));
         }
         return new Set<L[U]>();
     }

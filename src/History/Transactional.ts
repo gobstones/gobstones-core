@@ -10,6 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
+/**
+ * @module History
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ */
+
 /**
  * A {@link Transactional} is a data structure that changes over time, with the possibility
  * to group changes and later rollback those groups of changes as a whole.

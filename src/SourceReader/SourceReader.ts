@@ -10,8 +10,9 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  */
 import { SourcePosition, SourcePositions } from './SourcePositions';
@@ -53,8 +54,6 @@ import { and, expect } from '../Expectations';
  *    ```
  *    new SourceReader(input, '\n');
  *    ```
- *
- * @group API: Main
  */
 export type SourceInput = string | Record<string, string> | string[];
 // -----------------------------------------------
@@ -64,7 +63,7 @@ export type SourceInput = string | Record<string, string> | string[];
 // ===============================================
 // #region class SourceReader { TO DO: Update
 // -----------------------------------------------
-/** TO DO: Update
+/**
  * A {@link SourceReader} allows you to read input from some source, either one
  * single document of content or several named or index source documents, in
  * such a way that each character read registers its position in the source as a
@@ -81,13 +80,13 @@ export type SourceInput = string | Record<string, string> | string[];
  *    parts with ease.
  *
  * A {@link SourceReader} is created using a {@link SourceInput} and then
- * {@link SourcePosition}s can be read from it.
+ * {@link SourceReader/SourcePositions.SourcePosition}s can be read from it.
  * Possible interactions with a {@link SourceReader} include:
  *  - peek a character, with {@link SourceReader.peek | peek},
  *  - check if a given strings occurs at the beginning of the text in the
  *    current document, without skipping it, with
  *    {@link SourceReader.startsWith | startsWith},
- *  - get the current position as a {@link SourcePosition}, with
+ *  - get the current position as a {@link SourceReader/SourcePositions.SourcePosition}, with
  *    {@link SourceReader.getPosition | getPosition},
  *  - detect if the end of input was reached, with
  *    {@link SourceReader.atEndOfInput | atEndOfInput},
@@ -119,8 +118,6 @@ export type SourceInput = string | Record<string, string> | string[];
  * A {@link SourceReader} also has a special position,
  * {@link SourceReader.UnknownPosition | UnknownPosition}, as a static member of
  * the class, indicating that the position is not known.
- * This special position can also be obtaind from instances using
- * {@link SourceReader.getUnknownPosition | getUnknownPosition}.
  *
  * Characters from the input are classified as either visible or non visible.
  * Visible characters affect the line and column calculation, and, conversely, non visible
@@ -211,92 +208,80 @@ export type SourceInput = string | Record<string, string> | string[];
  *       For that reason document is better to use {@link SourceReader.startsWith | startsWith}
  *       to verify if the input starts with some character (or string), when peeking
  *       for something specific.
- * @group API: Main
+ *
+ * @privateRemarks
+ * The implementation of {@link SourceReader} keeps:
+ *  * an object associating input document names to input document contents,
+ *    {@link SourceReader._documents | _documents},
+ *  * an object associating input document names to visible input document
+ *    contents,
+ *    {@link SourceReader._visibleDocumentContents | _visibleDocumentContents},
+ *  * an array of the keys of that object for sequential access,
+ *    {@link SourceReader.documentsNames | _documentsNames},
+ *  * an index to the current input document in the array of inputs names,
+ *    {@link SourceReader._documentIndex | _documentIndex},
+ *  * an index to the current visible input document in the array of inputs
+ *    names (because it may be different from the document index),
+ *    {@link SourceReader._charIndex | _charIndex},
+ *  * the current line and column in the current input document,
+ *    {@link SourceReader._line | _line} and
+ *    {@link SourceReader._column | _column},
+ *  * a stack of strings representing the regions' IDs,
+ *    {@link SourceReader._regions | _regions}, and
+ *  * the characters used to determine line ends,
+ *    {@link SourceReader.lineEnders | _lineEnders}.
+ *
+ * The object of {@link SourceReader._documents | _documents } cannot be
+ * empty (with no input document), and all the {@link SourceInput} forms are
+ * converted to `Record<string, string>` for ease of access.
+ * The {@link SourceReader._charIndex | _charIndex } either points to a valid
+ * position in an input document, or at the end of an input document, or the
+ * end of input was reached (that is, when there are no more input documents
+ * to read).
+ *
+ * Line and column numbers are adjusted depending on which characters are
+ * considered as ending a line, as given by the property
+ * {@link SourceReader.lineEnders | _lineEnders}, and which characters are
+ * considered visible, as indicating by the user through
+ * {@link SourceReader.skip | skip}.
+ * When changing from one document to the next, line and column numbers are reset.
+ *
+ * The visible input is conformed by those characters of the input that has
+ * been skipped normally. As visible and non visible characters can be
+ * interleaved with no restrictions, it is better to keep a copy of the
+ * visible parts: characters are copied to the visible inputs attribute when
+ * skipped normally. Visible inputs always have a copy of those characters
+ * that have been processed as visible; unprocessed characters do not appear
+ * (yet) on visible inputs.
+ *
+ * This class is tightly coupled with {@link SourceReader/SourcePositions.SourcePosition}'s implementations,
+ * because of instances of that class represent different positions in the source
+ * inputs kept by a {@link SourceReader}.
+ * The operations
+ * {@link SourceReader._documentNameAt | _documentNameAt},
+ * {@link SourceReader._visibleDocumentContentsAt | _visibleDocumentContentsAt},
+ * {@link SourceReader._fullDocumentContentsAt | _fullDocumentContentsAt},
+ * {@link SourceReader._inputFromToIn | _inputFromToIn},
+ * {@link SourceReader._documentContextBeforeOf | _fullInputFromTo} and
+ * {@link SourceReader._documentContextAfterOf | _fullDocumentContentsAt}
+ * are meant to be used only by {@link SourceReader/SourcePositions.SourcePosition}, to complete
+ * their operations, and so they are grouped as Protected.
+ *
+ * The remaining auxiliary operations are meant for internal usage, to
+ * provide readability or to avoid code duplication.
+ * The auxiliary operation {@link SourceReader._cloneRegions | _cloneRegions }
+ * is needed because each new position produced with
+ * {@link SourceReader.getPosition | getPosition } need to have a snapshot
+ * of the region stack, and not a mutable reference.
  */
 export class SourceReader {
-    // ===============================================
-    // #region Implementation Details { TO DO: Update
-    // -----------------------------------------------
-    /** TO DO: Update
-     * The implementation of {@link SourceReader} keeps:
-     *  * an object associating input document names to input document contents,
-     *    {@link SourceReader._documents | _documents},
-     *  * an object associating input document names to visible input document
-     *    contents,
-     *    {@link SourceReader._visibleDocumentContents | _visibleDocumentContents},
-     *  * an array of the keys of that object for sequential access,
-     *    {@link SourceReader.documentsNames | _documentsNames},
-     *  * an index to the current input document in the array of inputs names,
-     *    {@link SourceReader._documentIndex | _documentIndex},
-     *  * an index to the current visible input document in the array of inputs
-     *    names (because it may be different from the document index),
-     *    {@link SourceReader._charIndex | _charIndex},
-     *  * the current line and column in the current input document,
-     *    {@link SourceReader._line | _line} and
-     *    {@link SourceReader._column | _column},
-     *  * a stack of strings representing the regions' IDs,
-     *    {@link SourceReader._regions | _regions}, and
-     *  * the characters used to determine line ends,
-     *    {@link SourceReader.lineEnders | _lineEnders}.
-     *
-     * The object of {@link SourceReader._documents | _documents } cannot be
-     * empty (with no input document), and all the {@link SourceInput} forms are
-     * converted to `Record<string, string>` for ease of access.
-     * The {@link SourceReader._charIndex | _charIndex } either points to a valid
-     * position in an input document, or at the end of an input document, or the
-     * end of input was reached (that is, when there are no more input documents
-     * to read).
-     *
-     * Line and column numbers are adjusted depending on which characters are
-     * considered as ending a line, as given by the property
-     * {@link SourceReader.lineEnders | _lineEnders}, and which characters are
-     * considered visible, as indicating by the user through
-     * {@link SourceReader.skip | skip}.
-     * When changing from one document to the next, line and column numbers are reset.
-     *
-     * The visible input is conformed by those characters of the input that has
-     * been skipped normally. As visible and non visible characters can be
-     * interleaved with no restrictions, it is better to keep a copy of the
-     * visible parts: characters are copied to the visible inputs attribute when
-     * skipped normally. Visible inputs always have a copy of those characters
-     * that have been processed as visible; unprocessed characters do not appear
-     * (yet) on visible inputs.
-     *
-     * This class is tightly coupled with {@link SourcePosition}'s implementations,
-     * because of instances of that class represent different positions in the source
-     * inputs kept by a {@link SourceReader}.
-     * The operations
-     * {@link SourceReader._documentNameAt | _documentNameAt},
-     * {@link SourceReader._visibleDocumentContentsAt | _visibleDocumentContentsAt} and
-     * {@link SourceReader._visibleInputFromTo | _visibleInputFromTo },
-     * {@link SourceReader._fullDocumentContentsAt | _fullDocumentContentsAt} and
-     * {@link SourceReader._fullInputFromTo | _fullInputFromTo}, and
-     * {@link SourceReader._documentContextBeforeOf | _fullInputFromTo} and
-     * {@link SourceReader._documentContextAfterOf | _fullDocumentContentsAt}
-     * are meant to be used only by {@link SourcePosition}, to complete
-     * their operations, and so they are grouped as Protected.
-     *
-     * The remaining auxiliary operations are meant for internal usage, to
-     * provide readability or to avoid code duplication.
-     * The auxiliary operation {@link SourceReader._cloneRegions | _cloneRegions }
-     * is needed because each new position produced with
-     * {@link SourceReader.getPosition | getPosition } need to have a snapshot
-     * of the region stack, and not a mutable reference.
-     *
-     * @group Implementation Details
-     * @private
-     */
-    // -----------------------------------------------
-    // #endregion } Implementation Details
-    // ===============================================
-
     // ===============================================
     // #region API: Static Properties {
     // -----------------------------------------------
     /**
      * A special position indicating that the position is not known.
      *
-     * @group API: Static Properties
+     * @group Properties (Static)
      */
     public static readonly UnknownPosition: SourcePosition = SourcePositions.Unknown();
 
@@ -304,7 +289,7 @@ export class SourceReader {
      * The string to use as a name for unnamed input documents.
      * It is intended to be used only by instances.
      *
-     * @group API: Static Properties
+     * @group Properties (Static)
      */
     public static readonly defaultDocumentNamePrefix: string = 'doc';
     // -----------------------------------------------
@@ -316,16 +301,12 @@ export class SourceReader {
     // -----------------------------------------------
     /**
      * The names with which input documents are identified.
-     *
-     * @group API: Properties
      */
     public readonly documentsNames: string[];
 
     /**
      * The characters used to indicate the end of a line.
      * These characters affect the calculation of line and column numbers for positions.
-     *
-     * @group API: Properties
      */
     public readonly lineEnders: string;
     // -----------------------------------------------
@@ -341,7 +322,6 @@ export class SourceReader {
      *
      * **INVARIANT:** it is always and object (not a string).
      *
-     * @group Implementation: Properties
      * @private
      */
     private _documents: Record<string, string>;
@@ -354,7 +334,6 @@ export class SourceReader {
      *
      * **INVARIANT:** `0 <= _documentIndex <= _documentsNames.length`
      *
-     * @group Implementation: Properties
      * @private
      */
     private _documentIndex: number;
@@ -366,7 +345,6 @@ export class SourceReader {
      * * if `_documentIndex < _documentsNames.length`
      *   then `0 <= _charIndex < _documents[_documentsNames[_documentIndex]].length`
      *
-     * @group Implementation: Properties
      * @private
      */
     private _charIndex: number;
@@ -381,7 +359,6 @@ export class SourceReader {
      *   * the values of each key are contained in the values of the
      *     corresponding key at `_documents`
      *
-     * @group Implementation: Properties
      * @private
      */
     private _visibleDocumentContents: Record<string, string>;
@@ -394,7 +371,6 @@ export class SourceReader {
      *   * if `_documentIndex < _documentsNames.length`
      *     then `_line < _documents[_documentsNames[_documentIndex]].length`
      *
-     * @group Implementation: Properties
      * @private
      */
     private _line: number;
@@ -407,7 +383,6 @@ export class SourceReader {
      *   * if `_documentIndex < _documentsNames.length`
      *     then `_column < _documents[_documentsNames[_documentIndex]].length`
      *
-     * @group Implementation: Properties
      * @private
      */
     private _column: number;
@@ -415,7 +390,6 @@ export class SourceReader {
     /**
      * The active regions in the current input document.
      *
-     * @group Implementation: Properties
      * @private
      */
     private _regions: string[];
@@ -437,16 +411,14 @@ export class SourceReader {
      *
      * **PRECONDITION:** there is at least one input document.
      *
-     * @param input The source input. See {@link SourceInput} for explanation
+     * @param input - The source input. See {@link SourceInput} for explanation
      *              and examples of how to understand this parameter.
-     * @param lineEnders A string of which characters will be used to determine
+     * @param lineEnders - A string of which characters will be used to determine
      * the end of a line.
      *
-     * @throws {@link NoInputError} if the arguments are undefined or has no documents.
-     *
-     * @group API: Creation
+     * @throws {@link SourceReader/Errors.NoInputError} if the arguments are undefined or has no documents.
      */
-    public constructor(input: SourceInput, lineEnders: string = '\n') {
+    public constructor(input: SourceInput, lineEnders = '\n') {
         // No input document is not a valid option
         and(
             expect(input).not.toBeUndefined(),
@@ -459,13 +431,13 @@ export class SourceReader {
         if (typeof input === 'string') {
             // Single unnamed input case:
             // will be referred as "doc1" afterwards.
-            this._documents = { [SourceReader.defaultDocumentNamePrefix + 1]: input };
+            this._documents = { [SourceReader.defaultDocumentNamePrefix + String(1)]: input };
         } else if (typeof input === 'object' && Array.isArray(input)) {
             // Multiple unnamed input case:
             // will be referred as "doc1", "doc2", ..., "docN" afterwards.
             const tmp = {};
             for (let i = 0; i < input.length; i++) {
-                tmp[SourceReader.defaultDocumentNamePrefix + (i + 1)] = input[i];
+                tmp[SourceReader.defaultDocumentNamePrefix + String(i + 1)] = input[i];
             }
             this._documents = tmp;
         } else {
@@ -500,7 +472,7 @@ export class SourceReader {
     /**
      * Answers if there are no more characters to read from the input.
      *
-     * @group API: Access
+     * @group Functions: Access
      */
     public atEndOfInput(): boolean {
         return !this._hasMoreDocuments();
@@ -509,7 +481,7 @@ export class SourceReader {
     /**
      * Answers if there are no more characters to read from the current document.
      *
-     * @group API: Access
+     * @group Functions: Access
      */
     public atEndOfDocument(): boolean {
         return this._hasMoreDocuments() && !this._hasMoreCharsAtCurrentDocument();
@@ -520,10 +492,10 @@ export class SourceReader {
      *
      * **PRECONDITION:** `!this.atEndOfInput()`
      *
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the source reader is at EndOfDocument in the current position.
      *
-     * @group API: Access
+     * @group Functions: Access
      */
     public currentDocumentName(): string {
         expect(this._hasMoreDocuments()).toBeTrue().orThrow(new InvalidOperationAtEOIError('peek', 'SourceReader'));
@@ -536,12 +508,12 @@ export class SourceReader {
      *
      * **PRECONDITION:** `!this.atEndOfInput() && !this.atEndOfDocument`
      *
-     * @throws {@link InvalidOperationAtEODError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEODError}
      *         if the source reader is at EndOfInput in the current position.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the source reader is at EndOfDocument in the current position.
      *
-     * @group API: Access
+     * @group Functions: Access
      */
     public peek(): string {
         expect(this._hasMoreDocuments()).toBeTrue().orThrow(new InvalidOperationAtEOIError('peek', 'SourceReader'));
@@ -557,9 +529,9 @@ export class SourceReader {
      * documents -- that is, only the current input document is checked.
      * See {@link SourceReader} documentation for an example.
      *
-     * @param str The string to verify the current input, starting at the current char.
+     * @param str - The string to verify the current input, starting at the current char.
      *
-     * @group API: Access
+     * @group Functions: Access
      */
     public startsWith(str: string): boolean {
         // The input ALWAYS starts with nothing, even at the end of input
@@ -582,14 +554,14 @@ export class SourceReader {
     }
 
     /**
-     * Gives the current position as a {@link SourcePosition}.
+     * Gives the current position as a {@link SourceReader/SourcePositions.SourcePosition}.
      * See {@link SourceReader} documentation for an example.
      *
      * **NOTE:**
      *   the special positions at the end of each input document, and at the end of the
-     *   input can be accessed by {@link SourceReader.getPosition}, but they cannot be peeked.
+     *   input can be accessed by {@link SourceReader/SourcePositions.SourceReader.getPosition}, but they cannot be peeked.
      *
-     * @group API: Access
+     * @group Functions: Access
      */
     public getPosition(): SourcePosition {
         /* istanbul ignore next */
@@ -644,18 +616,18 @@ export class SourceReader {
      *
      * See {@link SourceReader} for an example of visible `skip`s.
      *
-     * @param howMuch An indication of how many characters have to be skipped.
+     * @param howMuch - An indication of how many characters have to be skipped.
      *                It may be given as a number or as a string. In this last
      *                case, the length of the string is used (the contents are
      *                ignored). If it is not given, it is assumed 1.
-     * @param silently A boolean indicating if the skip must be silent. If it is
+     * @param silently - A boolean indicating if the skip must be silent. If it is
      *                 not given, it is assumed `false`, that is, a visible
      *                 skip. If the skip is visible, the char is added to the
      *                 visible input.
      *
-     * @group API: Modification
+     * @group Functions: Modification
      */
-    public skip(howMuch: number | string = 1, silently: boolean = false): void {
+    public skip(howMuch: number | string = 1, silently = false): void {
         const amountToSkip: number = typeof howMuch === 'string' ? howMuch.length : howMuch;
         for (let i = 0; i < amountToSkip && this._hasMoreDocuments(); i++) {
             this._skipOne(silently);
@@ -671,17 +643,17 @@ export class SourceReader {
      * satisfy the predicate.
      * It does not go beyond the end of the current document, if starting inside one.
      *
-     * @param contCondition A predicate on strings, indicating the chars to read.
-     * @param silently A boolean indicating if the reading must be silent. If it
+     * @param contCondition - A predicate on strings, indicating the chars to read.
+     * @param silently - A boolean indicating if the reading must be silent. If it
      *                 is not given, it is assumed `false`, that is, a visible
      *                 read. If the read is visible, the char is added to the
      *                 visible input.
-     * @result The string read from the initial position until the character that do not
+     * @returns The string read from the initial position until the character that do not
      *         satisfy the condition or the end of the current string.
      *
-     * @group API: Modification
+     * @group Functions: Modification
      */
-    public takeWhile(contCondition: (ch: string) => boolean, silently: boolean = false): string {
+    public takeWhile(contCondition: (ch: string) => boolean, silently = false): string {
         if (!this._hasMoreDocuments() || !this._hasMoreCharsAtCurrentDocument()) {
             return '';
         }
@@ -703,7 +675,7 @@ export class SourceReader {
      * Pushes a region in the stack of regions.
      * It does not work at the EndOfInput or the EndOfDocument (it does nothing).
      *
-     * @group API: Modification
+     * @group Functions: Modification
      */
     public beginRegion(regionId: string): void {
         // Optimized by inlining: if (!this.atEndOfInput() && !this.atEndOfDocument())
@@ -715,7 +687,7 @@ export class SourceReader {
     /**
      * Pops a region from the stack of regions.
      * It does nothing if there are no regions in the stack.
-     * @group API: Modification
+     * @group Functions: Modification
      */
     public endRegion(): void {
         if (this._regions.length > 0) {
@@ -731,7 +703,7 @@ export class SourceReader {
     // -----------------------------------------------
     /**
      * Gives the name of the input document at the given index.
-     * It is intended to be used only by {@link SourcePosition}s.
+     * It is intended to be used only by {@linkSourceReader/SourcePositions.SourcePosition}s.
      *
      * **PRECONDITION:**
      *   `index <= this._documentsNames.length` (not verified)
@@ -739,8 +711,8 @@ export class SourceReader {
      *   As it is a protected operation, it is not expectable to receive invalid indexes.
      *   It is not taken into account which are the results if that happens.
      *
-     * @group Implementation: Protected for Source Positions
-     * @private
+     * @group Functions: Querying
+     * @internal
      */
     public _documentNameAt(index: number): string {
         return this.documentsNames[index];
@@ -749,7 +721,7 @@ export class SourceReader {
     /**
      * Gives the contents of the input document at the given index, both visible
      * and non-visible.
-     * It is intended to be used only by {@link SourcePosition}s.
+     * It is intended to be used only by {@link SourceReader/SourcePositions.SourcePosition}s.
      *
      * **PRECONDITION:**
      *   `index < this._documentsNames.length` (not verified)
@@ -757,8 +729,8 @@ export class SourceReader {
      * As it is a protected operation, it is not expectable to receive invalid indexes.
      * It is not taken into account which are the results if that happens.
      *
-     * @group Implementation: Protected for Source Positions
-     * @private
+     * @group Functions: Querying
+     * @internal
      */
     public _fullDocumentContentsAt(index: number): string {
         return this._documents[this.documentsNames[index]];
@@ -766,7 +738,7 @@ export class SourceReader {
 
     /**
      * Gives the contents of the visible input document at the given index. It
-     * is intended to be used only by {@link SourcePosition}s.
+     * is intended to be used only by {@link SourceReader/SourcePositions.SourcePosition}s.
      *
      * **PRECONDITION:**
      *   `index < this._documentsNames.length` (not verified).
@@ -774,8 +746,8 @@ export class SourceReader {
      * As it is a protected operation, it is not expectable to receive invalid indexes.
      * It is not taken into account which are the results if that happens.
      *
-     * @group Implementation: Protected for Source Positions
-     * @private
+     * @group Functions: Querying
+     * @internal
      */
     public _visibleDocumentContentsAt(index: number): string {
         return this._visibleDocumentContents[this.documentsNames[index]];
@@ -784,8 +756,8 @@ export class SourceReader {
     /**
      * Returns the next character in the reader.
      *
-     * @group Implementation: Protected for Source Positions
-     * @private
+     * @group Functions: Querying
+     * @internal
      */
     public _peek(): string {
         return this._fullDocumentContentsAt(this._documentIndex)[this._charIndex];
@@ -810,8 +782,8 @@ export class SourceReader {
      *      * The index of the document is valid (not checked)
      *      * The number of lines is not lower than 0 (not checked)
      *
-     * @group Implementation: Protected for Source Positions
-     * @private
+     * @group Functions: Querying
+     * @internal
      */
     public _documentContextBeforeOf(docIndex: number, charIndex: number, lines: number): string[] {
         const docContents: string = this._fullDocumentContentsAt(docIndex);
@@ -843,8 +815,8 @@ export class SourceReader {
      *
      * The char at the given position is the first one in the solution.
      *
-     * @group Implementation: Protected for Source Positions
-     * @private
+     * @group Functions: Querying
+     * @internal
      */
     public _documentContextAfterOf(docIndex: number, charIndex: number, lines: number): string[] {
         const docContents: string = this._fullDocumentContentsAt(docIndex);
@@ -877,8 +849,8 @@ export class SourceReader {
      * **PRECONDITIONS:**
      *  * both positions correspond to this reader (and so are >= 0 -- not verified)
      *
-     * @group Implementation: Auxiliaries
-     * @private
+     * @group Functions: Auxiliaries
+     * @internal
      */
     public _inputFromToIn(
         inputFrom: number,
@@ -920,9 +892,9 @@ export class SourceReader {
      *
      * **PRECONDITION:** `!this.atEndOfInput()` (not verified)
      *
-     * @param silently A boolean indicating if the skip must be silent.
+     * @param silently - A boolean indicating if the skip must be silent.
      *
-     * @group Implementation: Auxiliaries
+     * @group Function: Auxiliaries
      * @private
      */
     private _skipOne(silently: boolean): void {
@@ -952,7 +924,7 @@ export class SourceReader {
      *
      * **PRECONDITION:** `!this.atEndOfInput() && this.atEndOfDocument()`
      *
-     * @group Implementation: Auxiliaries
+     * @group Function: Auxiliaries
      * @private
      */
     private _skipToNextDocument(): void {
@@ -969,7 +941,7 @@ export class SourceReader {
     /**
      * Answers if there are more input documents to be read.
      *
-     * @group Implementation: Auxiliaries
+     * @group Function: Auxiliaries
      * @private
      */
     private _hasMoreDocuments(): boolean {
@@ -981,7 +953,7 @@ export class SourceReader {
      *
      * **PRECONDITION:** `this._hasMoreDocuments()`
      *
-     * @group Implementation: Auxiliaries
+     * @group Function: Auxiliaries
      * @private
      */
     private _hasMoreCharsAtCurrentDocument(): boolean {
@@ -992,7 +964,7 @@ export class SourceReader {
      * Answers if the given char is recognized as an end of line indicator,
      * according to the configuration of the reader.
      *
-     * @group Implementation: Auxiliaries
+     * @group Function: Auxiliaries
      * @private
      */
     private _isEndOfLine(ch: string): boolean {
@@ -1001,11 +973,11 @@ export class SourceReader {
 
     /**
      * Gives a clone of the stack of regions.
-     * Auxiliary for {@link SourceReader.getPosition | getPosition}.
-     * It is necessary because regions of {@link SourcePosition} must correspond
+     * Auxiliary for {@link SourceReader/SourcePositions.SourceReader.getPosition | getPosition}.
+     * It is necessary because regions of {@link SourceReader/SourcePositions.SourcePosition} must correspond
      * to those at that position and do not change with changes in reader state.
      *
-     * @group Implementation: Auxiliaries
+     * @group Function: Auxiliaries
      * @private
      */
     private _cloneRegions(): string[] {

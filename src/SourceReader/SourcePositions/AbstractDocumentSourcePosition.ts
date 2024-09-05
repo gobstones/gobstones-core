@@ -10,17 +10,16 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 import { AbstractKnownSourcePosition } from './AbstractKnownSourcePosition';
 
 import { SourceReader } from '../SourceReader';
 
-// ===============================================
-// #region AbstractDocumentSourcePosition {
-// -----------------------------------------------
 /**
  * An {@link AbstractDocumentSourcePosition} points to a particular position,
  * that is well known, and belongs to a particular document.
@@ -42,40 +41,26 @@ import { SourceReader } from '../SourceReader';
  * can answer, such as inquiring for the document name, and the contents
  * of the document.
  *
- * @group Internals: Source Positions
- * @private
+ * @privateRemarks
+ * Among the different operations provided in this class there are a few
+ * operations used to determine context of the source input surrounding
+ * the current position:
+ * {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}, and
+ * {@link AbstractDocumentSourcePosition.documentContextAfter | documentContextAfter}.
+ * The implementation of all these is achieved by a
+ * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
+ * to provide a common validation and different logics depending on the actual subclass.
+ * Protected methods
+ * {@link SourceReader/SourcePositions.AbstractKnownSourcePosition._documentContextBefore | _documentContextBefore },
+ * and
+ * {@link SourceReader/SourcePositions.AbstractKnownSourcePosition._documentContextAfter | _documentContextAfter },
+ * are used to implement the aforementioned pattern.
  */
 export abstract class AbstractDocumentSourcePosition extends AbstractKnownSourcePosition {
-    // ===============================================
-    // #region Implementation Details {
-    // -----------------------------------------------
-    /**
-     * Among the different operations provided in this class there are a few
-     * operations used to determine context of the source input surrounding
-     * the current position:
-     * {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}, and
-     * {@link AbstractDocumentSourcePosition.documentContextAfter | documentContextAfter}.
-     * The implementation of all these is achieved by a
-     * [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern)
-     * to provide a common validation and different logics depending on the actual subclass.
-     * Protected methods
-     * {@link AbstractKnownSourcePosition._documentContextBefore | _documentContextBefore },
-     * and
-     * {@link AbstractKnownSourcePosition._documentContextAfter | _documentContextAfter },
-     * are used to implement the aforementioned pattern.
-     *
-     * @group Internal: Implementation Details
-     * @private
-     */
-    // -----------------------------------------------
-    // #endregion } Implementation Details
-    // ===============================================
-
     // ===============================================
     // #region API: Properties {
     // -----------------------------------------------
     /**
-     * @group API: Properties
      * @inheritdoc
      */
     public readonly isEndOfInput = false;
@@ -95,14 +80,14 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader state
      *
-     * @param sourceReader The {@link SourceReader} of the input this position belongs to.
-     * @param line The line number of this position in the current input.
+     * @param sourceReader - The {@link SourceReader} of the input this position belongs to.
+     * @param line - The line number of this position in the current input.
      *      It will be modified only by the constructor.
      *      **INVARIANT:** `line >=1`, and it is a valid line in that reader.
-     * @param column The column number of this position in the current input.
+     * @param column - The column number of this position in the current input.
      *      It will be modified only by the constructor.
      *      **INVARIANT:** `column >= 1` and it is a valid column in that reader.
-     * @param regions The regions the position in the current input belongs to.
+     * @param regions - The regions the position in the current input belongs to.
      *      It will be modified only by the constructor.
      *      **INVARIANT:** the regions are valid in the position's reader.
      * @param _documentIndex The index with information about the input document
@@ -116,22 +101,15 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      *      **INVARIANT:** `visibleCharIndex >= 0` and it is a valid index in
      *      that reader.
      *
-     * @group Internal: Constructors
      * @private
      */
     public constructor(
         sourceReader: SourceReader,
-        /** @group API: Access */
         public readonly line: number,
-        /** @group API: Access */
         public readonly column: number,
-        /** @group API: Access */
         public readonly regions: string[],
-        /** @group Internal: Properties @private */
         public readonly _documentIndex: number,
-        /** @group Internal: Properties @private */
         public readonly _charIndex: number,
-        /** @group Internal: Properties @private */
         public readonly _visibleCharIndex: number
     ) {
         super(sourceReader);
@@ -142,7 +120,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public get fullDocumentContents(): string {
         return this.sourceReader._fullDocumentContentsAt(this._documentIndex);
@@ -150,7 +127,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get documentName(): string {
         return this.sourceReader._documentNameAt(this._documentIndex);
@@ -158,7 +134,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public get visibleDocumentContents(): string {
         return this.sourceReader._visibleDocumentContentsAt(this._documentIndex);
@@ -176,10 +151,8 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      * of {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}.
      * It must be reimplemented by subclasses.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the at the end of input.
-     *
-     * @group Internal: Helpers
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the at the end of input.
      */
     protected abstract _documentContextBefore(lines: number): string[];
 
@@ -194,10 +167,8 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
      * of {@link AbstractDocumentSourcePosition.documentContextBefore | documentContextBefore}.
      * It must be reimplemented by subclasses.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the at the end of input.
-     *
-     * @group Internal: Helpers
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the at the end of input.
      */
     protected abstract _documentContextAfter(lines: number): string[];
 
@@ -215,7 +186,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public documentContextBefore(lines: number): string[] {
         return this._documentContextBefore(lines);
@@ -223,7 +193,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public documentContextAfter(lines: number): string[] {
         return this._documentContextAfter(lines);
@@ -237,8 +206,7 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group Internal: Helpers
-     * @private
+     * @internal
      */
     public _internalDocumentIndex(): number {
         return this._documentIndex;
@@ -246,8 +214,7 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
-     * @private
+     * @internal
      */
     public _internalCharacterIndex(visible: boolean): number {
         return visible ? this._visibleCharIndex : this._charIndex;
@@ -255,7 +222,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
      */
     protected _fullContentsTo(to: AbstractKnownSourcePosition): string {
         return this.sourceReader._inputFromToIn(
@@ -269,7 +235,6 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
      */
     protected _visibleContentsTo(to: AbstractKnownSourcePosition): string {
         return this.sourceReader._inputFromToIn(
@@ -284,6 +249,3 @@ export abstract class AbstractDocumentSourcePosition extends AbstractKnownSource
     // #endregion } Internal: Helpers
     // ===============================================
 }
-// -----------------------------------------------
-// #endregion } AbstractDocumentSourcePosition
-// ===============================================

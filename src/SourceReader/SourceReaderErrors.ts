@@ -10,16 +10,19 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * This module exports error classes used by the {@link SourceReader.SourceReader} module.
+ *
+ * @module SourceReader/Errors
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  */
+
 /**
  * The superclass for all {@link SourceReader} errors.
- * It provides internationalization of error messages through a {@link API.Translator!Translator}.
  * It also restores the prototype chain.
  *
- * @group API: Main
+ * @group Errors
  */
 export class SourceReaderError extends Error {
     /**
@@ -29,7 +32,7 @@ export class SourceReaderError extends Error {
      * from this level are supposed to be catched and rethrown or handled
      * properly.
      *
-     * @param message A string message to show.
+     * @param message - A string message to show.
      */
     public constructor(message: string) {
         super(message);
@@ -41,7 +44,7 @@ export class SourceReaderError extends Error {
  * The error to produce when a {@link SourceReader} is called with no input
  * (an empty object or array).
  *
- * @group API: Errors
+ * @group Errors
  */
 export class NoInputError extends SourceReaderError {
     /**
@@ -56,15 +59,15 @@ export class NoInputError extends SourceReaderError {
  * The error to produce when two positions related with different readers are
  * used to determine a portion of the contents.
  *
- * @group API: Errors
+ * @group Errors
  */
 export class MismatchedInputsError extends SourceReaderError {
     /**
      * The constructor for
      * {@link MismatchedInputsError | MismatchedInputsError} errors.
      *
-     * @param operation A string indicating which function inform as the producer of the error.
-     * @param context A string indicating the context in which the function produce the error.
+     * @param operation - A string indicating which function inform as the producer of the error.
+     * @param context - A string indicating the context in which the function produce the error.
      */
     public constructor(
         public readonly operation: string,
@@ -78,14 +81,14 @@ export class MismatchedInputsError extends SourceReaderError {
  * The error to produce when a function that is not supposed to be used at
  * an unknown position, but was called.
  *
- * @group API: Errors
+ * @group Errors
  */
 export class InvalidOperationAtUnknownPositionError extends SourceReaderError {
     /**
-     * The constructor for {@link InvalidOperationAtUnknownPositionError} errors.
+     * The constructor for {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} errors.
      *
-     * @param operation A string indicating which function produced the error.
-     * @param context A string indicating the context in which the function produced the error.
+     * @param operation - A string indicating which function produced the error.
+     * @param context - A string indicating the context in which the function produced the error.
      */
     public constructor(
         public readonly operation: string,
@@ -98,14 +101,14 @@ export class InvalidOperationAtUnknownPositionError extends SourceReaderError {
 /**
  * The error to produce when a function that is not supposed to be used at EndOfInput is called.
  *
- * @group API: Errors
+ * @group Errors
  */
 export class InvalidOperationAtEOIError extends SourceReaderError {
     /**
-     * The constructor for {@link InvalidOperationAtEOIError} errors.
+     * The constructor for {@link SourceReader/Errors.InvalidOperationAtEOIError} errors.
      *
-     * @param operation A string indicating which function produced the error.
-     * @param context A string indicating the context in which the function produced the error.
+     * @param operation - A string indicating which function produced the error.
+     * @param context - A string indicating the context in which the function produced the error.
      */
     public constructor(
         public readonly operation: string,
@@ -118,14 +121,14 @@ export class InvalidOperationAtEOIError extends SourceReaderError {
 /**
  * The error to produce when a function that is not supposed to be used at EndOfDocument is called.
  *
- * @group API: Errors
+ * @group Errors
  */
 export class InvalidOperationAtEODError extends SourceReaderError {
     /**
      * The constructor for {@link InvalidOperationAtEODError} errors.
      *
-     * @param operation A string indicating which function produced the error.
-     * @param context A string indicating the context in which the function produced the error.
+     * @param operation - A string indicating which function produced the error.
+     * @param context - A string indicating the context in which the function produced the error.
      */
     public constructor(
         public readonly operation: string,

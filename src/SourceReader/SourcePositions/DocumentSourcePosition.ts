@@ -10,41 +10,27 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 import { AbstractDocumentSourcePosition } from './AbstractDocumentSourcePosition';
 import { SourcePosition } from './SourcePosition';
 
 import { SourceReader } from '../SourceReader';
 
-// ===============================================
-// #region DocumentSourcePosition {
-// -----------------------------------------------
 /**
  * A {@link DocumentSourcePosition} points to a particular position, different
  * from EndOfDocument, inside a particular document.
- *
- * @group Internals: Source Positions
- * @private
  */
 export class DocumentSourcePosition extends AbstractDocumentSourcePosition implements SourcePosition {
-    // ===============================================
-    // #region API: Properties {
-    // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public readonly isEndOfDocument: boolean = false;
-    // -----------------------------------------------
-    // #endregion } API: Properties
-    // ===============================================
 
-    // ===============================================
-    // #region Internal: Constructors {
-    // -----------------------------------------------
     /**
      * Constructs a defined position different from the end of a document in an
      * input source.
@@ -53,8 +39,6 @@ export class DocumentSourcePosition extends AbstractDocumentSourcePosition imple
      * **PRECONDITIONS:** (not verified during execution)
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader state
-     * @group Internal: Constructors
-     * @private
      */
     public constructor(
         sourceReader: SourceReader,
@@ -67,16 +51,9 @@ export class DocumentSourcePosition extends AbstractDocumentSourcePosition imple
     ) {
         super(sourceReader, line, column, regions, documentIndex, charIndex, visibleCharIndex);
     }
-    // -----------------------------------------------
-    // #endregion } Internal: Constructors
-    // ===============================================
 
-    // ===============================================
-    // #region API: Printing {
-    // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Printing
      */
     public toString(): string {
         // if (
@@ -89,16 +66,9 @@ export class DocumentSourcePosition extends AbstractDocumentSourcePosition imple
         // }
         return `@<${this.documentName}:${this.line},${this.column}>`;
     }
-    // -----------------------------------------------
-    // #endregion } API: Printing
-    // ===============================================
 
-    // ===============================================
-    // #region Internal: Helpers {
-    // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group Internal: Helpers
      */
     protected _documentContextBefore(lines: number): string[] {
         return this.sourceReader._documentContextBeforeOf(
@@ -110,7 +80,6 @@ export class DocumentSourcePosition extends AbstractDocumentSourcePosition imple
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
      */
     protected _documentContextAfter(lines: number): string[] {
         return this.sourceReader._documentContextAfterOf(
@@ -119,10 +88,4 @@ export class DocumentSourcePosition extends AbstractDocumentSourcePosition imple
             lines
         );
     }
-    // -----------------------------------------------
-    // #endregion } Internal: Helpers
-    // ===============================================
 }
-// -----------------------------------------------
-// #endregion } EndOfDocumentSourcePosition
-// ===============================================

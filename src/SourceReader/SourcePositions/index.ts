@@ -11,8 +11,14 @@
  * *****************************************************************************
  */
 /**
- * @module API.SourceReader
+ * This module exposes the source position elements that are used by the
+ * {@link SourceReader}. This module is internal, thus, the user should not
+ * instantiate the classes here but through the {@link SourcePositions} factory.
+ *
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
+ *
+ * @internal
  */
 export * from './SourceSpan';
 export * from './SourcePosition';

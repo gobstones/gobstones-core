@@ -10,10 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 import { AbstractKnownSourcePosition } from './AbstractKnownSourcePosition';
 import { SourcePosition } from './SourcePosition';
 
@@ -26,9 +28,6 @@ import { InvalidOperationAtEOIError } from '../SourceReaderErrors';
  * That position is reached when all input documents have been processed.
  * It is a special position, because it does not point to a particular position
  * inside a document in the source input, but to the end of it.
- *
- * @group Internals: Source Positions
- * @private
  */
 export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implements SourcePosition {
     // ===============================================
@@ -54,9 +53,7 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader state
      *
-     * @param sourceReader The {@link SourceReader} of the input this position belongs to.
-     * @group Internal: Constructors
-     * @private
+     * @param sourceReader - The {@link SourceReader} of the input this position belongs to.
      */
     public constructor(sourceReader: SourceReader) {
         super(sourceReader);
@@ -70,7 +67,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public get isEndOfDocument(): boolean {
         throw new InvalidOperationAtEOIError('isEndOfDocument', 'EndOfInputSourcePosition');
@@ -84,7 +80,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get line(): number {
         throw new InvalidOperationAtEOIError('line', 'EndOfInputSourcePosition');
@@ -92,7 +87,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
 
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get column(): number {
         throw new InvalidOperationAtEOIError('column', 'EndOfInputSourcePosition');
@@ -100,7 +94,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
 
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get regions(): string[] {
         throw new InvalidOperationAtEOIError('regions', 'EndOfInputSourcePosition');
@@ -108,7 +101,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
 
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get documentName(): string {
         throw new InvalidOperationAtEOIError('documentName', 'EndOfInputSourcePosition');
@@ -122,7 +114,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public get fullDocumentContents(): string {
         throw new InvalidOperationAtEOIError('fullDocumentContents', 'EndOfInputSourcePosition');
@@ -130,7 +121,6 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public get visibleDocumentContents(): string {
         throw new InvalidOperationAtEOIError('visibleDocumentContents', 'EndOfInputSourcePosition');
@@ -138,17 +128,15 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
-    public documentContextBefore(lines: number): string[] {
+    public documentContextBefore(_lines: number): string[] {
         throw new InvalidOperationAtEOIError('documentContextBefore', 'EndOfInputSourcePosition');
     }
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
-    public documentContextAfter(lines: number): string[] {
+    public documentContextAfter(_lines: number): string[] {
         throw new InvalidOperationAtEOIError('documentContextAfter', 'EndOfInputSourcePosition');
     }
     // -----------------------------------------------
@@ -160,22 +148,17 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Printing
      */
     public toString(): string {
         return '@<EOI>';
     }
-    // -----------------------------------------------
-    // #endregion } API: Printing
-    // ===============================================
 
     // ===============================================
     // #region Internal: Helpers {
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group Internal: Helpers
-     * @private
+     * @internal
      */
     public _internalDocumentIndex(): number {
         return this.sourceReader.documentsNames.length - 1;
@@ -183,26 +166,23 @@ export class EndOfInputSourcePosition extends AbstractKnownSourcePosition implem
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
-     * @private
+     * @internal
      */
-    public _internalCharacterIndex(visible: boolean): number {
+    public _internalCharacterIndex(_visible: boolean): number {
         return this.sourceReader._fullDocumentContentsAt(this._internalDocumentIndex()).length;
     }
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
      */
-    protected _fullContentsTo(to: AbstractKnownSourcePosition): string {
+    protected _fullContentsTo(_to: AbstractKnownSourcePosition): string {
         return '';
     }
 
     /**
      * @inheritdoc
-     * @group Internal: Helpers
      */
-    protected _visibleContentsTo(to: AbstractKnownSourcePosition): string {
+    protected _visibleContentsTo(_to: AbstractKnownSourcePosition): string {
         return '';
     }
     // -----------------------------------------------

@@ -10,13 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
  * @ignore
  */
-export * from './Types';
-export * from './Functions';
 export * from './Events/EventEmitter';
 export * from './Expectations';
-export * from './Translations';
+export * from './Functions';
 export * from './SourceReader';
-export * from './GobstonesLang';
+export * from './Types';

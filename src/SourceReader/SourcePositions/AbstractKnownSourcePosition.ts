@@ -10,8 +10,9 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
@@ -22,9 +23,6 @@ import { expect } from '../../Expectations';
 import { SourceReader } from '../SourceReader';
 import { InvalidOperationAtUnknownPositionError, MismatchedInputsError } from '../SourceReaderErrors';
 
-// ===============================================
-// #region AbstractKnownSourcePosition {
-// -----------------------------------------------
 /**
  * A {@link AbstractKnownSourcePosition} points to a position in a specific
  * {@link SourceReader}. It should only be created using the
@@ -43,9 +41,6 @@ import { InvalidOperationAtUnknownPositionError, MismatchedInputsError } from '.
  * As all instances of {@link AbstractKnownSourcePosition} represent a known
  * position, they may be queried to obtain the line, column, regions and
  * surrounding contents.
- *
- * @group Internals: Source Positions
- * @private
  */
 export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition {
     // ===============================================
@@ -71,7 +66,6 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * {@link AbstractKnownSourcePosition._fullContentsFrom | _fullContentsFrom },
      * are used to implement the aforementioned pattern.
      *
-     * @group Internal: Implementation Details
      * @private
      */
     // -----------------------------------------------
@@ -83,13 +77,11 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public abstract readonly isEndOfInput: boolean;
 
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public readonly isUnknown = false;
 
@@ -108,15 +100,9 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *  * all numbers are >= 0
      *  * numbers are consistent with the reader's state
      *
-     * @param sourceReader The {@link SourceReader} of the input this position belongs to.
-     *
-     * @group Internal: Constructors
-     * @private
+     * @param sourceReader - The {@link SourceReader} of the input this position belongs to.
      */
-    public constructor(
-        /** @group API: Access */
-        public readonly sourceReader: SourceReader
-    ) {
+    public constructor(public readonly sourceReader: SourceReader) {
         super();
     }
     // -----------------------------------------------
@@ -131,8 +117,7 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * corresponds is stored.
      * It may be one longer that the lenght, in case the position is EOI.
      *
-     * @group Internal: Helpers
-     * @private
+     * @internal
      */
     public abstract _internalDocumentIndex(): number;
 
@@ -141,8 +126,7 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * character which this positions corresponds to is stored.
      * It may be one longer thant the lenght, in case the position is EOD.
      *
-     * @group Internal: Helpers
-     * @private
+     * @internal
      */
     public abstract _internalCharacterIndex(visible: boolean): number;
 
@@ -159,12 +143,10 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * **PRECONDITION:** both positions correspond to the same reader (not
      *                   validated, as it is a protected operation).
      *
-     * @param to A {@link AbstractKnownSourcePosition} related with the same
+     * @param to - A {@link AbstractKnownSourcePosition} related with the same
      *           {@link SourceReader} that the receiver.
      *           It indicates a final position to consult (not included),
      *           where the receiver is the first.
-     *
-     * @group Internal: Helpers
      */
     protected abstract _fullContentsTo(to: AbstractKnownSourcePosition): string;
 
@@ -181,18 +163,15 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * **PRECONDITION:** both positions correspond to the same reader (not
      *                   validated, as it is a protected operation).
      *
-     * @param to A {@link AbstractKnownSourcePosition} related with the same
+     * @param to - A {@link AbstractKnownSourcePosition} related with the same
      *           {@link SourceReader} that the receiver.
      *           It indicates the final position to consult (not included),
      *           where the receiver is the first.
-     *
-     * @group Internal: Helpers
      */
     protected abstract _visibleContentsTo(to: AbstractKnownSourcePosition): string;
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public fullContentsFrom(from: SourcePosition): string {
         this._validateSourceReaders(from, 'fullContentsFrom', 'AbstractKnownSourcePosition');
@@ -201,7 +180,6 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public fullContentsTo(to: SourcePosition): string {
         this._validateSourceReaders(to, 'fullContentsTo', 'AbstractKnownSourcePosition');
@@ -210,7 +188,6 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public visibleContentsTo(to: SourcePosition): string {
         this._validateSourceReaders(to, 'visibleContentsTo', 'AbstractKnownSourcePosition');
@@ -219,7 +196,6 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
 
     /**
      * @inheritdoc
-     * @group API: Contents access
      */
     public visibleContentsFrom(from: SourcePosition): string {
         this._validateSourceReaders(from, 'visibleContentsFrom', 'AbstractKnownSourcePosition');
@@ -239,12 +215,10 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *
      * Implements a common validation for the Template Method Pattern.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link MismatchedInputsError}
+     * @throws {@link SourceReader/Errors.MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
-     *
-     * @group Internal: Helpers
      */
     protected _validateSourceReaders(that: SourcePosition, operation: string, context: string): void {
         expect(that.isUnknown).toBeFalse().orThrow(new InvalidOperationAtUnknownPositionError(operation, context));
@@ -267,12 +241,10 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      *  * both positions correspond to the same reader
      *    (not validated, as it is a protected operation).
      *
-     * @param from An {@link AbstractKnownSourcePosition} related with the same
+     * @param from - An {@link AbstractKnownSourcePosition} related with the same
      *           {@link SourceReader} that the receiver.
      *           It indicates the starting position to consult,
      *           where the receiver is the last (not included).
-     *
-     * @group Internal: Helpers
      */
     protected _fullContentsFrom(from: AbstractKnownSourcePosition): string {
         return this.sourceReader._inputFromToIn(
@@ -297,12 +269,10 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
      * **PRECONDITION:** both positions correspond to the same reader (not
      *                   validated, as it is a protected operation).
      *
-     * @param from A {@link AbstractKnownSourcePosition} related with the same
-     *           {@link SourceReader} that the receiver.
+     * @param from - A {@link AbstractKnownSourcePosition} related with the same
+     *           {@link SourceReader.SourceReader} that the receiver.
      *           It indicates the starting position to consult,
      *           where the receiver is the last (not included).
-     *
-     * @group Internal: Helpers
      */
     protected _visibleContentsFrom(from: AbstractKnownSourcePosition): string {
         return this.sourceReader._inputFromToIn(
@@ -317,6 +287,3 @@ export abstract class AbstractKnownSourcePosition extends AbstractSourcePosition
     // #endregion } Internal: Helpers
     // ===============================================
 }
-// -----------------------------------------------
-// #endregion } AbstractKnownSourcePosition
-// ===============================================

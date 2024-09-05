@@ -10,18 +10,17 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 import { AbstractSourcePosition } from './AbstractSourcePosition';
 import { SourcePosition } from './SourcePosition';
 
 import { InvalidOperationAtUnknownPositionError } from '../SourceReaderErrors';
 
-// ===============================================
-// #region UnknownSourcePosition {
-// -----------------------------------------------
 /**
  * An {@link UnknownSourcePosition} represents an unknown source position,
  * that is, it does not point to any position in any source reader.
@@ -37,9 +36,6 @@ import { InvalidOperationAtUnknownPositionError } from '../SourceReaderErrors';
  * This class has a single instance, accessible through the
  * {@link UnknownSourcePosition.instance | instance} static field,
  * and cannot be further instantiated.
- *
- * @group Internals: Source Positions
- * @private
  */
 export class UnknownSourcePosition extends AbstractSourcePosition implements SourcePosition {
     // ===============================================
@@ -47,8 +43,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // -----------------------------------------------
     /**
      * Returns the single instance of this class.
-     * @group Internal: Constructors
-     * @private
      */
     public static readonly instance = new UnknownSourcePosition();
     // -----------------------------------------------
@@ -60,7 +54,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public readonly isUnknown: boolean = true;
     // -----------------------------------------------
@@ -73,9 +66,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     /**
      * Returns an instance of this class.
      * Made private to follow the singleton pattern.
-     *
-     * @group Internal: Constructors
-     * @private
      */
     private constructor() {
         super();
@@ -89,7 +79,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public get isEndOfInput(): boolean {
         throw new InvalidOperationAtUnknownPositionError('isEndOfInput', 'UnknownSourcePosition');
@@ -97,7 +86,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
 
     /**
      * @inheritdoc
-     * @group API: Properties
      */
     public get isEndOfDocument(): boolean {
         throw new InvalidOperationAtUnknownPositionError('isEndOfDocument', 'UnknownSourcePosition');
@@ -111,7 +99,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get line(): number {
         throw new InvalidOperationAtUnknownPositionError('line', 'UnknownSourcePosition');
@@ -119,7 +106,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
 
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get column(): number {
         throw new InvalidOperationAtUnknownPositionError('column', 'UnknownSourcePosition');
@@ -135,7 +121,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
 
     /**
      * @inheritdoc
-     * @group API: Access
      */
     public get documentName(): string {
         throw new InvalidOperationAtUnknownPositionError('documentName', 'UnknownSourcePosition');
@@ -149,7 +134,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Content access
      */
     public get fullDocumentContents(): string {
         throw new InvalidOperationAtUnknownPositionError('fullDocumentContents', 'UnknownSourcePosition');
@@ -157,7 +141,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
     public get visibleDocumentContents(): string {
         throw new InvalidOperationAtUnknownPositionError('visibleDocumentContents', 'UnknownSourcePosition');
@@ -165,49 +148,43 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
-    public fullContentsFrom(from: SourcePosition): string {
+    public fullContentsFrom(_from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError('fullContentsFrom', 'UnknownSourcePosition');
     }
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
-    public fullContentsTo(from: SourcePosition): string {
+    public fullContentsTo(_from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError('fullContentsTo', 'UnknownSourcePosition');
     }
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
-    public visibleContentsFrom(from: SourcePosition): string {
+    public visibleContentsFrom(_from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError('visibleContentsFrom', 'UnknownSourcePosition');
     }
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
-    public visibleContentsTo(from: SourcePosition): string {
+    public visibleContentsTo(_from: SourcePosition): string {
         throw new InvalidOperationAtUnknownPositionError('visibleContentsTo', 'UnknownSourcePosition');
     }
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
-    public documentContextBefore(lines: number): string[] {
+    public documentContextBefore(_lines: number): string[] {
         throw new InvalidOperationAtUnknownPositionError('documentContextBefore', 'UnknownSourcePosition');
     }
 
     /**
      * @inheritdoc
-     * @group API: Content access
      */
-    public documentContextAfter(lines: number): string[] {
+    public documentContextAfter(_lines: number): string[] {
         throw new InvalidOperationAtUnknownPositionError('documentContextAfter', 'UnknownSourcePosition');
     }
     // -----------------------------------------------
@@ -219,7 +196,6 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // -----------------------------------------------
     /**
      * @inheritdoc
-     * @group API: Printing
      */
     public toString(): string {
         return '@<?>';
@@ -228,6 +204,3 @@ export class UnknownSourcePosition extends AbstractSourcePosition implements Sou
     // #endregion } API: Printing
     // ===============================================
 }
-// -----------------------------------------------
-// #endregion } UnknownSourcePosition
-// ===============================================

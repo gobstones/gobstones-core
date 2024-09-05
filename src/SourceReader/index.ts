@@ -10,10 +10,7 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
-/**
- * @module API.SourceReader
- * @author Alan Rodas Bonjour <alanrodas@gmail.com>
- */
+
 /**
  * A {@link SourceReader} allows you to read input from some source, either one single document of
  * content or several named or indexed source documents, in such a way that each character read
@@ -27,23 +24,20 @@
  *  * to allow the relationship of parts of the input with identifiers naming "regions", thus
  *    making it possible for external tools to identify those parts with ease.
  *
- * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePosition}s,
- * in particular {@link KnownSourcePosition}s, can be read from it.
+ * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourceReader/SourcePositions.SourcePosition}s,
+ * in particular {@link SourceReader/SourcePositions.AbstractKnownSourcePosition}s, can be read from it.
  * Possible interactions with a {@link SourceReader} includes:
- *  - {@link SourceReader.peek | peek}, peeking a character,
- *  - {@link SourceReader.startsWith | startsWith}, checking if a given strings occurs at the
+ *  * {@link SourceReader.peek | peek}, peeking a character,
+ *  * {@link SourceReader.startsWith | startsWith}, checking if a given strings occurs at the
  *    beginning of the text in the current document, without skipping it,
- *  - {@link SourceReader.getPosition | getPosition}
- *  - {@link SourceReader.getDocumentPosition | getDocumentPosition}, getting the current position
- *    as a {@link KnownSourcePosition} or (provided the end of input was not reached)
- *    {@link DocumentSourcePosition}, respectively,
- *  - {@link SourceReader.atEndOfInput | atEndOfInput}, detecting if the end of input was reached,
- *  - {@link SourceReader.atEndOfDocument | atEndOfDocument}, detecting if the end of the current
+ *  * {@link SourceReader.getPosition | getPosition}
+ *  * {@link SourceReader.atEndOfInput | atEndOfInput}, detecting if the end of input was reached,
+ *  * {@link SourceReader.atEndOfDocument | atEndOfDocument}, detecting if the end of the current
  *    document was reached,
- *  - {@link SourceReader.skip | skip}, skipping one or more characters,
- *  - {@link SourceReader.takeWhile | takeWhile}, reading some characters from the current document
+ *  * {@link SourceReader.skip | skip}, skipping one or more characters,
+ *  * {@link SourceReader.takeWhile | takeWhile}, reading some characters from the current document
  *    based on a condition, and
- *  - {@link SourceReader.beginRegion | beginRegion} and
+ *  * {@link SourceReader.beginRegion | beginRegion} and
  *    {@link SourceReader.endRegion | endRegion}, manipulating "regions".
  * When reading from sources with multiple documents of input, skipping moves inside a document
  * until there are no more characters, then an end of document position is reached (a special
@@ -60,25 +54,27 @@
  *
  * ## Source positions
  *
- * {@link SourcePosition}s point to particular positions in the source given by a
+ * {@link SourceReader/SourcePositions.SourcePosition}s point to particular positions in the source given by a
  * {@link SourceReader}.
- * All {@link SourcePosition}s are created only through {@link SourceReader}.
+ * All {@link SourceReader/SourcePositions.SourcePosition}s are created only through {@link SourceReader}.
  *
  * A source position may be known (pointing to a particular position into a
  * {@link SourceReader}) or unknown (if a position cannot be determined).
- * The boolean property {@link SourcePosition.isUnknown | isUnknown}
+ * The boolean property {@link SourceReader/SourcePositions.SourcePosition.isUnknown | isUnknown}
  * indicates which is the case.
  *
- * Additionally, a string representation of any {@link SourcePosition}
- * can be obtained through {@link SourcePosition.toString | toString}
+ * Additionally, a string representation of any {@link SourceReader/SourcePositions.SourcePosition}
+ * can be obtained through {@link SourceReader/SourcePositions.SourcePosition.toString | toString}
  * for internal use purposes.
  *
- * A typical use of {@link SourcePosition}s is relating nodes of an AST
+ * A typical use of {@link SourceReader/SourcePositions.SourcePosition}s is relating nodes of an AST
  * representation of code to particular positions in the string version of the
  * source code (that may come from several input documents).
  *
  * @module SourceReader
+ * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 export * from './SourceReader';
 export { SourcePosition, SourceSpan } from './SourcePositions';
 export * from './SourceReaderErrors';

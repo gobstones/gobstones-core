@@ -10,10 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 import { DocumentSourcePosition } from './DocumentSourcePosition';
 import { EndOfDocumentSourcePosition } from './EndOfDocumentSourcePosition';
 import { EndOfInputSourcePosition } from './EndOfInputSourcePosition';
@@ -25,9 +27,6 @@ import { SourceReader } from '../SourceReader';
  * The constant implementing the
  * [Abstract Factory Pattern](https://en.wikipedia.org/wiki/Abstract_factory_pattern)
  * for {@link SourcePosition}s.
- *
- * @group Internal: Main
- * @private
  */
 export const SourcePositions = {
     Unknown: () => UnknownSourcePosition.instance,

@@ -1,13 +1,8 @@
-#!/usr/bin/env sh
-
-# Load husky
-. "$(dirname -- "$0")/_/husky.sh";
-
 # Read parameters
 # NOTHING TO READ HERE
 
 # Set failing on command fail, and undefined variable use
-set -eu;
+set -eu
 
 # This hook is invoked by git-commit, and can be bypassed with the
 # --no-verify option. It takes no parameters, and is invoked before
@@ -31,26 +26,29 @@ set -eu;
 # Generated files are added to the commit.
 
 # Show welcome message
-echo "**************************";
-echo "Running pre commit hooks";
-echo "**************************";
-echo "";
+echo "**************************"
+echo "Running pre commit hooks"
+echo "**************************"
+echo ""
 
 # Run license
-echo "\nAdd license text to code files\n";
-npx --no -- gobstones-scripts run license --silent ;
-
-# Run prettify
-echo "Run prettify\n";
-npx --no -- gobstones-scripts run prettify --silent ;
+echo "\nAdd license text to code files\n"
+npx --no -- gobstones-scripts run license --silent
 
 # Run changelog
-echo "\nRun changelog\n";
-npx --no -- gobstones-scripts run changelog --silent ;
+echo "\nRun changelog\n"
+# Only run if not first commit
+if git-log &> /dev/null; then
+    npx --no -- gobstones-scripts run changelog --silent
+fi
+
+# Run prettify
+echo "Run prettify\n"
+npx --no -- gobstones-scripts run prettify --silent
 
 # Add all generated files
-echo "\nAdd generated files to commit\n";
-git add --all;
+echo "\nAdd generated files to commit\n"
+git add --all
 
 # Exit
-exit 0;
+exit 0

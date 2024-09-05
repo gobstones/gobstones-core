@@ -11,7 +11,7 @@
  * *****************************************************************************
  */
 /**
- * @module API.Types
+ * @module Types
  * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
  */
 
@@ -22,8 +22,6 @@
  * {@link https://grrr.tech/posts/2021/typescript-partial/ | blog by Harmen Janssen}, posted
  * on November 29, 2021.
  * See that blog for an explanation on the code.
- *
- * @group API: Main
  */
 export type Subset<K> = {
     [attr in keyof K]?: K[attr] extends object

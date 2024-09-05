@@ -10,10 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.Types
+ * @module Types
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 /**
  * A type modifier that allows to construct a generic type that
  * requires only one property of a given type.
@@ -33,7 +35,7 @@
  * type UserWithName = WithRequired<User, 'name'>
  * ```
  *
- * @param T The base type.
- * @param K the name of the property to require in the new type.
+ * @param T - The base type.
+ * @param K - the name of the property to require in the new type.
  */
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };

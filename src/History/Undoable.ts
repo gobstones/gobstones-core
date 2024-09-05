@@ -10,6 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
+/**
+ * @module History
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ */
+
 /**
  * An {@link Undoable} is a data structure that changes over time, and incorporates the possibility
  * to undo some changes and later redo them (if no other changing operation was done in between).

@@ -10,6 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
+/**
+ * @module History
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ */
+
 /**
  * A {@link Changeable} is a data structure used to register changes over a certain value
  * of a given type.

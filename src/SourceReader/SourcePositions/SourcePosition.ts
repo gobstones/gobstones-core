@@ -10,23 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.SourceReader
+ * @module SourceReader/SourcePositions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-// These imports are needed for typedoc to find the references
-import {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    InvalidOperationAtUnknownPositionError,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    InvalidOperationAtEOIError,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    MismatchedInputsError
-} from '../SourceReaderErrors';
 
-// ===============================================
-// #region SourcePosition {
-// -----------------------------------------------
 /**
  * {@link SourcePosition}s point to particular positions in the source given by a
  * {@link SourceReader}.
@@ -44,7 +33,6 @@ import {
  * A typical use of {@link SourcePosition}s is relating nodes of an AST
  * representation of code to particular positions in the string version of the
  * source code (that may come from several input documents).
- * @group API: Main
  */
 export interface SourcePosition {
     // ===============================================
@@ -53,8 +41,6 @@ export interface SourcePosition {
     /**
      * Answers if this position correspond to one in some {@link SourceReader},
      * or if it is unknown.
-     *
-     * @group API: Properties
      */
     readonly isUnknown: boolean;
 
@@ -66,9 +52,7 @@ export interface SourcePosition {
      * **PRECONDITIONS:**
      *  * the position is known
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     *
-     * @group API: Properties
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
      */
     readonly isEndOfInput: boolean;
 
@@ -83,10 +67,8 @@ export interface SourcePosition {
      *  * the position is not unknown
      *  * the position is not at the end of input
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Properties
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     readonly isEndOfDocument: boolean;
     // -----------------------------------------------
@@ -103,10 +85,8 @@ export interface SourcePosition {
      *  * the position is not unknown
      *  * the position is not at the end of input
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Access
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     readonly documentName: string;
 
@@ -119,10 +99,8 @@ export interface SourcePosition {
      *
      * **INVARIANT:** `line >=1`, and it is a valid line in that reader.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Access
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     readonly line: number;
 
@@ -134,10 +112,8 @@ export interface SourcePosition {
      *  * the position is not at the end of input
      *
      * **INVARIANT:** `column >= 1` and it is a valid column in that reader.
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Access
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     readonly column: number;
 
@@ -149,10 +125,8 @@ export interface SourcePosition {
      *  * the position is not at the end of input
      *
      * **INVARIANT:** the regions are valid in the position's reader.
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Access
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     readonly regions: string[];
     // -----------------------------------------------
@@ -170,12 +144,10 @@ export interface SourcePosition {
      *  * the position is not unknown
      *  * the position is not at the end of input
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver is unknown.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
-     *
-     * @group API: Contents access
      */
     readonly fullDocumentContents: string;
 
@@ -186,12 +158,10 @@ export interface SourcePosition {
      *  * the position is not unknown
      *  * the position is not at the end of input
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver is unknown.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
-     *
-     * @group API: Contents access
      */
     readonly visibleDocumentContents: string;
 
@@ -206,19 +176,17 @@ export interface SourcePosition {
      *  * both positions correspond to the same reader
      *  * the receiver is not at the end of input
      *
-     * @param from
+     * @param from -
      *         A {@link SourcePosition} related with the same {@link SourceReader}
      *         that the receiver.
      *         It indicates a starting position to consult, where the receiver is the last.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link MismatchedInputsError}
+     * @throws {@link SourceReader/Errors.MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
-     *
-     * @group API: Contents access
      */
     fullContentsFrom(from: SourcePosition): string;
 
@@ -232,19 +200,17 @@ export interface SourcePosition {
      *  * both positions correspond to the same reader
      *  * the receiver is not at the end of input
      *
-     * @param to
+     * @param to -
      *         A {@link SourcePosition} related with the same {@link SourceReader} that
      *         the receiver.
      *         It indicates a final position to consult, where the receiver is the first.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link MismatchedInputsError}
+     * @throws {@link SourceReader/Errors.MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
-     *
-     * @group API: Contents access
      */
     fullContentsTo(to: SourcePosition): string;
 
@@ -258,19 +224,17 @@ export interface SourcePosition {
      *  * both positions correspond to the same reader
      *  * the receiver is not at the end of input
      *
-     * @param from
+     * @param from -
      *        A {@link SourcePosition} related with the same {@link SourceReader} that
      *           the receiver.
      *           It indicates a starting position to consult, where the receiver is the last.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link MismatchedInputsError}
+     * @throws {@link SourceReader/Errors.MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
-     *
-     * @group API: Contents access
      */
     visibleContentsFrom(from: SourcePosition): string;
 
@@ -284,19 +248,17 @@ export interface SourcePosition {
      *  * both positions correspond to the same reader
      *  * the receiver is not at the end of input
      *
-     * @param to
+     * @param to -
      *         A {@link SourcePosition} related with the same {@link SourceReader} that
      *         the receiver.
      *         It indicates a final position to consult, where the receiver is the first.
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError}
      *         if the receiver or the argument positions are unknown.
-     * @throws {@link MismatchedInputsError}
+     * @throws {@link SourceReader/Errors.MismatchedInputsError}
      *         if the receiver and the argument positions do not belong to the same reader.
-     * @throws {@link InvalidOperationAtEOIError}
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError}
      *         if the receiver is the end of input.
-     *
-     * @group API: Contents access
      */
     visibleContentsTo(to: SourcePosition): string;
 
@@ -310,10 +272,8 @@ export interface SourcePosition {
      *  * the position is not unknown
      *  * the position is not at the end of input
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Contents access
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     documentContextBefore(lines: number): string[];
 
@@ -327,10 +287,8 @@ export interface SourcePosition {
      *  * the position is not unknown
      *  * the position is not at the end of input
      *
-     * @throws {@link InvalidOperationAtUnknownPositionError} if the position is unknown.
-     * @throws {@link InvalidOperationAtEOIError} if the position is at the end of input.
-     *
-     * @group API: Contents access
+     * @throws {@link SourceReader/Errors.InvalidOperationAtUnknownPositionError} if the position is unknown.
+     * @throws {@link SourceReader/Errors.InvalidOperationAtEOIError} if the position is at the end of input.
      */
     documentContextAfter(lines: number): string[];
     // -----------------------------------------------
@@ -343,14 +301,9 @@ export interface SourcePosition {
     /**
      * Gives a string representation of the position.
      * It is NOT useful for persistence, as it may loose information.
-     *
-     * @group API: Printing
      */
     toString(): string;
     // -----------------------------------------------
     // #endregion } API: Printing
     // ===============================================
 }
-// -----------------------------------------------
-// #endregion } SourcePosition
-// ===============================================

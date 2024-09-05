@@ -19,10 +19,13 @@
  * This module includes the class {@link BiMap} as a bi-directional map,
  * and {@link Subset} as a recursive partial type definition.
  *
- * @module API.Types
+ * @module Types
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
 export * from './BiMap';
 export * from './Subset';
 export * from './WithRequired';
+export * from './Paths';
+export * from './Leaves';
+export * from './Join';

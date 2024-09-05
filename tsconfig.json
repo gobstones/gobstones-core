@@ -1,0 +1,25 @@
+{
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        }
+    },
+    "compilerOptions": {
+        "target": "es2015",
+        "rootDir": "./src",
+        "esModuleInterop": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "declarationDir": "./dist/typings",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "stripInternal": true,
+        "composite": false,
+        "skipLibCheck": true,
+        "jsx": "react",
+        "module": "ESNext"
+    },
+    "include": ["./src/**/*"]
+}

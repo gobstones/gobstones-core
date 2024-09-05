@@ -10,6 +10,12 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
+/**
+ * @module History
+ * @author Pablo E. --Fidel-- Martínez López <fidel.ml@gmail.com>
+ */
+
 /**
  * A {@link Compactable} is a data structure that changes over time, and incorporates the possibility
  * to compact all changes, leaving the structure as if the current value was used at creation.

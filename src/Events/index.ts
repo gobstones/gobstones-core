@@ -66,7 +66,8 @@ export function subscribeToEvent(): void {
     emitter.on('onStringChanged', subscriberToStringChanged);
 }
  * ```
- * @module API.Events
+
+ * @module Events
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 export * from './EventEmitter';

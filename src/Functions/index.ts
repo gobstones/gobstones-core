@@ -10,6 +10,7 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
  * This module provides different functions that provide common functionality
  * that may be reused in different packages.
@@ -17,11 +18,11 @@
  * for better accessibility in all packages.
  *
  *
- * @module API.Functions
+ * @module Functions
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-export * from './deepEquals';
-export * from './flatten';
-export * from './matrix';
-export * from './symbolAsString';
-export * from './deepStringAssign';
+export * from './Conversion';
+export * from './ExecutionManagement';
+export * from './Querying';
+export * from './ObjectManipulation';
+export * from './noop';

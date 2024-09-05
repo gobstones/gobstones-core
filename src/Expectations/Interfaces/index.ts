@@ -10,10 +10,15 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.Expectations
+ * This module contains interfaces that provide the basic messages that an
+ * expectation can understand, depending on it's type.
+ *
+ * @module Expectations/Interfaces
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
+
 export * from './Expectation';
 export * from './FinishedExpectation';
 export * from './BooleanExpectation';

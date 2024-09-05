@@ -3,8 +3,10 @@
         "streetsidesoftware.code-spell-checker",
         "editorconfig.editorconfig",
         "dbaeumer.vscode-eslint",
-        "orta.vscode-jest",
         "christian-kohler.path-intellisense",
-        "SantaCodes.santacodes-region-viewer"
+        "SantaCodes.santacodes-region-viewer",
+        "foxundermoon.shell-format",
+        "github.vscode-github-actions",
+        "redhat.vscode-yaml"
     ]
 }

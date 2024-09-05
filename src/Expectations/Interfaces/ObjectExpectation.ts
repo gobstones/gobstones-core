@@ -10,8 +10,9 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.Expectations
+ * @module Expectations/Interfaces
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
@@ -49,6 +50,5 @@ export interface ObjectExpectation<T> extends Expectation<T> {
     /**
      * Answer if the actual element is an instance of a given class (using instanceof).
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    toBeInstanceOf(classConstructor: Function): this & FinishedExpectation;
+    toBeInstanceOf(classConstructor: (...arguments_: readonly unknown[]) => unknown): this & FinishedExpectation;
 }

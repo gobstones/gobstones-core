@@ -10,8 +10,9 @@
  * You may read the full license at https://gobstones.github.io/gobstones-guidelines/LICENSE.
  * *****************************************************************************
  */
+
 /**
- * @module API.Types
+ * @module Types
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
@@ -61,10 +62,8 @@
  * given key or value in the map where they are values, if they appear there, and the
  * association of a new pair key-value, deleting the old associations for both, if they exist.
  *
- * @param K The type of the keys.
- * @param V The type of the values.
- *
- * @group API: Main
+ * @param K - The type of the keys.
+ * @param V - The type of the values.
  */
 export class BiMap<K, V> {
     /**
@@ -104,7 +103,7 @@ export class BiMap<K, V> {
      *   ```
      *
      * @group Constructors
-     * @param map Optional list of associations to contain in the new BiMap.
+     * @param map - Optional list of associations to contain in the new BiMap.
      */
     public constructor(map?: [K, V][]) {
         this.mapKV = new Map<K, V>();
@@ -139,7 +138,7 @@ export class BiMap<K, V> {
      * Answer if this BiMap has the given key associated with a value.
      *
      * @group Querying
-     * @param key The key to search
+     * @param key - The key to search
      * @returns true if the key is present, false otherwise.
      */
     public hasKey(key: K): boolean {
@@ -151,7 +150,7 @@ export class BiMap<K, V> {
      * undefined if the key is not associated with any value.
      *
      * @group Querying
-     * @param key The key to retrieve the associated value
+     * @param key - The key to retrieve the associated value
      * @returns true if the key is present, false otherwise.
      */
     public getByKey(key: K): V | undefined {
@@ -163,8 +162,8 @@ export class BiMap<K, V> {
      * If any of both have previous associations, they are lost.
      *
      * @group Manipulation
-     * @param key The key to associate with the value
-     * @param value The value to associate with the key
+     * @param key - The key to associate with the value
+     * @param value - The value to associate with the key
      */
     public setByKey(key: K, value: V): void {
         this.biassociateKeyAndValue(key, value);
@@ -174,7 +173,7 @@ export class BiMap<K, V> {
      * Delete the association between the given key and its value, if it exists.
      *
      * @group Manipulation
-     * @param key The key to delete its association
+     * @param key - The key to delete its association
      */
     public deleteByKey(key: K): void {
         this.reverseDeleteKey(key);
@@ -185,7 +184,7 @@ export class BiMap<K, V> {
      * Answer if this BiMap has the given value associated with a key.
      *
      * @group Querying
-     * @param value The value to search
+     * @param value - The value to search
      */
     public hasValue(value: V): boolean {
         return !!this.mapVK.has(value); // !! transforms falsy values into booleans
@@ -196,7 +195,7 @@ export class BiMap<K, V> {
      * undefined if the value is not associated with any key.
      *
      * @group Querying
-     * @param value The value to retrieve the associated key
+     * @param value - The value to retrieve the associated key
      */
     public getByValue(value: V): K | undefined {
         return this.mapVK.get(value);
@@ -207,8 +206,8 @@ export class BiMap<K, V> {
      * If any of both have previous associations, they are lost.
      *
      * @group Manipulation
-     * @param value The value to associate with the key
-     * @param key The key to associate with the value
+     * @param value - The value to associate with the key
+     * @param key - The key to associate with the value
      */
     public setByValue(value: V, key: K): void {
         this.biassociateKeyAndValue(key, value);
@@ -218,7 +217,7 @@ export class BiMap<K, V> {
      * Delete the association between the given key and its value, if it exists.
      *
      * @group Manipulation
-     * @param value The value to delete its association.
+     * @param value - The value to delete its association.
      */
     public deleteByValue(value: V): void {
         this.reverseDeleteValue(value);
@@ -271,16 +270,18 @@ export class BiMap<K, V> {
      * @group Printing
      */
     public toString(): string {
-        let str: string = 'BiMap:{ ';
+        let str = 'BiMap:{ ';
         const entries = this.entries();
         if (entries.length > 0) {
             let k: K;
             let v: V;
             for (let i = 0; i < entries.length - 1; i++) {
                 [k, v] = entries[i];
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 str += k + ' <-> ' + v + ', ';
             }
             [k, v] = entries[entries.length - 1];
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             str += k + ' <-> ' + v + ' ';
         }
         str += '}';
