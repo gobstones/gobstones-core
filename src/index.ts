@@ -14,8 +14,9 @@
 /**
  * @ignore
  */
-export * from './Events/EventEmitter';
+export * from './Events';
 export * from './Expectations';
 export * from './Functions';
+export * from './History';
 export * from './SourceReader';
 export * from './Types';

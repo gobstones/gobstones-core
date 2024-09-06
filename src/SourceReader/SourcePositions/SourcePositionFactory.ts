@@ -26,9 +26,9 @@ import { SourceReader } from '../SourceReader';
 /**
  * The constant implementing the
  * [Abstract Factory Pattern](https://en.wikipedia.org/wiki/Abstract_factory_pattern)
- * for {@link SourcePosition}s.
+ * for {@link SourceReader.SourcePosition}s.
  */
-export const SourcePositions = {
+export const SourcePositionFactory = {
     Unknown: () => UnknownSourcePosition.instance,
     EndOfInput: (_sr: SourceReader) => new EndOfInputSourcePosition(_sr),
     EndOfDocument: (

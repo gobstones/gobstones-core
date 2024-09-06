@@ -16,8 +16,8 @@
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 import { AbstractDocumentSourcePosition } from './AbstractDocumentSourcePosition';
-import { SourcePosition } from './SourcePosition';
 
+import { SourcePosition } from '../SourcePosition';
 import { SourceReader } from '../SourceReader';
 
 /**

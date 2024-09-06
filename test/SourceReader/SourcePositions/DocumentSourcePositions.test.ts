@@ -6,7 +6,7 @@ import { describe, expect, describe as given, it } from '@jest/globals';
 import { DocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/DocumentSourcePosition';
 import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfDocumentSourcePosition';
 import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
-import { SourcePositions } from '../../../src/SourceReader/SourcePositions/SourcePositions';
+import { SourcePositionFactory } from '../../../src/SourceReader/SourcePositions/SourcePositionFactory';
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 import { SourceReader } from '../../../src/SourceReader/SourceReader';
 import {
@@ -44,7 +44,7 @@ describe('A DocumentSourcePosition', () => {
 
         describe('when obtained through the factory', () => {
             it('it provides the same sort of instance', () => {
-                const posEq = SourcePositions.Document(
+                const posEq = SourcePositionFactory.Document(
                     sr,
                     1,
                     'program {'.length,

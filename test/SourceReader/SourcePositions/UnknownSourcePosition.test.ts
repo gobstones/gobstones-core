@@ -6,7 +6,7 @@ import { describe, describe as given, expect, it } from '@jest/globals';
 import { DocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/DocumentSourcePosition';
 import { EndOfDocumentSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfDocumentSourcePosition';
 import { EndOfInputSourcePosition } from '../../../src/SourceReader/SourcePositions/EndOfInputSourcePosition';
-import { SourcePositions } from '../../../src/SourceReader/SourcePositions/SourcePositions';
+import { SourcePositionFactory } from '../../../src/SourceReader/SourcePositions/SourcePositionFactory';
 import { UnknownSourcePosition } from '../../../src/SourceReader/SourcePositions/UnknownSourcePosition';
 import { SourceReader } from '../../../src/SourceReader/SourceReader';
 import { InvalidOperationAtUnknownPositionError } from '../../../src/SourceReader/SourceReaderErrors';
@@ -16,7 +16,7 @@ const badOpAtUnknownError: string = 'InvalidOperationAtUnknownPositionError';
 describe('An UnknownSourcePosition', () => {
     describe('when obtained through the factory', () => {
         it('it provides the same sort of instance', () => {
-            expect(UnknownSourcePosition.instance).toStrictEqual(SourcePositions.Unknown());
+            expect(UnknownSourcePosition.instance).toStrictEqual(SourcePositionFactory.Unknown());
         });
     });
 

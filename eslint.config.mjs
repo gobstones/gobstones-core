@@ -225,7 +225,149 @@ const config = eslintTs.config(
             '@typescript-eslint/member-ordering': [
                 'error',
                 {
-                    default: ['signature', 'field', 'constructor', ['get', 'set'], 'method']
+                    default: {
+                        memberTypes: [
+                            // Static
+                            // ======
+                            // fields
+                            'public-static-field',
+                            'protected-static-field',
+                            'private-static-field',
+                            '#private-static-field',
+                            'static-field',
+                            // accessors
+                            'public-static-accessor',
+                            'protected-static-accessor',
+                            'private-static-accessor',
+                            '#private-static-accessor',
+                            'static-accessor',
+                            // initialization
+                            'static-initialization',
+                            // Getter and setter
+                            ['public-static-get', 'public-static-set'],
+                            ['protected-static-get', 'protected-static-set'],
+                            ['private-static-get', 'private-static-set'],
+                            ['#private-static-get', '#private-static-set'],
+                            ['static-get', 'static-set'],
+                            // Methods
+                            'public-static-method',
+                            'protected-static-method',
+                            'private-static-method',
+                            '#private-static-method',
+                            'static-method',
+
+                            // Instance
+                            // ========
+                            // Index signature
+                            'signature',
+                            'call-signature',
+
+                            // Fields
+                            'public-abstract-field',
+                            'protected-abstract-field',
+
+                            'public-decorated-field',
+                            'protected-decorated-field',
+                            'private-decorated-field',
+
+                            'public-instance-field',
+                            'protected-instance-field',
+                            'private-instance-field',
+                            '#private-instance-field',
+
+                            'public-field',
+                            'protected-field',
+                            'private-field',
+                            '#private-field',
+
+                            'abstract-field',
+                            'instance-field',
+
+                            'decorated-field',
+
+                            'field',
+
+                            // Constructors
+                            'public-constructor',
+                            'protected-constructor',
+                            'private-constructor',
+                            'constructor',
+
+                            // Accessors
+                            'public-abstract-accessor',
+                            'protected-abstract-accessor',
+
+                            'public-decorated-accessor',
+                            'protected-decorated-accessor',
+                            'private-decorated-accessor',
+
+                            'public-instance-accessor',
+                            'protected-instance-accessor',
+                            'private-instance-accessor',
+                            '#private-instance-accessor',
+
+                            'public-accessor',
+                            'protected-accessor',
+                            'private-accessor',
+                            '#private-accessor',
+
+                            'abstract-accessor',
+                            'instance-accessor',
+
+                            'decorated-accessor',
+
+                            'accessor',
+
+                            // Getters and Setter
+                            ['public-abstract-get', 'public-abstract-set'],
+                            ['protected-abstract-get', 'protected-abstract-set'],
+
+                            ['public-decorated-get', 'public-decorated-set'],
+                            ['protected-decorated-get', 'protected-decorated-set'],
+                            ['private-decorated-get', 'private-decorated-set'],
+
+                            ['public-instance-get', 'public-instance-set'],
+                            ['protected-instance-get', 'protected-instance-set'],
+                            ['private-instance-get', 'private-instance-set'],
+                            ['#private-instance-get', '#private-instance-set'],
+
+                            ['public-get', 'public-set'],
+                            ['protected-get', 'protected-set'],
+                            ['private-get', 'private-set'],
+                            ['#private-get', '#private-set'],
+
+                            ['abstract-get', 'abstract-set'],
+                            ['decorated-get', 'decorated-set'],
+                            ['instance-get', 'instance-set'],
+
+                            ['get', 'set'],
+
+                            // Methods
+                            'public-abstract-method',
+                            'protected-abstract-method',
+
+                            'public-decorated-method',
+                            'protected-decorated-method',
+                            'private-decorated-method',
+
+                            'public-instance-method',
+                            'protected-instance-method',
+                            'private-instance-method',
+                            '#private-instance-method',
+
+                            'public-method',
+                            'protected-method',
+                            'private-method',
+                            '#private-method',
+
+                            'abstract-method',
+                            'instance-method',
+
+                            'decorated-method',
+
+                            'method'
+                        ]
+                    }
                 }
             ],
             '@typescript-eslint/no-unused-vars': [

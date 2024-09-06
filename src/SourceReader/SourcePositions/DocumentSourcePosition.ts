@@ -17,8 +17,8 @@
  */
 
 import { AbstractDocumentSourcePosition } from './AbstractDocumentSourcePosition';
-import { SourcePosition } from './SourcePosition';
 
+import { SourcePosition } from '../SourcePosition';
 import { SourceReader } from '../SourceReader';
 
 /**

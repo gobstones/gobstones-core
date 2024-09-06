@@ -12,12 +12,11 @@
  */
 
 /**
- * @module SourceReader/SourcePositions
+ * @module SourceReader
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-
 import { SourcePosition } from './SourcePosition';
-import { SourcePositions } from './SourcePositions';
+import { SourcePositionFactory } from './SourcePositions/SourcePositionFactory';
 
 /**
  * A {@link SourceSpan} delimitates a span in a {@link SourceReader.SourceInput}.
@@ -39,12 +38,12 @@ export class SourceSpan {
     /**
      * The start position of the span.
      */
-    public readonly start: SourcePosition = SourcePositions.Unknown();
+    public readonly start: SourcePosition = SourcePositionFactory.Unknown();
 
     /**
      * The end position of the span.
      */
-    public readonly end: SourcePosition = SourcePositions.Unknown();
+    public readonly end: SourcePosition = SourcePositionFactory.Unknown();
 
     /**
      * A Span represents a span of a SourceInput.
@@ -54,7 +53,7 @@ export class SourceSpan {
      * and made unknown.
      */
     public constructor(start?: SourcePosition, end?: SourcePosition) {
-        this.start = start ?? SourcePositions.Unknown();
+        this.start = start ?? SourcePositionFactory.Unknown();
         this.end = start ? (end ?? this.start) : this.start;
     }
 }

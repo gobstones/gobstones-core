@@ -16,7 +16,7 @@
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
-import { SourcePosition } from './SourcePosition';
+import { SourcePosition } from '../SourcePosition';
 
 /**
  * This is the abstract implementation of the interface {@link SourcePosition}, and

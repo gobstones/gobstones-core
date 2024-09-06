@@ -17,8 +17,8 @@
  */
 
 import { AbstractKnownSourcePosition } from './AbstractKnownSourcePosition';
-import { SourcePosition } from './SourcePosition';
 
+import { SourcePosition } from '../SourcePosition';
 import { SourceReader } from '../SourceReader';
 import { InvalidOperationAtEOIError } from '../SourceReaderErrors';
 

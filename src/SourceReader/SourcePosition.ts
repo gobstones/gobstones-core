@@ -12,7 +12,7 @@
  */
 
 /**
- * @module SourceReader/SourcePositions
+ * @module SourceReader
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 

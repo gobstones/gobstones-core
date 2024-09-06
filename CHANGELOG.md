@@ -1,3 +1,5 @@
+## <small>0.5.6 (2024-09-06)</small>
+
 ## <small>0.5.5 (2024-09-05)</small>
 
 -   build: bump gobstones-scripts version to 0.9.3 ([f9e850a](https://github.com/gobstones/gobstones-core/commit/f9e850a))

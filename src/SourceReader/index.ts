@@ -24,7 +24,7 @@
  *  * to allow the relationship of parts of the input with identifiers naming "regions", thus
  *    making it possible for external tools to identify those parts with ease.
  *
- * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourceReader/SourcePositions.SourcePosition}s,
+ * A {@link SourceReader} is created using a {@link SourceInput} and then {@link SourcePosition}s,
  * in particular {@link SourceReader/SourcePositions.AbstractKnownSourcePosition}s, can be read from it.
  * Possible interactions with a {@link SourceReader} includes:
  *  * {@link SourceReader.peek | peek}, peeking a character,
@@ -54,20 +54,20 @@
  *
  * ## Source positions
  *
- * {@link SourceReader/SourcePositions.SourcePosition}s point to particular positions in the source given by a
+ * {@link SourcePosition}s point to particular positions in the source given by a
  * {@link SourceReader}.
- * All {@link SourceReader/SourcePositions.SourcePosition}s are created only through {@link SourceReader}.
+ * All {@link SourcePosition}s are created only through {@link SourceReader}.
  *
  * A source position may be known (pointing to a particular position into a
  * {@link SourceReader}) or unknown (if a position cannot be determined).
- * The boolean property {@link SourceReader/SourcePositions.SourcePosition.isUnknown | isUnknown}
+ * The boolean property {@link SourcePosition.isUnknown | isUnknown}
  * indicates which is the case.
  *
- * Additionally, a string representation of any {@link SourceReader/SourcePositions.SourcePosition}
- * can be obtained through {@link SourceReader/SourcePositions.SourcePosition.toString | toString}
+ * Additionally, a string representation of any {@link SourcePosition}
+ * can be obtained through {@link SourcePosition.toString | toString}
  * for internal use purposes.
  *
- * A typical use of {@link SourceReader/SourcePositions.SourcePosition}s is relating nodes of an AST
+ * A typical use of {@link SourcePosition}s is relating nodes of an AST
  * representation of code to particular positions in the string version of the
  * source code (that may come from several input documents).
  *
@@ -76,5 +76,6 @@
  */
 
 export * from './SourceReader';
-export { SourcePosition, SourceSpan } from './SourcePositions';
+export * from './SourcePosition';
+export * from './SourceSpan';
 export * from './SourceReaderErrors';

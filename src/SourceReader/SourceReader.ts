@@ -15,7 +15,8 @@
  * @module SourceReader
  * @author Pablo E. --Fidel-- Martínez López, <fidel.ml@gmail.com>
  */
-import { SourcePosition, SourcePositions } from './SourcePositions';
+import { SourcePosition } from './SourcePosition';
+import { SourcePositionFactory } from './SourcePositions';
 import { InvalidOperationAtEODError, InvalidOperationAtEOIError, NoInputError } from './SourceReaderErrors';
 
 import { and, expect } from '../Expectations';
@@ -80,13 +81,13 @@ export type SourceInput = string | Record<string, string> | string[];
  *    parts with ease.
  *
  * A {@link SourceReader} is created using a {@link SourceInput} and then
- * {@link SourceReader/SourcePositions.SourcePosition}s can be read from it.
+ * {@link SourcePosition}s can be read from it.
  * Possible interactions with a {@link SourceReader} include:
  *  - peek a character, with {@link SourceReader.peek | peek},
  *  - check if a given strings occurs at the beginning of the text in the
  *    current document, without skipping it, with
  *    {@link SourceReader.startsWith | startsWith},
- *  - get the current position as a {@link SourceReader/SourcePositions.SourcePosition}, with
+ *  - get the current position as a {@link SourcePosition}, with
  *    {@link SourceReader.getPosition | getPosition},
  *  - detect if the end of input was reached, with
  *    {@link SourceReader.atEndOfInput | atEndOfInput},
@@ -254,7 +255,7 @@ export type SourceInput = string | Record<string, string> | string[];
  * that have been processed as visible; unprocessed characters do not appear
  * (yet) on visible inputs.
  *
- * This class is tightly coupled with {@link SourceReader/SourcePositions.SourcePosition}'s implementations,
+ * This class is tightly coupled with {@link SourcePosition}'s implementations,
  * because of instances of that class represent different positions in the source
  * inputs kept by a {@link SourceReader}.
  * The operations
@@ -264,7 +265,7 @@ export type SourceInput = string | Record<string, string> | string[];
  * {@link SourceReader._inputFromToIn | _inputFromToIn},
  * {@link SourceReader._documentContextBeforeOf | _fullInputFromTo} and
  * {@link SourceReader._documentContextAfterOf | _fullDocumentContentsAt}
- * are meant to be used only by {@link SourceReader/SourcePositions.SourcePosition}, to complete
+ * are meant to be used only by {@link SourcePosition}, to complete
  * their operations, and so they are grouped as Protected.
  *
  * The remaining auxiliary operations are meant for internal usage, to
@@ -283,7 +284,7 @@ export class SourceReader {
      *
      * @group Properties (Static)
      */
-    public static readonly UnknownPosition: SourcePosition = SourcePositions.Unknown();
+    public static readonly UnknownPosition: SourcePosition = SourcePositionFactory.Unknown();
 
     /**
      * The string to use as a name for unnamed input documents.
@@ -554,7 +555,7 @@ export class SourceReader {
     }
 
     /**
-     * Gives the current position as a {@link SourceReader/SourcePositions.SourcePosition}.
+     * Gives the current position as a {@link SourcePosition}.
      * See {@link SourceReader} documentation for an example.
      *
      * **NOTE:**
@@ -566,9 +567,9 @@ export class SourceReader {
     public getPosition(): SourcePosition {
         /* istanbul ignore next */
         if (!this._hasMoreDocuments()) {
-            return SourcePositions.EndOfInput(this);
+            return SourcePositionFactory.EndOfInput(this);
         } else if (!this._hasMoreCharsAtCurrentDocument()) {
-            return SourcePositions.EndOfDocument(
+            return SourcePositionFactory.EndOfDocument(
                 this,
                 this._line,
                 this._column,
@@ -578,7 +579,7 @@ export class SourceReader {
                 this._visibleDocumentContents[this.documentsNames[this._documentIndex]].length
             );
         } else {
-            return SourcePositions.Document(
+            return SourcePositionFactory.Document(
                 this,
                 this._line,
                 this._column,
@@ -703,7 +704,7 @@ export class SourceReader {
     // -----------------------------------------------
     /**
      * Gives the name of the input document at the given index.
-     * It is intended to be used only by {@linkSourceReader/SourcePositions.SourcePosition}s.
+     * It is intended to be used only by {@link SourcePosition}s.
      *
      * **PRECONDITION:**
      *   `index <= this._documentsNames.length` (not verified)
@@ -721,7 +722,7 @@ export class SourceReader {
     /**
      * Gives the contents of the input document at the given index, both visible
      * and non-visible.
-     * It is intended to be used only by {@link SourceReader/SourcePositions.SourcePosition}s.
+     * It is intended to be used only by {@link SourcePosition}s.
      *
      * **PRECONDITION:**
      *   `index < this._documentsNames.length` (not verified)
@@ -738,7 +739,7 @@ export class SourceReader {
 
     /**
      * Gives the contents of the visible input document at the given index. It
-     * is intended to be used only by {@link SourceReader/SourcePositions.SourcePosition}s.
+     * is intended to be used only by {@link SourcePosition}s.
      *
      * **PRECONDITION:**
      *   `index < this._documentsNames.length` (not verified).
@@ -974,7 +975,7 @@ export class SourceReader {
     /**
      * Gives a clone of the stack of regions.
      * Auxiliary for {@link SourceReader/SourcePositions.SourceReader.getPosition | getPosition}.
-     * It is necessary because regions of {@link SourceReader/SourcePositions.SourcePosition} must correspond
+     * It is necessary because regions of {@link SourcePosition} must correspond
      * to those at that position and do not change with changes in reader state.
      *
      * @group Function: Auxiliaries
