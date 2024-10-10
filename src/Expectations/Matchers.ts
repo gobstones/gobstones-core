@@ -25,8 +25,7 @@
  * @module Expectations/Matchers
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-import { deepEquals } from '../Functions/Querying/deepEquals';
-import { isBuffer } from '../Functions/Querying/isBuffer';
+import { Shape, deepEquals, hasShape } from '../Functions';
 
 // ===============================================
 // #region MatcherCall
@@ -68,17 +67,17 @@ export const toBeTruthy = (actual: unknown): boolean => !!actual;
 /** Answers if the actual value is a falsy value */
 export const toBeFalsy = (actual: unknown): boolean => !actual;
 /**
- * Answers if the actual value has a type matching the expected type.
- * This comparison is performed using the `typeof` operation over the value,
- * with additional logic added to support 'array' as a type.
- * @example `toHaveType([1,2,3], 'array')` returns `true` as expected.
+ * Answers if the actual value has a type matching the expected type,
+ * checked by using the typeof operator.
+ *
+ * @example `toHaveType('hello', 'string')` returns `true`.
  */
-export const toHaveType = (actual: unknown, expectedType: string): boolean =>
-    (expectedType !== 'object' && typeof actual === expectedType) ||
-    (expectedType === 'array' && typeof actual === 'object' && Array.isArray(actual)) ||
-    (expectedType === 'regexp' && typeof actual === 'object' && actual instanceof RegExp) ||
-    (expectedType === 'buffer' && isBuffer(actual)) ||
-    (expectedType === 'object' && !Array.isArray(actual) && typeof actual === expectedType);
+export const toHaveType = (actual: unknown, expectedType: string): boolean => typeof actual === expectedType;
+/**
+ * Answer if the actual element has the given shape, as defined by
+ * the shapeOf submodule.
+ */
+export const toHaveShape = (actual: unknown, shape: Shape): boolean => hasShape(actual, shape);
 
 // -----------------------------------------------
 // #endregion IGenericExpectation implementors

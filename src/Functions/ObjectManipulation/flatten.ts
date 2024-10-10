@@ -23,7 +23,7 @@
  */
 
 import { asDefined } from '../Conversion/asDefined';
-import { isBuffer } from '../Querying/isBuffer';
+import { hasShape } from '../Querying/shapeOf';
 
 /**
  * This type represent the options that are available for
@@ -107,7 +107,7 @@ export const flatten = <TTarget extends Record<string, unknown>, TResult extends
             const value: unknown = object[key];
             const type: string = Object.prototype.toString.call(value) as string;
             const isarray: boolean = opts.safe && Array.isArray(value);
-            const isbuffer: boolean = isBuffer(value);
+            const isbuffer: boolean = hasShape(value, 'buffer');
             const isobject: boolean = type === '[object Object]' || type === '[object Array]';
 
             const newKey = prev ? prev + opts.delimiter + opts.transformKey(key) : opts.transformKey(key);
@@ -176,7 +176,7 @@ export const unflatten = <TTarget extends Record<string, any>, TResult extends R
     const opts: UnflattenOptions = Object.assign({}, unflattenOptionsDefaults, options);
     const output: Record<string, unknown> = {};
 
-    const isbuffer = isBuffer(target);
+    const isbuffer = hasShape(target, 'buffer');
     if (isbuffer || Object.prototype.toString.call(target) !== '[object Object]') {
         return target as unknown as TResult;
     }

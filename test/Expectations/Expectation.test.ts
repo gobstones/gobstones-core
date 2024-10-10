@@ -407,17 +407,13 @@ describe('IGenericExpectation', () => {
             it('Should have true result', () => {
                 expect(assert(5).toHaveType('number').getResult()).toBe(true);
 
+                expect(assert(5000000000000n).toHaveType('bigint').getResult()).toBe(true);
+
                 expect(assert('hello').toHaveType('string').getResult()).toBe(true);
 
                 expect(assert(false).toHaveType('boolean').getResult()).toBe(true);
 
                 expect(assert({ a: 'hello', b: 5 }).toHaveType('object').getResult()).toBe(true);
-
-                expect(assert([1, 3, 4]).toHaveType('array').getResult()).toBe(true);
-
-                expect(assert(/ab/).toHaveType('regexp').getResult()).toBe(true);
-
-                expect(assert(Buffer.from('test', 'utf-8')).toHaveType('buffer').getResult()).toBe(true);
             });
         });
         given('actual has not the given type', () => {
@@ -433,8 +429,6 @@ describe('IGenericExpectation', () => {
                 expect(assert({ a: 'hello' }).toHaveType('number').getResult()).toBe(false);
 
                 expect(assert([1, 2, 3]).toHaveType('number').getResult()).toBe(false);
-
-                expect(assert([1, 2, 3]).toHaveType('object').getResult()).toBe(false);
             });
         });
         given('actual has the given type but not was called', () => {
@@ -446,8 +440,6 @@ describe('IGenericExpectation', () => {
                 expect(assert(false).not.toHaveType('boolean').getResult()).toBe(false);
 
                 expect(assert({ a: 'hello', b: 5 }).not.toHaveType('object').getResult()).toBe(false);
-
-                expect(assert([1, 3, 4]).not.toHaveType('array').getResult()).toBe(false);
             });
         });
         given('actual has not the given type but not was called', () => {
@@ -463,8 +455,28 @@ describe('IGenericExpectation', () => {
                 expect(assert({ a: 'hello' }).not.toHaveType('number').getResult()).toBe(true);
 
                 expect(assert([1, 2, 3]).not.toHaveType('number').getResult()).toBe(true);
+            });
+        });
+    });
 
-                expect(assert([1, 2, 3]).not.toHaveType('object').getResult()).toBe(true);
+    describe('toHaveShape', () => {
+        given('actual has the given type', () => {
+            it('Should have true result', () => {
+                expect(assert(5).toHaveShape('number').getResult()).toBe(true);
+
+                expect(assert(5000000000000n).toHaveShape('bigint').getResult()).toBe(true);
+
+                expect(assert('hello').toHaveShape('string').getResult()).toBe(true);
+
+                expect(assert(false).toHaveShape('boolean').getResult()).toBe(true);
+
+                expect(assert({ a: 'hello', b: 5 }).toHaveShape('object').getResult()).toBe(true);
+
+                expect(assert(Buffer.from('test', 'utf-8')).toHaveShape('buffer').getResult()).toBe(true);
+
+                expect(assert(/a/).toHaveShape('regexp').getResult()).toBe(true);
+
+                expect(assert([1, 2, 3]).toHaveShape('array').getResult()).toBe(true);
             });
         });
     });

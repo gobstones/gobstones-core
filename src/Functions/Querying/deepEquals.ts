@@ -16,7 +16,7 @@
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 
-import { isBuffer } from './isBuffer';
+import { hasShape } from './shapeOf';
 
 import { asDefined } from '../Conversion/asDefined';
 
@@ -95,7 +95,7 @@ export const deepEquals = <T>(first: T, second: T): boolean => {
             // If both are Dates
             if (a instanceof Date && b instanceof Date) return dateEquals(a, b);
             // If both are Buffers
-            if (isBuffer(a) && isBuffer(b)) return bufferEquals(a, b);
+            if (hasShape(a, 'buffer') && hasShape(b, 'buffer')) return bufferEquals(a as Buffer, b as Buffer);
             // Reached this case we consider a plain object (or class
             // with plain properties that can be accessed)
             return objectEquals(a, b, compare);

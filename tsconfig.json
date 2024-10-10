@@ -5,7 +5,7 @@
         }
     },
     "compilerOptions": {
-        "target": "es2015",
+        "target": "es2020",
         "rootDir": "./src",
         "esModuleInterop": true,
         "allowJs": true,

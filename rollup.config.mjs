@@ -33,7 +33,7 @@ export default [
             }),
             commonjs()
         ],
-        external: [/@gobstones\/.*/]
+        external: [/@gobstones\/.*/, '@alanrodas/shapeof']
     },
     {
         input: 'src/cli.ts',
@@ -58,6 +58,6 @@ export default [
             }),
             commonjs()
         ],
-        external: [/@gobstones\/.*/, 'commander', 'fs']
+        external: [/@gobstones\/.*/, 'commander', 'fs', '@alanrodas/shapeof']
     }
 ];

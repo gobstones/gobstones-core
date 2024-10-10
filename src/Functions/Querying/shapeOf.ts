@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /*
  * *****************************************************************************
  * Copyright (C) National University of Quilmes 2018-2024
@@ -16,18 +12,10 @@
  */
 
 /**
+ * Re-exports all elements from the alanrodas/shapeof project, that allows to check
+ * for simple shapes of object.
+ *
  * @module Functions/Querying
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
-
-/**
- * Answer if an element is a Buffer.
- *
- * @param obj - The element to test if it's a buffer
- *
- * @returns `true` if the element is a Buffer, `false` otherwise.
- */
-export const isBuffer = (obj: unknown): obj is Buffer =>
-    obj?.constructor &&
-    typeof (obj.constructor as any).isBuffer === 'function' &&
-    (obj.constructor as any).isBuffer(obj);
+export { Shape, hasShape, shapeOf } from '@alanrodas/shapeof';

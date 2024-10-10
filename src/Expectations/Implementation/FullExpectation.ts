@@ -18,6 +18,7 @@
 
 import { AbstractFinishedExpectation } from './AbstractFinishedExpectation';
 
+import { Shape } from '../../Functions';
 import {
     ArrayExpectation,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -130,16 +131,21 @@ export class FullExpectation extends AbstractFinishedExpectation {
         return this.runMatcher('toHaveType', [typeName]);
     }
 
+    /** @inheritDoc {@link Expectation.toHaveShape} */
+    public toHaveShape(shape: Shape): this & FinishedExpectation {
+        return this.runMatcher('toHaveShape', [shape]);
+    }
+
     /* istanbul ignore next */
     /** @inheritDoc {@link Expectation.asNumber} */
     public asNumber(): NumberExpectation {
-        return this as NumberExpectation;
+        return this as unknown as NumberExpectation;
     }
 
     /* istanbul ignore next */
     /** @inheritDoc {@link Expectation.asString} */
     public asString(): StringExpectation {
-        return this as StringExpectation;
+        return this as unknown as StringExpectation;
     }
 
     /* istanbul ignore next */
@@ -344,7 +350,7 @@ export class FullExpectation extends AbstractFinishedExpectation {
      * logic conjunction with the previous result if
      * a value already exists.
      *
-     * @value The value to set.
+     * @param value - The value to set.
      */
     protected setResult(value: boolean): void {
         if (this.result === undefined) {

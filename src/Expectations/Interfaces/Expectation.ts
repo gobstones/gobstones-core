@@ -22,6 +22,8 @@ import { NumberExpectation } from './NumberExpectation';
 import { ObjectExpectation } from './ObjectExpectation';
 import { StringExpectation } from './StringExpectation';
 
+import { Shape } from '../../Functions';
+
 /**
  * This type represents an expectation for any type of element.
  * The matchers that can be called contain general things, such as
@@ -71,13 +73,17 @@ export interface Expectation<T> {
      */
     toBeFalsy(): this & FinishedExpectation;
     /**
-     * Answers if the actual value has a type matching the expected type.
-     * This comparison is performed using the `typeof` operation over the value,
-     * with additional logic added to support 'array' as a type.
+     * Answers if the actual value has a type matching the expected type,
+     * checked by using the typeof operator.
      *
-     * @example `toHaveType([1,2,3], 'array')` returns `true` as expected.
+     * @example `toHaveType('hello', 'string')` returns `true`.
      */
     toHaveType(value: string): this & FinishedExpectation;
+    /**
+     * Answer if the actual element has the given shape, as defined by
+     * the shapeOf submodule.
+     */
+    toHaveShape(shape: Shape): this & FinishedExpectation;
     /**
      * Answer the given expectation as an instance of INumberExpectation.
      * No check is performed on the input to see if it can actually be casted.

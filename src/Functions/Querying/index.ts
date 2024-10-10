@@ -19,4 +19,4 @@
  * @author Alan Rodas Bonjour <alanrodas@gmail.com>
  */
 export * from './deepEquals';
-export * from './isBuffer';
+export * from './shapeOf';
